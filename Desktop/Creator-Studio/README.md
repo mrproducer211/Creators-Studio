@@ -101,6 +101,7 @@ View your app in AI Studio: https://ai.studio/apps/drive/1yG5g9IOYSdMzYzzL1uyhhY
      - **Value:** Your Gemini API key (get it from [Google AI Studio](https://aistudio.google.com/apikey))
    - Click **Save**
    - ⚠️ **Important:** This must be set before deploying, or the serverless functions won't work
+   - ⚠️ **Security Note:** Never commit API keys to git. The API key is stored securely in Netlify's environment variables and never exposed in your code
 
 5. **Deploy**
    - Netlify will automatically deploy your site
