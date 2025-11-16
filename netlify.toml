@@ -1,5 +1,5 @@
 [build]
-  command = "cd Desktop/Creator-Studio && npm ci --no-optional || npm install --no-optional && npm run build"
+  command = "cd Desktop/Creator-Studio && rm -rf node_modules package-lock.json 2>/dev/null || true && npm install && npm run build"
   publish = "Desktop/Creator-Studio/dist"
 
 [build.environment]
