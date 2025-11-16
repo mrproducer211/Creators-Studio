@@ -87,16 +87,20 @@ View your app in AI Studio: https://ai.studio/apps/drive/1yG5g9IOYSdMzYzzL1uyhhY
    - Connect your GitHub account and select your repository
 
 3. **Configure Build Settings**
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-   - Netlify will auto-detect these from `netlify.toml`
+   - Netlify will auto-detect from `netlify.toml`:
+     - Build command: `npm run build`
+     - Publish directory: `dist`
+     - Functions directory: `netlify/functions`
+   - ✅ No manual configuration needed - it's all in `netlify.toml`
 
-4. **Set Environment Variable**
-   - In Netlify dashboard, go to Site settings → Environment variables
-   - Add a new variable:
-     - Key: `GEMINI_API_KEY`
-     - Value: Your Gemini API key
-   - Click "Save"
+4. **Set Environment Variable (IMPORTANT)**
+   - In Netlify dashboard, go to **Site settings** → **Environment variables**
+   - Click **Add a variable**
+   - Add:
+     - **Key:** `GEMINI_API_KEY`
+     - **Value:** `AIzaSyC7HpdeAe0g_AWJqUnXokHvLd1pOdzZB00`
+   - Click **Save**
+   - ⚠️ **Important:** This must be set before deploying, or the serverless functions won't work
 
 5. **Deploy**
    - Netlify will automatically deploy your site

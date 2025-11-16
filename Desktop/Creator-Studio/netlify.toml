@@ -5,8 +5,20 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# Serverless functions configuration
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# SPA redirects - all routes go to index.html for client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
+  status = 200
+
+# Function redirects - proxy API calls to serverless functions
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
   status = 200
 
