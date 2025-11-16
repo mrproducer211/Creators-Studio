@@ -3,7 +3,7 @@
   publish = "Desktop/Creator-Studio/dist"
 
 [build.environment]
-  # Node version is controlled by .nvmrc file in Desktop/Creator-Studio
+  NODE_VERSION = "18"
 
 # Serverless functions configuration
 [functions]
