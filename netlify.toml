@@ -1,5 +1,5 @@
 [build]
-  command = "cd Desktop/Creator-Studio && npm ci && npm run build"
+  command = "cd Desktop/Creator-Studio && npm ci --no-optional || npm install --no-optional && npm run build"
   publish = "Desktop/Creator-Studio/dist"
 
 [build.environment]
