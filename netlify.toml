@@ -1,0 +1,24 @@
+[build]
+  command = "cd Desktop/Creator-Studio && npm ci && npm run build"
+  publish = "Desktop/Creator-Studio/dist"
+
+[build.environment]
+  # Node version is controlled by .nvmrc file in Desktop/Creator-Studio
+
+# Serverless functions configuration
+[functions]
+  directory = "Desktop/Creator-Studio/netlify/functions"
+  node_bundler = "esbuild"
+
+# SPA redirects - all routes go to index.html for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Function redirects - proxy API calls to serverless functions
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
