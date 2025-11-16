@@ -98,7 +98,7 @@ View your app in AI Studio: https://ai.studio/apps/drive/1yG5g9IOYSdMzYzzL1uyhhY
    - Click **Add a variable**
    - Add:
      - **Key:** `GEMINI_API_KEY`
-     - **Value:** `AIzaSyC7HpdeAe0g_AWJqUnXokHvLd1pOdzZB00`
+     - **Value:** Your Gemini API key (get it from [Google AI Studio](https://aistudio.google.com/apikey))
    - Click **Save**
    - ⚠️ **Important:** This must be set before deploying, or the serverless functions won't work
 
