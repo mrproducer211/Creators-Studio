@@ -1,0 +1,5 @@
+{
+  "name": "Gemini Creator Studio",
+  "description": "A powerful and modern web application that leverages the Gemini API to generate and edit images, create videos from text or images, analyze visual content, and engage in intelligent conversations with an AI chatbot.",
+  "requestFramePermissions": []
+}
