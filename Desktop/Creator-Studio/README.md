@@ -10,23 +10,63 @@ View your app in AI Studio: https://ai.studio/apps/drive/1yG5g9IOYSdMzYzzL1uyhhY
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
+**Prerequisites:**
+- Node.js (v18 or higher)
+- npm or yarn
+- A Gemini API key
 
-1. Install dependencies:
+### Quick Start
+
+1. **Install dependencies:**
    ```bash
    npm install
    ```
 
-2. For local development, you can create a `.env.local` file with:
+2. **Create environment file:**
+   Create a `.env` file in the root directory:
+   ```env
+   GEMINI_API_KEY=your_actual_gemini_api_key_here
    ```
-   GEMINI_API_KEY=your_api_key_here
-   ```
-   Note: The API key is only used for local development. In production, it's securely stored in Netlify's environment variables.
+   ⚠️ **Important:** Never commit `.env` to git - it's already in `.gitignore`
 
-3. Run the app:
+3. **Run with Netlify Dev (Recommended):**
+   ```bash
+   npm run dev:netlify
+   ```
+   This will:
+   - Start the Vite dev server
+   - Start Netlify Functions locally
+   - Load environment variables from `.env`
+   - Make serverless functions available at `/.netlify/functions/*`
+   
+   Your app will be available at `http://localhost:8888`
+
+4. **Alternative: Run Vite only (without serverless functions):**
    ```bash
    npm run dev
    ```
+   ⚠️ **Note:** This won't work for API calls since serverless functions won't be running. Use `npm run dev:netlify` for full functionality.
+
+### Troubleshooting
+
+**Port already in use:**
+- Netlify Dev defaults to port 8888
+- If occupied, it will prompt for an alternative port
+- Or specify: `netlify dev --port 3000`
+
+**Environment variables not loading:**
+- Ensure `.env` is in the root directory (same level as `package.json`)
+- Restart `netlify dev` after creating/modifying `.env`
+- Verify `GEMINI_API_KEY` is set correctly (no quotes needed)
+
+**Functions not working:**
+- Make sure you're using `npm run dev:netlify`, not `npm run dev`
+- Check terminal for function errors
+- Verify `@netlify/functions` is installed: `npm list @netlify/functions`
+
+**TypeScript errors:**
+- Run `npm install` to ensure all dependencies are installed
+- If `@types/node` error persists, restart your IDE/editor
 
 ## Deploy to Netlify
 
