@@ -3,7 +3,7 @@
   publish = "Desktop/Creator-Studio/dist"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
 
 # Serverless functions configuration
 [functions]
@@ -14,11 +14,5 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200
-
-# Function redirects - proxy API calls to serverless functions
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
   status = 200
 
