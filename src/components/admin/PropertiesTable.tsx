@@ -1,0 +1,165 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { PropertyCard } from "@/types/property";
+
+function badgeStyle(t: string) {
+  if (t === "sale") return { background: "#1C3A2F", color: "#E2C97E" };
+  if (t === "rent") return { background: "#C9A84C", color: "#1C3A2F" };
+  return { background: "#FFFFFF", color: "#1C3A2F", border: "1px solid #E5E0D8" };
+}
+function badgeLabel(t: string) {
+  if (t === "sale") return "Sale";
+  if (t === "rent") return "Rent";
+  return "Short Stay";
+}
+
+export default function PropertiesTable({ properties }: { properties: PropertyCard[] }) {
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | "sale" | "rent" | "short_stay">("all");
+  const [busyId, setBusyId] = useState<number | null>(null);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return properties
+      .filter((p) => filter === "all" || p.listingType === filter)
+      .filter((p) =>
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.area.toLowerCase().includes(q) ||
+        p.slug.toLowerCase().includes(q)
+      );
+  }, [properties, search, filter]);
+
+  const del = async (id: number, name: string) => {
+    if (!confirm(`Delete "${name}"? This can't be undone.`)) return;
+    setBusyId(id);
+    try {
+      const res = await fetch(`/api/admin/properties/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error ?? "Failed to delete.");
+      } else {
+        router.refresh();
+      }
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  return (
+    <div>
+      {/* Toolbar */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by name, area or slug…"
+          suppressHydrationWarning
+          className="flex-1 min-w-[200px] rounded-xl px-4 py-2.5 text-[13px] outline-none"
+          style={{ border: "1.5px solid #E5E0D8", background: "#FFFFFF", color: "#1A1A1A", fontFamily: "inherit" }}
+        />
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value as "all" | "sale" | "rent" | "short_stay")}
+          suppressHydrationWarning
+          className="rounded-xl px-3 py-2.5 text-[13px] cursor-pointer outline-none"
+          style={{ border: "1.5px solid #E5E0D8", background: "#FFFFFF", color: "#1A1A1A", fontFamily: "inherit" }}
+        >
+          <option value="all">All listings</option>
+          <option value="sale">For Sale</option>
+          <option value="rent">Long Rent</option>
+          <option value="short_stay">Short Stay</option>
+        </select>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-2xl" style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}>
+        <table className="w-full" style={{ borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "#FAF8F3", borderBottom: "1px solid #E5E0D8" }}>
+              <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3" style={{ color: "#888" }}>Property</th>
+              <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-3 py-3" style={{ color: "#888" }}>Type</th>
+              <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-3 py-3" style={{ color: "#888" }}>Area</th>
+              <th className="text-right text-[11px] uppercase tracking-[0.8px] font-semibold px-3 py-3" style={{ color: "#888" }}>Price</th>
+              <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-3 py-3" style={{ color: "#888" }}>Flags</th>
+              <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-3 py-3" style={{ color: "#888" }}>Engagement</th>
+              <th className="text-right text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3" style={{ color: "#888" }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((p) => (
+              <tr key={p.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    {p.coverImage ? (
+                      <img src={p.coverImage} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-lg flex-shrink-0" style={{ background: "linear-gradient(135deg,#254D3E,#1C3A2F)" }} />
+                    )}
+                    <div className="min-w-0">
+                      <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.name}</div>
+                      <div className="text-[11px] truncate" style={{ color: "#999" }}>{p.slug}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-3 py-3">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.5px] px-2 py-1 rounded-full" style={badgeStyle(p.listingType)}>
+                    {badgeLabel(p.listingType)}
+                  </span>
+                </td>
+                <td className="px-3 py-3 text-[12px]" style={{ color: "#555" }}>{p.area}</td>
+                <td className="px-3 py-3 text-right text-[12px] font-semibold" style={{ color: "#1C3A2F" }}>
+                  ฿{Number(p.priceTHB).toLocaleString("th-TH")}{p.priceLabel}
+                </td>
+                <td className="px-3 py-3">
+                  <div className="flex items-center justify-center gap-1.5">
+                    {p.featured  && <span title="Featured"    className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(201,168,76,0.18)", color: "#8B6914" }}>FEAT</span>}
+                    {p.hasVideo  && <span title="Has video"   className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(28,58,47,0.1)", color: "#1C3A2F" }}>VID</span>}
+                    {p.petFriendly && <span title="Pet friendly" className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(46,97,80,0.15)", color: "#2E6150" }}>PET</span>}
+                    {p.nearBts   && <span title="Near BTS/MRT" className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(74,144,222,0.15)", color: "#2A5A99" }}>BTS</span>}
+                  </div>
+                </td>
+                <td className="px-3 py-3 text-center">
+                  <div className="inline-flex items-center gap-2.5 text-[11px] font-semibold text-[#666]">
+                    <span title="Views">👁️ {p.viewCount ?? 0}</span>
+                    <span title="Clicks">🖱️ {p.clicks ?? 0}</span>
+                    <span title="Likes">❤️ {p.likes}</span>
+                    <span title="Saves">⭐ {p.saves}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <div className="flex items-center gap-1.5 justify-end">
+                    <a href={`/property/${p.slug}`} target="_blank" rel="noopener noreferrer"
+                      className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium no-underline" style={{ background: "#F7F3EC", color: "#1C3A2F", border: "1px solid #E5E0D8" }}>
+                      View
+                    </a>
+                    <a href={`/admin/properties/${p.id}`}
+                      className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium no-underline" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>
+                      Edit
+                    </a>
+                    <button onClick={() => del(p.id, p.name)} disabled={busyId === p.id}
+                      suppressHydrationWarning
+                      className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium cursor-pointer border-none disabled:opacity-50"
+                      style={{ background: "rgba(224,82,82,0.1)", color: "#E05252", fontFamily: "inherit" }}>
+                      {busyId === p.id ? "…" : "Delete"}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-[13px] text-center py-10" style={{ color: "#999" }}>
+                  No properties match the current filter.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
