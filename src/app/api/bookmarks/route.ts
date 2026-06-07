@@ -1,16 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { db } from "@/lib/db";
+import { db, isDbConfigured } from "@/lib/db";
 import { bookmarks } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
+import { getUserBookmarks, syncUserBookmarks, toggleUserBookmark } from "@/lib/store/bookmarks";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await auth();
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
+    if (!isDbConfigured) {
+      const ids = await getUserBookmarks(session.user.email);
+      return NextResponse.json({ ids });
+    }
+
     const userBookmarks = await db
       .select({ propertyId: bookmarks.propertyId })
       .from(bookmarks)
@@ -46,6 +52,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, count: 0 });
       }
 
+      if (!isDbConfigured) {
+        await syncUserBookmarks(email, body.syncIds);
+        return NextResponse.json({ success: true, count: body.syncIds.length });
+      }
+
       const values = body.syncIds.map((id) => ({
         userEmail: email,
         propertyId: Number(id),
@@ -58,6 +69,11 @@ export async function POST(req: NextRequest) {
     // 2. Toggle single bookmark
     if (body.propertyId !== undefined) {
       const propertyId = Number(body.propertyId);
+
+      if (!isDbConfigured) {
+        const bookmarked = await toggleUserBookmark(email, propertyId);
+        return NextResponse.json({ success: true, bookmarked });
+      }
 
       const existing = await db
         .select()

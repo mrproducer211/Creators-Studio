@@ -10,6 +10,8 @@ import Footer from "@/components/Footer";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAllPosts } from "@/lib/store/blog";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const allProperties = await getDbProperties();
   const allPosts = await getAllPosts();
@@ -23,11 +25,13 @@ export default async function Home() {
     })
     .slice(0, 5);
 
+  const featuredProperty = allProperties.find((p) => p.featured) || allProperties[0];
+
   return (
     <>
       <Navbar />
       <main>
-        <HeroSection />
+        <HeroSection featured={featuredProperty} />
         <TrustStrip />
         <BrowseModes />
         <CategorySection />

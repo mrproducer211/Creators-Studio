@@ -20,7 +20,6 @@ const DEFAULT_FILTERS: ExploreFilters = {
   nearBts: false,
 };
 
-/* Build initial filters from URL search params */
 function filtersFromParams(params: URLSearchParams): ExploreFilters {
   const f = { ...DEFAULT_FILTERS };
   const type = params.get("type");
@@ -31,6 +30,13 @@ function filtersFromParams(params: URLSearchParams): ExploreFilters {
   if (area) f.area = area;
   const search = params.get("search");
   if (search) f.search = search;
+  
+  const petFriendly = params.get("pets") || params.get("petFriendly");
+  if (petFriendly === "true") f.petFriendly = true;
+  
+  const nearBts = params.get("bts") || params.get("nearBts");
+  if (nearBts === "true") f.nearBts = true;
+  
   return f;
 }
 
@@ -78,17 +84,13 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
 
   // Re-sync if URL params change (clicking Buy → Rent in nav)
   useEffect(() => {
-    setFilters((prev) => ({ ...prev, ...filtersFromParams(searchParams) }));
+    Promise.resolve().then(() => {
+      setFilters((prev) => ({ ...prev, ...filtersFromParams(searchParams) }));
+    });
   }, [searchParams]);
 
   const filtered = useMemo(() => applyFilters(properties, filters), [properties, filters]);
   const update = (patch: Partial<ExploreFilters>) => setFilters((p) => ({ ...p, ...patch }));
-
-  const hasActive =
-    filters.listingType !== "all" || filters.propertyType !== "all" ||
-    filters.area !== "" || filters.bedrooms !== "any" || filters.search !== "" ||
-    filters.minPrice > 0 || filters.maxPrice < Infinity ||
-    filters.petFriendly || filters.nearBts;
 
   return (
     <>

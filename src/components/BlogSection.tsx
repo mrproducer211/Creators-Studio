@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BlogPost } from "@/data/blogPosts";
+import Link from "next/link";
 
 const POSTS = [
   {
@@ -55,7 +56,7 @@ export default function BlogSection({ posts }: BlogSectionProps) {
 
   const getLocalizedCategory = (cat: string) => {
     const key = categoryKeys[cat];
-    return key ? (t.blog.blogCategories as any)[key] : cat;
+    return key ? (t.blog.blogCategories as Record<string, string>)[key] : cat;
   };
 
   const getLocalizedReadTime = (rt: string) => {
@@ -84,19 +85,19 @@ export default function BlogSection({ posts }: BlogSectionProps) {
             {t.blog.title}
           </h2>
         </div>
-        <a
+        <Link
           href="/blog"
           className="hidden md:block text-[12px] font-medium no-underline pb-px"
           style={{ color: "#1C3A2F", borderBottom: "1px solid #1C3A2F" }}
         >
           {t.blog.all}
-        </a>
+        </Link>
       </div>
 
       {/* 4-col grid — 1 col mobile → 2 col tablet → 4 col desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {displayPosts.map((post) => (
-          <a
+          <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
             className="group no-underline flex flex-col rounded-2xl overflow-hidden transition-shadow duration-200 hover:shadow-lg"
@@ -147,19 +148,18 @@ export default function BlogSection({ posts }: BlogSectionProps) {
                 </span>
               </div>
             </div>
-          </a>
+          </Link>
         ))}
       </div>
 
-      {/* Mobile "All guides" link */}
       <div className="sm:hidden mt-5">
-        <a
+        <Link
           href="/blog"
           className="flex items-center justify-center py-3.5 rounded-2xl text-[13px] font-semibold no-underline"
           style={{ background: "#F7F3EC", color: "#1C3A2F", border: "1px solid #E5E0D8" }}
         >
           {t.blog.all} →
-        </a>
+        </Link>
       </div>
     </section>
   );

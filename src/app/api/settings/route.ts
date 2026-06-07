@@ -11,7 +11,7 @@ export async function GET() {
       adminLine: settings.adminLine || "",
       adminTelegram: settings.adminTelegram || "",
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Failed to load public settings" }, { status: 500 });
   }
 }

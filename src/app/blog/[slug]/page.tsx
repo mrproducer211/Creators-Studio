@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getAllPosts, getPostBySlug } from "@/lib/store/blog";
+import Link from "next/link";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -41,8 +42,8 @@ export default async function BlogPostPage({ params }: Props) {
     day: "numeric", month: "long", year: "numeric",
   });
 
-  const headerFont = (post as any).headerFontFamily || "Outfit";
-  const bodyFont = (post as any).fontFamily || "Inter";
+  const headerFont = post.headerFontFamily || "Outfit";
+  const bodyFont = post.fontFamily || "Inter";
   const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(headerFont)}:wght@400;600;700&family=${encodeURIComponent(bodyFont)}:wght@300;400;500;600&display=swap`;
 
   return (
@@ -81,9 +82,9 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-[12px] mb-8" style={{ color: "#999" }}>
-            <a href="/" className="no-underline hover:underline" style={{ color: "#999" }}>Home</a>
+            <Link href="/" className="no-underline hover:underline" style={{ color: "#999" }}>Home</Link>
             <span>/</span>
-            <a href="/blog" className="no-underline hover:underline" style={{ color: "#999" }}>Guides</a>
+            <Link href="/blog" className="no-underline hover:underline" style={{ color: "#999" }}>Guides</Link>
             <span>/</span>
             <span style={{ color: "#1C3A2F" }}>{post.category}</span>
           </nav>

@@ -20,6 +20,9 @@ const T = {
       home:      "Home",
       language:  "Language",
       adminDashboard: "Admin Dashboard",
+      discover: "Discover",
+      imLookingFor: "I’m Looking For",
+      petFriendly: "Pet Friendly",
     },
     hero: {
       tag:         "Bangkok · Premium Properties",
@@ -218,6 +221,9 @@ const T = {
       home:      "หน้าแรก",
       language:  "ภาษา",
       adminDashboard: "ระบบจัดการ",
+      discover: "ค้นพบ",
+      imLookingFor: "ฉันกำลังมองหา",
+      petFriendly: "เลี้ยงสัตว์ได้",
     },
     hero: {
       tag:         "กรุงเทพฯ · อสังหาริมทรัพย์พรีเมียม",

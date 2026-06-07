@@ -61,6 +61,22 @@ export const properties = pgTable("properties", {
   transit:      text("transit").array(),
   neighborhood: text("neighborhood"),
 
+  // Customizable details
+  buildingBuilt:     integer("building_built"),
+  lastRenovated:     integer("last_renovated"),
+  furnishing:        varchar("furnishing", { length: 50 }),
+  availableFrom:     varchar("available_from", { length: 50 }),
+  lastVerifiedAt:    varchar("last_verified_at", { length: 50 }),
+  btsStation:        varchar("bts_station", { length: 100 }),
+  btsWalkMin:        integer("bts_walk_min"),
+  mrtStation:        varchar("mrt_station", { length: 100 }),
+  mrtWalkMin:        integer("mrt_walk_min"),
+  foreignQuota:      boolean("foreign_quota"),
+  visaFriendly:      boolean("visa_friendly"),
+  leaseTerms:        text("lease_terms"),
+  depositTerms:      text("deposit_terms"),
+  maintenance:       varchar("maintenance", { length: 100 }),
+
   // Flags
   featured:          boolean("featured").notNull().default(false),
   hasVideo:          boolean("has_video").notNull().default(false),

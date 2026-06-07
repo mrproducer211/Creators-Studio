@@ -1,6 +1,7 @@
-import AdminPage, { PrimaryLink } from "@/components/admin/Page";
+import AdminPage from "@/components/admin/Page";
 import { getAllPosts } from "@/lib/store/blog";
 import BlogTable from "@/components/admin/BlogTable";
+import BlogControls from "@/components/admin/BlogControls";
 
 export default async function AdminBlogPage() {
   const posts = await getAllPosts();
@@ -8,8 +9,8 @@ export default async function AdminBlogPage() {
     <AdminPage
       title="Blog"
       subtitle={`${posts.length} posts`}
-      action={<PrimaryLink href="/admin/blog/new">+ New Post</PrimaryLink>}
     >
+      <BlogControls />
       <BlogTable posts={posts} />
     </AdminPage>
   );

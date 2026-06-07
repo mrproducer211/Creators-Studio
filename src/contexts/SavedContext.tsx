@@ -32,12 +32,18 @@ export function SavedProvider({ children }: { children: ReactNode }) {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const arr: number[] = JSON.parse(stored);
-        setSavedIds(new Set(arr));
+        Promise.resolve().then(() => {
+          setSavedIds(new Set(arr));
+        });
       } else {
-        setSavedIds(new Set());
+        Promise.resolve().then(() => {
+          setSavedIds(new Set());
+        });
       }
     } catch {
-      setSavedIds(new Set());
+      Promise.resolve().then(() => {
+        setSavedIds(new Set());
+      });
     }
   }, []);
 
@@ -95,7 +101,13 @@ export function SavedProvider({ children }: { children: ReactNode }) {
 
   const toggle = useCallback(async (id: number) => {
     if (status !== "authenticated") {
-      window.location.href = `/auth/signin?callbackUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+      // Allow guest users to toggle local bookmarks
+      setSavedIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      });
       return;
     }
 

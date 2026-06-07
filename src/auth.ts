@@ -4,15 +4,19 @@ import Credentials from "next-auth/providers/credentials";
 import { compare, hash } from "bcryptjs";
 
 // ── Demo admin credentials (replace with DB lookup in production) ──
-const DEMO_USERS = [
+const isDev = process.env.NODE_ENV === "development";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || (isDev ? "admin@nhp-bangkok.com" : undefined);
+const ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || (isDev ? "$2b$10$KKMMCyA7/7OFLdKq/9I9POrP8DLNDyTV/apFNVz2tj6zNnuZ842dK" : undefined); // nhp2026 for dev fallback
+
+const DEMO_USERS = ADMIN_EMAIL && ADMIN_HASH ? [
   {
     id:       "admin-1",
-    email:    "admin@nhp-bangkok.com",
+    email:    ADMIN_EMAIL.toLowerCase().trim(),
     name:     "NHP Admin",
-    password: "$2b$10$KKMMCyA7/7OFLdKq/9I9POrP8DLNDyTV/apFNVz2tj6zNnuZ842dK", // nhp2026
+    password: ADMIN_HASH,
     role:     "admin",
   },
-];
+] : [];
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,

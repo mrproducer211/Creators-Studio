@@ -63,12 +63,18 @@ export default function ReelItem({ property, index, isActive, onLocationClick }:
 
     if (isActive) {
       if (!userPaused) {
-        video.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+        video.play()
+          .then(() => {
+            Promise.resolve().then(() => setPlaying(true));
+          })
+          .catch(() => {
+            Promise.resolve().then(() => setPlaying(false));
+          });
       }
     } else {
       video.pause();
       video.currentTime = 0;
-      setPlaying(false);
+      Promise.resolve().then(() => setPlaying(false));
     }
   }, [isActive, userPaused]);
 

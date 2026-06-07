@@ -19,7 +19,7 @@ export default function LeadsTable({ initialLeads }: { initialLeads: LeadUser[] 
         const data = await res.json().catch(() => ({}));
         alert(data.error || "Failed to delete lead user.");
       }
-    } catch (err) {
+    } catch {
       alert("Error deleting lead user.");
     } finally {
       setBusy(null);

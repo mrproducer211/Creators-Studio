@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function SignInClient({ googleEnabled }: { googleEnabled: boolean }) {
   const router       = useRouter();
@@ -65,8 +66,8 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         router.push(callbackUrl);
         router.refresh();
       }
-    } catch (err: any) {
-      setError(err.message || "Something went wrong.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -91,13 +92,13 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         className="hidden lg:flex flex-col justify-between p-12 flex-shrink-0"
         style={{ width: 420, background: "#1C3A2F" }}
       >
-        <a href="/" className="flex items-center gap-3 no-underline">
+        <Link href="/" className="flex items-center gap-3 no-underline">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
           <div>
             <div className="text-[15px] font-semibold" style={{ color: "#FFFFFF" }}>New Homes Property</div>
             <div className="text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>Bangkok, Thailand</div>
           </div>
-        </a>
+        </Link>
 
         <div>
           <div className="text-[11px] uppercase tracking-[2px] font-semibold mb-4" style={{ color: "#C9A84C" }}>Member benefits</div>
@@ -124,10 +125,10 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-[400px]">
           {/* Mobile logo */}
-          <a href="/" className="lg:hidden flex items-center gap-2 no-underline mb-8">
+          <Link href="/" className="lg:hidden flex items-center gap-2 no-underline mb-8">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style={{ background: "#1C3A2F", color: "#C9A84C" }}>NHP</div>
             <span className="text-[15px] font-semibold" style={{ color: "#1C3A2F" }}>New Homes Property</span>
-          </a>
+          </Link>
 
           <h1 className="text-[26px] font-bold mb-1" style={{ color: "#1A1A1A", letterSpacing: "-0.5px" }}>
             {tab === "signin" ? "Welcome back" : "Create account"}
@@ -226,7 +227,7 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
 
           {tab === "signin" ? (
             <p className="text-[13px] text-center mt-6" style={{ color: "#666" }}>
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <button
                 type="button"
                 onClick={() => { setTab("register"); setError(""); }}

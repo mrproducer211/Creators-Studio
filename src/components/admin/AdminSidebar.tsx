@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 interface NavItem {
   href:  string;
@@ -77,20 +78,20 @@ export default function AdminSidebar({ userName }: { userName: string }) {
   return (
     <aside className="flex flex-col h-full w-60 flex-shrink-0" style={{ background: "#1C3A2F", borderRight: "1px solid rgba(255,255,255,0.08)" }}>
       {/* Brand */}
-      <a href="/" className="flex items-center gap-2.5 px-5 py-5 no-underline" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+      <Link href="/" className="flex items-center gap-2.5 px-5 py-5 no-underline" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-[13px]" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
         <div>
           <div className="text-[13px] font-semibold" style={{ color: "#FFFFFF" }}>NHP Admin</div>
           <div className="text-[10px]" style={{ color: "rgba(255,255,255,0.45)" }}>Bangkok HQ</div>
         </div>
-      </a>
+      </Link>
 
       {/* Nav */}
       <nav className="flex flex-col gap-0.5 px-3 py-4 flex-1">
         {NAV.map((item) => {
           const active = isActive(item.href);
           return (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium no-underline transition-all"
@@ -101,7 +102,7 @@ export default function AdminSidebar({ userName }: { userName: string }) {
             >
               {item.icon}
               {item.label}
-            </a>
+            </Link>
           );
         })}
       </nav>

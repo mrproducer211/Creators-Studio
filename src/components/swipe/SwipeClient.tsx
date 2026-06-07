@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { PropertyCard, ListingType } from "@/types/property";
-import { useSaved } from "@/contexts/SavedContext";
 import { SlidersHorizontal, X } from "lucide-react";
+import Link from "next/link";
 import SwipeCard from "./SwipeCard";
 import SavedPanel from "./SavedPanel";
 
@@ -23,7 +23,6 @@ function formatPrice(p: PropertyCard) {
 }
 
 export default function SwipeClient({ properties }: { properties: PropertyCard[] }) {
-  const { toggle: toggleSavedCtx, isSaved: isInSavedCtx } = useSaved();
   const [filter, setFilter]       = useState<Filter>("all");
   const [petFriendly, setPetFriendly] = useState(false);
   const [nearBts, setNearBts] = useState(false);
@@ -53,8 +52,10 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
       }
       return true;
     });
-    setStack([...f]);
-    setSkipped([]);
+    Promise.resolve().then(() => {
+      setStack([...f]);
+      setSkipped([]);
+    });
   }, [filter, petFriendly, nearBts, minPrice, maxPrice, searchLocation, properties]);
 
   const current = stack[stack.length - 1] ?? null;
@@ -74,19 +75,13 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
     });
   }, []);
 
-  const rewind = () => {
+  const rewind = useCallback(() => {
     if (skipped.length === 0) return;
     const last = skipped[skipped.length - 1];
     setSkipped((s) => s.slice(0, -1));
     setStack((prev) => [...prev, last]);
-  };
+  }, [skipped]);
 
-  /* Bookmark the current top card (toggles persistent SavedContext, doesn't advance) */
-  const bookmarkCurrent = () => {
-    const card = stack[stack.length - 1];
-    if (!card) return;
-    toggleSavedCtx(card.id);
-  };
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -97,7 +92,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
-  }, [doSwipe, showSaved, skipped]);
+  }, [doSwipe, showSaved, rewind]);
 
   const visibleStack = stack.slice(-3);
 
@@ -107,13 +102,13 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
       {/* ─── DESKTOP LEFT SIDEBAR ─────────────────── */}
       <div className="hidden md:flex flex-col justify-between px-8 py-8 flex-shrink-0" style={{ width: 260, background: "rgba(0,0,0,0.3)", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
         <div>
-          <a href="/" className="flex items-center gap-2 no-underline mb-8">
+          <Link href="/" className="flex items-center gap-2 no-underline mb-8">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
             <div>
               <div className="text-[13px] font-semibold" style={{ color: "#FFFFFF" }}>Swipe Mode</div>
               <div className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>Bangkok Properties</div>
             </div>
-          </a>
+          </Link>
 
           {/* Search location */}
           <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>Search Location</p>
@@ -237,10 +232,10 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
         <div className="w-full flex items-center justify-between md:justify-end mb-3 max-w-[420px] mx-auto md:max-w-none">
           {/* Mobile logo and search location badge */}
           <div className="md:hidden flex items-center gap-3">
-            <a href="/" className="flex items-center gap-2 no-underline">
+            <Link href="/" className="flex items-center gap-2 no-underline">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
               <span className="text-[13px] font-semibold" style={{ color: "rgba(255,255,255,0.7)" }}>Swipe</span>
-            </a>
+            </Link>
             {searchLocation && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold shadow-lg" style={{ background: "rgba(255,255,255,0.1)", color: "#C9A84C", border: "1px solid rgba(255,255,255,0.15)" }}>
                 <span>📍 {searchLocation}</span>
@@ -315,21 +310,6 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
             <div className="flex items-center justify-center gap-5">
               <button onClick={() => doSwipe("left")} className="w-14 h-14 rounded-full flex items-center justify-center text-2xl cursor-pointer border-2 transition-all active:scale-90" style={{ borderColor: "rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.65)", fontFamily: "inherit" }}>✕</button>
 
-              {/* Bookmark — toggles persistent save (SavedContext) on the top card */}
-              <button
-                onClick={bookmarkCurrent}
-                disabled={!current}
-                className="w-11 h-11 rounded-full flex items-center justify-center cursor-pointer border-2 transition-all active:scale-90"
-                style={current && isInSavedCtx(current.id)
-                  ? { borderColor: "#C9A84C", background: "rgba(201,168,76,0.18)", color: "#E2C97E", fontFamily: "inherit" }
-                  : { borderColor: "rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.55)", fontFamily: "inherit" }
-                }
-                aria-label="Bookmark"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill={current && isInSavedCtx(current.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-                </svg>
-              </button>
 
               {/* Info button directing to property details */}
               {current && (

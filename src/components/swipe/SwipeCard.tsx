@@ -119,6 +119,7 @@ export default function SwipeCard({ property, index, total, onSwipe }: Props) {
         boxShadow: index === 0 ? "0 20px 60px rgba(0,0,0,0.25)" : "0 8px 24px rgba(0,0,0,0.15)",
         background: "#FFFFFF",
         willChange: "transform",
+        touchAction: "none",
         ...stackStyles,
       }}
       onPointerDown={onPointerDown}

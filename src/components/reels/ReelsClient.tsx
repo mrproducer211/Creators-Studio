@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { PropertyCard, ListingType } from "@/types/property";
 import { SlidersHorizontal, X } from "lucide-react";
 import ReelItem from "./ReelItem";
+import Link from "next/link";
 
 type Filter = ListingType | "all";
 
@@ -42,7 +43,9 @@ export default function ReelsClient({ properties }: { properties: PropertyCard[]
   });
 
   useEffect(() => {
-    setActive(0);
+    Promise.resolve().then(() => {
+      setActive(0);
+    });
     containerRef.current?.scrollTo({ top: 0 });
   }, [filter, petFriendly, nearBts, minPrice, maxPrice, searchLocation]);
 
@@ -88,13 +91,13 @@ export default function ReelsClient({ properties }: { properties: PropertyCard[]
       <div className="hidden md:flex flex-col justify-between px-8 py-8 flex-shrink-0" style={{ width: 280, background: "#111" }}>
         {/* Logo */}
         <div>
-          <a href="/" className="flex items-center gap-2 no-underline mb-8">
+          <Link href="/" className="flex items-center gap-2 no-underline mb-8">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style={{ background: "#1C3A2F", color: "#C9A84C" }}>NHP</div>
             <div>
               <div className="text-[13px] font-semibold" style={{ color: "#FFFFFF" }}>Property Reels</div>
               <div className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>Bangkok, Thailand</div>
             </div>
-          </a>
+          </Link>
 
           {/* Search location */}
           <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.35)" }}>Search Location</p>
@@ -209,12 +212,12 @@ export default function ReelsClient({ properties }: { properties: PropertyCard[]
 
         {/* Bottom nav */}
         <div className="flex flex-col gap-2">
-          <a href="/explore" className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl no-underline text-[13px]" style={{ color: "rgba(255,255,255,0.5)" }}>
+          <Link href="/explore" className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl no-underline text-[13px]" style={{ color: "rgba(255,255,255,0.5)" }}>
             <span>▦</span> Explore Grid
-          </a>
-          <a href="/swipe" className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl no-underline text-[13px]" style={{ color: "rgba(255,255,255,0.5)" }}>
+          </Link>
+          <Link href="/swipe" className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl no-underline text-[13px]" style={{ color: "rgba(255,255,255,0.5)" }}>
             <span>♥</span> Swipe Mode
-          </a>
+          </Link>
           <div className="flex gap-1 mt-2 px-4">
             <button onClick={goPrev} className="flex-1 py-2 rounded-xl text-sm cursor-pointer border-none" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)", fontFamily: "inherit" }}>↑</button>
             <button onClick={goNext} className="flex-1 py-2 rounded-xl text-sm cursor-pointer border-none" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)", fontFamily: "inherit" }}>↓</button>
@@ -272,10 +275,10 @@ export default function ReelsClient({ properties }: { properties: PropertyCard[]
         {/* Mobile top bar */}
         <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-4 pt-4 pb-2" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%)" }}>
           <div className="flex items-center gap-3">
-            <a href="/" className="flex items-center gap-2 no-underline">
+            <Link href="/" className="flex items-center gap-2 no-underline">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold" style={{ background: "rgba(0,0,0,0.5)", color: "#C9A84C", backdropFilter: "blur(6px)" }}>NHP</div>
               <span className="text-[13px] font-semibold" style={{ color: "rgba(255,255,255,0.7)" }}>Reels</span>
-            </a>
+            </Link>
             {searchLocation && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold shadow-lg" style={{ background: "rgba(0,0,0,0.5)", color: "#C9A84C", backdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,0.15)" }}>
                 <span>📍 {searchLocation}</span>

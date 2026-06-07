@@ -3,19 +3,21 @@
 import { useState, useEffect } from "react";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PropertyCard } from "@/types/property";
 
-const FEATURED = MOCK_PROPERTIES.find((p) => p.featured) ?? MOCK_PROPERTIES[0];
+const FEATURED_FALLBACK = MOCK_PROPERTIES.find((p) => p.featured) ?? MOCK_PROPERTIES[0];
 
 /* ─────────────────────────────────────────────
    DESKTOP HERO  —  faithful port of nhp-v3.html
 ───────────────────────────────────────────── */
 function DesktopHero({
-  activeTab, setActiveTab, query, setQuery,
+  activeTab, setActiveTab, query, setQuery, featured,
 }: {
   activeTab: number;
   setActiveTab: (i: number) => void;
   query: string;
   setQuery: (v: string) => void;
+  featured: PropertyCard;
 }) {
   const { t }                    = useLanguage();
   const TABS                     = [t.hero.tabBuy, t.hero.tabRent, t.hero.tabShort];
@@ -307,7 +309,7 @@ function DesktopHero({
 
         {/* Floating property card — bottom (matches .hero-img-card) */}
         <a
-          href={`/property/${FEATURED.slug}`}
+          href={`/property/${featured.slug}`}
           style={{
             position: "absolute",
             bottom: 48,
@@ -336,9 +338,9 @@ function DesktopHero({
               overflow: "hidden",
             }}
           >
-            {FEATURED.coverImage ? (
+            {featured.coverImage ? (
               <img
-                src={FEATURED.coverImage}
+                src={featured.coverImage}
                 alt=""
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
@@ -365,10 +367,10 @@ function DesktopHero({
           {/* Info */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 18, fontWeight: 700, color: "#1C3A2F", letterSpacing: "-0.3px", marginBottom: 2 }}>
-              ฿{Number(FEATURED.priceTHB).toLocaleString("th-TH")}
-              {FEATURED.priceLabel && (
+              ฿{Number(featured.priceTHB).toLocaleString("th-TH")}
+              {featured.priceLabel && (
                 <span style={{ fontSize: 12, fontWeight: 400, color: "#999", marginLeft: 3 }}>
-                  {FEATURED.priceLabel}
+                  {featured.priceLabel}
                 </span>
               )}
             </div>
@@ -383,12 +385,12 @@ function DesktopHero({
                 textOverflow: "ellipsis",
               }}
             >
-              {FEATURED.name}
+              {featured.name}
             </div>
             <div style={{ fontSize: 11, color: "#999" }}>
-              📍 {FEATURED.area}{FEATURED.district ? `, ${FEATURED.district}` : ""}
-              {FEATURED.bedrooms === 0 ? ` · ${t.property.studio}` : ` · ${FEATURED.bedrooms} ${t.property.beds}`}
-              {FEATURED.sqm && ` · ${FEATURED.sqm} m²`}
+              📍 {featured.area}{featured.district ? `, ${featured.district}` : ""}
+              {featured.bedrooms === 0 ? ` · ${t.property.studio}` : ` · ${featured.bedrooms} ${t.property.beds}`}
+              {featured.sqm && ` · ${featured.sqm} m²`}
             </div>
           </div>
 
@@ -407,7 +409,7 @@ function DesktopHero({
               flexShrink: 0,
             }}
           >
-            {FEATURED.listingType === "sale" ? t.property.forSale : FEATURED.listingType === "rent" ? t.property.longRent : t.property.shortStay}
+            {featured.listingType === "sale" ? t.property.forSale : featured.listingType === "rent" ? t.property.longRent : t.property.shortStay}
           </div>
         </a>
       </div>
@@ -418,11 +420,13 @@ function DesktopHero({
 /* ─────────────────────────────────────────────
    MAIN EXPORT
 ───────────────────────────────────────────── */
-export default function HeroSection() {
+export default function HeroSection({ featured }: { featured?: PropertyCard }) {
   const [activeTab, setActiveTab] = useState(0);
   const [query, setQuery]         = useState("");
   const { t }                     = useLanguage();
   const MOBILE_TABS               = [t.hero.tabBuy, t.hero.tabRent, t.hero.tabShort];
+
+  const featuredVal = featured || FEATURED_FALLBACK;
 
   return (
     <>
@@ -432,6 +436,7 @@ export default function HeroSection() {
         setActiveTab={setActiveTab}
         query={query}
         setQuery={setQuery}
+        featured={featuredVal}
       />
 
       {/* Mobile (< lg) — original forest hero, unchanged */}

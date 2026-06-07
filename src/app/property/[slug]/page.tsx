@@ -88,8 +88,7 @@ export default async function PropertyPage({ params }: Props) {
 
   const similar      = getSuggestions(property, all);
   const sameBuilding = similar.filter((p) => buildingHint(p.name) === buildingHint(property.name));
-  const sameArea     = similar.filter((p) => p.area === property.area && !sameBuilding.includes(p));
-  const nearby       = similar.filter((p) => !sameBuilding.includes(p) && !sameArea.includes(p));
+  const nearby       = similar.filter((p) => buildingHint(p.name) !== buildingHint(property.name));
 
   return (
     <>
@@ -98,7 +97,6 @@ export default async function PropertyPage({ params }: Props) {
         <PropertyDetail
           property={property}
           sameBuilding={sameBuilding}
-          sameArea={sameArea}
           nearby={nearby}
         />
       </main>

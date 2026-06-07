@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { PropertyCard } from "@/types/property";
 import { useEnquiry } from "@/hooks/useEnquiry";
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext";
 import { useSaved } from "@/contexts/SavedContext";
-import { useSession } from "next-auth/react";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
+import Link from "next/link";
 
 /* ─────────────────────────────────────────────
    Helpers
@@ -198,11 +198,57 @@ function furnishingLabel(p: PropertyCard): string {
 
 function availableFromLabel(p: PropertyCard): string {
   if (p.availableFrom) {
-    return new Date(p.availableFrom).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+    const d = new Date(p.availableFrom);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+    }
+    return p.availableFrom;
   }
   // For short stay / available units: "Immediate"; sale: "Negotiable"
   if (p.listingType === "sale") return "Negotiable";
   return "Immediate";
+}
+
+function getDynamicViews(description: string, features: string[] = []): string {
+  const views: string[] = [];
+  const lowerDesc = (description || "").toLowerCase();
+  
+  if (lowerDesc.includes("skyline") || lowerDesc.includes("city view") || features.some(f => f.toLowerCase().includes("city") || f.toLowerCase().includes("skyline"))) {
+    views.push("City", "Sky");
+  }
+  if (lowerDesc.includes("pool view") || features.some(f => f.toLowerCase().includes("pool"))) {
+    views.push("Pool");
+  }
+  if (lowerDesc.includes("garden") || features.some(f => f.toLowerCase().includes("garden"))) {
+    views.push("Garden");
+  }
+  if (lowerDesc.includes("river") || features.some(f => f.toLowerCase().includes("river"))) {
+    views.push("River");
+  }
+  if (views.length === 0) {
+    return "City, Sky";
+  }
+  return [...new Set(views)].join(", ");
+}
+
+function getDynamicHeating(description: string): string {
+  const lower = (description || "").toLowerCase();
+  if (lower.includes("heating") || lower.includes("heater")) return "Water Heater";
+  return "Central";
+}
+
+function getDynamicCooling(description: string): string {
+  const lower = (description || "").toLowerCase();
+  if (lower.includes("central ac") || lower.includes("central air")) return "Central AC";
+  if (lower.includes("ac") || lower.includes("aircon") || lower.includes("air conditioning")) return "Split AC Units";
+  return "Central AC";
+}
+
+function getDynamicKitchen(description: string, features: string[] = []): string {
+  const lower = (description || "").toLowerCase();
+  if (lower.includes("fully fitted") || lower.includes("fitted kitchen") || features.some(f => f.toLowerCase().includes("kitchen"))) return "Fully Fitted";
+  if (lower.includes("equipped kitchen")) return "Equipped";
+  return "Fully Fitted";
 }
 
 function lastVerifiedLabel(p: PropertyCard): string {
@@ -351,11 +397,10 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
   const [active, setActive]       = useState(0);
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
   const { isSaved, toggle }       = useSaved();
-  const { data: session }         = useSession();
   const saved                     = isSaved(propertyId);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
-  const rawImages = images.filter(Boolean);
+  const rawImages = useMemo(() => images.filter(Boolean), [images]);
   // Pad to always show 4 thumbnails — cycle through available images when fewer exist
   const safeImages = rawImages.length === 0
     ? []
@@ -365,14 +410,15 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
   const visibleThumbs = safeImages.slice(0, 4);
   const extraCount = Math.max(0, rawImages.length - 4);
 
-  const prev = () => setActive((a) => {
+  const prev = useCallback(() => setActive((a) => {
     const len = rawImages.length || 1;
     return (a - 1 + len) % len;
-  });
-  const next = () => setActive((a) => {
+  }), [rawImages.length]);
+
+  const next = useCallback(() => setActive((a) => {
     const len = rawImages.length || 1;
     return (a + 1) % len;
-  });
+  }), [rawImages.length]);
 
   useEffect(() => {
     if (!lightboxOpen) return;
@@ -383,7 +429,7 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [lightboxOpen, rawImages.length]);
+  }, [lightboxOpen, prev, next]);
 
   const GALLERY_H = "clamp(360px, 36vw, 460px)";
 
@@ -605,17 +651,17 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
 /* ─────────────────────────────────────────────
    Tab navigation
 ───────────────────────────────────────────── */
-const TABS = ["Overview", "Details", "Features", "Floor Plan", "Neighborhood", "Schools"] as const;
+const TABS = ["Overview", "Details", "Features", "Neighborhood"] as const;
 type TabKey = typeof TABS[number];
 
 function TabBar({ active, onChange }: { active: TabKey; onChange: (t: TabKey) => void }) {
   return (
-    <div className="flex justify-center gap-1 mt-8 mb-6 overflow-x-auto no-scrollbar" style={{ borderBottom: "1px solid #E5E0D8" }}>
+    <div className="flex justify-start md:justify-center gap-1 mt-8 mb-6 overflow-x-auto no-scrollbar px-4 md:px-0" style={{ borderBottom: "1px solid #E5E0D8" }}>
       {TABS.map((tab) => (
         <button
           key={tab}
           onClick={() => onChange(tab)}
-          className="px-4 py-3 text-[13px] cursor-pointer border-none bg-transparent transition-all whitespace-nowrap"
+          className="px-4 py-3 text-[13px] cursor-pointer border-none bg-transparent transition-all whitespace-nowrap flex-shrink-0"
           style={{
             color:      active === tab ? "#1C3A2F" : "#999",
             fontWeight: active === tab ? 700 : 500,
@@ -653,10 +699,10 @@ function DetailsGrid({ property }: { property: PropertyCard }) {
     }] : []),
     { icon: <Icon.hash />,     label: "Listing ID",      value: `NHP-${String(property.id).padStart(7, "0")}` },
     { icon: <Icon.ruler />,    label: "Floor Area",      value: property.sqm ? `${property.sqm} m²` : "—" },
-    { icon: <Icon.money />,    label: "Maintenance",     value: getDynamicMaintenance(property.description, property.id, property.listingType) },
-    { icon: <Icon.subtype />,  label: "Lease Terms",     value: contractTerms(property.listingType) },
-    { icon: <Icon.money />,    label: "Deposit",         value: depositTerms(property.listingType) },
-    { icon: <Icon.stories />,  label: "Floor / Floors",  value: getDynamicFloor(property.description, property.id, property.propertyType) },
+    { icon: <Icon.money />,    label: "Maintenance",     value: property.maintenance ? property.maintenance : getDynamicMaintenance(property.description, property.id, property.listingType) },
+    { icon: <Icon.subtype />,  label: "Lease Terms",     value: property.leaseTerms ? property.leaseTerms : contractTerms(property.listingType) },
+    { icon: <Icon.money />,    label: "Deposit",         value: property.depositTerms ? property.depositTerms : depositTerms(property.listingType) },
+    { icon: <Icon.stories />,  label: "Floor / Floors",  value: property.floor && property.totalFloors ? `${property.floor} / ${property.totalFloors}` : property.floor ? String(property.floor) : getDynamicFloor(property.description, property.id, property.propertyType) },
     { icon: <Icon.parking />,  label: "Parking",         value: getDynamicParking(property.description, property.id, property.propertyType) },
     ...(property.listingType === "sale" ? [{
       icon: <Icon.status />,
@@ -1043,7 +1089,7 @@ interface PropertyDetailProps {
   nearby:       PropertyCard[];
 }
 
-export default function PropertyDetail({ property, sameBuilding, sameArea, nearby }: PropertyDetailProps) {
+export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<PropertyDetailProps, "sameArea">) {
   const [tab, setTab] = useState<TabKey>("Overview");
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
@@ -1059,7 +1105,6 @@ export default function PropertyDetail({ property, sameBuilding, sameArea, nearb
   const [selectedPlace, setSelectedPlace] = useState<Facility | null>(null);
 
   const areaFacilities = getNeighborhoodFacilities(property.area);
-  const schoolsList = areaFacilities.filter(f => f.type === "school");
 
   useEffect(() => {
     fetch("/api/settings")
@@ -1107,17 +1152,17 @@ export default function PropertyDetail({ property, sameBuilding, sameArea, nearb
       {/* ── Breadcrumb + Back to Search ── */}
       <div className="px-5 md:px-10 py-4 flex items-center justify-between" style={{ background: "#F7F3EC", borderBottom: "1px solid #EDE8DF" }}>
         <div className="flex items-center gap-2 text-[12px] overflow-x-auto no-scrollbar">
-          <a href="/" className="no-underline transition-opacity hover:opacity-70" style={{ color: "#999" }}>Home</a>
+          <Link href="/" className="no-underline transition-opacity hover:opacity-70" style={{ color: "#999" }}>Home</Link>
           <span style={{ color: "#ccc" }}>/</span>
-          <a href="/explore" className="no-underline transition-opacity hover:opacity-70" style={{ color: "#999" }}>{listingBadge(property.listingType)}</a>
+          <Link href="/explore" className="no-underline transition-opacity hover:opacity-70" style={{ color: "#999" }}>{listingBadge(property.listingType)}</Link>
           <span style={{ color: "#ccc" }}>/</span>
-          <a href={`/explore?area=${property.area}`} className="no-underline transition-opacity hover:opacity-70 whitespace-nowrap" style={{ color: "#999" }}>{property.area}</a>
+          <Link href={`/explore?area=${property.area}`} className="no-underline transition-opacity hover:opacity-70 whitespace-nowrap" style={{ color: "#999" }}>{property.area}</Link>
           <span style={{ color: "#ccc" }}>/</span>
           <span className="font-semibold whitespace-nowrap" style={{ color: "#1C3A2F" }}>{property.name}</span>
         </div>
-        <a href="/explore" className="hidden md:flex items-center gap-1.5 text-[12px] font-medium no-underline transition-opacity hover:opacity-70 whitespace-nowrap" style={{ color: "#1C3A2F" }}>
+        <Link href="/explore" className="hidden md:flex items-center gap-1.5 text-[12px] font-medium no-underline transition-opacity hover:opacity-70 whitespace-nowrap" style={{ color: "#1C3A2F" }}>
           <Icon.chevL /> Back to Search
-        </a>
+        </Link>
       </div>
 
       {/* ── Main layout ── */}
@@ -1368,18 +1413,6 @@ export default function PropertyDetail({ property, sameBuilding, sameArea, nearb
               </div>
             )}
 
-            {/* ── FLOOR PLAN ── */}
-            {tab === "Floor Plan" && (
-              <div className="pb-8 max-w-3xl mx-auto">
-                <h2 className="text-[18px] font-bold mb-5 text-center" style={{ color: "#1A1A1A" }}>Floor Plan</h2>
-                <div className="rounded-2xl flex items-center justify-center p-12 text-center" style={{ background: "#FFFFFF", border: "1px dashed #E5E0D8", color: "#999" }}>
-                  <div>
-                    <p className="text-[14px] font-medium mb-1" style={{ color: "#1C3A2F" }}>Floor plan available on request</p>
-                    <p className="text-[12px] font-light">Contact our team to receive the detailed floor plan.</p>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* ── NEIGHBORHOOD ── */}
             {tab === "Neighborhood" && (
@@ -1512,36 +1545,6 @@ export default function PropertyDetail({ property, sameBuilding, sameArea, nearb
               </div>
             )}
 
-            {/* ── SCHOOLS ── */}
-            {tab === "Schools" && (
-              <div className="pb-8 max-w-3xl mx-auto">
-                <h2 className="text-[18px] font-bold mb-5 text-center" style={{ color: "#1A1A1A" }}>Nearby International Schools</h2>
-                <div className="flex flex-col gap-3">
-                  {schoolsList.map((s, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setTab("Neighborhood");
-                        setSelectedPlace(s);
-                      }}
-                      className="flex items-center justify-between p-4 rounded-xl text-left cursor-pointer border transition-all hover:border-[#C9A84C]"
-                      style={{ background: "#FFFFFF", borderColor: "#EDE8DF", width: "100%", fontFamily: "inherit" }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-xl">🏫</span>
-                        <div>
-                          <div className="text-[14px] font-semibold" style={{ color: "#1A1A1A" }}>{s.name}</div>
-                          <div className="text-[11px] mt-0.5" style={{ color: "#999" }}>{s.distance}</div>
-                        </div>
-                      </div>
-                      <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "#EDE8DF", color: "#1C3A2F" }}>
-                        IB / British
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Similar properties — building → nearby */}
             {(sameBuilding.length + nearby.length) > 0 && (
@@ -1711,13 +1714,15 @@ export default function PropertyDetail({ property, sameBuilding, sameArea, nearb
                 <div className="flex flex-col gap-3.5">
                   {(() => {
                     const bts = btsInfo(property);
+                    const mrt = mrtInfo(property);
+                    const btsText = bts ? `${bts.station} · ${bts.walk}m` : mrt ? `${mrt.station} · ${mrt.walk}m` : `${property.area} · 5m`;
                     const items: Array<{ icon: React.ReactNode; label: string; value: string }> = [
-                      ...(bts ? [{ icon: <Icon.pin />,      label: "Nearest BTS",  value: `${bts.station} · ${bts.walk}m` }] : []),
+                      { icon: <Icon.pin />,      label: "Nearest BTS",  value: btsText },
                       { icon: <Icon.home />,    label: "Furnishing",   value: furnishingLabel(property) },
-                      { icon: <Icon.view />,    label: "Views",        value: "City, Sky" },
-                      { icon: <Icon.heating />, label: "Heating",      value: "Central" },
-                      { icon: <Icon.cooling />, label: "Cooling",      value: "Central AC" },
-                      { icon: <Icon.fire />,    label: "Kitchen",      value: "Fully Fitted" },
+                      { icon: <Icon.view />,    label: "Views",        value: getDynamicViews(property.description, property.features) },
+                      { icon: <Icon.heating />, label: "Heating",      value: getDynamicHeating(property.description) },
+                      { icon: <Icon.cooling />, label: "Cooling",      value: getDynamicCooling(property.description) },
+                      { icon: <Icon.fire />,    label: "Kitchen",      value: getDynamicKitchen(property.description, property.features) },
                     ];
                     return items.map((g) => (
                       <div key={g.label} className="flex items-center justify-between">
@@ -1725,7 +1730,7 @@ export default function PropertyDetail({ property, sameBuilding, sameArea, nearb
                           <span style={{ color: "#1C3A2F" }}>{g.icon}</span>
                           <span className="text-[12px]" style={{ color: "#777" }}>{g.label}</span>
                         </div>
-                        <span className="text-[12px] font-semibold" style={{ color: "#1A1A1A" }}>{g.value}</span>
+                        <span className="text-[12px] font-semibold text-right" style={{ color: "#1A1A1A" }}>{g.value}</span>
                       </div>
                     ));
                   })()}

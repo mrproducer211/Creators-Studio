@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildTelegramMessage, sendTelegramMessage, EnquiryPayload } from "@/lib/telegram";
 import { addEnquiry } from "@/lib/store/enquiries";
+import { db, isDbConfigured } from "@/lib/db";
+import { enquiries as enquiriesTable, properties as propertiesTable } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 // Simple in-memory rate limiter (resets on cold start — good enough for MVP)
 const rateLimitMap = new Map<string, number[]>();
@@ -31,7 +34,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Validate required fields
-  const { propertySlug, propertyName, listingType, price, area, name, contact, method, source } = body;
+  const { propertySlug, propertyName, name, contact, method, source } = body;
   if (!propertySlug || !propertyName || !name || !contact || !method || !source) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
   }
@@ -42,22 +45,46 @@ export async function POST(req: NextRequest) {
   // Build base URL
   const baseUrl = process.env.NEXTAUTH_URL ?? `https://${req.headers.get("host") ?? "nhp-bangkok.com"}`;
 
-  // Persist locally so the admin can review enquiries even if Telegram fails.
+  // Persist enquiry (Database or Local File Store)
   try {
-    await addEnquiry({
-      propertySlug: body.propertySlug!,
-      propertyName: body.propertyName!,
-      listingType:  body.listingType!,
-      price:        body.price!,
-      area:         body.area!,
-      name:         body.name!,
-      contact:      body.contact!,
-      method:       body.method!,
-      message:      body.message,
-      source:       body.source!,
-      tourDate:     body.tourDate,
-      tourTime:     body.tourTime,
-    });
+    if (isDbConfigured) {
+      // Resolve propertyId from propertySlug if possible
+      let resolvedPropertyId: number | null = null;
+      if (body.propertySlug) {
+        const prop = await db
+          .select({ id: propertiesTable.id })
+          .from(propertiesTable)
+          .where(eq(propertiesTable.slug, body.propertySlug))
+          .limit(1);
+        if (prop.length > 0) {
+          resolvedPropertyId = prop[0].id;
+        }
+      }
+
+      await db.insert(enquiriesTable).values({
+        propertyId: resolvedPropertyId,
+        name: body.name!,
+        contact: body.contact!,
+        method: body.method!,
+        message: body.message || null,
+        status: "new",
+      });
+    } else {
+      await addEnquiry({
+        propertySlug: body.propertySlug!,
+        propertyName: body.propertyName!,
+        listingType:  body.listingType!,
+        price:        body.price!,
+        area:         body.area!,
+        name:         body.name!,
+        contact:      body.contact!,
+        method:       body.method!,
+        message:      body.message,
+        source:       body.source!,
+        tourDate:     body.tourDate,
+        tourTime:     body.tourTime,
+      });
+    }
   } catch (err) {
     // Persistence failure shouldn't block Telegram — log and continue.
     console.error("Enquiry persist error:", err);

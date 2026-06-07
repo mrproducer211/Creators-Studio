@@ -21,7 +21,11 @@ export function RecentlyViewedProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setIds(JSON.parse(stored) as number[]);
+      if (stored) {
+        Promise.resolve().then(() => {
+          setIds(JSON.parse(stored) as number[]);
+        });
+      }
     } catch {}
   }, []);
 

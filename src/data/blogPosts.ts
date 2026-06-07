@@ -17,6 +17,8 @@ export interface BlogPost {
   keywords:    string[];
   intro:       string;
   sections:    BlogSection[];
+  headerFontFamily?: string;
+  fontFamily?:       string;
   cta: {
     heading: string;
     body:    string;

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { BlogPost, BlogSection } from "@/data/blogPosts";
+import Link from "next/link";
 
 type BlogFormState = BlogPost & {
   fontFamily?: string;
@@ -261,27 +262,6 @@ export default function BlogForm({ initial, isNew }: { initial?: BlogPost; isNew
 
       {/* Side column */}
       <div className="flex flex-col gap-6">
-        
-        {/* Style Customization (Enterprise Upgrade) */}
-        <div className={sectionCls} style={sectionStyle}>
-          <h3 className="text-[14px] font-bold mb-4" style={{ color: "#1C3A2F" }}>Typography Customization</h3>
-          <div className="flex flex-col gap-4">
-            <Field label="Header Font Family" hint="Applied to blog title and sections headings.">
-              <select className={inputCls} style={inputStyle} value={state.headerFontFamily ?? "Outfit"} onChange={(e) => setField("headerFontFamily", e.target.value)}>
-                {GOOGLE_HEADER_FONTS.map((font) => (
-                  <option key={font} value={font}>{font}</option>
-                ))}
-              </select>
-            </Field>
-            <Field label="Body Text Font Family" hint="Applied to paragraph text blocks.">
-              <select className={inputCls} style={inputStyle} value={state.fontFamily ?? "Inter"} onChange={(e) => setField("fontFamily", e.target.value)}>
-                {GOOGLE_TEXT_FONTS.map((font) => (
-                  <option key={font} value={font}>{font}</option>
-                ))}
-              </select>
-            </Field>
-          </div>
-        </div>
 
         {/* Publish Details */}
         <div className={sectionCls} style={sectionStyle}>
@@ -306,10 +286,10 @@ export default function BlogForm({ initial, isNew }: { initial?: BlogPost; isNew
             style={{ background: "#1C3A2F", fontFamily: "inherit" }}>
             {submitting ? "Saving Post..." : isNew ? "Publish Post" : "Save Changes"}
           </button>
-          <a href="/admin/blog" className="text-center w-full py-3.5 rounded-xl text-[13px] font-semibold no-underline border transition-all hover:bg-[#FAF8F3]"
+          <Link href="/admin/blog" className="text-center w-full py-3.5 rounded-xl text-[13px] font-semibold no-underline border transition-all hover:bg-[#FAF8F3]"
             style={{ background: "transparent", borderColor: "#E5E0D8", color: "#555" }}>
             Cancel
-          </a>
+          </Link>
         </div>
       </div>
     </form>

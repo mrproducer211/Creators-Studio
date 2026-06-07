@@ -13,6 +13,89 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+interface TelegramPhoto {
+  file_id: string;
+  width: number;
+  height: number;
+  file_size?: number;
+}
+
+interface TelegramVideo {
+  file_id: string;
+  width: number;
+  height: number;
+  duration: number;
+  mime_type?: string;
+  file_size?: number;
+}
+
+interface TelegramMessage {
+  message_id: number;
+  media_group_id?: number | string;
+  text?: string;
+  caption?: string;
+  photo?: TelegramPhoto[];
+  video?: TelegramVideo;
+}
+
+interface TelegramWebhookBody {
+  channel_post?: TelegramMessage;
+  message?: TelegramMessage;
+}
+
+
+/**
+ * Searches DuckDuckGo HTML snippets to find the building construction year.
+ */
+async function findYearBuiltFromWeb(propertyName: string): Promise<number | null> {
+  try {
+    const query = encodeURIComponent(`${propertyName} condo year built Bangkok OR completed`);
+    const res = await fetch(`https://html.duckduckgo.com/html/?q=${query}`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      },
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    const yearRegex = /\b(19[89]\d|20[012]\d)\b/g;
+    const cleanText = html.replace(/<[^>]*>/g, " ");
+
+    const builtKeywords = ["built", "completed", "completion", "opened", "year", "construction", "launched"];
+    const matches: { year: number; score: number }[] = [];
+
+    let match;
+    while ((match = yearRegex.exec(cleanText)) !== null) {
+      const yearVal = Number(match[0]);
+      const index = match.index;
+      const start = Math.max(0, index - 80);
+      const end = Math.min(cleanText.length, index + 80);
+      const snippet = cleanText.substring(start, end).toLowerCase();
+
+      let score = 0;
+      for (const kw of builtKeywords) {
+        if (snippet.includes(kw)) {
+          score += 1;
+        }
+      }
+      if (new RegExp(`(?:built|completed|completion|opened|year)\\s*(?:in|:)?\\s*${yearVal}`, "i").test(snippet)) {
+        score += 3;
+      }
+      if (score > 0) {
+        matches.push({ year: yearVal, score });
+      }
+    }
+
+    if (matches.length > 0) {
+      matches.sort((a, b) => b.score - a.score);
+      return matches[0].year;
+    }
+  } catch (err) {
+    console.error("Error fetching year built from web:", err);
+  }
+  return null;
+}
+
 /**
  * Robust parser to extract property listing details from Telegram post text/caption.
  */
@@ -31,7 +114,23 @@ function parseTelegramMessage(text: string, messageId: number) {
   let district: string | undefined = undefined;
   let petFriendly = false;
   let nearBts = false;
-  let description = text;
+  const description = text;
+
+  let buildingBuilt: number | undefined = undefined;
+  let lastRenovated: number | undefined = undefined;
+  let furnishing: "furnished" | "partially_furnished" | "unfurnished" | undefined = undefined;
+  let availableFrom: string | undefined = undefined;
+  let btsStation: string | undefined = undefined;
+  let btsWalkMin: number | undefined = undefined;
+  let mrtStation: string | undefined = undefined;
+  let mrtWalkMin: number | undefined = undefined;
+  let floor: number | undefined = undefined;
+  let totalFloors: number | undefined = undefined;
+  let maintenance: string | undefined = undefined;
+  let leaseTerms: string | undefined = undefined;
+  let depositTerms: string | undefined = undefined;
+  let foreignQuota: boolean | undefined = undefined;
+  let visaFriendly: boolean | undefined = undefined;
 
   // Extract explicit name if defined
   const nameMatch = text.match(/(?:#name|Name)[:\s=]+([^\n]+)/i);
@@ -182,6 +281,50 @@ function parseTelegramMessage(text: string, messageId: number) {
     features.push("Near BTS/MRT");
   }
 
+  // Custom fields parsing
+  const builtMatch = text.match(/(?:#built|built|year built|built year)[:\s=]+(\d{4})/i);
+  if (builtMatch) buildingBuilt = Number(builtMatch[1]);
+
+  const renovatedMatch = text.match(/(?:#renovated|renovated|last renovated)[:\s=]+(\d{4})/i);
+  if (renovatedMatch) lastRenovated = Number(renovatedMatch[1]);
+
+  const furnishingMatch = text.match(/(?:#furnish|#furnishing|furnish|furnishing)[:\s=]+([a-z_]+)/i);
+  if (furnishingMatch) {
+    const val = furnishingMatch[1].toLowerCase();
+    if (val.includes("un")) furnishing = "unfurnished";
+    else if (val.includes("part")) furnishing = "partially_furnished";
+    else furnishing = "furnished";
+  }
+
+  const availableMatch = text.match(/(?:#available|available|available from)[:\s=]+([^\n]+)/i);
+  if (availableMatch) availableFrom = availableMatch[1].trim();
+
+  const btsMatch = text.match(/(?:#bts|bts station|bts)[:\s=]+([^\n,#]+)/i);
+  if (btsMatch) btsStation = btsMatch[1].trim();
+  const btsWalkMatch = text.match(/(?:#bts_walk|bts walk|bts walk min)[:\s=]+(\d+)/i);
+  if (btsWalkMatch) btsWalkMin = Number(btsWalkMatch[1]);
+
+  const mrtMatch = text.match(/(?:#mrt|mrt station|mrt)[:\s=]+([^\n,#]+)/i);
+  if (mrtMatch) mrtStation = mrtMatch[1].trim();
+  const mrtWalkMatch = text.match(/(?:#mrt_walk|mrt walk|mrt walk min)[:\s=]+(\d+)/i);
+  if (mrtWalkMatch) mrtWalkMin = Number(mrtWalkMatch[1]);
+
+  const floorMatch = text.match(/(?:#floor|floor)[:\s=]+(\d+)/i);
+  if (floorMatch) floor = Number(floorMatch[1]);
+  const totalFloorsMatch = text.match(/(?:#total_floors|total floors|floors)[:\s=]+(\d+)/i);
+  if (totalFloorsMatch) totalFloors = Number(totalFloorsMatch[1]);
+
+  const maintenanceMatch = text.match(/(?:#maintenance|maintenance)[:\s=]+([^\n]+)/i);
+  if (maintenanceMatch) maintenance = maintenanceMatch[1].trim();
+
+  const leaseMatch = text.match(/(?:#lease|lease|lease terms)[:\s=]+([^\n]+)/i);
+  if (leaseMatch) leaseTerms = leaseMatch[1].trim();
+  const depositMatch = text.match(/(?:#deposit|deposit|deposit terms)[:\s=]+([^\n]+)/i);
+  if (depositMatch) depositTerms = depositMatch[1].trim();
+
+  if (/#foreignquota|foreign quota/i.test(text)) foreignQuota = true;
+  if (/#visafriendly|visa friendly/i.test(text)) visaFriendly = true;
+
   return {
     slug,
     name,
@@ -199,6 +342,21 @@ function parseTelegramMessage(text: string, messageId: number) {
     nearBts,
     amenities,
     features,
+    buildingBuilt,
+    lastRenovated,
+    furnishing,
+    availableFrom,
+    btsStation,
+    btsWalkMin,
+    mrtStation,
+    mrtWalkMin,
+    floor,
+    totalFloors,
+    maintenance,
+    leaseTerms,
+    depositTerms,
+    foreignQuota,
+    visaFriendly,
     featured: false,
     hasVideo: false,
     likes: 0,
@@ -211,11 +369,11 @@ export async function POST(req: NextRequest) {
   // Webhook Signature verification
   const secretToken = req.headers.get("x-telegram-bot-api-secret-token");
   const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
-  if (expectedSecret && secretToken !== expectedSecret) {
+  if (!expectedSecret || secretToken !== expectedSecret) {
     return NextResponse.json({ error: "Unauthorized request signature." }, { status: 401 });
   }
 
-  let body: any;
+  let body: TelegramWebhookBody;
   try {
     body = await req.json();
   } catch {
@@ -271,7 +429,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Combine multi-photo posts matching on mediaGroupId
     if (mediaGroupId) {
-      let existingProperty: any = null;
+      let existingProperty: { id: number; images?: string[] | null } | null = null;
 
       if (isDbConfigured) {
         const dbResult = await db
@@ -310,6 +468,14 @@ export async function POST(req: NextRequest) {
     // 3. Standalone post or first message in a media group album
     const parsed = parseTelegramMessage(text, messageId);
     
+    // Automatically search search engine for built year if not provided
+    if (!parsed.buildingBuilt) {
+      const detectedYear = await findYearBuiltFromWeb(parsed.name);
+      if (detectedYear) {
+        parsed.buildingBuilt = detectedYear;
+      }
+    }
+
     // Add parsed fields and save
     const propertyData: Omit<PropertyCard, "id" | "createdAt"> & { telegramMediaGroupId?: string } = {
       ...parsed,
@@ -347,12 +513,28 @@ export async function POST(req: NextRequest) {
           telegramMediaGroupId: propertyData.telegramMediaGroupId || null,
           amenities: propertyData.amenities || [],
           features: propertyData.features || [],
+          buildingBuilt: propertyData.buildingBuilt || null,
+          lastRenovated: propertyData.lastRenovated || null,
+          furnishing: propertyData.furnishing || null,
+          availableFrom: propertyData.availableFrom || null,
+          lastVerifiedAt: propertyData.lastVerifiedAt || null,
+          btsStation: propertyData.btsStation || null,
+          btsWalkMin: propertyData.btsWalkMin || null,
+          mrtStation: propertyData.mrtStation || null,
+          mrtWalkMin: propertyData.mrtWalkMin || null,
+          foreignQuota: propertyData.foreignQuota || null,
+          visaFriendly: propertyData.visaFriendly || null,
+          leaseTerms: propertyData.leaseTerms || null,
+          depositTerms: propertyData.depositTerms || null,
+          maintenance: propertyData.maintenance || null,
+          floor: propertyData.floor || null,
+          totalFloors: propertyData.totalFloors || null,
         })
         .returning();
 
       return NextResponse.json({ ok: true, message: "Listing created in live Neon DB", property: created });
     } else {
-      const created = await createProperty(propertyData as any);
+      const created = await createProperty(propertyData as Omit<PropertyCard, "id" | "createdAt" | "updatedAt">);
       return NextResponse.json({ ok: true, message: "Listing created in local JSON store", property: created });
     }
   } catch (err) {

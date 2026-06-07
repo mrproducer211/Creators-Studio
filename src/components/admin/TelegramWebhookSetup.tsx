@@ -9,7 +9,9 @@ export default function TelegramWebhookSetup() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setUrl(window.location.origin + "/api/webhooks/telegram");
+      Promise.resolve().then(() => {
+        setUrl(window.location.origin + "/api/webhooks/telegram");
+      });
     }
   }, []);
 

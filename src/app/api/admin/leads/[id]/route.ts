@@ -23,7 +23,7 @@ export async function DELETE(
 
     await createAuditLog(admin.email, "delete_lead", `Deleted lead user: ${id}`);
     return NextResponse.json({ success: true });
-  } catch (err: any) {
+  } catch (err) {
     console.error("Delete lead error:", err);
     return NextResponse.json({ error: "Failed to delete lead" }, { status: 500 });
   }

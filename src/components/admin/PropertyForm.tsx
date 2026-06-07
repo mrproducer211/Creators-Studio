@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PropertyCard } from "@/types/property";
+import { PropertyCard, ListingType, PropertyType } from "@/types/property";
+import Link from "next/link";
 
 type FormState = Omit<PropertyCard, "id" | "createdAt">;
 
@@ -146,8 +147,8 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
     if (lngField) lngField.value = lng;
     
     // Save to state
-    setField("latitude" as any, lat);
-    setField("longitude" as any, lng);
+    setField("latitude", lat);
+    setField("longitude", lng);
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -261,14 +262,14 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-3">
               <Field label="Listing Type" error={errors.listingType}>
-                <select className={inputCls} style={inputStyle} value={state.listingType} onChange={(e) => setField("listingType", e.target.value as any)}>
+                <select className={inputCls} style={inputStyle} value={state.listingType} onChange={(e) => setField("listingType", e.target.value as ListingType)}>
                   <option value="sale">For Sale</option>
                   <option value="rent">Long Rent</option>
                   <option value="short_stay">Short Stay</option>
                 </select>
               </Field>
               <Field label="Property Type" error={errors.propertyType}>
-                <select className={inputCls} style={inputStyle} value={state.propertyType} onChange={(e) => setField("propertyType", e.target.value as any)}>
+                <select className={inputCls} style={inputStyle} value={state.propertyType} onChange={(e) => setField("propertyType", e.target.value as PropertyType)}>
                   <option value="condo">Condo</option>
                   <option value="house">House</option>
                   <option value="villa">Villa</option>
@@ -531,10 +532,10 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
             style={{ background: "#1C3A2F", fontFamily: "inherit" }}>
             {submitting ? "Saving Listing..." : isNew ? "Publish Listing" : "Save Changes"}
           </button>
-          <a href="/admin/properties" className="text-center w-full py-3.5 rounded-xl text-[13px] font-semibold no-underline border transition-all hover:bg-[#FAF8F3]"
+          <Link href="/admin/properties" className="text-center w-full py-3.5 rounded-xl text-[13px] font-semibold no-underline border transition-all hover:bg-[#FAF8F3]"
             style={{ background: "transparent", borderColor: "#E5E0D8", color: "#555" }}>
             Cancel
-          </a>
+          </Link>
         </div>
 
       </div>

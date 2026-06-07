@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/auth-helpers";
 import { validateProperty } from "@/lib/validation";
-import { createProperty, getAllProperties, getPropertyBySlug } from "@/lib/store/properties";
+import { createProperty, getPropertyBySlug } from "@/lib/store/properties";
 import { getDbProperties, createAuditLog } from "@/lib/db/dbLoader";
 import { db } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";

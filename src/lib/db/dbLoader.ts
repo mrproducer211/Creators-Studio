@@ -94,6 +94,22 @@ export async function getDbProperties() {
         transit: p.transit || [],
         neighborhood: p.neighborhood || "",
         telegramMediaGroupId: p.telegramMediaGroupId || undefined,
+        floor: p.floor || undefined,
+        totalFloors: p.totalFloors || undefined,
+        buildingBuilt: p.buildingBuilt || undefined,
+        lastRenovated: p.lastRenovated || undefined,
+        furnishing: (p.furnishing as "furnished" | "partially_furnished" | "unfurnished" | null) || undefined,
+        availableFrom: p.availableFrom || undefined,
+        lastVerifiedAt: p.lastVerifiedAt || undefined,
+        btsStation: p.btsStation || undefined,
+        btsWalkMin: p.btsWalkMin || undefined,
+        mrtStation: p.mrtStation || undefined,
+        mrtWalkMin: p.mrtWalkMin || undefined,
+        foreignQuota: p.foreignQuota || undefined,
+        visaFriendly: p.visaFriendly || undefined,
+        leaseTerms: p.leaseTerms || undefined,
+        depositTerms: p.depositTerms || undefined,
+        maintenance: p.maintenance || undefined,
       }));
     }
   } catch (err) {

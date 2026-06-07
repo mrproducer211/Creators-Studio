@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const authCheck = await requireAdminApi();
   if ("error" in authCheck) {
     return authCheck.error;
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
   try {
     const settings = await getSystemSettings();
     return NextResponse.json({ settings });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Failed to get settings" }, { status: 500 });
   }
 }

@@ -15,8 +15,9 @@ export async function POST(req: NextRequest) {
 
     const lead = await createLead(name, email, password);
     return NextResponse.json({ success: true, lead: { id: lead.id, name: lead.name, email: lead.email } });
-  } catch (err: any) {
+  } catch (err) {
     console.error("Registration error:", err);
-    return NextResponse.json({ error: err.message || "Failed to register account" }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Failed to register account";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

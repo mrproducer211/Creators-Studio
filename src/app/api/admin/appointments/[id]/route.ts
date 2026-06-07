@@ -54,7 +54,7 @@ export async function PUT(
     }
 
     // Fallback: update local JSON store
-    const updatedLocal = await updateLocalAppointmentStatus(id, status as any);
+    const updatedLocal = await updateLocalAppointmentStatus(id, status as "pending" | "confirmed" | "cancelled");
     if (updatedLocal) {
       await createAuditLog(
         adminUser.email,

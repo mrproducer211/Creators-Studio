@@ -2,27 +2,60 @@
 
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Link from "next/link";
 
 export default function Footer() {
   const { t } = useLanguage();
-  const [contacts, setContacts] = useState({ adminEmail: "admin@nhpbangkok.com", adminPhone: "+66812345678" });
+  const [contacts, setContacts] = useState({
+    adminWhatsApp: "+66812345678",
+    adminLine: "nhp-line-id",
+    adminTelegram: "nhp-telegram",
+  });
 
   useEffect(() => {
     fetch("/api/settings")
       .then((res) => res.json())
       .then((data) => {
-        if (data.adminEmail && data.adminPhone) {
-          setContacts({ adminEmail: data.adminEmail, adminPhone: data.adminPhone });
-        }
+        setContacts({
+          adminWhatsApp: data.adminWhatsApp || "+66812345678",
+          adminLine: data.adminLine || "nhp-line-id",
+          adminTelegram: data.adminTelegram || "nhp-telegram",
+        });
       })
       .catch(() => {});
   }, []);
 
-  const links = {
-    [t.footer.browse]: [t.footer.forSale, t.footer.longRent, t.footer.shortStay, t.footer.swipeMode, t.footer.reels],
-    [t.footer.areas]: [t.footer.sukhumvit, t.footer.silomSathorn, t.footer.thongLo, t.footer.asok, t.footer.onNut],
-    [t.footer.contact]: ["WhatsApp", "Line", t.footer.aboutNhp, t.footer.privacyPolicy],
-  };
+  const linkGroups = [
+    {
+      heading: t.footer.browse,
+      items: [
+        { label: t.footer.forSale, href: "/explore?type=sale" },
+        { label: t.footer.longRent, href: "/explore?type=rent" },
+        { label: t.footer.shortStay, href: "/explore?type=short_stay" },
+        { label: t.footer.swipeMode, href: "/swipe" },
+        { label: t.footer.reels, href: "/reels" },
+      ],
+    },
+    {
+      heading: t.footer.areas,
+      items: [
+        { label: t.footer.sukhumvit, href: "/explore?area=Sukhumvit" },
+        { label: t.footer.silomSathorn, href: "/explore?area=Sathorn" },
+        { label: t.footer.thongLo, href: "/explore?area=Thong%20Lo" },
+        { label: t.footer.asok, href: "/explore?area=Asok" },
+        { label: t.footer.onNut, href: "/explore?area=On%20Nut" },
+      ],
+    },
+    {
+      heading: t.footer.contact,
+      items: [
+        { label: "WhatsApp", href: `https://wa.me/${contacts.adminWhatsApp.replace(/[^0-9]/g, "")}` },
+        { label: "Line", href: `https://line.me/ti/p/~${contacts.adminLine}` },
+        { label: t.footer.aboutNhp, href: "/about" },
+        { label: t.footer.privacyPolicy, href: "/privacy" },
+      ],
+    },
+  ];
 
   return (
     <footer className="px-4 pt-8 pb-6" style={{ background: "#1A1A1A" }}>
@@ -40,36 +73,34 @@ export default function Footer() {
         >
           {t.footer.tagline}
         </p>
-        <div className="text-[11px] font-light mt-3.5 flex flex-col gap-1.5" style={{ color: "rgba(255,255,255,0.45)" }}>
-          <a href={`tel:${contacts.adminPhone}`} className="hover:underline no-underline text-inherit">📞 {contacts.adminPhone}</a>
-          <a href={`mailto:${contacts.adminEmail}`} className="hover:underline no-underline text-inherit">✉️ {contacts.adminEmail}</a>
-        </div>
       </div>
 
       {/* Links grid */}
       <div className="grid grid-cols-2 gap-6 mb-7 md:grid-cols-3">
-        {Object.entries(links).map(([heading, items]) => (
-          <div key={heading}>
+        {linkGroups.map((group) => (
+          <div key={group.heading}>
             <h4
               className="text-[11px] uppercase tracking-[1.5px] font-medium mb-3"
               style={{ color: "rgba(255,255,255,0.7)" }}
             >
-              {heading}
+              {group.heading}
             </h4>
             <ul className="list-none p-0 m-0 space-y-[9px]">
-              {items.map((item) => (
-                <li
-                  key={item}
-                  className="text-[13px] font-light cursor-pointer transition-colors duration-150"
-                  style={{ color: "rgba(255,255,255,0.45)" }}
-                  onMouseEnter={(e) =>
-                    ((e.currentTarget as HTMLLIElement).style.color = "rgba(255,255,255,0.7)")
-                  }
-                  onMouseLeave={(e) =>
-                    ((e.currentTarget as HTMLLIElement).style.color = "rgba(255,255,255,0.45)")
-                  }
-                >
-                  {item}
+              {group.items.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-[13px] font-light no-underline transition-colors duration-150 block"
+                    style={{ color: "rgba(255,255,255,0.45)", fontFamily: "inherit" }}
+                    onMouseEnter={(e) =>
+                      ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.7)")
+                    }
+                    onMouseLeave={(e) =>
+                      ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.45)")
+                    }
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>

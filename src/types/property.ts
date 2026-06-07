@@ -15,6 +15,8 @@ export interface PropertyCard {
   bedrooms: number;
   bathrooms: number;
   sqm?: number;
+  floor?: number;
+  totalFloors?: number;
   area: string;
   district?: string;
   latitude?: string;
@@ -53,6 +55,9 @@ export interface PropertyCard {
   btsWalkMin?:      number;
   mrtStation?:      string;
   mrtWalkMin?:      number;
+  leaseTerms?:      string;
+  depositTerms?:    string;
+  maintenance?:     string;
   utilities?: {
     water?:       "included" | "metered";
     electricity?: "included" | "metered";
