@@ -267,7 +267,7 @@ export default function Navbar() {
                     className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline"
                     style={{ color: "#1C3A2F" }}
                   >
-                    {t.nav.rent}
+                    {t.nav.renting}
                   </Link>
                   <Link
                     href="/explore?type=sale"
@@ -275,7 +275,7 @@ export default function Navbar() {
                     className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline border-t"
                     style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
                   >
-                    {t.nav.buy}
+                    {t.nav.buying}
                   </Link>
                   <Link
                     href="/explore?type=short_stay"
