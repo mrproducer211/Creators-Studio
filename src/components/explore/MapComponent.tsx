@@ -13,6 +13,7 @@ interface Props {
   workplaceCoords: [number, number] | null;
   maxCommute: number;
   matchedSlugs: string[]; // Slugs of top AI matches
+  selectedLayer: string; // Lifestyle, Commute, Budget, Expat, Pet, Luxury
 }
 
 export default function MapComponent({
@@ -23,6 +24,7 @@ export default function MapComponent({
   workplaceCoords,
   maxCommute,
   matchedSlugs,
+  selectedLayer,
 }: Props) {
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -82,7 +84,7 @@ export default function MapComponent({
     };
   }, []);
 
-  // Fit map bounds when map is initialized or workplace changes
+  // Fit map bounds when map is initialized or workplace/neighborhoods changes
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -93,11 +95,11 @@ export default function MapComponent({
     }
     if (boundsPoints.length > 0) {
       const bounds = L.latLngBounds(boundsPoints);
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13.5 });
+      map.fitBounds(bounds, { padding: [60, 60], maxZoom: 13.5 });
     }
   }, [workplaceCoords, neighborhoods]);
 
-  // Update markers on change of data/workplace/commute/selection
+  // Update markers on change of data/workplace/commute/selection/layer
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -107,29 +109,44 @@ export default function MapComponent({
     markersRef.current = {};
 
     neighborhoods.forEach((n) => {
-      // Determine color based on commute time if workplace is active
-      let color = "#1C3A2F"; // Default NHP green
       const isMatched = matchedSlugs.includes(n.slug);
-      const mins = getCommuteMinutes(n, workplace);
 
-      if (workplace) {
-        if (mins === 0) {
-          color = "#10B981"; // Bright Green for center
-        } else if (mins <= 15) {
-          color = "#10B981"; // Green (under 15 mins)
-        } else if (mins <= maxCommute) {
-          color = "#F59E0B"; // Yellow (fits commute)
-        } else {
-          color = "#EF4444"; // Red (exceeds commute)
-        }
-      } else if (isMatched) {
-        color = "#C9A84C"; // Gold for AI matches
+      // Determine score value out of 10 based on selected layer
+      let scoreVal = 8; // default fallback
+      if (selectedLayer === "lifestyle") {
+        scoreVal = Math.round((n.scores.remoteWork + n.scores.cafeCulture + n.scores.walkability) / 3);
+      } else if (selectedLayer === "commute") {
+        const mins = getCommuteMinutes(n, workplace);
+        if (mins === 0) scoreVal = 10;
+        else if (mins <= 10) scoreVal = 9;
+        else if (mins <= 20) scoreVal = 8;
+        else if (mins <= 30) scoreVal = 6;
+        else scoreVal = 3;
+      } else if (selectedLayer === "budget") {
+        // Less rent = more affordable (higher score)
+        if (n.averageRentMax <= 30000) scoreVal = 9;
+        else if (n.averageRentMax <= 60000) scoreVal = 7;
+        else scoreVal = 4;
+      } else if (selectedLayer === "expat") {
+        scoreVal = n.scores.expatCommunity;
+      } else if (selectedLayer === "pet") {
+        scoreVal = n.scores.petFriendly;
+      } else if (selectedLayer === "luxury") {
+        scoreVal = n.scores.luxury;
+      }
+
+      // Color coding pins based on compatibility score
+      let color = "#EF4444"; // Low Fit (Red)
+      if (scoreVal >= 8) {
+        color = "#10B981"; // High Fit (Green)
+      } else if (scoreVal >= 5) {
+        color = "#F59E0B"; // Moderate Fit (Yellow)
       }
 
       const isSelected = selectedSlug === n.slug;
-      const markerSize = isSelected ? 26 : isMatched ? 22 : 18;
+      const markerSize = isSelected ? 30 : isMatched ? 26 : 22;
 
-      // Custom premium HTML marker
+      // Custom premium HTML marker with score inside
       const markerIcon = L.divIcon({
         className: "custom-map-pin",
         html: `
@@ -140,14 +157,16 @@ export default function MapComponent({
             background: ${color};
             border-radius: 50%;
             border: 2.5px solid #FFFFFF;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
           ">
-            ${isMatched ? '<span style="color:#FFFFFF; font-size:10px; font-weight:bold;">★</span>' : ""}
-            ${isSelected ? '<div style="position:absolute; width:6px; height:6px; background:#FFFFFF; border-radius:50%;"></div>' : ""}
+            <span style="color:#FFFFFF; font-size:${isSelected ? '11px' : '9.5px'}; font-weight:bold;">
+              ${scoreVal}
+            </span>
+            ${isSelected ? '<div style="position:absolute; bottom:-4px; width:8px; height:8px; background:#FFFFFF; transform:rotate(45deg);"></div>' : ""}
           </div>
           ${
             isMatched
@@ -176,18 +195,19 @@ export default function MapComponent({
           map.setView([n.lat, n.lng], 13.5, { animate: true });
         });
 
-      // Bind simple popup (permanent label, Google Maps style)
+      // Bind permanent bubble tooltip showing neighborhood name and score
+      const commuteText = workplace ? ` (${getCommuteMinutes(n, workplace)}m)` : "";
       marker.bindTooltip(
         `<div style="font-family: inherit; font-size:11px; font-weight:700; color:#1C3A2F; padding:0px 2px;">
-          ${n.name} ${workplace ? `(${mins}m)` : ""}
+          ${n.name}${commuteText}
          </div>`,
-        { direction: "top", permanent: true, opacity: 0.95, offset: [0, -8], className: "custom-map-tooltip" }
+        { direction: "top", permanent: true, opacity: 0.95, offset: [0, -10], className: "custom-map-tooltip" }
       );
 
       markersRef.current[n.slug] = marker;
     });
 
-    // Add workplace marker if coords exist
+    // Add workplace marker if coordinates exist
     if (workplaceCoords) {
       const markerIcon = L.divIcon({
         className: "workplace-map-pin",
@@ -224,7 +244,7 @@ export default function MapComponent({
 
       markersRef.current["__workplace"] = wMarker;
     }
-  }, [neighborhoods, selectedSlug, workplace, workplaceCoords, maxCommute, matchedSlugs, onSelect]);
+  }, [neighborhoods, selectedSlug, workplace, workplaceCoords, maxCommute, matchedSlugs, onSelect, selectedLayer]);
 
   // Center map on selection
   useEffect(() => {
@@ -258,6 +278,7 @@ export default function MapComponent({
           box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
           border-radius: 12px !important;
           overflow: hidden;
+          background: #FFFFFF !important;
         }
         .leaflet-bar a {
           background-color: #FFFFFF !important;

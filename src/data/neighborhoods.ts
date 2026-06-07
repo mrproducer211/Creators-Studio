@@ -12,12 +12,37 @@ export interface Neighborhood {
     nightlife: number;
     cafeCulture: number;
     walkability: number;
+    luxury: number;
+    expatCommunity: number;
+    japaneseCommunity: number;
+    chineseCommunity: number;
+    studentSuitability: number;
   };
   commuteMinutes: Record<string, number>; // Commute from this neighborhood to workplace keys (in mins)
   averageRentMin: number;
   averageRentMax: number;
   nearestTransit: string;
+  heroImage: string;
+  residentTypes: string[];
+  cafes: string[];
+  coworkingSpaces: string[];
+  malls: string[];
+  parks: string[];
 }
+
+export interface Destination {
+  name: string;
+  lat: number;
+  lng: number;
+}
+
+export const DESTINATIONS: Destination[] = [
+  { name: "One Bangkok", lat: 13.7265, lng: 100.5445 },
+  { name: "Sathorn", lat: 13.7242, lng: 100.5284 },
+  { name: "Silom", lat: 13.7285, lng: 100.5342 },
+  { name: "Asoke", lat: 13.7369, lng: 100.5604 },
+  { name: "Chulalongkorn University", lat: 13.7384, lng: 100.5321 },
+];
 
 export const NEIGHBORHOODS: Neighborhood[] = [
   {
@@ -30,10 +55,15 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     scores: {
       remoteWork: 10,
       petFriendly: 8,
-      familyFriendly: 7,
+      familyFriendly: 6,
       nightlife: 5,
       cafeCulture: 10,
       walkability: 9,
+      luxury: 6,
+      expatCommunity: 8,
+      japaneseCommunity: 5,
+      chineseCommunity: 4,
+      studentSuitability: 7,
     },
     commuteMinutes: {
       "Ari": 0,
@@ -44,10 +74,19 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       "Silom": 20,
       "Sathorn": 22,
       "On Nut": 28,
+      "One Bangkok": 18,
+      "Asoke": 15,
+      "Chulalongkorn University": 18
     },
     averageRentMin: 20000,
     averageRentMax: 45000,
     nearestTransit: "Ari BTS",
+    heroImage: "https://images.unsplash.com/photo-1598977123418-45f04b615e37?w=1200&auto=format&q=80",
+    residentTypes: ["Digital Nomads", "Creative Professionals", "Young Expats", "Cafe Lovers"],
+    cafes: ["Common Room x Babe", "Nana Coffee Roasters", "Bar Storia del Caffè", "Landhaus Bakery"],
+    coworkingSpaces: ["FlySpaces Ari", "Launchpad Co-working", "AIS D.C. (nearby)"],
+    malls: ["La Villa Ari", "Gump's Ari Community Space"],
+    parks: ["Chatuchak Park (nearby)", "Queen Sirikit Park"]
   },
   {
     id: 2,
@@ -62,7 +101,12 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       familyFriendly: 9,
       nightlife: 7,
       cafeCulture: 7,
-      walkability: 7,
+      walkability: 8,
+      luxury: 9,
+      expatCommunity: 9,
+      japaneseCommunity: 6,
+      chineseCommunity: 5,
+      studentSuitability: 6,
     },
     commuteMinutes: {
       "Ari": 22,
@@ -73,10 +117,19 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       "Silom": 3,
       "Sathorn": 0,
       "On Nut": 24,
+      "One Bangkok": 5,
+      "Asoke": 12,
+      "Chulalongkorn University": 8
     },
     averageRentMin: 30000,
     averageRentMax: 85000,
     nearestTransit: "Chong Nonsi BTS",
+    heroImage: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&auto=format&q=80",
+    residentTypes: ["Corporate Executives", "Expat Families", "Diplomats", "Finance Professionals"],
+    cafes: ["Sarnies Suki", "Koffee", "The Coffee Club", "Rocket Coffeebar"],
+    coworkingSpaces: ["The Hive Sathorn", "Glowfish Sathorn", "Regus Sathorn"],
+    malls: ["Silom Complex (nearby)", "Sathorn Square Retail"],
+    parks: ["Lumphini Park", "Benjakitti Park (nearby)"]
   },
   {
     id: 3,
@@ -92,6 +145,11 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       nightlife: 10,
       cafeCulture: 9,
       walkability: 8,
+      luxury: 10,
+      expatCommunity: 10,
+      japaneseCommunity: 10,
+      chineseCommunity: 6,
+      studentSuitability: 6,
     },
     commuteMinutes: {
       "Ari": 20,
@@ -102,10 +160,19 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       "Silom": 15,
       "Sathorn": 16,
       "On Nut": 8,
+      "One Bangkok": 12,
+      "Asoke": 4,
+      "Chulalongkorn University": 15
     },
     averageRentMin: 35000,
     averageRentMax: 90000,
     nearestTransit: "Thong Lo BTS",
+    heroImage: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&q=80",
+    residentTypes: ["Wealthy Locals", "Japanese Expats", "Luxury Seekers", "Socialites"],
+    cafes: ["The Commons Thonglor", "Patom Organic Living", "Toby's Thonglor", "Roots Coffee"],
+    coworkingSpaces: ["The Hive Thonglor", "Draft Board", "Spaces Summer Hill (nearby)"],
+    malls: ["J Avenue", "Eight Thonglor", "Donki Mall Thonglor"],
+    parks: ["Benjasiri Park (nearby)", "Pocket Park Thonglor"]
   },
   {
     id: 4,
@@ -119,8 +186,13 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       petFriendly: 5,
       familyFriendly: 6,
       nightlife: 8,
-      cafeCulture: 7,
-      walkability: 9,
+      cafeCulture: 8,
+      walkability: 10,
+      luxury: 8,
+      expatCommunity: 9,
+      japaneseCommunity: 7,
+      chineseCommunity: 8,
+      studentSuitability: 7,
     },
     commuteMinutes: {
       "Ari": 15,
@@ -131,10 +203,19 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       "Silom": 8,
       "Sathorn": 12,
       "On Nut": 10,
+      "One Bangkok": 8,
+      "Asoke": 0,
+      "Chulalongkorn University": 10
     },
     averageRentMin: 25000,
     averageRentMax: 60000,
     nearestTransit: "Asok BTS / Sukhumvit MRT",
+    heroImage: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&auto=format&q=80",
+    residentTypes: ["Young Professionals", "Multinational Employees", "Urbanites", "Commuters"],
+    cafes: ["Artis Coffee", "Kuppadeli", "Chu Chocolate Cafe", "The Coffee Academics"],
+    coworkingSpaces: ["The Work Loft", "Servcorp Interchange 21", "Regus Asoke"],
+    malls: ["Terminal 21 Asok", "Robinson Sukhumvit"],
+    parks: ["Benjakitti Park", "Lumphini Park (nearby)"]
   },
   {
     id: 5,
@@ -150,6 +231,11 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       nightlife: 9,
       cafeCulture: 8,
       walkability: 9,
+      luxury: 8,
+      expatCommunity: 9,
+      japaneseCommunity: 9,
+      chineseCommunity: 7,
+      studentSuitability: 8,
     },
     commuteMinutes: {
       "Ari": 20,
@@ -160,10 +246,19 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       "Silom": 0,
       "Sathorn": 3,
       "On Nut": 22,
+      "One Bangkok": 4,
+      "Asoke": 8,
+      "Chulalongkorn University": 5
     },
     averageRentMin: 22000,
     averageRentMax: 55000,
     nearestTransit: "Sala Daeng BTS / Si Lom MRT",
+    heroImage: "https://images.unsplash.com/photo-1590073844006-33379778ae09?w=1200&auto=format&q=80",
+    residentTypes: ["LGBTQ+ Expat Community", "Business Travelers", "Japanese Executives", "Foodies"],
+    cafes: ["Everyday Karmakamet", "Sarnies Roastery", "Prints 364", "Fork & Cork"],
+    coworkingSpaces: ["Launchpad Coworking", "The Work Loft Silom", "WeWork T-One (nearby)"],
+    malls: ["Silom Complex", "Patpong Night Market"],
+    parks: ["Lumphini Park", "Chulalongkorn Centenary Park"]
   },
   {
     id: 6,
@@ -179,6 +274,11 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       nightlife: 5,
       cafeCulture: 7,
       walkability: 8,
+      luxury: 5,
+      expatCommunity: 8,
+      japaneseCommunity: 4,
+      chineseCommunity: 5,
+      studentSuitability: 7,
     },
     commuteMinutes: {
       "Ari": 28,
@@ -189,10 +289,19 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       "Silom": 22,
       "Sathorn": 24,
       "On Nut": 0,
+      "One Bangkok": 18,
+      "Asoke": 10,
+      "Chulalongkorn University": 20
     },
     averageRentMin: 12000,
     averageRentMax: 30000,
     nearestTransit: "On Nut BTS",
+    heroImage: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&auto=format&q=80",
+    residentTypes: ["Budget-conscious Expats", "English Teachers", "Local Thai Staff", "Digital Nomads"],
+    cafes: ["Better Half Cafe", "Craft Cafe Onnut", "Toby's (nearby)", "The Wood Land"],
+    coworkingSpaces: ["Habito Hub", "The Phyll Coworking", "Spaces Summer Hill"],
+    malls: ["Tesco Lotus On Nut", "Century Plaza Movie Plaza On Nut", "Habito Mall"],
+    parks: ["Benjasiri Park (nearby)", "Saeng Thip Garden"]
   },
   {
     id: 7,
@@ -208,6 +317,11 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       nightlife: 8,
       cafeCulture: 9,
       walkability: 8,
+      luxury: 8,
+      expatCommunity: 9,
+      japaneseCommunity: 8,
+      chineseCommunity: 5,
+      studentSuitability: 6,
     },
     commuteMinutes: {
       "Ari": 22,
@@ -218,10 +332,19 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       "Silom": 17,
       "Sathorn": 18,
       "On Nut": 6,
+      "One Bangkok": 14,
+      "Asoke": 6,
+      "Chulalongkorn University": 16
     },
     averageRentMin: 25000,
     averageRentMax: 65000,
     nearestTransit: "Ekkamai BTS",
+    heroImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&q=80",
+    residentTypes: ["Families", "Cafe Enthusiasts", "Young Creatives", "Expat Residents"],
+    cafes: ["Ekkamai Macchiato", "Featherstone Cafe", "Ink & Lion Cafe", "Unbirthday Cafe"],
+    coworkingSpaces: ["The Hive Ekkamai", "Union Space Ekkamai", "Draft Board (nearby)"],
+    malls: ["Gateway Ekkamai", "Index Living Mall Ekkamai"],
+    parks: ["Benjasiri Park (nearby)", "Ekkamai Pocket Garden"]
   },
   {
     id: 8,
@@ -237,6 +360,11 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       nightlife: 7,
       cafeCulture: 9,
       walkability: 9,
+      luxury: 9,
+      expatCommunity: 10,
+      japaneseCommunity: 8,
+      chineseCommunity: 7,
+      studentSuitability: 7,
     },
     commuteMinutes: {
       "Ari": 17,
@@ -247,9 +375,18 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       "Silom": 10,
       "Sathorn": 12,
       "On Nut": 10,
+      "One Bangkok": 10,
+      "Asoke": 2,
+      "Chulalongkorn University": 12
     },
     averageRentMin: 30000,
     averageRentMax: 80000,
     nearestTransit: "Phrom Phong BTS",
+    heroImage: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&auto=format&q=80",
+    residentTypes: ["High Net Worth Expats", "Western Expatriates", "Families", "Shopping Enthusiasts"],
+    cafes: ["Baker Gonna Bake", "Holey Artisan Bakery", "Veganerie Concept", "D'Ark EmQuartier"],
+    coworkingSpaces: ["The Hive Phrom Phong", "Regus Bhiraj Tower", "Spaces EmQuartier"],
+    malls: ["EmQuartier", "EmPorium", "EmSphere"],
+    parks: ["Benjasiri Park", "Benjakitti Park"]
   },
 ];
