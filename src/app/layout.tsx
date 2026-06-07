@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import { SavedProvider } from "@/contexts/SavedContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { RecentlyViewedProvider } from "@/contexts/RecentlyViewedContext";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -28,11 +29,13 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <SessionProvider>
           <LanguageProvider>
-            <SavedProvider>
-              <RecentlyViewedProvider>
-                {children}
-              </RecentlyViewedProvider>
-            </SavedProvider>
+            <CurrencyProvider>
+              <SavedProvider>
+                <RecentlyViewedProvider>
+                  {children}
+                </RecentlyViewedProvider>
+              </SavedProvider>
+            </CurrencyProvider>
           </LanguageProvider>
         </SessionProvider>
       </body>

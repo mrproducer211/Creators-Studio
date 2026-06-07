@@ -6,6 +6,7 @@ import { PropertyCard } from "@/types/property";
 import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const FALLBACK_GRADIENTS = [
   "linear-gradient(135deg,#254D3E,#1C3A2F)",
@@ -22,22 +23,17 @@ function badgeStyle(t: string) {
   return                   { background: "#FFFFFF", color: "#1C3A2F" };
 }
 
-function formatPrice(p: PropertyCard) {
-  const thb = Number(p.priceTHB).toLocaleString("th-TH");
-  if (p.listingType === "sale")
-    return { main: `฿${thb}`, sub: p.priceUSD ? `$${Number(p.priceUSD).toLocaleString("en")}` : "" };
-  return { main: `฿${thb}`, sub: p.priceLabel ?? "" };
-}
-
 export default function ExplorePropertyCard({ property, index }: { property: PropertyCard; index: number }) {
   const router                  = useRouter();
   const { isSaved, toggle }     = useSaved();
   const { t }                   = useLanguage();
+  const { formatPrice }         = useCurrency();
   const saved                   = isSaved(property.id);
   const { data: session }       = useSession();
   const [liked, setLiked]       = useState(false);
   const [imgErr, setImgErr]     = useState(false);
-  const { main, sub }           = formatPrice(property);
+  const main                    = formatPrice(Number(property.priceTHB));
+  const sub                     = property.listingType === "sale" ? "" : (property.priceLabel ?? "");
   const fallback                = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length];
   const href                    = `/property/${property.slug}`;
 

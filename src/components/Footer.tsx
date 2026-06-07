@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 export default function Footer() {
   const { t } = useLanguage();
+  const { currency, setCurrency } = useCurrency();
   const [contacts, setContacts] = useState({
     adminWhatsApp: "+66812345678",
     adminLine: "nhp-line-id",
@@ -117,9 +119,22 @@ export default function Footer() {
         }}
       >
         <span>{t.footer.copy}</span>
-        <span className="font-medium" style={{ color: "#C9A84C" }}>
-          ฿ THB · $ USD
-        </span>
+        <div className="flex gap-1.5 flex-wrap">
+          {(["THB", "USD", "EUR", "CNY"] as const).map((curr) => (
+            <button
+              key={curr}
+              onClick={() => setCurrency(curr)}
+              className="cursor-pointer border-none text-[10px] font-bold px-2 py-1 rounded transition-colors"
+              style={{
+                background: currency === curr ? "#C9A84C" : "rgba(255,255,255,0.06)",
+                color: currency === curr ? "#1A1A1A" : "rgba(255,255,255,0.5)",
+                fontFamily: "inherit",
+              }}
+            >
+              {curr === "THB" ? "฿ THB" : curr === "USD" ? "$ USD" : curr === "EUR" ? "€ EUR" : "¥ CNY"}
+            </button>
+          ))}
+        </div>
       </div>
     </footer>
   );

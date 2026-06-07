@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { PropertyCard } from "@/types/property";
 import { useEnquiry } from "@/hooks/useEnquiry";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
-function formatPrice(p: PropertyCard) {
-  const n = Number(p.priceTHB).toLocaleString("th-TH");
-  if (p.listingType === "sale") return `฿${n}${p.priceUSD ? ` (~$${Number(p.priceUSD).toLocaleString("en")})` : ""}`;
-  return `฿${n}${p.priceLabel ?? ""}`;
+function formatPrice(p: PropertyCard, formatPriceFn: (n: number) => string) {
+  if (p.listingType === "sale") return formatPriceFn(Number(p.priceTHB));
+  return `${formatPriceFn(Number(p.priceTHB))}${p.priceLabel ?? ""}`;
 }
 
 interface Props {
@@ -23,6 +23,7 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
   const [contact, setContact]   = useState("");
   const [method, setMethod]     = useState("WhatsApp");
   const { status, errorMsg, submit: sendEnquiry } = useEnquiry();
+  const { formatPrice: formatPriceFn } = useCurrency();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +32,7 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
       propertySlug: property.slug,
       propertyName: property.name,
       listingType:  property.listingType,
-      price:        formatPrice(property),
+      price:        formatPrice(property, formatPriceFn),
       area:         property.area,
       name, contact, method,
       source:       "swipe",
@@ -62,7 +63,7 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
           {!showForm && status !== "done" && (
             <>
               <div className="text-[24px] font-bold mt-3 mb-1" style={{ color: "#1C3A2F", letterSpacing: "-0.5px" }}>
-                {formatPrice(property)}
+                {formatPrice(property, formatPriceFn)}
               </div>
               <div className="text-[17px] font-semibold mb-1 leading-tight" style={{ color: "#1A1A1A" }}>{property.name}</div>
               <div className="text-[13px] mb-4 flex items-center gap-1" style={{ color: "#999" }}>

@@ -5,6 +5,7 @@ import { Mail, Play, Volume2, VolumeX } from "lucide-react";
 import { PropertyCard } from "@/types/property";
 import ReelActions from "./ReelActions";
 import ReelInterestSheet from "./ReelInterestSheet";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const GRADIENTS = [
   "linear-gradient(180deg, #254D3E 0%, #1C3A2F 100%)",
@@ -35,12 +36,6 @@ function listingStyle(t: string) {
   return { background: "rgba(255,255,255,0.9)", color: "#1C3A2F" };
 }
 
-function formatPrice(p: PropertyCard) {
-  const n = Number(p.priceTHB).toLocaleString("th-TH");
-  if (p.listingType === "sale") return `฿${n}`;
-  return `฿${n}${p.priceLabel ?? ""}`;
-}
-
 interface Props {
   property: PropertyCard;
   index: number;
@@ -54,6 +49,7 @@ export default function ReelItem({ property, index, isActive, onLocationClick }:
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const [userPaused, setUserPaused] = useState(false);
+  const { formatPrice: formatPriceFn } = useCurrency();
   const gradient = GRADIENTS[index % GRADIENTS.length];
   const videoSrc = property.videoUrl ?? MOCK_REEL_VIDEOS[index % MOCK_REEL_VIDEOS.length];
 
@@ -162,7 +158,8 @@ export default function ReelItem({ property, index, isActive, onLocationClick }:
         </button>
 
         <div className="text-[28px] font-bold mb-1" style={{ color: "#FFFFFF", letterSpacing: "-0.5px" }}>
-          {formatPrice(property)}
+          {formatPriceFn(Number(property.priceTHB))}
+          {property.listingType === "sale" ? "" : (property.priceLabel ?? "")}
         </div>
         <div className="text-[16px] font-semibold mb-1 leading-tight" style={{ color: "rgba(255,255,255,0.95)" }}>
           {property.name}

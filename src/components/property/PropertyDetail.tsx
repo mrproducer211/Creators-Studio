@@ -7,6 +7,7 @@ import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext";
 import { useSaved } from "@/contexts/SavedContext";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import Link from "next/link";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 /* ─────────────────────────────────────────────
    Helpers
@@ -16,15 +17,13 @@ function listingBadge(t: string) {
   if (t === "rent") return "Long Rent";
   return "Short Stay";
 }
-function formatPrice(p: PropertyCard) {
-  // Short stays: convert nightly to monthly (×30) and show as /month
+function formatPrice(p: PropertyCard, formatPriceFn: (n: number) => string) {
   if (p.listingType === "short_stay" && (p.priceLabel ?? "").includes("night")) {
     const monthly = Number(p.priceTHB) * 30;
-    return `฿${monthly.toLocaleString("th-TH")}/month`;
+    return `${formatPriceFn(monthly)}/month`;
   }
-  const thb = Number(p.priceTHB).toLocaleString("th-TH");
-  if (p.listingType === "sale") return `฿${thb}`;
-  return `฿${thb}${p.priceLabel ?? ""}`;
+  if (p.listingType === "sale") return formatPriceFn(Number(p.priceTHB));
+  return `${formatPriceFn(Number(p.priceTHB))}${p.priceLabel ?? ""}`;
 }
 
 /* Relative date string e.g. "Posted 3 days ago" */
@@ -750,6 +749,8 @@ function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: 
   const [msg, setMsg]         = useState("");
   const { status, errorMsg, submit: sendEnquiry } = useEnquiry();
 
+  const { formatPrice: formatPriceFn } = useCurrency();
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !contact) return;
@@ -757,7 +758,7 @@ function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: 
       propertySlug: property.slug,
       propertyName: property.name,
       listingType:  property.listingType,
-      price:        formatPrice(property),
+      price:        formatPrice(property, formatPriceFn),
       area:         property.area,
       name, contact, method,
       message:      msg || undefined,
@@ -823,6 +824,7 @@ function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: 
 ───────────────────────────────────────────── */
 function SimilarCard({ property }: { property: PropertyCard }) {
   const [imgErr, setImgErr] = useState(false);
+  const { formatPrice: formatPriceFn } = useCurrency();
   return (
     <a href={`/property/${property.slug}`} className="no-underline rounded-2xl overflow-hidden block group" style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}>
       <div className="relative h-36 overflow-hidden" style={{ background: "#1C3A2F" }}>
@@ -834,7 +836,8 @@ function SimilarCard({ property }: { property: PropertyCard }) {
       </div>
       <div className="p-3">
         <div className="text-[14px] font-bold mb-0.5" style={{ color: "#1C3A2F" }}>
-          ฿{Number(property.priceTHB).toLocaleString("th-TH")}{property.priceLabel ?? ""}
+          {formatPriceFn(Number(property.priceTHB))}
+          {property.listingType === "sale" ? "" : (property.priceLabel ?? "")}
         </div>
         <div className="text-[12px] font-medium line-clamp-1 mb-1" style={{ color: "#1A1A1A" }}>{property.name}</div>
         <div className="text-[11px] flex gap-2" style={{ color: "#999" }}>
@@ -878,13 +881,15 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
   const times = ["09:00", "10:30", "12:00", "13:30", "15:00", "16:30", "18:00"];
   const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
 
+  const { formatPrice: formatPriceFn } = useCurrency();
+
   const submit = async () => {
     if (!selDate || !selTime || !name || !contact) return;
     await sendEnquiry({
       propertySlug: property.slug,
       propertyName: property.name,
       listingType:  property.listingType,
-      price:        formatPrice(property),
+      price:        formatPrice(property, formatPriceFn),
       area:         property.area,
       name,
       contact,
@@ -1097,6 +1102,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
   const posted    = relativeDate(property.createdAt);
   const { track } = useRecentlyViewed();
   const [contacts, setContacts] = useState({ adminEmail: "admin@nhpbangkok.com", adminPhone: "+66812345678" });
+  const { formatPrice: formatPriceFn } = useCurrency();
 
   // Real-time View Tracking State
   const [views, setViews] = useState(property.viewCount ?? viewCount(property));
@@ -1219,7 +1225,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
               {/* Gold price */}
               <div className="mb-3">
                 <div className="text-[26px] font-bold" style={{ color: "#C9A84C", letterSpacing: "-0.8px", lineHeight: 1 }}>
-                  {formatPrice(property)}
+                  {formatPrice(property, formatPriceFn)}
                 </div>
               </div>
 
@@ -1622,7 +1628,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                 {/* Gold price (currency-aware) */}
                 <div className="mb-4">
                   <div className="text-[26px] font-bold" style={{ color: "#C9A84C", letterSpacing: "-0.8px", lineHeight: 1 }}>
-                    {formatPrice(property)}
+                    {formatPrice(property, formatPriceFn)}
                   </div>
                 </div>
 

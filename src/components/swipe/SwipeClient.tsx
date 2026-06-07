@@ -6,6 +6,7 @@ import { SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
 import SwipeCard from "./SwipeCard";
 import SavedPanel from "./SavedPanel";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 type Filter = ListingType | "all";
 
@@ -16,13 +17,8 @@ const FILTER_TABS: { label: string; value: Filter }[] = [
   { label: "Short Stay", value: "short_stay" },
 ];
 
-function formatPrice(p: PropertyCard) {
-  const n = Number(p.priceTHB).toLocaleString("th-TH");
-  if (p.listingType === "sale") return `฿${n}`;
-  return `฿${n}${p.priceLabel ?? ""}`;
-}
-
 export default function SwipeClient({ properties }: { properties: PropertyCard[] }) {
+  const { formatPrice: formatPriceFn } = useCurrency();
   const [filter, setFilter]       = useState<Filter>("all");
   const [petFriendly, setPetFriendly] = useState(false);
   const [nearBts, setNearBts] = useState(false);
@@ -350,7 +346,10 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
               </div>
             )}
           </div>
-          <div className="text-[22px] font-bold mb-1" style={{ color: "#E2C97E", letterSpacing: "-0.5px" }}>{formatPrice(current)}</div>
+          <div className="text-[22px] font-bold mb-1" style={{ color: "#E2C97E", letterSpacing: "-0.5px" }}>
+            {formatPriceFn(Number(current.priceTHB))}
+            {current.listingType === "sale" ? "" : (current.priceLabel ?? "")}
+          </div>
           <div className="text-[14px] font-semibold mb-1 leading-tight" style={{ color: "#FFFFFF" }}>{current.name}</div>
           <div className="text-[12px] mb-3" style={{ color: "rgba(255,255,255,0.45)" }}>📍 {current.area}</div>
           <div className="flex gap-3 mb-4 text-[12px]" style={{ color: "rgba(255,255,255,0.55)" }}>

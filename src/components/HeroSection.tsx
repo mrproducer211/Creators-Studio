@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PropertyCard } from "@/types/property";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const FEATURED_FALLBACK = MOCK_PROPERTIES.find((p) => p.featured) ?? MOCK_PROPERTIES[0];
 
@@ -20,6 +21,7 @@ function DesktopHero({
   featured: PropertyCard;
 }) {
   const { t }                    = useLanguage();
+  const { formatPrice }          = useCurrency();
   const TABS                     = [t.hero.tabBuy, t.hero.tabRent, t.hero.tabShort];
   const [activeDot, setActiveDot] = useState(0);
   const DOTS = 4;
@@ -367,7 +369,7 @@ function DesktopHero({
           {/* Info */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 18, fontWeight: 700, color: "#1C3A2F", letterSpacing: "-0.3px", marginBottom: 2 }}>
-              ฿{Number(featured.priceTHB).toLocaleString("th-TH")}
+              {formatPrice(Number(featured.priceTHB))}
               {featured.priceLabel && (
                 <span style={{ fontSize: 12, fontWeight: 400, color: "#999", marginLeft: 3 }}>
                   {featured.priceLabel}

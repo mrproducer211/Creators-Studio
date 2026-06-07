@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { useSaved } from "@/contexts/SavedContext";
 import { PropertyCard as PropertyType } from "@/types/property";
 
+import { useCurrency } from "@/contexts/CurrencyContext";
+
 const FILTERS = ["All", "For Sale", "Long Rent", "Short Stay", "Condo", "House", "Sukhumvit", "Silom", "Sathorn"];
 
 function badgeStyle(t: string) {
@@ -33,11 +35,9 @@ function PropertyCard({ property }: { property: PropertyType }) {
   ];
   const cardGradient = gradientsList[property.id % gradientsList.length];
 
-  const thb = Number(property.priceTHB).toLocaleString("th-TH");
-  const priceMain = `฿${thb}`;
-  const priceSub = property.listingType === "sale"
-    ? (property.priceUSD ? `$${Number(property.priceUSD).toLocaleString("en")}` : "")
-    : (property.priceLabel ?? "");
+  const { formatPrice } = useCurrency();
+  const priceMain = formatPrice(Number(property.priceTHB));
+  const priceSub = property.listingType === "sale" ? "" : (property.priceLabel ?? "");
 
   const bedsLabel = property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`;
   const bathsLabel = `${property.bathrooms} Bath`;

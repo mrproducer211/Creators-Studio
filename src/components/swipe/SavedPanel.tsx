@@ -1,12 +1,7 @@
 "use client";
 
 import { PropertyCard } from "@/types/property";
-
-function formatPrice(p: PropertyCard) {
-  const n = Number(p.priceTHB).toLocaleString("th-TH");
-  if (p.listingType === "sale") return `฿${n}`;
-  return `฿${n}${p.priceLabel ?? ""}`;
-}
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface Props {
   saved: PropertyCard[];
@@ -15,6 +10,7 @@ interface Props {
 }
 
 export default function SavedPanel({ saved, onClose, onRemove }: Props) {
+  const { formatPrice: formatPriceFn } = useCurrency();
   return (
     <div className="fixed inset-0 z-50 flex items-end" onClick={onClose}>
       <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.55)" }} />
@@ -71,7 +67,10 @@ export default function SavedPanel({ saved, onClose, onRemove }: Props) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.name}</div>
-                    <div className="text-[12px]" style={{ color: "#1C3A2F" }}>{formatPrice(p)}</div>
+                    <div className="text-[12px]" style={{ color: "#1C3A2F" }}>
+                      {formatPriceFn(Number(p.priceTHB))}
+                      {p.listingType === "sale" ? "" : (p.priceLabel ?? "")}
+                    </div>
                     <div className="text-[11px]" style={{ color: "#999" }}>📍 {p.area}</div>
                   </div>
                   <button

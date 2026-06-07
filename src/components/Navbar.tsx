@@ -5,11 +5,13 @@ import { useSession, signOut } from "next-auth/react";
 import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
   const { count }                  = useSaved();
   const { lang, setLang, t }       = useLanguage();
+  const { currency, setCurrency }  = useCurrency();
   const [menuOpen, setMenuOpen]    = useState(false);
   const [userMenu, setUserMenu]    = useState(false);
   const [discoverOpen, setDiscoverOpen] = useState(false);
@@ -48,6 +50,7 @@ export default function Navbar() {
           <Link href="/explore"               className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.explore}</Link>
           <Link href="/swipe"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.swipe}</Link>
           <Link href="/reels"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.reels}</Link>
+          <Link href="/explore/match"         className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#C9A84C", fontWeight: "bold" }}>✨ NHP Match</Link>
           <Link href="/explore?type=sale"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.buy}</Link>
           <Link href="/explore?type=rent"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.rent}</Link>
           <Link href="/explore?type=short_stay" className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.shortStay}</Link>
@@ -296,6 +299,16 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+            {/* NHP Match Link */}
+            <Link
+              href="/explore/match"
+              onClick={() => setMenuOpen(false)}
+              className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
+              style={{ color: "#C9A84C", borderColor: "#EDE8DF", fontWeight: "bold" }}
+            >
+              <span>✨ NHP Match</span>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#C9A84C", color: "#FFFFFF" }}>AI</span>
+            </Link>
 
             {/* Mobile language toggle */}
             <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: "1px solid #EDE8DF" }}>
@@ -306,6 +319,26 @@ export default function Navbar() {
                     className="cursor-pointer border-none text-[11px] font-bold"
                     style={{ padding: "5px 12px", background: lang === l ? "#1C3A2F" : "transparent", color: lang === l ? "#F7F3EC" : "#888", fontFamily: "inherit" }}
                   >{l.toUpperCase()}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile currency toggle */}
+            <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: "1px solid #EDE8DF" }}>
+              <span className="text-[12px]" style={{ color: "#999" }}>Currency</span>
+              <div className="flex items-center rounded-lg overflow-hidden ml-auto" style={{ border: "1.5px solid #E5E0D8" }}>
+                {(["THB", "USD", "EUR", "CNY"] as const).map((curr) => (
+                  <button key={curr} onClick={() => setCurrency(curr)}
+                    className="cursor-pointer border-none text-[10px] font-bold"
+                    style={{
+                      padding: "5px 10px",
+                      background: currency === curr ? "#1C3A2F" : "transparent",
+                      color: currency === curr ? "#F7F3EC" : "#888",
+                      fontFamily: "inherit"
+                    }}
+                  >
+                    {curr === "THB" ? "฿ THB" : curr === "USD" ? "$ USD" : curr === "EUR" ? "€ EUR" : "¥ CNY"}
+                  </button>
                 ))}
               </div>
             </div>

@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const GRADIENTS = [
   "linear-gradient(160deg, #254D3E 0%, #1C3A2F 100%)",
@@ -23,11 +24,6 @@ function listingStyle(t: string) {
   if (t === "rent") return { background: "#C9A84C", color: "#1C3A2F" };
   return { background: "#FFFFFF", color: "#1C3A2F" };
 }
-function formatPrice(p: PropertyCard) {
-  const n = Number(p.priceTHB).toLocaleString("th-TH");
-  if (p.listingType === "sale") return `฿${n}`;
-  return `฿${n}${p.priceLabel ?? ""}`;
-}
 
 interface Props {
   property: PropertyCard;
@@ -42,6 +38,7 @@ const MAX_ROTATE      = 15;
 
 export default function SwipeCard({ property, index, total, onSwipe }: Props) {
   const router  = useRouter();
+  const { formatPrice: formatPriceFn } = useCurrency();
   const cardRef = useRef<HTMLDivElement>(null);
   const startX  = useRef(0);
   const startY  = useRef(0);
@@ -213,7 +210,8 @@ export default function SwipeCard({ property, index, total, onSwipe }: Props) {
       {/* Bottom info */}
       <div className="absolute bottom-0 left-0 right-0 p-5">
         <div className="text-[26px] font-bold mb-1" style={{ color: "#FFFFFF", letterSpacing: "-0.5px" }}>
-          {formatPrice(property)}
+          {formatPriceFn(Number(property.priceTHB))}
+          {property.listingType === "sale" ? "" : (property.priceLabel ?? "")}
         </div>
         <div className="text-[16px] font-semibold mb-1 leading-tight" style={{ color: "rgba(255,255,255,0.95)" }}>
           {property.name}

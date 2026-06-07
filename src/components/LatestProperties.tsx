@@ -5,6 +5,7 @@ import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PropertyCard } from "@/types/property";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const GRID_PROPS = [
   ...MOCK_PROPERTIES.filter((p) => p.featured),
@@ -17,12 +18,6 @@ function badgeStyle(t: string) {
   return { background: "rgba(255,255,255,0.9)", color: "#1C3A2F" };
 }
 
-function formatPrice(p: (typeof MOCK_PROPERTIES)[0]) {
-  const n = Number(p.priceTHB).toLocaleString("th-TH");
-  if (p.listingType === "sale") return `฿${n}`;
-  return `฿${n}${p.priceLabel ?? ""}`;
-}
-
 function MagCard({
   property,
   large = false,
@@ -32,6 +27,7 @@ function MagCard({
 }) {
   const { isSaved, toggle } = useSaved();
   const { t } = useLanguage();
+  const { formatPrice } = useCurrency();
   const saved = isSaved(property.id);
   const [imgErr, setImgErr] = useState(false);
 
@@ -99,7 +95,8 @@ function MagCard({
           className={`font-bold leading-none mb-1 truncate ${large ? "text-[20px] md:text-[22px]" : "text-[14px] md:text-[17px]"}`}
           style={{ color: "#FFFFFF", letterSpacing: "-0.5px" }}
         >
-          {formatPrice(property)}
+          {formatPrice(Number(property.priceTHB))}
+          {property.listingType === "sale" ? "" : (property.priceLabel ?? "")}
         </div>
         {/* Name — single line, truncated */}
         <div
