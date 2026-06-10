@@ -60,7 +60,9 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Proximity to Lumphini Park for outdoor recreation",
       "Prestigious dining venues and rooftop bars",
       "High concentration of international schools nearby",
-      "Quiet, tree-lined residential side-streets (sois)"
+      "Quiet, tree-lined residential side-streets (sois)",
+      "Convenient tollway access and multi-lane roads",
+      "Top-tier healthcare centers and embassies within reach"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "High Quality", image: "/images/lifestyles/sathorn_cafe.png" },
@@ -601,8 +603,11 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
               </h3>
               <div className="love-map-grid gap-6 w-full items-stretch md:h-full md:flex-1">
                 <ul className="flex flex-col gap-2.5 text-xs text-gray-600 font-light pl-0 list-none">
-                  {meta.pros.map((pro) => (
-                    <li key={pro} className="flex items-start gap-2">
+                  {meta.pros.map((pro, index) => (
+                    <li
+                      key={pro}
+                      className={`flex items-start gap-2${index >= 5 ? " hidden md:flex" : ""}`}
+                    >
                       <span className="font-bold text-emerald-600">✓</span>
                       <span>{pro}</span>
                     </li>
