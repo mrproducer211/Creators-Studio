@@ -5,6 +5,7 @@ import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PropertyCard } from "@/types/property";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { Sparkles } from "lucide-react";
 
 const FEATURED_FALLBACK = MOCK_PROPERTIES.find((p) => p.featured) ?? MOCK_PROPERTIES[0];
 
@@ -102,6 +103,9 @@ function DesktopHero({
               key={tab}
               onClick={() => setActiveTab(i)}
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
                 background: "transparent",
                 border: "none",
                 borderBottom: activeTab === i ? "2px solid #C9A84C" : "2px solid transparent",
@@ -122,6 +126,7 @@ function DesktopHero({
                 if (activeTab !== i) (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.38)";
               }}
             >
+              {i === 2 && <Sparkles size={13} className="text-[#C9A84C]" />}
               {tab}
             </button>
           ))}
@@ -532,9 +537,10 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(i)}
-                  className="flex-1 text-center py-[7px] px-1 rounded-lg text-xs font-medium cursor-pointer transition-all duration-150 border-none"
+                  className="flex-1 text-center py-[7px] px-1 rounded-lg text-xs font-medium cursor-pointer transition-all duration-150 border-none flex items-center justify-center gap-1"
                   style={activeTab === i ? { background: "#1C3A2F", color: "#FFFFFF" } : { background: "transparent", color: "#555" }}
                 >
+                  {i === 2 && <Sparkles size={11} className={activeTab === 2 ? "text-[#E2C97E]" : "text-[#C9A84C]"} />}
                   {tab}
                 </button>
               ))}
