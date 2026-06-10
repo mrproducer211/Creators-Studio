@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSaved } from "@/contexts/SavedContext";
 import Link from "next/link";
+import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Map, Check } from "lucide-react";
 
 // Dynamically load Map component to prevent window SSR errors
 const NeighborhoodMap = dynamic(() => import("./NeighborhoodMap"), { ssr: false });
@@ -420,32 +421,32 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
             {/* Transit Badges Row (Mobile only) */}
             <div className="flex flex-col gap-2 text-[10px] md:hidden w-full">
               <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 justify-start w-fit">
-                🚇 {neighborhood.nearestTransit} (5 min walk)
+                <Train size={11} className="text-[#E2C97E]" /> {neighborhood.nearestTransit} (5 min walk)
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 justify-start w-fit">
-                🚇 Sukhumvit Line (Easy access)
+                <Train size={11} className="text-[#E2C97E]" /> Sukhumvit Line (Easy access)
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 justify-start w-fit">
-                ☕ Cafe Culture (Excellent)
+                <Coffee size={11} className="text-[#E2C97E]" /> Cafe Culture (Excellent)
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 justify-start w-fit">
-                🚶 Walkability ({neighborhood.scores.walkability}/10)
+                <Footprints size={11} className="text-[#E2C97E]" /> Walkability ({neighborhood.scores.walkability}/10)
               </span>
             </div>
 
             {/* Transit Badges Row (Desktop only) */}
             <div className="hidden md:flex md:flex-wrap gap-2 text-[10.5px]">
               <span className="flex items-center gap-1.5 px-2.5 py-1.2 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10">
-                🚇 {neighborhood.nearestTransit} (5 min walk)
+                <Train size={11} className="text-[#E2C97E]" /> {neighborhood.nearestTransit} (5 min walk)
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.2 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10">
-                🚇 Sukhumvit Line (Easy access)
+                <Train size={11} className="text-[#E2C97E]" /> Sukhumvit Line (Easy access)
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.2 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10">
-                ☕ Cafe Culture (Excellent)
+                <Coffee size={11} className="text-[#E2C97E]" /> Cafe Culture (Excellent)
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.2 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10">
-                🚶 Walkability ({neighborhood.scores.walkability}/10)
+                <Footprints size={11} className="text-[#E2C97E]" /> Walkability ({neighborhood.scores.walkability}/10)
               </span>
             </div>
           </div>
@@ -511,32 +512,46 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                 At a Glance
               </h3>
               <div className="flex flex-col gap-3 text-xs">
-                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF]">
-                  <span className="text-gray-500 font-light">🏢 Area</span>
+                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
+                  <span className="text-gray-500 font-light flex items-center gap-1.5">
+                    <Building2 size={13} className="text-[#C9A84C]" /> Area
+                  </span>
                   <span className="font-medium" style={{ color: "#1C3A2F" }}>{meta.district}</span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF]">
-                  <span className="text-gray-500 font-light">🚉 BTS Station</span>
+                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
+                  <span className="text-gray-500 font-light flex items-center gap-1.5">
+                    <Train size={13} className="text-[#C9A84C]" /> BTS Station
+                  </span>
                   <span className="font-medium" style={{ color: "#1C3A2F" }}>{meta.btsCode}</span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF]">
-                  <span className="text-gray-500 font-light">🚇 Travel to Asoke</span>
+                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
+                  <span className="text-gray-500 font-light flex items-center gap-1.5">
+                    <Train size={13} className="text-[#C9A84C]" /> Travel to Asoke
+                  </span>
                   <span className="font-medium" style={{ color: "#1C3A2F" }}>{neighborhood.commuteMinutes["Asok"]} min</span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF]">
-                  <span className="text-gray-500 font-light">🚇 Travel to Silom</span>
+                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
+                  <span className="text-gray-500 font-light flex items-center gap-1.5">
+                    <Train size={13} className="text-[#C9A84C]" /> Travel to Silom
+                  </span>
                   <span className="font-medium" style={{ color: "#1C3A2F" }}>{neighborhood.commuteMinutes["Silom"]} min</span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF]">
-                  <span className="text-gray-500 font-light">✈️ Airport (BKK)</span>
+                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
+                  <span className="text-gray-500 font-light flex items-center gap-1.5">
+                    <Plane size={13} className="text-[#C9A84C]" /> Airport (BKK)
+                  </span>
                   <span className="font-medium" style={{ color: "#1C3A2F" }}>{meta.airportTime}</span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF]">
-                  <span className="text-gray-500 font-light">✨ Vibe</span>
+                <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
+                  <span className="text-gray-500 font-light flex items-center gap-1.5">
+                    <Sparkles size={13} className="text-[#C9A84C]" /> Vibe
+                  </span>
                   <span className="font-medium" style={{ color: "#1C3A2F" }}>{meta.vibe}</span>
                 </div>
                 <div className="flex flex-col py-1.5">
-                  <span className="text-gray-500 font-light mb-1">👍 Best For</span>
+                  <span className="text-gray-500 font-light mb-1 flex items-center gap-1.5">
+                    <ThumbsUp size={13} className="text-[#C9A84C]" /> Best For
+                  </span>
                   <span className="font-medium leading-relaxed" style={{ color: "#1C3A2F" }}>{meta.bestFor}</span>
                 </div>
               </div>
@@ -608,7 +623,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                       key={pro}
                       className={`flex items-start gap-2${index >= 5 ? " hidden md:flex" : ""}`}
                     >
-                      <span className="font-bold text-emerald-600">✓</span>
+                      <Check size={14} className="text-emerald-600 flex-shrink-0 mt-0.5" />
                       <span>{pro}</span>
                     </li>
                   ))}
@@ -723,10 +738,13 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                   {/* Save Heart icon button */}
                   <button
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); togglePropertySave(prop.id); }}
-                    className="absolute top-2.5 right-2.5 md:top-3 md:right-3 w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm border-none shadow-md cursor-pointer"
+                    className="absolute top-2.5 right-2.5 md:top-3 md:right-3 w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center border-none shadow-md cursor-pointer transition-colors"
                     style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)" }}
                   >
-                    {isSaved ? "💚" : "🤍"}
+                    <Heart
+                      size={15}
+                      className={isSaved ? "fill-[#E11D48] text-[#E11D48]" : "text-white"}
+                    />
                   </button>
 
                   {/* Bottom Text Info */}

@@ -22,7 +22,16 @@ import {
   Clock,
   Coins,
   Building,
-  Activity
+  Activity,
+  BarChart3,
+  Coffee,
+  Moon,
+  Footprints,
+  PawPrint,
+  Globe,
+  Train,
+  Calendar,
+  Check
 } from "lucide-react";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
@@ -1254,8 +1263,8 @@ export default function MatchExplorer({ properties }: Props) {
                   <h1 className="text-[30px] font-bold text-[#FFFFFF] leading-none mb-1 font-outfit">
                     {selectedNeighborhood.name}
                   </h1>
-                  <p className="text-[11.5px] text-white/80 font-medium">
-                    🚇 Nearby Station: <span className="font-bold text-white">{selectedNeighborhood.nearestTransit}</span>
+                  <p className="text-[11.5px] text-white/80 font-medium flex items-center gap-1.5">
+                    <Train size={12} className="text-[#E2C97E]" /> Nearby Station: <span className="font-bold text-white">{selectedNeighborhood.nearestTransit}</span>
                   </p>
                 </div>
               </div>
@@ -1280,22 +1289,24 @@ export default function MatchExplorer({ properties }: Props) {
 
             {/* Lifestyle Scores */}
             <div className="bg-[#FFFFFF] p-5 rounded-3xl border border-[#E5E0D8] mb-6">
-              <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4 pb-2 border-b border-gray-100">
-                📊 Neighborhood Lifestyle Scores
+              <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                <BarChart3 size={15} className="text-[#C9A84C]" /> Neighborhood Lifestyle Scores
               </h3>
               <div className="grid grid-cols-2 gap-x-4 gap-y-3">
                 {[
-                  { label: "☕ Cafe Culture", val: selectedNeighborhood.scores.cafeCulture },
-                  { label: "💻 Remote Work", val: selectedNeighborhood.scores.remoteWork },
-                  { label: "🌃 Nightlife", val: selectedNeighborhood.scores.nightlife },
-                  { label: "🚶 Walkability", val: selectedNeighborhood.scores.walkability },
-                  { label: "🐾 Pet Friendly", val: selectedNeighborhood.scores.petFriendly },
-                  { label: "🏆 Luxury Living", val: selectedNeighborhood.scores.luxury },
-                  { label: "🌍 Expat Community", val: selectedNeighborhood.scores.expatCommunity },
-                  { label: "🎓 Student Suitability", val: selectedNeighborhood.scores.studentSuitability },
+                  { label: "Cafe Culture", val: selectedNeighborhood.scores.cafeCulture, icon: <Coffee size={13} className="text-[#C9A84C]" /> },
+                  { label: "Remote Work", val: selectedNeighborhood.scores.remoteWork, icon: <Laptop size={13} className="text-[#C9A84C]" /> },
+                  { label: "Nightlife", val: selectedNeighborhood.scores.nightlife, icon: <Wine size={13} className="text-[#C9A84C]" /> },
+                  { label: "Walkability", val: selectedNeighborhood.scores.walkability, icon: <Footprints size={13} className="text-[#C9A84C]" /> },
+                  { label: "Pet Friendly", val: selectedNeighborhood.scores.petFriendly, icon: <PawPrint size={13} className="text-[#C9A84C]" /> },
+                  { label: "Luxury Living", val: selectedNeighborhood.scores.luxury, icon: <Crown size={13} className="text-[#C9A84C]" /> },
+                  { label: "Expat Community", val: selectedNeighborhood.scores.expatCommunity, icon: <Globe size={13} className="text-[#C9A84C]" /> },
+                  { label: "Student Suitability", val: selectedNeighborhood.scores.studentSuitability, icon: <GraduationCap size={13} className="text-[#C9A84C]" /> },
                 ].map((s) => (
                   <div key={s.label} className="flex flex-col">
-                    <span className="text-[10.5px] text-[#888] font-bold mb-0.5">{s.label}</span>
+                    <span className="text-[10.5px] text-[#888] font-bold mb-0.5 flex items-center gap-1.5">
+                      {s.icon} {s.label}
+                    </span>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "#F0EAE1" }}>
                         <div className="h-full rounded-full" style={{ width: `${s.val * 10}%`, background: s.val >= 8 ? "#10B981" : "#C9A84C" }}></div>
@@ -1310,8 +1321,8 @@ export default function MatchExplorer({ properties }: Props) {
             {/* Step 13: One-Day Life Preview */}
             {selectedNeighborhood.dayItinerary && selectedNeighborhood.dayItinerary.length > 0 && (
               <div className="bg-[#FFFFFF] p-5 rounded-3xl border border-[#E5E0D8] mb-6">
-                <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4 pb-2 border-b border-gray-100">
-                  📅 A Day in {selectedNeighborhood.name}
+                <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                  <Calendar size={15} className="text-[#C9A84C]" /> A Day in {selectedNeighborhood.name}
                 </h3>
                 <div className="flex flex-col gap-4">
                   {selectedNeighborhood.dayItinerary.map((item, idx) => (
