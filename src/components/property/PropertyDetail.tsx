@@ -926,7 +926,7 @@ function RecentlyViewedStrip({ currentId }: { currentId: number }) {
   if (items.length === 0) return null;
 
   return (
-    <div className="px-5 md:px-10 py-6" style={{ background: "#FFFFFF", borderTop: "1px solid #EDE8DF" }}>
+    <div className="px-5 md:px-10 py-4 md:py-5" style={{ background: "#FFFFFF", borderTop: "1px solid #EDE8DF" }}>
       <h3 className="text-[14px] font-bold mb-4" style={{ color: "#1A1A1A" }}>Recently viewed</h3>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {items.map((p) => <SimilarCard key={p.id} property={p} />)}
@@ -951,101 +951,101 @@ interface NearbyPlace {
 
 const NEARBY_PLACES_DATA: Record<string, NearbyPlace[]> = {
   "Sukhumvit": [
-    { name: "EmQuartier Shopping Mall", category: "Shopping", distance: "3 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: "Benjasiri Park", category: "Parks", distance: "4 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&q=80" },
-    { name: "Phrom Phong BTS Station", category: "BTS/MRT", distance: "3 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "Holey Artisan Bakery", category: "Cafes", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&q=80" },
-    { name: "The Hive Phrom Phong", category: "Co-working", distance: "6 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" },
-    { name: "Roast EmQuartier", category: "Restaurants", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&auto=format&q=80" }
+    { name: "EmQuartier Shopping Mall", category: "Shopping", distance: "3 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&q=80" },
+    { name: "Benjasiri Park", category: "Parks", distance: "4 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1596700447384-e40ab4a4a4a4?w=400&auto=format&q=80" },
+    { name: "Phrom Phong BTS Station", category: "BTS/MRT", distance: "3 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&auto=format&q=80" },
+    { name: "Holey Artisan Bakery", category: "Cafes", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=400&auto=format&q=80" },
+    { name: "The Hive Phrom Phong", category: "Co-working", distance: "6 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?w=400&auto=format&q=80" },
+    { name: "Roast EmQuartier", category: "Restaurants", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&auto=format&q=80" }
   ],
   "Sathorn": [
-    { name: "Chong Nonsi BTS Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "Lumphini Park", category: "Parks", distance: "15 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&q=80" },
-    { name: "Sarnies Suki", category: "Restaurants", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&auto=format&q=80" },
+    { name: "Chong Nonsi BTS Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1580237072617-771c4e21b910?w=400&auto=format&q=80" },
+    { name: "Lumphini Park", category: "Parks", distance: "15 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1588771746270-f47225102510?w=400&auto=format&q=80" },
+    { name: "Sarnies Suki", category: "Restaurants", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&auto=format&q=80" },
     { name: "Rocket Coffeebar S.12", category: "Cafes", distance: "6 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "The Hive Sathorn", category: "Co-working", distance: "4 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" },
-    { name: "Fitness First Sathorn Square", category: "Fitness", distance: "8 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&auto=format&q=80" }
+    { name: "The Hive Sathorn", category: "Co-working", distance: "4 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400&auto=format&q=80" },
+    { name: "Fitness First Sathorn Square", category: "Fitness", distance: "8 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=400&auto=format&q=80" }
   ],
   "Thong Lo": [
-    { name: "Thong Lo BTS Station", category: "BTS/MRT", distance: "4 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "The Commons Thonglor", category: "Shopping", distance: "5 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1579705745811-a32be7cd1083?w=400&auto=format&q=80" },
-    { name: "Patom Organic Living", category: "Cafes", distance: "8 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "Octave Rooftop Lounge", category: "Restaurants", distance: "6 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&auto=format&q=80" },
-    { name: "Absolute You Gym", category: "Fitness", distance: "7 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&auto=format&q=80" },
-    { name: "theCOMMONS Lawn", category: "Parks", distance: "5 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&q=80" }
+    { name: "Thong Lo BTS Station", category: "BTS/MRT", distance: "4 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1629814249584-bd4d53cf0e7d?w=400&auto=format&q=80" },
+    { name: "The Commons Thonglor", category: "Shopping", distance: "5 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1582298538104-ed2d6bb5ab82?w=400&auto=format&q=80" },
+    { name: "Patom Organic Living", category: "Cafes", distance: "8 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&auto=format&q=80" },
+    { name: "Octave Rooftop Lounge", category: "Restaurants", distance: "6 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&auto=format&q=80" },
+    { name: "Absolute You Gym", category: "Fitness", distance: "7 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&auto=format&q=80" },
+    { name: "theCOMMONS Lawn", category: "Parks", distance: "5 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1596700447384-e40ab4a4a4a4?w=400&auto=format&q=80" }
   ],
   "Asok": [
-    { name: "Asok BTS / Sukhumvit MRT Station", category: "BTS/MRT", distance: "1 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "Terminal 21 Asok", category: "Shopping", distance: "2 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: "Benjakitti Park", category: "Parks", distance: "10 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&q=80" },
+    { name: "Asok BTS / Sukhumvit MRT Station", category: "BTS/MRT", distance: "1 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=400&auto=format&q=80" },
+    { name: "Terminal 21 Asok", category: "Shopping", distance: "2 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1569937728357-4971c45f974c?w=400&auto=format&q=80" },
+    { name: "Benjakitti Park", category: "Parks", distance: "10 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1596700447384-e40ab4a4a4a4?w=400&auto=format&q=80" },
     { name: "Artis Coffee", category: "Cafes", distance: "3 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "The Work Loft Asok", category: "Co-working", distance: "4 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" },
-    { name: "El Gaucho Steakhouse", category: "Restaurants", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&auto=format&q=80" }
+    { name: "The Work Loft Asok", category: "Co-working", distance: "4 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?w=400&auto=format&q=80" },
+    { name: "El Gaucho Steakhouse", category: "Restaurants", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&auto=format&q=80" }
   ],
   "Silom": [
-    { name: "Sala Daeng BTS / Si Lom MRT Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "Silom Complex", category: "Shopping", distance: "3 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: "Lumphini Park", category: "Parks", distance: "8 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&q=80" },
-    { name: "Everyday Karmakamet", category: "Cafes", distance: "4 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "Sarnies Roastery", category: "Restaurants", distance: "6 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&auto=format&q=80" },
+    { name: "Sala Daeng BTS / Si Lom MRT Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&auto=format&q=80" },
+    { name: "Silom Complex", category: "Shopping", distance: "3 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&q=80" },
+    { name: "Lumphini Park", category: "Parks", distance: "8 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1588771746270-f47225102510?w=400&auto=format&q=80" },
+    { name: "Everyday Karmakamet", category: "Cafes", distance: "4 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&auto=format&q=80" },
+    { name: "Sarnies Roastery", category: "Restaurants", distance: "6 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&auto=format&q=80" },
     { name: "Patpong Night Market", category: "Markets", distance: "5 min walk", rating: 4.1, image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&q=80" }
   ],
   "On Nut": [
-    { name: "On Nut BTS Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "Lotus's On Nut", category: "Shopping", distance: "3 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: "Century Movie Plaza On Nut", category: "Shopping", distance: "2 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1579705745811-a32be7cd1083?w=400&auto=format&q=80" },
-    { name: "The Wood Land Cafe", category: "Cafes", distance: "6 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "Habito Hub", category: "Co-working", distance: "10 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" },
-    { name: "On Nut Food Court", category: "Markets", distance: "4 min walk", rating: 4.2, image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&q=80" }
+    { name: "On Nut BTS Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1580237072617-771c4e21b910?w=400&auto=format&q=80" },
+    { name: "Lotus's On Nut", category: "Shopping", distance: "3 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400&auto=format&q=80" },
+    { name: "Century Movie Plaza On Nut", category: "Shopping", distance: "2 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1569937728357-4971c45f974c?w=400&auto=format&q=80" },
+    { name: "The Wood Land Cafe", category: "Cafes", distance: "6 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&q=80" },
+    { name: "Habito Hub", category: "Co-working", distance: "10 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400&auto=format&q=80" },
+    { name: "On Nut Food Court", category: "Markets", distance: "4 min walk", rating: 4.2, image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&auto=format&q=80" }
   ],
   "Ekkamai": [
-    { name: "Ekkamai BTS Station", category: "BTS/MRT", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "Gateway Ekkamai", category: "Shopping", distance: "3 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: "Featherstone Cafe", category: "Cafes", distance: "12 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "Ekkamai Beer House", category: "Restaurants", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&auto=format&q=80" },
-    { name: "The Hive Ekkamai", category: "Co-working", distance: "6 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" },
-    { name: "Ekkamai Pocket Garden", category: "Parks", distance: "8 min walk", rating: 4.2, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&q=80" }
+    { name: "Ekkamai BTS Station", category: "BTS/MRT", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1629814249584-bd4d53cf0e7d?w=400&auto=format&q=80" },
+    { name: "Gateway Ekkamai", category: "Shopping", distance: "3 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&q=80" },
+    { name: "Featherstone Cafe", category: "Cafes", distance: "12 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&auto=format&q=80" },
+    { name: "Ekkamai Beer House", category: "Restaurants", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&auto=format&q=80" },
+    { name: "The Hive Ekkamai", category: "Co-working", distance: "6 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400&auto=format&q=80" },
+    { name: "Ekkamai Pocket Garden", category: "Parks", distance: "8 min walk", rating: 4.2, image: "https://images.unsplash.com/photo-1588771746270-f47225102510?w=400&auto=format&q=80" }
   ],
   "Ari": [
-    { name: "Ari BTS Station", category: "BTS/MRT", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "La Villa Ari", category: "Shopping", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: "Villa Market Ari", category: "Shopping", distance: "6 min walk", rating: 4.2, image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&q=80" },
-    { name: "Common Room x Babe", category: "Cafes", distance: "5 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&q=80" },
-    { name: "The Hive Ari", category: "Co-working", distance: "7 min walk", rating: 4.8, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" },
-    { name: "Landhaus Bakery", category: "Cafes", distance: "8 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "Gump's Ari", category: "Markets", distance: "4 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1579705745811-a32be7cd1083?w=400&auto=format&q=80" }
+    { name: "Ari BTS Station", category: "BTS/MRT", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=400&auto=format&q=80" },
+    { name: "La Villa Ari", category: "Shopping", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1582298538104-ed2d6bb5ab82?w=400&auto=format&q=80" },
+    { name: "Villa Market Ari", category: "Shopping", distance: "6 min walk", rating: 4.2, image: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400&auto=format&q=80" },
+    { name: "Common Room x Babe", category: "Cafes", distance: "5 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
+    { name: "The Hive Ari", category: "Co-working", distance: "7 min walk", rating: 4.8, image: "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?w=400&auto=format&q=80" },
+    { name: "Landhaus Bakery", category: "Cafes", distance: "8 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=400&auto=format&q=80" },
+    { name: "Gump's Ari", category: "Markets", distance: "4 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&q=80" }
   ],
   "Rama 9": [
-    { name: "Phra Ram 9 MRT Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "Central Plaza Grand Rama 9", category: "Shopping", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: "Fortune Town IT Mall", category: "Shopping", distance: "4 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1579705745811-a32be7cd1083?w=400&auto=format&q=80" },
-    { name: "Bellinee's G Tower", category: "Cafes", distance: "2 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "Regus G Tower", category: "Co-working", distance: "3 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" },
-    { name: "Jodd Fairs Rama 9", category: "Markets", distance: "6 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&q=80" }
+    { name: "Phra Ram 9 MRT Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1629814249584-bd4d53cf0e7d?w=400&auto=format&q=80" },
+    { name: "Central Plaza Grand Rama 9", category: "Shopping", distance: "3 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&q=80" },
+    { name: "Fortune Town IT Mall", category: "Shopping", distance: "4 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1569937728357-4971c45f974c?w=400&auto=format&q=80" },
+    { name: "Bellinee's G Tower", category: "Cafes", distance: "2 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&q=80" },
+    { name: "Regus G Tower", category: "Co-working", distance: "3 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400&auto=format&q=80" },
+    { name: "Jodd Fairs Rama 9", category: "Markets", distance: "6 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&auto=format&q=80" }
   ],
   "Bang Na": [
-    { name: "Bang Na BTS Station", category: "BTS/MRT", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
+    { name: "Bang Na BTS Station", category: "BTS/MRT", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1580237072617-771c4e21b910?w=400&auto=format&q=80" },
     { name: "Mega Bangna & IKEA", category: "Shopping", distance: "15 min drive", rating: 4.7, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: "Central Plaza Bangna", category: "Shopping", distance: "8 min drive", rating: 4.4, image: "https://images.unsplash.com/photo-1579705745811-a32be7cd1083?w=400&auto=format&q=80" },
-    { name: "La Mesa Coffee Co.", category: "Cafes", distance: "6 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "Rama IX Park", category: "Parks", distance: "12 min drive", rating: 4.6, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&q=80" },
+    { name: "Central Plaza Bangna", category: "Shopping", distance: "8 min drive", rating: 4.4, image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&q=80" },
+    { name: "La Mesa Coffee Co.", category: "Cafes", distance: "6 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&auto=format&q=80" },
+    { name: "Rama IX Park", category: "Parks", distance: "12 min drive", rating: 4.6, image: "https://images.unsplash.com/photo-1596700447384-e40ab4a4a4a4?w=400&auto=format&q=80" },
     { name: "Bang Na Market", category: "Markets", distance: "8 min walk", rating: 4.1, image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&q=80" }
   ],
   "Huai Khwang": [
-    { name: "Huai Khwang MRT Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "The Street Ratchada", category: "Shopping", distance: "10 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: "Esplanade Ratchada", category: "Shopping", distance: "12 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1579705745811-a32be7cd1083?w=400&auto=format&q=80" },
-    { name: "Huai Khwang Night Market", category: "Markets", distance: "5 min walk", rating: 4.2, image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&q=80" },
+    { name: "Huai Khwang MRT Station", category: "BTS/MRT", distance: "2 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=400&auto=format&q=80" },
+    { name: "The Street Ratchada", category: "Shopping", distance: "10 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1569937728357-4971c45f974c?w=400&auto=format&q=80" },
+    { name: "Esplanade Ratchada", category: "Shopping", distance: "12 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&q=80" },
+    { name: "Huai Khwang Night Market", category: "Markets", distance: "5 min walk", rating: 4.2, image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&auto=format&q=80" },
     { name: "Chuan Chuan Cafe", category: "Cafes", distance: "6 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "The Street Cyberport", category: "Co-working", distance: "10 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" }
+    { name: "The Street Cyberport", category: "Co-working", distance: "10 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?w=400&auto=format&q=80" }
   ],
   "Phaya Thai": [
-    { name: "Phaya Thai BTS & ARL Station", category: "BTS/MRT", distance: "1 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: "Century Movie Plaza", category: "Shopping", distance: "6 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1579705745811-a32be7cd1083?w=400&auto=format&q=80" },
-    { name: "Factory Coffee", category: "Cafes", distance: "2 min walk", rating: 4.8, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
-    { name: "Santiphap Park", category: "Parks", distance: "8 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&q=80" },
+    { name: "Phaya Thai BTS & ARL Station", category: "BTS/MRT", distance: "1 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&auto=format&q=80" },
+    { name: "Century Movie Plaza", category: "Shopping", distance: "6 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
+    { name: "Factory Coffee", category: "Cafes", distance: "2 min walk", rating: 4.8, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&q=80" },
+    { name: "Santiphap Park", category: "Parks", distance: "8 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1588771746270-f47225102510?w=400&auto=format&q=80" },
     { name: "Spaces Phayathai", category: "Co-working", distance: "2 min walk", rating: 4.7, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" },
-    { name: "King Power Rangnam", category: "Shopping", distance: "7 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" }
+    { name: "King Power Rangnam", category: "Shopping", distance: "7 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&q=80" }
   ]
 };
 
@@ -1062,14 +1062,14 @@ function getNearbyPlaces(area: string): NearbyPlace[] {
     return NEARBY_PLACES_DATA[area];
   }
   return [
-    { name: `${area} Transit Station`, category: "BTS/MRT", distance: "5 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&auto=format&q=80" },
-    { name: `${area} Landmark Mall`, category: "Shopping", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80" },
-    { name: `${area} Local Diner`, category: "Restaurants", distance: "4 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&auto=format&q=80" },
+    { name: `${area} Transit Station`, category: "BTS/MRT", distance: "5 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&auto=format&q=80" },
+    { name: `${area} Landmark Mall`, category: "Shopping", distance: "5 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1569937728357-4971c45f974c?w=400&auto=format&q=80" },
+    { name: `${area} Local Diner`, category: "Restaurants", distance: "4 min walk", rating: 4.3, image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&auto=format&q=80" },
     { name: `${area} Market`, category: "Markets", distance: "7 min walk", rating: 4.2, image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&q=80" },
-    { name: `${area} Specialty Coffee`, category: "Cafes", distance: "3 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&q=80" },
-    { name: `${area} Fitness Club`, category: "Fitness", distance: "10 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&auto=format&q=80" },
-    { name: `${area} Community Park`, category: "Parks", distance: "12 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&q=80" },
-    { name: `${area} Coworking Space`, category: "Co-working", distance: "8 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&q=80" }
+    { name: `${area} Specialty Coffee`, category: "Cafes", distance: "3 min walk", rating: 4.6, image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&auto=format&q=80" },
+    { name: `${area} Fitness Club`, category: "Fitness", distance: "10 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=400&auto=format&q=80" },
+    { name: `${area} Community Park`, category: "Parks", distance: "12 min walk", rating: 4.4, image: "https://images.unsplash.com/photo-1596700447384-e40ab4a4a4a4?w=400&auto=format&q=80" },
+    { name: `${area} Coworking Space`, category: "Co-working", distance: "8 min walk", rating: 4.5, image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400&auto=format&q=80" }
   ];
 }
 
@@ -1142,7 +1142,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
       </div>
 
       {/* ── Main layout ── */}
-      <div className="px-5 md:px-10 py-6 md:py-8">
+      <div className="px-5 md:px-10 pt-6 pb-2 md:pt-8 md:pb-4">
         <div className="md:grid md:grid-cols-[1fr_400px] md:gap-4 lg:gap-5">
 
           {/* ═══════════ LEFT COLUMN ═══════════ */}
@@ -1413,7 +1413,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
 
             {/* Similar properties — building → nearby */}
             {(sameBuilding.length + nearby.length) > 0 && (
-              <div className="pb-10" style={{ borderTop: "1px solid #EDE8DF", paddingTop: 32 }}>
+              <div className="pb-0" style={{ borderTop: "1px solid #EDE8DF", paddingTop: 32 }}>
 
                 {sameBuilding.length > 0 && (
                   <div className="mb-8">
@@ -1766,11 +1766,11 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
         </button>
       </div>
 
-      {/* Padding for mobile sticky CTA */}
-      <div className="md:hidden" style={{ height: 80 }} />
-
       {/* Recently viewed strip */}
       <RecentlyViewedStrip currentId={property.id} />
+
+      {/* Padding for mobile sticky CTA */}
+      <div className="md:hidden" style={{ height: 80 }} />
 
       {/* Enquiry modal */}
       {enquiryOpen && <EnquiryModal property={property} onClose={() => setEnquiryOpen(false)} />}

@@ -387,51 +387,51 @@ export default function SmartSearchClient({ properties }: Props) {
       {/* ── TOP SECTION: NLP Search Input ── */}
       <div className="flex flex-col gap-3 w-full bg-[#1C3A2F] p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl text-[#F7F3EC]">
         <span className="text-[10px] font-bold uppercase tracking-[3px] text-[#C9A84C]">
-          Premium AI Concierge Search
+          <span className="hidden sm:inline">Premium AI Concierge Search</span>
+          <span className="inline sm:hidden">Premium Smart Search</span>
         </span>
         <h2 className="text-2xl lg:text-3xl font-bold font-outfit" style={{ letterSpacing: "-0.5px" }}>
           Describe your perfect Bangkok home
         </h2>
 
-        <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-2 w-full max-w-[700px]">
-          <div className="flex-1 bg-white bg-opacity-10 backdrop-blur-md rounded-2xl border border-white border-opacity-15 flex items-center px-4 py-3">
-            <Search size={18} className="text-[#C9A84C] mr-3" />
+        <form onSubmit={handleSearchSubmit} className="flex flex-row items-center gap-2 mt-2 w-full max-w-[700px]">
+          <div className="flex-1 bg-white bg-opacity-10 backdrop-blur-md rounded-2xl border border-white border-opacity-15 flex items-center px-3 py-2.5 sm:px-4 sm:py-3">
+            <Search size={16} className="text-[#C9A84C] mr-2 sm:mr-3 flex-shrink-0" />
             <input
               id="smart-search-input"
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="I'm looking for a pet-friendly condo in On Nut near BTS under 35,000 baht."
-              className="bg-transparent border-none outline-none text-[13.5px] w-full text-white placeholder-gray-400 font-sans"
+              className="bg-transparent border-none outline-none text-[12px] sm:text-[13.5px] w-full text-white placeholder-gray-400 font-sans"
             />
           </div>
           <button
             type="submit"
-            className="bg-[#C9A84C] hover:bg-[#D4B665] text-[#1C3A2F] font-bold px-6 py-3.5 rounded-2xl border-none cursor-pointer transition-colors text-xs uppercase tracking-wider whitespace-nowrap shadow-md active:scale-95"
+            className="bg-[#C9A84C] hover:bg-[#D4B665] text-[#1C3A2F] font-bold px-3.5 py-2.5 sm:px-6 sm:py-3.5 rounded-2xl border-none cursor-pointer transition-colors text-[10px] sm:text-xs uppercase tracking-wider whitespace-nowrap shadow-md active:scale-95"
           >
             Find Matches
           </button>
         </form>
 
         {/* Suggested Searches chips */}
-        <div className="flex flex-row sm:flex-wrap gap-2 items-center mt-3 overflow-x-auto sm:overflow-x-visible no-scrollbar pb-1 sm:pb-0 w-full">
-          <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">Try searching:</span>
+        <div className="flex flex-row sm:flex-wrap gap-1.5 sm:gap-2 items-center mt-3 overflow-x-auto sm:overflow-x-visible no-scrollbar pb-1 sm:pb-0 w-full">
+          <span className="text-[10px] sm:text-[11px] text-gray-400 font-medium whitespace-nowrap">Try searching:</span>
           {[
-            "Pet-friendly condo near BTS under 35k",
-            "2-bedroom condo in Thonglor with pool",
-            "Family home near schools in Bang Na",
-            "Luxury condo in Phrom Phong",
-            "Studio in Ari under 20k",
-            "Remote-work friendly condo with cafes nearby",
+            { label: "Pet-friendly <35k", query: "Pet-friendly condo near BTS under 35k" },
+            { label: "2-bed in Thonglor", query: "2-bedroom condo in Thonglor with pool" },
+            { label: "Family in Bang Na", query: "Family home near schools in Bang Na" },
+            { label: "Ari under 20k", query: "Studio in Ari under 20k" },
+            { label: "Remote work", query: "Remote-work friendly condo with cafes nearby" }
           ].map((chip) => (
             <button
-              key={chip}
-              onClick={() => handleChipClick(chip)}
+              key={chip.label}
+              onClick={() => handleChipClick(chip.query)}
               type="button"
-              className="text-[11px] px-3 py-1.5 rounded-full border border-white border-opacity-10 text-[#E2C97E] hover:bg-white hover:bg-opacity-5 cursor-pointer transition-colors whitespace-nowrap flex-shrink-0"
+              className="text-[10px] sm:text-[11px] px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full border border-white border-opacity-10 text-[#E2C97E] hover:bg-white hover:bg-opacity-5 cursor-pointer transition-colors whitespace-nowrap flex-shrink-0"
               style={{ background: "rgba(255, 255, 255, 0.05)" }}
             >
-              {chip}
+              {chip.label}
             </button>
           ))}
         </div>
@@ -442,71 +442,61 @@ export default function SmartSearchClient({ properties }: Props) {
         {/* ── LEFT COLUMN (Sidebar) ── */}
         <div className="lg:col-span-3 order-2 lg:order-1 lg:sticky lg:bottom-6 lg:self-end w-full bg-white rounded-2xl border border-[#E5E0D8] shadow-sm overflow-hidden flex flex-col">
           {/* Section 1: Your Search Understood */}
-          <div className="p-5 flex flex-col gap-4">
+          <div className="hidden lg:flex p-5 flex-col gap-4">
             {/* Desktop View Title */}
-            <div className="hidden lg:flex justify-between items-center pb-2 border-b border-gray-100">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100">
               <span className="font-bold text-[14px] text-[#1C3A2F] uppercase tracking-wider">
                 Your Search Understood
               </span>
             </div>
 
-            {/* Mobile Accordion Title Toggle */}
-            <button
-              onClick={() => setIsAccordionExpanded(!isAccordionExpanded)}
-              className="lg:hidden flex justify-between items-center w-full bg-transparent border-none p-0 cursor-pointer text-left"
-            >
-              <span className="font-bold text-[14px] text-[#1C3A2F] uppercase tracking-wider">
-                Your Search Understood
-              </span>
-              <span className="text-gray-500 font-bold">{isAccordionExpanded ? "−" : "+"}</span>
-            </button>
-
-            {isAccordionExpanded && (
-              <div className="flex flex-col gap-3 mt-1 animate-fadeIn">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400 font-semibold">Area:</span>
-                  <span className="font-bold text-[#1C3A2F]">{parsed.area || "Bangkok (Any)"}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400 font-semibold">Pet Friendly:</span>
-                  <span className="font-bold text-[#1C3A2F]">
-                    {parsed.petFriendly === "Yes" ? "✓ Yes" : "Not Specified"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400 font-semibold">Near BTS:</span>
-                  <span className="font-bold text-[#1C3A2F]">
-                    {parsed.nearBts === "Walking Distance" ? "✓ Walking Distance" : "Not Specified"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400 font-semibold">Property Type:</span>
-                  <span className="font-bold text-[#1C3A2F]">{parsed.propertyType}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400 font-semibold">Budget:</span>
-                  <span className="font-bold text-[#1C3A2F]">
-                    {parsed.budget ? `Under ฿${parsed.budget.toLocaleString()}` : "Not Specified"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400 font-semibold">Lifestyle:</span>
-                  <span className="font-bold text-[#1C3A2F]">{parsed.lifestyle}</span>
-                </div>
-
-                <button
-                  onClick={editSearchButtonHandler}
-                  className="mt-3 w-full py-2.5 rounded-xl border border-[#C9A84C] text-[#C9A84C] font-bold text-xs uppercase tracking-wider bg-transparent hover:bg-amber-50 cursor-pointer transition-colors active:scale-95"
-                >
-                  Edit Search
-                </button>
+            <div className="flex flex-col gap-3 mt-1 animate-fadeIn">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-semibold">Area:</span>
+                <span className="font-bold text-[#1C3A2F]">{parsed.area || "Bangkok (Any)"}</span>
               </div>
-            )}
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-semibold">Pet Friendly:</span>
+                <span className="font-bold text-[#1C3A2F]">
+                  {parsed.petFriendly === "Yes" ? "✓ Yes" : "Not Specified"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-semibold">Near BTS:</span>
+                <span className="font-bold text-[#1C3A2F]">
+                  {parsed.nearBts === "Walking Distance" ? "✓ Walking Distance" : "Not Specified"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-semibold">Property Type:</span>
+                <span className="font-bold text-[#1C3A2F]">{parsed.propertyType}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-semibold">Budget:</span>
+                <span className="font-bold text-[#1C3A2F]">
+                  {parsed.budget ? `Under ฿${parsed.budget.toLocaleString()}` : "Not Specified"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-semibold">Lifestyle:</span>
+                <span className="font-bold text-[#1C3A2F]">{parsed.lifestyle}</span>
+              </div>
+
+              <button
+                onClick={editSearchButtonHandler}
+                className="mt-3 w-full py-2.5 rounded-xl border border-[#C9A84C] text-[#C9A84C] font-bold text-xs uppercase tracking-wider bg-transparent hover:bg-amber-50 cursor-pointer transition-colors active:scale-95"
+              >
+                Edit Search
+              </button>
+            </div>
           </div>
+
+          {/* Divider between Section 1 and Section 2: Only visible on desktop */}
+          <div className="hidden lg:block border-t border-[#E5E0D8]" />
 
           {/* Section 2: Neighborhood Insight */}
           {detectedNeighborhood ? (
-            <div className="border-t border-[#E5E0D8] p-5 flex flex-col gap-4 animate-fadeIn">
+            <div className="p-5 flex flex-col gap-4 animate-fadeIn">
               <div className="pb-2 border-b border-gray-100">
                 <span className="font-bold text-[14px] text-[#1C3A2F] uppercase tracking-wider block">
                   About {detectedNeighborhood.name}
@@ -542,7 +532,7 @@ export default function SmartSearchClient({ properties }: Props) {
               </div>
             </div>
           ) : (
-            <div className="border-t border-[#E5E0D8] p-5 flex flex-col gap-3">
+            <div className="p-5 flex flex-col gap-3">
               <span className="font-bold text-[14px] text-[#1C3A2F] uppercase tracking-wider pb-2 border-b border-gray-100">
                 Neighborhood Insight
               </span>
@@ -552,8 +542,11 @@ export default function SmartSearchClient({ properties }: Props) {
             </div>
           )}
 
+          {/* Divider between Section 2 and Section 3 */}
+          <div className="border-t border-[#E5E0D8]" />
+
           {/* Section 3: Explore on Map */}
-          <div className="border-t border-[#E5E0D8] p-5 flex flex-col gap-3 animate-fadeIn">
+          <div className="p-5 flex flex-col gap-3 animate-fadeIn">
             <div className="flex justify-between items-center pb-1">
               <span className="font-bold text-[14px] text-[#1C3A2F] uppercase tracking-wider">
                 Explore on Map
@@ -584,6 +577,55 @@ export default function SmartSearchClient({ properties }: Props) {
 
         {/* ── CENTER COLUMN (Main Area - Property Grid) ── */}
         <div className="lg:col-span-9 order-1 lg:order-2 flex flex-col gap-6">
+          {/* Mobile-only: Your Search Understood */}
+          <div className="lg:hidden bg-white p-5 rounded-2xl border border-[#E5E0D8] shadow-sm flex flex-col gap-3">
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100">
+              <span className="font-bold text-[13px] text-[#1C3A2F] uppercase tracking-wider">
+                Your Search Understood
+              </span>
+              <button
+                onClick={editSearchButtonHandler}
+                className="text-[11px] font-bold text-[#C9A84C] bg-transparent border-none cursor-pointer uppercase tracking-wider"
+              >
+                Edit
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 font-medium">Area:</span>
+                <span className="font-bold text-[#1C3A2F]">{parsed.area || "Bangkok (Any)"}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 font-medium">Property Type:</span>
+                <span className="font-bold text-[#1C3A2F]">{parsed.propertyType}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 font-medium">Pet Friendly:</span>
+                <span className="font-bold text-[#1C3A2F]">
+                  {parsed.petFriendly === "Yes" ? "✓ Yes" : "Not Specified"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 font-medium">Budget:</span>
+                <span className="font-bold text-[#1C3A2F]">
+                  {parsed.budget ? `Under ฿${parsed.budget.toLocaleString()}` : "Not Specified"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 font-medium">Near BTS:</span>
+                <span className="font-bold text-[#1C3A2F]">
+                  {parsed.nearBts === "Walking Distance" ? "✓ Yes" : "Not Specified"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 font-medium">Lifestyle:</span>
+                <span className="font-bold text-[#1C3A2F] truncate max-w-[100px]" title={parsed.lifestyle}>
+                  {parsed.lifestyle}
+                </span>
+              </div>
+            </div>
+          </div>
           {/* Match Results Header */}
           <div className="bg-white p-4 rounded-2xl border border-[#E5E0D8] shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
