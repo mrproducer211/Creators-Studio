@@ -1083,6 +1083,51 @@ interface PropertyDetailProps {
 export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<PropertyDetailProps, "sameArea">) {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [enquiryOpen, setEnquiryOpen] = useState(false);
+  const [commutes, setCommutes] = useState<any[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("nhp_commute_hubs");
+      if (stored && property.latitude && property.longitude) {
+        const hubs = JSON.parse(stored);
+        const pLat = Number(property.latitude);
+        const pLng = Number(property.longitude);
+        if (!isNaN(pLat) && !isNaN(pLng)) {
+          const list = hubs.map((h: any) => {
+            const hLat = Number(h.latitude);
+            const hLng = Number(h.longitude);
+            const R = 6371;
+            const dLat = ((hLat - pLat) * Math.PI) / 180;
+            const dLon = ((hLng - pLng) * Math.PI) / 180;
+            const a =
+              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos((pLat * Math.PI) / 180) *
+                Math.cos((hLat * Math.PI) / 180) *
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const dist = R * c;
+
+            let mins = 15;
+            if (h.transitMode === "walking") {
+              mins = Math.round(dist * 12);
+            } else if (h.transitMode === "driving") {
+              mins = Math.round(dist * 3 + 5);
+            } else {
+              mins = Math.round(dist * 2.5 + 8);
+            }
+            return {
+              name: h.name,
+              minutes: Math.max(1, mins),
+              distance: dist,
+              transitMode: h.transitMode,
+            };
+          });
+          setCommutes(list);
+        }
+      }
+    } catch {}
+  }, [property]);
 
   const nearbyPlaces = useMemo(() => getNearbyPlaces(property.area), [property.area]);
   const filteredPlaces = useMemo(() => {
@@ -1186,6 +1231,23 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                   {property.district ? `${property.district}, ` : ""}{property.area}, Bangkok
                 </span>
               </a>
+
+              {/* Commute Times */}
+              {commutes.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {commutes.map((c: any) => (
+                    <span
+                      key={c.name}
+                      className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg"
+                      style={{ background: "#FAF8F3", color: "#1C3A2F", border: "1px solid #EDE8DF" }}
+                      title={`${c.distance.toFixed(1)} km away`}
+                    >
+                      {c.transitMode === "walking" ? "🚶" : c.transitMode === "driving" ? "🚗" : "🚆"}{" "}
+                      {c.minutes}m to {c.name}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Gallery */}
@@ -1477,7 +1539,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                   href={`https://www.google.com/maps/search/${encodeURIComponent(property.name + " " + (property.district ?? "") + " " + property.area + " Bangkok")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[12px] mb-4 no-underline transition-opacity hover:opacity-70"
+                  className="inline-flex items-center gap-1.5 text-[12px] mb-2 no-underline transition-opacity hover:opacity-70"
                   style={{ color: "#999" }}
                 >
                   <span style={{ color: "#1C3A2F" }}><Icon.pin /></span>
@@ -1485,6 +1547,23 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                     {property.district ? `${property.district}, ` : ""}{property.area}, Bangkok
                   </span>
                 </a>
+
+                {/* Commute Times */}
+                {commutes.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-4 mt-1">
+                    {commutes.map((c: any) => (
+                      <span
+                        key={c.name}
+                        className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg"
+                        style={{ background: "#FAF8F3", color: "#1C3A2F", border: "1px solid #EDE8DF" }}
+                        title={`${c.distance.toFixed(1)} km away`}
+                      >
+                        {c.transitMode === "walking" ? "🚶" : c.transitMode === "driving" ? "🚗" : "🚆"}{" "}
+                        {c.minutes}m to {c.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 {/* Gold price (currency-aware) */}
                 <div className="text-[26px] font-bold mb-4" style={{ color: "#C9A84C", letterSpacing: "-0.8px", lineHeight: 1 }}>

@@ -139,6 +139,51 @@ export const auditLogs = pgTable("audit_logs", {
   createdAt:    timestamp("created_at").notNull().defaultNow(),
 });
 
+export const savedSearches = pgTable("saved_searches", {
+  id:           serial("id").primaryKey(),
+  userEmail:    varchar("user_email", { length: 255 }).notNull(),
+  query:        text("query").notNull(),
+  filters:      text("filters"), // JSON string representating filter parameters
+  alertEnabled: boolean("alert_enabled").notNull().default(true),
+  createdAt:    timestamp("created_at").notNull().defaultNow(),
+});
+
+export const commuteHubs = pgTable("commute_hubs", {
+  id:          serial("id").primaryKey(),
+  userEmail:   varchar("user_email", { length: 255 }).notNull(),
+  name:        varchar("name", { length: 100 }).notNull(),
+  address:     text("address"),
+  latitude:    numeric("latitude", { precision: 10, scale: 7 }).notNull(),
+  longitude:   numeric("longitude", { precision: 10, scale: 7 }).notNull(),
+  transitMode: varchar("transit_mode", { length: 50 }).notNull().default("transit"),
+  createdAt:   timestamp("created_at").notNull().defaultNow(),
+});
+
+export const sharedShortlists = pgTable("shared_shortlists", {
+  id:                serial("id").primaryKey(),
+  ownerEmail:        varchar("owner_email", { length: 255 }).notNull(),
+  collaboratorEmail: varchar("collaborator_email", { length: 255 }).notNull(),
+  name:              varchar("name", { length: 200 }).notNull(),
+  createdAt:         timestamp("created_at").notNull().defaultNow(),
+});
+
+export const shortlistProperties = pgTable("shortlist_properties", {
+  id:          serial("id").primaryKey(),
+  shortlistId: integer("shortlist_id").references(() => sharedShortlists.id, { onDelete: "cascade" }).notNull(),
+  propertyId:  integer("property_id").references(() => properties.id, { onDelete: "cascade" }).notNull(),
+  createdAt:   timestamp("created_at").notNull().defaultNow(),
+});
+
+export const shortlistComments = pgTable("shortlist_comments", {
+  id:          serial("id").primaryKey(),
+  shortlistId: integer("shortlist_id").references(() => sharedShortlists.id, { onDelete: "cascade" }).notNull(),
+  propertyId:  integer("property_id").references(() => properties.id, { onDelete: "cascade" }).notNull(),
+  userEmail:   varchar("user_email", { length: 255 }).notNull(),
+  userName:    varchar("user_name", { length: 200 }).notNull(),
+  comment:     text("comment").notNull(),
+  createdAt:   timestamp("created_at").notNull().defaultNow(),
+});
+
 export type Property  = typeof properties.$inferSelect;
 export type NewProperty = typeof properties.$inferInsert;
 export type Enquiry   = typeof enquiries.$inferSelect;
@@ -151,3 +196,14 @@ export type PageView  = typeof pageViews.$inferSelect;
 export type NewPageView = typeof pageViews.$inferInsert;
 export type AuditLog  = typeof auditLogs.$inferSelect;
 export type NewAuditLog = typeof auditLogs.$inferInsert;
+export type SavedSearch = typeof savedSearches.$inferSelect;
+export type NewSavedSearch = typeof savedSearches.$inferInsert;
+export type CommuteHub = typeof commuteHubs.$inferSelect;
+export type NewCommuteHub = typeof commuteHubs.$inferInsert;
+export type SharedShortlist = typeof sharedShortlists.$inferSelect;
+export type NewSharedShortlist = typeof sharedShortlists.$inferInsert;
+export type ShortlistProperty = typeof shortlistProperties.$inferSelect;
+export type NewShortlistProperty = typeof shortlistProperties.$inferInsert;
+export type ShortlistComment = typeof shortlistComments.$inferSelect;
+export type NewShortlistComment = typeof shortlistComments.$inferInsert;
+

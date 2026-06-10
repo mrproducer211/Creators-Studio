@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
 import { useSaved } from "@/contexts/SavedContext";
@@ -45,6 +45,51 @@ export default function SmartPropertyCard({
   const priceLabel = property.listingType === "sale" ? "" : (property.priceLabel ?? "");
   const fallbackGradient = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length];
   const href = `/property/${property.slug}`;
+  const [commutes, setCommutes] = useState<any[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("nhp_commute_hubs");
+      if (stored && property.latitude && property.longitude) {
+        const hubs = JSON.parse(stored);
+        const pLat = Number(property.latitude);
+        const pLng = Number(property.longitude);
+        if (!isNaN(pLat) && !isNaN(pLng)) {
+          const list = hubs.map((h: any) => {
+            const hLat = Number(h.latitude);
+            const hLng = Number(h.longitude);
+            const R = 6371;
+            const dLat = ((hLat - pLat) * Math.PI) / 180;
+            const dLon = ((hLng - pLng) * Math.PI) / 180;
+            const a =
+              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos((pLat * Math.PI) / 180) *
+                Math.cos((hLat * Math.PI) / 180) *
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const dist = R * c;
+
+            let mins = 15;
+            if (h.transitMode === "walking") {
+              mins = Math.round(dist * 12);
+            } else if (h.transitMode === "driving") {
+              mins = Math.round(dist * 3 + 5);
+            } else {
+              mins = Math.round(dist * 2.5 + 8);
+            }
+            return {
+              name: h.name,
+              minutes: Math.max(1, mins),
+              distance: dist,
+              transitMode: h.transitMode,
+            };
+          });
+          setCommutes(list);
+        }
+      }
+    } catch {}
+  }, [property]);
 
   // Get BTS / MRT walk info
   const transitText = (() => {
@@ -172,6 +217,23 @@ export default function SmartPropertyCard({
         <div className="text-[10px] text-gray-400 mb-1.5 flex items-center gap-1">
           📍 {property.district ? `${property.district}, ` : ""}{property.area}
         </div>
+
+        {/* Commute Times */}
+        {commutes.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {commutes.map((c: any) => (
+              <span
+                key={c.name}
+                className="text-[9px] font-bold px-1.5 py-0.5 rounded-lg flex items-center gap-0.5"
+                style={{ background: "#F4EFE6", color: "#1C3A2F", border: "1px solid #E5DCCB" }}
+                title={`${c.distance.toFixed(1)} km away`}
+              >
+                {c.transitMode === "walking" ? "🚶" : c.transitMode === "driving" ? "🚗" : "🚆"}{" "}
+                {c.minutes}m to {c.name}
+              </span>
+            ))}
+          </div>
+        )}
 
         {transitText && (
           <div className="text-[10px] text-emerald-700 font-semibold mb-2 flex items-center gap-1">

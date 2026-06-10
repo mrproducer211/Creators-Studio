@@ -149,8 +149,11 @@ export default function Navbar() {
                       <p className="text-[13px] font-semibold" style={{ color: "#1A1A1A" }}>{user.name}</p>
                       <p className="text-[11px]" style={{ color: "#999" }}>{user.email}</p>
                     </div>
-                    <Link href="/saved" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                      💚 {t.nav.saved}
+                    <Link href="/dashboard" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                      👤 My Dashboard
+                    </Link>
+                    <Link href="/dashboard?tab=saved" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                      💚 Saved Properties
                       {count > 0 && <span className="ml-auto text-xs font-semibold px-1.5 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
                     </Link>
                     {(session.user as { role?: string }).role === "admin" && (
@@ -357,12 +360,19 @@ export default function Navbar() {
             </div>
 
             {user && (
-              <Link href="/saved" onClick={() => setMenuOpen(false)}
-                className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
-                style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
-                <span className="flex items-center gap-1.5">💚 {t.nav.saved}</span>
-                {count > 0 && <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
-              </Link>
+              <>
+                <Link href="/dashboard" onClick={() => setMenuOpen(false)}
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
+                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                  <span className="flex items-center gap-1.5">👤 My Dashboard</span>
+                </Link>
+                <Link href="/dashboard?tab=saved" onClick={() => setMenuOpen(false)}
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
+                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                  <span className="flex items-center gap-1.5">💚 Saved Properties</span>
+                  {count > 0 && <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
+                </Link>
+              </>
             )}
             <div className="px-5 py-4 flex gap-3">
               {user ? (

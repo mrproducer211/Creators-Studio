@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
 import { useSaved } from "@/contexts/SavedContext";
@@ -34,6 +34,51 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
   const sub                     = property.listingType === "sale" ? "" : (property.priceLabel ?? "");
   const fallback                = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length];
   const href                    = `/property/${property.slug}`;
+  const [commutes, setCommutes] = useState<any[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("nhp_commute_hubs");
+      if (stored && property.latitude && property.longitude) {
+        const hubs = JSON.parse(stored);
+        const pLat = Number(property.latitude);
+        const pLng = Number(property.longitude);
+        if (!isNaN(pLat) && !isNaN(pLng)) {
+          const list = hubs.map((h: any) => {
+            const hLat = Number(h.latitude);
+            const hLng = Number(h.longitude);
+            const R = 6371;
+            const dLat = ((hLat - pLat) * Math.PI) / 180;
+            const dLon = ((hLng - pLng) * Math.PI) / 180;
+            const a =
+              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos((pLat * Math.PI) / 180) *
+                Math.cos((hLat * Math.PI) / 180) *
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const dist = R * c;
+
+            let mins = 15;
+            if (h.transitMode === "walking") {
+              mins = Math.round(dist * 12);
+            } else if (h.transitMode === "driving") {
+              mins = Math.round(dist * 3 + 5);
+            } else {
+              mins = Math.round(dist * 2.5 + 8);
+            }
+            return {
+              name: h.name,
+              minutes: Math.max(1, mins),
+              distance: dist,
+              transitMode: h.transitMode,
+            };
+          });
+          setCommutes(list);
+        }
+      }
+    } catch {}
+  }, [property]);
 
   const badgeLabel = (type: string) => {
     if (type === "sale") return t.property.forSale;
@@ -113,6 +158,23 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
         <div className="text-[11px] mb-2.5 flex items-center gap-1" style={{ color: "#999" }}>
           📍 {property.district ? `${property.district}, ` : ""}{property.area}
         </div>
+
+        {/* Commute Times */}
+        {commutes.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-2.5">
+            {commutes.map((c: any) => (
+              <span
+                key={c.name}
+                className="text-[9.5px] font-bold px-2 py-0.5 rounded-lg flex items-center gap-1"
+                style={{ background: "#F4EFE6", color: "#1C3A2F", border: "1px solid #E5DCCB" }}
+                title={`${c.distance.toFixed(1)} km away`}
+              >
+                {c.transitMode === "walking" ? "🚶" : c.transitMode === "driving" ? "🚗" : "🚆"}{" "}
+                {c.minutes}m to {c.name}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Specs */}
         <div className="flex gap-3 py-2 mb-3" style={{ borderTop: "1px solid #EDE8DF", borderBottom: "1px solid #EDE8DF" }}>

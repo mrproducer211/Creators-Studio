@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { PropertyCard } from "@/types/property";
 import { NEIGHBORHOODS, Neighborhood } from "@/data/neighborhoods";
@@ -72,7 +73,9 @@ const RatingRow = ({ label, score }: { label: string; score: number }) => (
 );
 
 export default function SmartSearchClient({ properties }: Props) {
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
   const initialQuery = searchParams.get("q") || "";
 
   // State Management
@@ -81,6 +84,39 @@ export default function SmartSearchClient({ properties }: Props) {
   const [sortBy, setSortBy] = useState<"best" | "low_price" | "high_price" | "newest" | "closest_bts">("best");
   const [hoveredPropertyId, setHoveredPropertyId] = useState<number | null>(null);
   const [showMobileMap, setShowMobileMap] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [isSavingSearch, setIsSavingSearch] = useState(false);
+
+  const handleSaveSearchClick = async () => {
+    if (!session?.user?.email) {
+      router.push(`/auth/signin?callbackUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
+    setIsSavingSearch(true);
+    try {
+      const res = await fetch("/api/saved-searches", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: activeQuery,
+          filters: parsed,
+        }),
+      });
+
+      if (res.ok) {
+        setToastMessage("✓ Search saved to your dashboard!");
+        setTimeout(() => setToastMessage(""), 3000);
+      } else {
+        setToastMessage("Failed to save search.");
+        setTimeout(() => setToastMessage(""), 3000);
+      }
+    } catch {
+      setToastMessage("Error saving search.");
+      setTimeout(() => setToastMessage(""), 3000);
+    } finally {
+      setIsSavingSearch(false);
+    }
+  };
 
   // Handle suggested chips click
   const handleChipClick = (queryText: string) => {
@@ -614,9 +650,21 @@ export default function SmartSearchClient({ properties }: Props) {
           {/* Match Results Header */}
           <div className="bg-white p-4 rounded-2xl border border-[#E5E0D8] shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h3 className="text-lg font-extrabold text-[#1C3A2F]">
-                We found {filteredAndSortedProperties.length} matches
-              </h3>
+              <div className="flex items-center gap-3">
+                <h3 className="text-lg font-extrabold text-[#1C3A2F]">
+                  We found {filteredAndSortedProperties.length} matches
+                </h3>
+                {activeQuery && (
+                  <button
+                    onClick={handleSaveSearchClick}
+                    disabled={isSavingSearch}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold border border-[#E5E0D8] bg-transparent text-[#1C3A2F] cursor-pointer hover:bg-gray-50 disabled:opacity-50 transition-all uppercase tracking-wider"
+                    style={{ fontFamily: "inherit" }}
+                  >
+                    💾 Save Search
+                  </button>
+                )}
+              </div>
               <p className="text-xs text-gray-400 font-light mt-0.5">
                 These properties best fit your search parameters.
               </p>
@@ -757,6 +805,15 @@ export default function SmartSearchClient({ properties }: Props) {
               detectedArea={parsed.area}
             />
           </div>
+        </div>
+      )}
+
+      {toastMessage && (
+        <div
+          className="fixed bottom-6 left-6 z-[9999] px-4 py-3 rounded-xl text-xs font-semibold shadow-xl border"
+          style={{ background: "#1C3A2F", color: "#E2C97E", borderColor: "#C9A84C" }}
+        >
+          {toastMessage}
         </div>
       )}
     </div>
