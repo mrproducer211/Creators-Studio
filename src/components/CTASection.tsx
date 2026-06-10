@@ -53,7 +53,7 @@ export default function CTASection() {
           {t.cta.browse}
         </a>
         <a
-          href="/reels"
+          href="/swipe"
           suppressHydrationWarning
           className="flex-1 py-3.5 rounded-xl text-sm font-semibold cursor-pointer transition-colors duration-150 text-center no-underline"
           style={{
@@ -63,7 +63,7 @@ export default function CTASection() {
             fontFamily: "inherit",
           }}
         >
-          {t.cta.watchReels}
+          {t.footer.swipeMode}
         </a>
       </div>
     </section>

@@ -42,3 +42,9 @@ next-env.d.ts
 
 # Local file-based stores (dev only — swap for DB in production)
 /data/
+
+# Temporary and local tool files
+scratch/
+/cmdkey
+/git
+

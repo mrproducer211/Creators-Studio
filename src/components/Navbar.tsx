@@ -57,7 +57,6 @@ export default function Navbar() {
           <Link href="/"                      className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.home}</Link>
           <Link href="/explore"               className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.explore}</Link>
           <Link href="/swipe"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.swipe}</Link>
-          <Link href="/reels"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.reels}</Link>
           <Link href="/explore/match"         className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#C9A84C", fontWeight: "bold" }}>✨ Auto Finder</Link>
           <Link href="/explore?type=sale"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.buy}</Link>
           <Link href="/explore?type=rent"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.rent}</Link>
@@ -247,14 +246,6 @@ export default function Navbar() {
                     style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
                   >
                     {t.nav.swipe}
-                  </Link>
-                  <Link
-                    href="/reels"
-                    onClick={() => setMenuOpen(false)}
-                    className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline border-t"
-                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
-                  >
-                    {t.nav.reels}
                   </Link>
                 </div>
               )}

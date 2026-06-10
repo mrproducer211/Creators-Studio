@@ -35,7 +35,6 @@ export default function Footer() {
         { label: t.footer.longRent, href: "/explore?type=rent" },
         { label: t.footer.shortStay, href: "/explore?type=short_stay" },
         { label: t.footer.swipeMode, href: "/swipe" },
-        { label: t.footer.reels, href: "/reels" },
       ],
     },
     {

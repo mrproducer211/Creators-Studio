@@ -31,7 +31,7 @@ export default function SavedPageClient({ allProperties }: { allProperties: Prop
               No saved properties yet
             </h2>
             <p className="text-[14px] font-light mb-8 max-w-xs" style={{ color: "#999" }}>
-              Tap the ♥ on any property to save it here. Browse, swipe, or watch reels to find your next home.
+              Tap the ♥ on any property to save it here. Browse or swipe to find your next home.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <a href="/explore" className="px-5 py-3 rounded-xl text-[13px] font-semibold no-underline" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>
@@ -39,9 +39,6 @@ export default function SavedPageClient({ allProperties }: { allProperties: Prop
               </a>
               <a href="/swipe" className="px-5 py-3 rounded-xl text-[13px] font-semibold no-underline" style={{ background: "#F7F3EC", color: "#1C3A2F", border: "1px solid #E5E0D8" }}>
                 ♥ Swipe Mode
-              </a>
-              <a href="/reels" className="px-5 py-3 rounded-xl text-[13px] font-semibold no-underline" style={{ background: "#F7F3EC", color: "#1C3A2F", border: "1px solid #E5E0D8" }}>
-                ▶ Watch Reels
               </a>
             </div>
           </div>

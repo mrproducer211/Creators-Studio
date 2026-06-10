@@ -184,18 +184,7 @@ export default function SwipeCard({ property, index, total, onSwipe }: Props) {
         {listingLabel(property.listingType)}
       </div>
 
-      {/* Video badge — clickable, opens reels (only rendered when hasVideo) */}
-      {property.hasVideo && (
-        <a
-          href={`/reels?property=${property.slug}`}
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-          className="absolute top-4 right-4 flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium no-underline cursor-pointer transition-transform active:scale-95"
-          style={{ background: "rgba(255,255,255,0.9)", color: "#1C3A2F" }}
-        >
-          ▶ Tour
-        </a>
-      )}
+
 
       {/* Card counter (top centre) */}
       {index === 0 && (
