@@ -386,7 +386,8 @@ export default function SmartSearchClient({ properties }: Props) {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="I'm looking for a pet-friendly condo in On Nut near BTS under 35,000 baht."
-              className="bg-transparent border-none outline-none text-[12px] sm:text-[13.5px] w-full text-white placeholder-gray-400 font-sans"
+              className="bg-transparent border-none outline-none text-[12px] sm:text-[13.5px] w-full placeholder-gray-400 font-sans"
+              style={{ color: "#F7F3EC", WebkitTextFillColor: "#F7F3EC" }}
             />
           </div>
           <button
@@ -401,20 +402,21 @@ export default function SmartSearchClient({ properties }: Props) {
         <div className="flex flex-row sm:flex-wrap gap-1.5 sm:gap-2 items-center mt-3 overflow-x-auto sm:overflow-x-visible no-scrollbar pb-1 sm:pb-0 w-full">
           <span className="text-[10px] sm:text-[11px] text-gray-400 font-medium whitespace-nowrap">Try searching:</span>
           {[
-            { label: "Pet-friendly <35k", query: "Pet-friendly condo near BTS under 35k" },
-            { label: "2-bed in Thonglor", query: "2-bedroom condo in Thonglor with pool" },
-            { label: "Family in Bang Na", query: "Family home near schools in Bang Na" },
-            { label: "Ari under 20k", query: "Studio in Ari under 20k" },
-            { label: "Remote work", query: "Remote-work friendly condo with cafes nearby" }
+            "Pet-friendly condo near BTS under 35k",
+            "2-bedroom condo in Thonglor with pool",
+            "Family home near schools in Bang Na",
+            "Luxury condo in Phrom Phong",
+            "Studio in Ari under 20k",
+            "Remote-work friendly condo with cafes nearby"
           ].map((chip) => (
             <button
-              key={chip.label}
-              onClick={() => handleChipClick(chip.query)}
+              key={chip}
+              onClick={() => handleChipClick(chip)}
               type="button"
               className="text-[10px] sm:text-[11px] px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full border border-white border-opacity-10 text-[#E2C97E] hover:bg-white hover:bg-opacity-5 cursor-pointer transition-colors whitespace-nowrap flex-shrink-0"
               style={{ background: "rgba(255, 255, 255, 0.05)" }}
             >
-              {chip.label}
+              {chip}
             </button>
           ))}
         </div>
