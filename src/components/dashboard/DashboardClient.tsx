@@ -30,7 +30,8 @@ import {
   Users,
   Eye,
   Sliders,
-  AlertCircle
+  AlertCircle,
+  Settings
 } from "lucide-react";
 
 interface DashboardClientProps {
@@ -68,16 +69,17 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
   const router = useRouter();
   const searchParams = useSearchParams();
   const { savedIds, count, toggle: toggleSaved } = useSaved();
-  const { t } = useLanguage();
-  const { formatPrice } = useCurrency();
+  const { lang, setLang, t } = useLanguage();
+  const { currency, setCurrency, formatPrice } = useCurrency();
   const user = session?.user;
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<"feed" | "searches" | "commute" | "collab" | "saved">("feed");
+  const [activeTab, setActiveTab] = useState<"feed" | "searches" | "commute" | "collab" | "saved" | "settings">("feed");
+  const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     const tabParam = searchParams.get("tab");
-    if (tabParam && ["feed", "searches", "commute", "collab", "saved"].includes(tabParam)) {
+    if (tabParam && ["feed", "searches", "commute", "collab", "saved", "settings"].includes(tabParam)) {
       setActiveTab(tabParam as any);
     }
   }, [searchParams]);
@@ -595,6 +597,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
             { id: "searches", label: "Saved Searches", icon: <Bookmark size={16} /> },
             { id: "commute", label: "Commute Planner", icon: <Car size={16} /> },
             { id: "collab", label: "Collaborative Lists", icon: <Users size={16} /> },
+            { id: "settings", label: "Settings", icon: <Settings size={16} /> },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -793,7 +796,9 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
             <div>
               {savedListings.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-[#E5E0D8] p-12 text-center shadow-sm">
-                  <span className="text-4xl mb-4 block">💚</span>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(201,168,76,0.15)" }}>
+                    <Heart size={24} className="text-[#C9A84C]" fill="#C9A84C" />
+                  </div>
                   <h3 className="text-[16px] font-bold text-[#1C3A2F] mb-1">Your shortlist is empty</h3>
                   <p className="text-[13px] text-gray-400 font-light mb-6">
                     Tap the heart icon on any property to save it to your local dashboard.
@@ -1173,7 +1178,8 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                         ← Back to Collections
                       </button>
                       <h2 className="text-[18px] font-bold text-[#1C3A2F] mt-2 flex items-center gap-2">
-                        👥 {activeShortlist.name}
+                        <Users size={20} className="text-[#C9A84C]" />
+                        {activeShortlist.name}
                       </h2>
                       <p className="text-[11.5px] text-gray-400 mt-0.5">
                         Shared with <span className="font-semibold text-gray-500">{activeShortlist.collaboratorEmail}</span>
@@ -1277,8 +1283,140 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
               )}
             </div>
           )}
+
+          {/* 6. SETTINGS SECTION */}
+          {activeTab === "settings" && (
+            <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6 shadow-sm flex flex-col gap-6">
+              <div>
+                <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-1">Account & Preferences</h2>
+                <p className="text-[13px] text-gray-500 font-light">
+                  Manage your personal details, preferred currency, language, and system settings.
+                </p>
+              </div>
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                setToastMessage("✓ Settings saved successfully!");
+                setTimeout(() => setToastMessage(""), 3000);
+              }} className="flex flex-col gap-6 max-w-xl">
+                {/* Profile Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      defaultValue={user?.name || ""}
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px]"
+                      style={{ fontFamily: "inherit" }}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={user?.email || ""}
+                      disabled
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px] bg-gray-50 text-gray-400 cursor-not-allowed"
+                      style={{ fontFamily: "inherit" }}
+                    />
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-100 my-1" />
+
+                {/* Display Preferences */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
+                      Preferred Currency
+                    </label>
+                    <select
+                      value={currency}
+                      onChange={(e) => setCurrency(e.target.value as any)}
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px] bg-white"
+                      style={{ fontFamily: "inherit" }}
+                    >
+                      <option value="THB">฿ THB (Thai Baht)</option>
+                      <option value="USD">$ USD (US Dollar)</option>
+                      <option value="EUR">€ EUR (Euro)</option>
+                      <option value="CNY">¥ CNY (Chinese Yuan)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
+                      System Language
+                    </label>
+                    <select
+                      value={lang}
+                      onChange={(e) => setLang(e.target.value as any)}
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px] bg-white"
+                      style={{ fontFamily: "inherit" }}
+                    >
+                      <option value="en">English</option>
+                      <option value="th">ไทย (Thai)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-100 my-1" />
+
+                {/* Alert Notifications */}
+                <div className="flex flex-col gap-3">
+                  <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider">
+                    Notification Settings
+                  </span>
+                  
+                  <div className="flex items-center justify-between p-1">
+                    <div>
+                      <span className="text-[13px] font-bold text-[#1C3A2F] block">New Listing Recommendations</span>
+                      <span className="text-[10px] text-gray-400">Receive weekly emails with properties matching your Auto Finder profile</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="w-5 h-5 accent-[#1C3A2F] cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-1">
+                    <div>
+                      <span className="text-[13px] font-bold text-[#1C3A2F] block">Shortlist Activity Alerts</span>
+                      <span className="text-[10px] text-gray-400">Notify me immediately when collaborators post comments on my shortlists</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="w-5 h-5 accent-[#1C3A2F] cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3.5 rounded-xl text-[13px] font-semibold text-white mt-4 cursor-pointer border-none transition-opacity hover:opacity-90"
+                  style={{ background: "#1C3A2F" }}
+                >
+                  Save Account Settings
+                </button>
+              </form>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div
+          className="fixed bottom-6 left-6 z-[9999] px-4 py-3 rounded-xl text-xs font-semibold shadow-xl border"
+          style={{ background: "#1C3A2F", color: "#E2C97E", borderColor: "#C9A84C" }}
+        >
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }

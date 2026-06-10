@@ -6,6 +6,7 @@ import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { LayoutDashboard, Heart, Settings, LogOut } from "lucide-react";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -150,15 +151,22 @@ export default function Navbar() {
                       <p className="text-[11px]" style={{ color: "#999" }}>{user.email}</p>
                     </div>
                     <Link href="/dashboard" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                      👤 My Dashboard
+                      <LayoutDashboard size={14} className="text-[#C9A84C]" />
+                      My Dashboard
                     </Link>
                     <Link href="/dashboard?tab=saved" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                      💚 Saved Properties
+                      <Heart size={14} className="text-[#C9A84C]" />
+                      Saved Properties
                       {count > 0 && <span className="ml-auto text-xs font-semibold px-1.5 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
+                    </Link>
+                    <Link href="/dashboard?tab=settings" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                      <Settings size={14} className="text-[#C9A84C]" />
+                      Settings
                     </Link>
                     {(session.user as { role?: string }).role === "admin" && (
                       <Link href="/admin" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                        ⚙️ {t.nav.adminDashboard}
+                        <Settings size={14} className="text-[#1C3A2F]" />
+                        {t.nav.adminDashboard}
                       </Link>
                     )}
                     <button
@@ -166,6 +174,7 @@ export default function Navbar() {
                       className="w-full flex items-center gap-2.5 px-4 py-3 text-[13px] cursor-pointer border-none bg-transparent text-left transition-colors hover:bg-gray-50"
                       style={{ color: "#E05252", fontFamily: "inherit", borderTop: "1px solid #EDE8DF" }}
                     >
+                      <LogOut size={14} className="text-[#E05252]" />
                       {t.nav.signOut}
                     </button>
                   </div>
@@ -362,15 +371,25 @@ export default function Navbar() {
             {user && (
               <>
                 <Link href="/dashboard" onClick={() => setMenuOpen(false)}
-                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
                   style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
-                  <span className="flex items-center gap-1.5">👤 My Dashboard</span>
+                  <LayoutDashboard size={18} className="text-[#C9A84C]" />
+                  <span>My Dashboard</span>
                 </Link>
                 <Link href="/dashboard?tab=saved" onClick={() => setMenuOpen(false)}
                   className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
                   style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
-                  <span className="flex items-center gap-1.5">💚 Saved Properties</span>
+                  <span className="flex items-center gap-2.5">
+                    <Heart size={18} className="text-[#C9A84C]" />
+                    <span>Saved Properties</span>
+                  </span>
                   {count > 0 && <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
+                </Link>
+                <Link href="/dashboard?tab=settings" onClick={() => setMenuOpen(false)}
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
+                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                  <Settings size={18} className="text-[#C9A84C]" />
+                  <span>Settings</span>
                 </Link>
               </>
             )}
