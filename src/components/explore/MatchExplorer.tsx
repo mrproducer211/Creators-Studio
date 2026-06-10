@@ -711,13 +711,13 @@ export default function MatchExplorer({ properties }: Props) {
           maxHeight: isMobile ? "none" : "calc(100vh - 56px)",
           overflowY: isMobile ? "visible" : "auto",
           borderRight: isMobile ? "none" : "1px solid #E5E0D8",
-          padding: step === 0 ? "0px" : (isMobile ? "20px 16px" : "32px 24px"),
+          padding: step === 0 ? "0px" : (isMobile ? "20px 16px 80px 16px" : "32px 24px"),
         }}
       >
         
         {/* Step 0: Premium Hero Section Landing */}
         {step === 0 && !hasSearched && (
-          <div className="flex-1 flex flex-col justify-center items-center text-center p-8 bg-[#1C3A2F] text-[#F7F3EC] min-h-[500px]">
+          <div className="flex-1 flex flex-col justify-center items-center text-center p-8 bg-[#1C3A2F] text-[#F7F3EC] min-h-[500px] mb-16 lg:mb-0">
             <span className="text-[10px] font-bold uppercase tracking-[3px] text-[#C9A84C] mb-3">
               New Home Property Premium
             </span>
