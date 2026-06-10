@@ -476,7 +476,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
           style={{ background: "#FFFFFF", borderColor: "#EDE8DF" }}
         >
           {/* 3-Column Grid */}
-          <div className="grid grid-cols-1 white-card-grid gap-8 items-start">
+          <div className="grid grid-cols-1 white-card-grid gap-8 items-stretch">
             
             {/* Column 1: AT A GLANCE (at-a-glance-col) */}
             <div className="flex flex-col gap-4 text-left at-a-glance-col">
@@ -516,7 +516,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
             </div>
 
             {/* Column 2: LIFESTYLE & VIBE (lifestyle-col) */}
-            <div className="flex flex-col gap-4 text-left lifestyle-col">
+            <div className="flex flex-col gap-4 text-left lifestyle-col md:h-full">
               <h3 className="text-xs font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
                 Lifestyle & Vibe
               </h3>
@@ -525,7 +525,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
               </p>
               
               {/* Vibe cards row */}
-              <div className="flex overflow-x-auto no-scrollbar gap-3 mt-2 -mx-4 px-4 scroll-smooth md:grid md:grid-cols-4 md:mx-0 md:px-0">
+              <div className="flex overflow-x-auto no-scrollbar gap-3 mt-2 md:mt-auto -mx-4 px-4 scroll-smooth md:grid md:grid-cols-4 md:mx-0 md:px-0">
                 {meta.vibeCards.map((card) => (
                   <div
                     key={card.title}
@@ -567,11 +567,11 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
             </div>
 
             {/* Column 3: WHY PEOPLE LOVE & Map (love-map-col) */}
-            <div className="flex flex-col gap-4 text-left w-full love-map-col">
+            <div className="flex flex-col gap-4 text-left w-full love-map-col md:h-full">
               <h3 className="text-xs font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
                 Why People Love {neighborhood.name}
               </h3>
-              <div className="love-map-grid gap-6 w-full items-start">
+              <div className="love-map-grid gap-6 w-full items-stretch md:h-full md:flex-1">
                 <ul className="flex flex-col gap-2.5 text-xs text-gray-600 font-light pl-0 list-none">
                   {meta.pros.map((pro) => (
                     <li key={pro} className="flex items-start gap-2">
@@ -582,7 +582,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                 </ul>
 
                 {/* Dynamic Map container - Desktop Only */}
-                <div className="hidden md:flex w-full flex-col gap-2">
+                <div className="hidden md:flex w-full flex-col gap-2 md:justify-end">
                   <div className="w-full h-[155px] relative rounded-xl overflow-hidden border border-[#EDE8DF] shadow-inner">
                     <NeighborhoodMap lat={neighborhood.lat} lng={neighborhood.lng} name={neighborhood.name} />
                     
