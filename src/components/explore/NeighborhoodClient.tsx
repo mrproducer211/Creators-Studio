@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { PropertyCard } from "@/types/property";
 import { Neighborhood } from "@/data/neighborhoods";
@@ -205,37 +205,10 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
   const { formatPrice } = useCurrency();
   const { isSaved: isPropertySaved, toggle: togglePropertySave } = useSaved();
 
-  const [isSaved, setIsSaved] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showFullMap, setShowFullMap] = useState(false);
 
   const meta = NEIGHBORHOOD_METADATA[neighborhood.slug.toLowerCase()] || DEFAULT_METADATA;
-
-  // Persistence of neighborhood bookmarks
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("nhp_saved_neighborhoods");
-      const list = stored ? JSON.parse(stored) : [];
-      setTimeout(() => {
-        setIsSaved(list.includes(neighborhood.slug));
-      }, 0);
-    } catch {}
-  }, [neighborhood.slug]);
-
-  const toggleSave = () => {
-    try {
-      const stored = localStorage.getItem("nhp_saved_neighborhoods");
-      let list = stored ? JSON.parse(stored) : [];
-      if (list.includes(neighborhood.slug)) {
-        list = list.filter((item: string) => item !== neighborhood.slug);
-        setIsSaved(false);
-      } else {
-        list.push(neighborhood.slug);
-        setIsSaved(true);
-      }
-      localStorage.setItem("nhp_saved_neighborhoods", JSON.stringify(list));
-    } catch {}
-  };
 
   const handleShare = () => {
     try {

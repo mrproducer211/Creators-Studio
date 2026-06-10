@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { PropertyCard } from "@/types/property";
 import { NEIGHBORHOODS, Neighborhood } from "@/data/neighborhoods";
 import SmartPropertyCard from "./SmartPropertyCard";
-import { Search, Map, Check, Heart, Bookmark, MessageSquare, AlertCircle } from "lucide-react";
+import { Search, Map, AlertCircle } from "lucide-react";
 
 const MapComponent = dynamic(() => import("./SmartMapComponent"), { ssr: false });
 
@@ -58,6 +58,19 @@ const DEFAULT_RECOMMENDATIONS = [
   { name: "Thong Lo", why: "Bangkok's premium lifestyle district featuring world-class dining and bars." }
 ];
 
+// Helper row for Neighborhood ratings
+const RatingRow = ({ label, score }: { label: string; score: number }) => (
+  <div className="flex flex-col gap-1 w-full">
+    <div className="flex justify-between text-[11px] font-bold text-gray-700 uppercase tracking-wide">
+      <span>{label}</span>
+      <span className="text-[#C9A84C]">{score}/10</span>
+    </div>
+    <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+      <div className="h-full bg-[#1C3A2F]" style={{ width: `${score * 10}%` }} />
+    </div>
+  </div>
+);
+
 export default function SmartSearchClient({ properties }: Props) {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
@@ -67,13 +80,7 @@ export default function SmartSearchClient({ properties }: Props) {
   const [activeQuery, setActiveQuery] = useState(initialQuery);
   const [sortBy, setSortBy] = useState<"best" | "low_price" | "high_price" | "newest" | "closest_bts">("best");
   const [hoveredPropertyId, setHoveredPropertyId] = useState<number | null>(null);
-  const [isAccordionExpanded, setIsAccordionExpanded] = useState(true);
   const [showMobileMap, setShowMobileMap] = useState(false);
-
-  // Save Search States
-  const [emailInput, setEmailInput] = useState("");
-  const [savedSearches, setSavedSearches] = useState<string[]>([]);
-  const [isSavedSearchSuccess, setIsSavedSearchSuccess] = useState(false);
 
   // Handle suggested chips click
   const handleChipClick = (queryText: string) => {
@@ -85,7 +92,6 @@ export default function SmartSearchClient({ properties }: Props) {
   const handleSearchSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setActiveQuery(searchInput);
-    setIsSavedSearchSuccess(false); // Reset saved search confirmation
   };
 
   // Natural Language Parsing Logic
@@ -350,37 +356,14 @@ export default function SmartSearchClient({ properties }: Props) {
     return DEFAULT_RECOMMENDATIONS;
   }, [parsed.area]);
 
-  // Handle Save Search
-  const handleSaveSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!emailInput) return;
 
-    const summary = `${parsed.petFriendly === "Yes" ? "Pet-Friendly + " : ""}${
-      parsed.area || "Bangkok"
-    }${parsed.nearBts === "Walking Distance" ? " + BTS" : ""}`;
-
-    setSavedSearches((prev) => [...prev, summary]);
-    setIsSavedSearchSuccess(true);
-    setEmailInput("");
-  };
 
   const editSearchButtonHandler = () => {
     const el = document.getElementById("smart-search-input");
     if (el) el.focus();
   };
 
-  // Helper row for Neighborhood ratings
-  const RatingRow = ({ label, score }: { label: string; score: number }) => (
-    <div className="flex flex-col gap-1 w-full">
-      <div className="flex justify-between text-[11px] font-bold text-gray-700 uppercase tracking-wide">
-        <span>{label}</span>
-        <span className="text-[#C9A84C]">{score}/10</span>
-      </div>
-      <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-        <div className="h-full bg-[#1C3A2F]" style={{ width: `${score * 10}%` }} />
-      </div>
-    </div>
-  );
+
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 py-4 sm:py-8 flex flex-col gap-5 sm:gap-8">
@@ -537,7 +520,7 @@ export default function SmartSearchClient({ properties }: Props) {
                 Neighborhood Insight
               </span>
               <p className="text-xs text-gray-500 leading-relaxed font-light">
-                Enter a search query specifying a target neighborhood (e.g. "On Nut") to see customized local insights, ratings, and lifestyle recommendations.
+                Enter a search query specifying a target neighborhood (e.g. &quot;On Nut&quot;) to see customized local insights, ratings, and lifestyle recommendations.
               </p>
             </div>
           )}
@@ -641,7 +624,7 @@ export default function SmartSearchClient({ properties }: Props) {
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Sort By:</span>
               <select
                 value={sortBy}
-                onChange={(e: any) => setSortBy(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value as "best" | "low_price" | "high_price" | "newest" | "closest_bts")}
                 className="flex-1 sm:flex-none px-3 py-1.5 rounded-xl border border-gray-300 text-xs font-semibold text-gray-700 bg-white outline-none cursor-pointer focus:border-[#1C3A2F]"
               >
                 <option value="best">Best Match</option>
@@ -672,7 +655,7 @@ export default function SmartSearchClient({ properties }: Props) {
                 <ul className="text-xs text-gray-700 flex flex-col gap-2 list-none p-0 m-0">
                   <li className="flex items-center gap-2">
                     <span className="text-amber-500">✦</span>
-                    <span>Increase budget limit (e.g. "under 60k")</span>
+                    <span>Increase budget limit (e.g. &quot;under 60k&quot;)</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-amber-500">✦</span>

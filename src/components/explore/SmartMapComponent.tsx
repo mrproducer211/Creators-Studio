@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { PropertyCard } from "@/types/property";
-import { NEIGHBORHOODS, Neighborhood } from "@/data/neighborhoods";
+import { NEIGHBORHOODS } from "@/data/neighborhoods";
 
 interface Props {
   properties: PropertyCard[];
@@ -29,7 +29,7 @@ const BTS_STATIONS: Record<string, { name: string; lat: number; lng: number }> =
   "Phaya Thai": { name: "Phaya Thai BTS", lat: 13.7569, lng: 100.5348 }
 };
 
-const isValidLatLng = (lat: any, lng: any): boolean => {
+const isValidLatLng = (lat: unknown, lng: unknown): boolean => {
   const latitude = Number(lat);
   const longitude = Number(lng);
   return (

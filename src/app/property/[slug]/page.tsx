@@ -3,7 +3,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyDetail from "@/components/property/PropertyDetail";
 import { getDbProperties } from "@/lib/db/dbLoader";
-import { PropertyCard } from "@/types/property";
 
 interface Props {
   params: Promise<{ slug: string }>;

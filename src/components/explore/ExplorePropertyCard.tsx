@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
 import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSession } from "next-auth/react";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 const FALLBACK_GRADIENTS = [
@@ -27,9 +26,8 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
   const router                  = useRouter();
   const { isSaved, toggle }     = useSaved();
   const { t }                   = useLanguage();
-  const { formatPrice }         = useCurrency();
+  const formatPrice           = useCurrency().formatPrice;
   const saved                   = isSaved(property.id);
-  const { data: session }       = useSession();
   const [liked, setLiked]       = useState(false);
   const [imgErr, setImgErr]     = useState(false);
   const main                    = formatPrice(Number(property.priceTHB));

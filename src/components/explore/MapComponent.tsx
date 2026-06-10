@@ -17,7 +17,7 @@ interface Props {
   liveScores?: Record<string, number>; // Live compatibility scores mapped by slug
 }
 
-const isValidLatLng = (coords: any): coords is [number, number] => {
+const isValidLatLng = (coords: unknown): coords is [number, number] => {
   return (
     Array.isArray(coords) &&
     coords.length === 2 &&

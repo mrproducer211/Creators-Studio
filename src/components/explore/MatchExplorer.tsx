@@ -168,7 +168,6 @@ export default function MatchExplorer({ properties }: Props) {
   const [customWorkplace, setCustomWorkplace] = useState<string>("");
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [isImmersive, setIsImmersive] = useState<boolean>(false);
-  const [mobileView, setMobileView] = useState<"list" | "map">("list");
   const [activeLayer, setActiveLayer] = useState<string>("match");
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
