@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Bookmark, Bell, BarChart3, Heart, Home } from "lucide-react";
 
 export default function SignInClient({ googleEnabled }: { googleEnabled: boolean }) {
   const router       = useRouter();
@@ -103,14 +104,14 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         <div>
           <div className="text-[11px] uppercase tracking-[2px] font-semibold mb-4" style={{ color: "#C9A84C" }}>Member benefits</div>
           {[
-            { icon: "🔖", text: "Save properties across devices" },
-            { icon: "🔔", text: "Get alerts for new listings" },
-            { icon: "📊", text: "Track your enquiries" },
-            { icon: "❤️", text: "Build your shortlist" },
-            { icon: "🏠", text: "Access exclusive listings" },
+            { icon: <Bookmark size={18} />, text: "Save properties across devices" },
+            { icon: <Bell size={18} />, text: "Get alerts for new listings" },
+            { icon: <BarChart3 size={18} />, text: "Track your enquiries" },
+            { icon: <Heart size={18} />, text: "Build your shortlist" },
+            { icon: <Home size={18} />, text: "Access exclusive listings" },
           ].map((b) => (
             <div key={b.text} className="flex items-center gap-3 mb-4">
-              <span className="text-xl w-8 text-center">{b.icon}</span>
+              <span className="w-8 flex justify-center flex-shrink-0" style={{ color: "#C9A84C" }}>{b.icon}</span>
               <span className="text-[14px] font-light" style={{ color: "rgba(255,255,255,0.75)" }}>{b.text}</span>
             </div>
           ))}
