@@ -150,10 +150,17 @@ export default function Navbar() {
                       <p className="text-[13px] font-semibold" style={{ color: "#1A1A1A" }}>{user.name}</p>
                       <p className="text-[11px]" style={{ color: "#999" }}>{user.email}</p>
                     </div>
-                    <Link href="/dashboard" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                      <LayoutDashboard size={14} className="text-[#C9A84C]" />
-                      My Dashboard
-                    </Link>
+                    {(session.user as { role?: string }).role === "agent" ? (
+                      <Link href="/agent/dashboard" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                        <LayoutDashboard size={14} className="text-[#C9A84C]" />
+                        Agent Dashboard
+                      </Link>
+                    ) : (
+                      <Link href="/dashboard" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                        <LayoutDashboard size={14} className="text-[#C9A84C]" />
+                        My Dashboard
+                      </Link>
+                    )}
                     <Link href="/dashboard?tab=saved" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
                       <Heart size={14} className="text-[#C9A84C]" />
                       Saved Properties
@@ -370,12 +377,21 @@ export default function Navbar() {
 
             {user && (
               <>
-                <Link href="/dashboard" onClick={() => setMenuOpen(false)}
-                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
-                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
-                  <LayoutDashboard size={18} className="text-[#C9A84C]" />
-                  <span>My Dashboard</span>
-                </Link>
+                {(session.user as { role?: string }).role === "agent" ? (
+                  <Link href="/agent/dashboard" onClick={() => setMenuOpen(false)}
+                    className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
+                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                    <LayoutDashboard size={18} className="text-[#C9A84C]" />
+                    <span>Agent Dashboard</span>
+                  </Link>
+                ) : (
+                  <Link href="/dashboard" onClick={() => setMenuOpen(false)}
+                    className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
+                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                    <LayoutDashboard size={18} className="text-[#C9A84C]" />
+                    <span>My Dashboard</span>
+                  </Link>
+                )}
                 <Link href="/dashboard?tab=saved" onClick={() => setMenuOpen(false)}
                   className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
                   style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>

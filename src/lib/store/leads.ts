@@ -7,7 +7,8 @@ export interface LeadUser {
   email: string;
   passwordHash: string;
   createdAt: string;
-  role: "user";
+  role: "user" | "agent";
+  agentStatus?: "pending" | "approved" | "rejected";
 }
 
 const FILE = "leads.json";
@@ -57,6 +58,49 @@ export async function createLead(name: string, email: string, passwordPlain: str
 
   await persist([next, ...all]);
   return next;
+}
+
+export async function createAgent(name: string, email: string, passwordPlain: string): Promise<LeadUser> {
+  const all = await load();
+  
+  // Check duplicate email
+  const existing = all.find((u) => u.email.toLowerCase() === email.toLowerCase());
+  if (existing) {
+    throw new Error("Email address already registered.");
+  }
+
+  const passwordHash = await hash(passwordPlain, 10);
+  const next: LeadUser = {
+    id: `lead_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    name,
+    email: email.toLowerCase(),
+    passwordHash,
+    createdAt: new Date().toISOString(),
+    role: "agent",
+    agentStatus: "pending",
+  };
+
+  await persist([next, ...all]);
+  return next;
+}
+
+export async function getAllAgents(): Promise<LeadUser[]> {
+  const all = await load();
+  return all.filter((u) => u.role === "agent").sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function updateAgentStatus(id: string, status: "approved" | "rejected"): Promise<boolean> {
+  const all = await load();
+  const idx = all.findIndex((u) => u.id === id);
+  if (idx === -1) return false;
+  
+  all[idx] = {
+    ...all[idx],
+    agentStatus: status,
+  };
+  
+  await persist(all);
+  return true;
 }
 
 export async function deleteLead(id: string): Promise<boolean> {

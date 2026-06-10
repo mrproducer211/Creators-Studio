@@ -7,7 +7,7 @@ export interface AdminUser {
   id:    string;
   email: string;
   name:  string;
-  role:  "admin" | "user";
+  role:  "admin" | "user" | "agent";
 }
 
 /** Server component / page guard — redirects if not an admin. */
@@ -33,6 +33,34 @@ export async function requireAdminApi(): Promise<{ user: AdminUser } | { error: 
     return { error: NextResponse.json({ error: "Not authenticated" }, { status: 401 }) };
   }
   if (user.role !== "admin") {
+    return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
+  }
+  return { user };
+}
+
+/** Server component / page guard — redirects if not an agent. */
+export async function requireAgent(): Promise<AdminUser> {
+  const session = await auth();
+  const user    = session?.user as AdminUser | undefined;
+
+  if (!user) {
+    redirect("/auth/signin?callbackUrl=/agent/dashboard");
+  }
+  if (user.role !== "agent") {
+    redirect("/");
+  }
+  return user;
+}
+
+/** API route guard for agents — returns 401/403. */
+export async function requireAgentApi(): Promise<{ user: AdminUser } | { error: NextResponse }> {
+  const session = await auth();
+  const user    = session?.user as AdminUser | undefined;
+
+  if (!user) {
+    return { error: NextResponse.json({ error: "Not authenticated" }, { status: 401 }) };
+  }
+  if (user.role !== "agent") {
     return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
   }
   return { user };

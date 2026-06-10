@@ -54,6 +54,7 @@ export default function Footer() {
         { label: "Line", href: `https://line.me/ti/p/~${contacts.adminLine}` },
         { label: t.footer.aboutNhp, href: "/about" },
         { label: t.footer.privacyPolicy, href: "/privacy" },
+        { label: "Join Us", href: "/agent/register" },
       ],
     },
   ];
