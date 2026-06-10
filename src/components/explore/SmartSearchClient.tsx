@@ -378,7 +378,7 @@ export default function SmartSearchClient({ properties }: Props) {
         </h2>
 
         <form onSubmit={handleSearchSubmit} className="flex flex-row items-center gap-2 mt-2 w-full max-w-[700px]">
-          <div className="flex-1 bg-white bg-opacity-10 backdrop-blur-md rounded-2xl border border-white border-opacity-15 flex items-center px-3 py-2.5 sm:px-4 sm:py-3">
+          <div className="flex-1 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 flex items-center px-3 py-2.5 sm:px-4 sm:py-3">
             <Search size={16} className="text-[#C9A84C] mr-2 sm:mr-3 flex-shrink-0" />
             <input
               id="smart-search-input"
@@ -386,7 +386,7 @@ export default function SmartSearchClient({ properties }: Props) {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="I'm looking for a pet-friendly condo in On Nut near BTS under 35,000 baht."
-              className="bg-transparent border-none outline-none text-[12px] sm:text-[13.5px] w-full placeholder-gray-400 font-sans"
+              className="bg-transparent border-none outline-none text-[12px] sm:text-[13.5px] w-full placeholder-white/50 font-sans"
               style={{ color: "#F7F3EC", WebkitTextFillColor: "#F7F3EC" }}
             />
           </div>
@@ -413,7 +413,7 @@ export default function SmartSearchClient({ properties }: Props) {
               key={chip}
               onClick={() => handleChipClick(chip)}
               type="button"
-              className="text-[10px] sm:text-[11px] px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full border border-white border-opacity-10 text-[#E2C97E] hover:bg-white hover:bg-opacity-5 cursor-pointer transition-colors whitespace-nowrap flex-shrink-0"
+              className="text-[10px] sm:text-[11px] px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full border border-white/10 text-[#E2C97E] hover:bg-white/5 cursor-pointer transition-colors whitespace-nowrap flex-shrink-0"
               style={{ background: "rgba(255, 255, 255, 0.05)" }}
             >
               {chip}
@@ -736,7 +736,7 @@ export default function SmartSearchClient({ properties }: Props) {
             </div>
             <button
               onClick={() => setShowMobileMap(false)}
-              className="px-3 py-1.5 rounded-xl bg-white bg-opacity-10 text-white font-bold text-xs uppercase tracking-wider border border-white border-opacity-10 cursor-pointer active:scale-95"
+              className="px-3 py-1.5 rounded-xl bg-white/10 text-white font-bold text-xs uppercase tracking-wider border border-white/10 cursor-pointer active:scale-95"
             >
               Close
             </button>
