@@ -214,18 +214,6 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
             </button>
           </form>
 
-          {/* Demo credentials hint */}
-          {tab === "signin" && (
-            <div
-              className="mt-5 p-4 rounded-xl text-[12px] leading-[1.7]"
-              style={{ background: "#FFFFFF", border: "1px solid #E5E0D8", color: "#555" }}
-            >
-              <p className="font-semibold mb-1" style={{ color: "#1C3A2F" }}>Demo credentials</p>
-              <p>Email: <span className="font-medium">admin@nhp-bangkok.com</span></p>
-              <p>Password: <span className="font-medium">nhp2026</span></p>
-            </div>
-          )}
-
           {tab === "signin" ? (
             <p className="text-[13px] text-center mt-6" style={{ color: "#666" }}>
               Don&apos;t have an account?{" "}
