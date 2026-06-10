@@ -476,7 +476,7 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
     if (activeTab === 2) {
       window.location.href = `/explore/smart?q=${encodeURIComponent(query)}`;
     } else {
-      const map: Record<number, string> = { 0: "sale", 1: "rent" };
+      const map: Record<number, string> = { 0: "short_stay", 1: "rent" };
       const params = new URLSearchParams({ type: map[activeTab] });
       if (query) params.set("search", query);
       window.location.href = `/explore?${params.toString()}`;
