@@ -4,18 +4,12 @@ import { readJson, writeJson } from "./fileStore";
 
 const FILE = "properties.json";
 
-/* ────────── In-memory cache (single dev worker) ────────── */
-let cache: PropertyCard[] | null = null;
-
 async function load(): Promise<PropertyCard[]> {
-  if (cache) return cache;
   const stored = await readJson<PropertyCard[] | null>(FILE, null);
-  cache = stored && stored.length ? stored : [...MOCK_PROPERTIES];
-  return cache;
+  return stored && stored.length ? stored : [...MOCK_PROPERTIES];
 }
 
 async function persist(list: PropertyCard[]): Promise<void> {
-  cache = list;
   await writeJson(FILE, list);
 }
 

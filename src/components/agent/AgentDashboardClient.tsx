@@ -614,8 +614,8 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                   </div>
                   <div className="flex justify-between py-3 border-b text-[13px]">
                     <span className="text-gray-500">Verification State</span>
-                    <span className="font-bold uppercase tracking-[0.5px]" style={{ color: "#2E7D4F" }}>
-                      {status}
+                    <span className="font-bold uppercase tracking-[0.5px]" style={{ color: status === "approved" ? "#2E7D4F" : "#8B6914" }}>
+                      {status === "approved" ? "active" : status}
                     </span>
                   </div>
                   <div className="flex justify-between py-3 text-[13px]">

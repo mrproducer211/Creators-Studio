@@ -13,16 +13,11 @@ export interface LeadUser {
 
 const FILE = "leads.json";
 
-let cache: LeadUser[] | null = null;
-
 async function load(): Promise<LeadUser[]> {
-  if (cache) return cache;
-  cache = await readJson<LeadUser[]>(FILE, []);
-  return cache;
+  return await readJson<LeadUser[]>(FILE, []);
 }
 
 async function persist(list: LeadUser[]): Promise<void> {
-  cache = list;
   await writeJson(FILE, list);
 }
 
@@ -86,7 +81,14 @@ export async function createAgent(name: string, email: string, passwordPlain: st
 
 export async function getAllAgents(): Promise<LeadUser[]> {
   const all = await load();
-  return all.filter((u) => u.role === "agent").sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const agents = all.filter((u) => u.role === "agent");
+  return agents.sort((a, b) => {
+    const statusA = a.agentStatus || "pending";
+    const statusB = b.agentStatus || "pending";
+    if (statusA === "pending" && statusB !== "pending") return -1;
+    if (statusA !== "pending" && statusB === "pending") return 1;
+    return b.createdAt.localeCompare(a.createdAt);
+  });
 }
 
 export async function updateAgentStatus(id: string, status: "approved" | "rejected"): Promise<boolean> {

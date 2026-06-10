@@ -70,7 +70,7 @@ export default function AgentsTable({ initialAgents }: { initialAgents: LeadUser
                       ? { background: "rgba(224,82,82,0.1)", color: "#E05252" }
                       : { background: "rgba(201,168,76,0.15)", color: "#8B6914" }
                   }>
-                  {agent.agentStatus || "pending"}
+                  {agent.agentStatus === "approved" ? "active" : (agent.agentStatus || "pending")}
                 </span>
               </td>
               <td className="px-4 py-4 text-right flex items-center justify-end gap-2">

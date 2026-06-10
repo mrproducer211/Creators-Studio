@@ -2,20 +2,25 @@ import AdminPage, { StatCard, PrimaryLink } from "@/components/admin/Page";
 import { getDbProperties, getDbEnquiries, getDbAppointments, get24HourTraffic, getDbAuditLogs } from "@/lib/db/dbLoader";
 import { getAllPosts } from "@/lib/store/blog";
 import { requireAdmin } from "@/lib/auth-helpers";
+import { getAllAgents } from "@/lib/store/leads";
 
 export default async function AdminDashboard() {
   // Guard the page to allow admin access only
   await requireAdmin();
 
   // Load live DB stats with fallback
-  const [properties, enquiries, posts, appointments, pageViews, auditLogs] = await Promise.all([
+  const [properties, enquiries, posts, appointments, pageViews, auditLogs, agents] = await Promise.all([
     getDbProperties(),
     getDbEnquiries(),
     getAllPosts(),
     getDbAppointments(),
     get24HourTraffic(),
     getDbAuditLogs(),
+    getAllAgents(),
   ]);
+
+  const totalAgents = agents.length;
+  const pendingAgents = agents.filter((a) => (a.agentStatus || "pending") === "pending").length;
 
   const totalProps = properties.length;
   const forSale = properties.filter((p) => p.listingType === "sale").length;
@@ -111,10 +116,11 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard label="Total Enquiries" value={totalEnq} hint={`${unreadEnq} unread leads`} />
         <StatCard label="Blog Articles" value={posts.length} />
         <StatCard label="Neighborhoods" value={new Set(properties.map((p) => p.area)).size} />
+        <StatCard label="Pending Agents" value={pendingAgents} hint={`${totalAgents} total agents`} />
       </div>
 
       {/* SVG Analytics Charts Row */}
