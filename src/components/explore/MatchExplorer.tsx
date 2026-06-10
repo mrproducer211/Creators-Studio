@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { PropertyCard, ListingType } from "@/types/property";
 import { NEIGHBORHOODS, Neighborhood, DESTINATIONS } from "@/data/neighborhoods";
 import POSTS from "@/data/blogPosts";
@@ -1511,9 +1512,11 @@ export default function MatchExplorer({ properties }: Props) {
                 <span className="text-[9px] font-bold uppercase tracking-wider text-[#C9A84C]">
                   {selectedNeighborhood.personality}
                 </span>
-                <h4 className="text-[15px] font-bold text-[#1C3A2F] leading-tight mt-0.5 font-outfit">
-                  {selectedNeighborhood.name}
-                </h4>
+                <Link href={`/neighborhood/${selectedNeighborhood.slug}`} className="hover:underline no-underline block">
+                  <h4 className="text-[15px] font-bold text-[#1C3A2F] leading-tight mt-0.5 font-outfit">
+                    {selectedNeighborhood.name}
+                  </h4>
+                </Link>
               </div>
               <div 
                 className="px-2 py-0.5 rounded-lg text-[10px] font-extrabold text-white whitespace-nowrap"
@@ -1559,16 +1562,13 @@ export default function MatchExplorer({ properties }: Props) {
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => {
-                    setIsImmersive(true);
-                    document.getElementById("match-explorer-left-column")?.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                  className="w-full py-2 rounded-xl text-center font-bold text-[10.5px] cursor-pointer border-none bg-[#1C3A2F] text-white hover:bg-opacity-95 transition-all"
+                <Link
+                  href={`/neighborhood/${selectedNeighborhood.slug}`}
+                  className="w-full py-2 rounded-xl text-center font-bold text-[10.5px] bg-[#1C3A2F] text-white hover:bg-opacity-95 transition-all no-underline block"
                   style={{ fontFamily: "inherit" }}
                 >
                   Explore Area Guide & Condos →
-                </button>
+                </Link>
               )}
             </div>
           </div>
