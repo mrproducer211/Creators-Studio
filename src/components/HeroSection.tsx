@@ -549,7 +549,7 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
               <input
                 type="text"
                 placeholder={activeTab === 2 ? "I'm looking for a pet-friendly condo in On Nut near BTS under 35,000 baht." : t.hero.placeholder}
-                className="flex-1 border-none outline-none text-[13px] bg-transparent px-1.5 py-1"
+                className="flex-1 border-none outline-none text-[16px] bg-transparent px-1.5 py-1"
                 style={{ color: "#1A1A1A", fontFamily: "inherit" }}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}

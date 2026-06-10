@@ -409,7 +409,7 @@ export default function SmartSearchClient({ properties }: Props) {
           <span className="hidden sm:inline">Premium AI Concierge Search</span>
           <span className="inline sm:hidden">Premium Smart Search</span>
         </span>
-        <h2 className="text-2xl lg:text-3xl font-bold font-outfit" style={{ letterSpacing: "-0.5px" }}>
+        <h2 className="text-sm sm:text-lg lg:text-3xl font-bold font-outfit truncate w-full block" style={{ letterSpacing: "-0.5px" }}>
           Describe your perfect Bangkok home
         </h2>
 
@@ -422,7 +422,7 @@ export default function SmartSearchClient({ properties }: Props) {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="I'm looking for a pet-friendly condo in On Nut near BTS under 35,000 baht."
-              className="bg-transparent border-none outline-none text-[12px] sm:text-[13.5px] w-full placeholder-white/50 font-sans"
+              className="bg-transparent border-none outline-none text-[16px] lg:text-[13.5px] w-full placeholder-white/50 font-sans"
               style={{ color: "#F7F3EC", WebkitTextFillColor: "#F7F3EC" }}
             />
           </div>
@@ -598,8 +598,8 @@ export default function SmartSearchClient({ properties }: Props) {
 
         {/* ── CENTER COLUMN (Main Area - Property Grid) ── */}
         <div className="lg:col-span-9 order-1 lg:order-2 flex flex-col gap-6">
-          {/* Mobile-only: Your Search Understood */}
-          <div className="lg:hidden bg-white p-5 rounded-2xl border border-[#E5E0D8] shadow-sm flex flex-col gap-3">
+          {/* Mobile-only: Joined Your Search Understood + Match Results Header */}
+          <div className="lg:hidden bg-white p-5 rounded-2xl border border-[#E5E0D8] shadow-sm flex flex-col gap-4">
             <div className="flex justify-between items-center pb-2 border-b border-gray-100">
               <span className="font-bold text-[13px] text-[#1C3A2F] uppercase tracking-wider">
                 Your Search Understood
@@ -646,9 +646,52 @@ export default function SmartSearchClient({ properties }: Props) {
                 </span>
               </div>
             </div>
+
+            {/* Divider */}
+            <div className="border-t border-[#E5E0D8] my-1" />
+
+            {/* Part 2: Matches Found + Sort By */}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-extrabold text-[#1C3A2F]">
+                    We found {filteredAndSortedProperties.length} matches
+                  </h3>
+                  <p className="text-[11px] text-gray-400 font-light mt-0.5">
+                    These properties best fit your search parameters.
+                  </p>
+                </div>
+                {activeQuery && (
+                  <button
+                    onClick={handleSaveSearchClick}
+                    disabled={isSavingSearch}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold border border-[#E5E0D8] bg-transparent text-[#1C3A2F] cursor-pointer hover:bg-gray-50 disabled:opacity-50 transition-all uppercase tracking-wider"
+                    style={{ fontFamily: "inherit" }}
+                  >
+                    💾 Save Search
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between gap-2 border-t border-gray-100 pt-2">
+                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Sort By:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value as "best" | "low_price" | "high_price" | "newest" | "closest_bts")}
+                  className="px-3 py-1.5 rounded-xl border border-gray-300 text-xs font-semibold text-gray-700 bg-white outline-none cursor-pointer focus:border-[#1C3A2F]"
+                >
+                  <option value="best">Best Match</option>
+                  <option value="low_price">Lowest Price</option>
+                  <option value="high_price">Highest Price</option>
+                  <option value="newest">Newest</option>
+                  <option value="closest_bts">Closest to BTS</option>
+                </select>
+              </div>
+            </div>
           </div>
-          {/* Match Results Header */}
-          <div className="bg-white p-4 rounded-2xl border border-[#E5E0D8] shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+          {/* Desktop-only: Match Results Header */}
+          <div className="hidden lg:flex bg-white p-4 rounded-2xl border border-[#E5E0D8] shadow-sm flex-row items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-3">
                 <h3 className="text-lg font-extrabold text-[#1C3A2F]">
@@ -670,12 +713,12 @@ export default function SmartSearchClient({ properties }: Props) {
               </p>
             </div>
 
-            <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto border-t sm:border-none pt-2 sm:pt-0 mt-1 sm:mt-0">
+            <div className="flex items-center gap-2">
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Sort By:</span>
               <select
                 value={sortBy}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value as "best" | "low_price" | "high_price" | "newest" | "closest_bts")}
-                className="flex-1 sm:flex-none px-3 py-1.5 rounded-xl border border-gray-300 text-xs font-semibold text-gray-700 bg-white outline-none cursor-pointer focus:border-[#1C3A2F]"
+                className="px-3 py-1.5 rounded-xl border border-gray-300 text-xs font-semibold text-gray-700 bg-white outline-none cursor-pointer focus:border-[#1C3A2F]"
               >
                 <option value="best">Best Match</option>
                 <option value="low_price">Lowest Price</option>
