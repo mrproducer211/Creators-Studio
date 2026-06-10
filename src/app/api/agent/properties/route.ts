@@ -66,6 +66,12 @@ export async function POST(req: NextRequest) {
       petFriendly,
       nearBts,
       btsStation,
+      floor,
+      totalFloors,
+      availableFrom,
+      leaseTerms,
+      amenities,
+      images,
     } = body;
 
     if (!name || !listingType || !propertyType || !priceTHB || !area) {
@@ -96,12 +102,17 @@ export async function POST(req: NextRequest) {
       saves: 0,
       clicks: 0,
       viewCount: 0,
-      images: [],
-      amenities: [],
+      images: images || [],
+      amenities: amenities || [],
       features: [],
       schools: [],
       transit: [],
       agentEmail, // Associate listing with the agent
+      floor: floor ? Number(floor) : undefined,
+      totalFloors: totalFloors ? Number(totalFloors) : undefined,
+      availableFrom: availableFrom || undefined,
+      leaseTerms: leaseTerms || undefined,
+      status: "active", // default status
     } as any);
 
     return NextResponse.json({ success: true, property: newProp });

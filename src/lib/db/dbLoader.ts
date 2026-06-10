@@ -11,6 +11,7 @@ import { desc, eq, sql, and, lt } from "drizzle-orm";
 import { getAllLocalAppointments } from "@/lib/store/appointments";
 import { getAllEnquiries } from "@/lib/store/enquiries";
 import { getSystemSettings } from "@/lib/store/settings";
+import { PropertyCard } from "@/types/property";
 
 /**
  * Safely fetches property listings from the live database.
@@ -18,10 +19,11 @@ import { getSystemSettings } from "@/lib/store/settings";
  */
 import { getAllProperties, getPropertyById, updateProperty } from "@/lib/store/properties";
 
-export async function getDbProperties() {
+export async function getDbProperties(): Promise<PropertyCard[]> {
   if (!isDbConfigured) {
     const localList = await getAllProperties();
-    return localList.map((p) => ({
+    const visibleList = localList.filter((p) => p.status !== "unlisted");
+    return visibleList.map((p) => ({
       ...p,
       clicks: p.clicks ?? 0,
       amenities: p.amenities ?? [],
@@ -56,7 +58,7 @@ export async function getDbProperties() {
     
     // Map Drizzle output model to PropertyCard shape
     if (list && list.length > 0) {
-      return list.map((p) => {
+      const mapped = list.map((p) => {
         let priceTHB = Number(p.priceTHB);
         let priceUSD = p.priceUSD ? Number(p.priceUSD) : undefined;
         let priceLabel = p.priceLabel || undefined;
@@ -121,8 +123,10 @@ export async function getDbProperties() {
           leaseTerms: p.leaseTerms || undefined,
           depositTerms: p.depositTerms || undefined,
           maintenance: p.maintenance || undefined,
+          status: (p as any).status || undefined,
         };
       });
+      return mapped.filter((p: any) => p.status !== "unlisted");
     }
   } catch (err) {
     console.warn("DB properties fetch failed, using fallback mock data:", err);

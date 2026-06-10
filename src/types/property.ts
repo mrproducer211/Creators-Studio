@@ -36,6 +36,7 @@ export interface PropertyCard {
   telegramMediaGroupId?: string;
   createdAt: string;
   updatedAt?: string;
+  status?: "active" | "unlisted";
 
   // ── Optional enrichment (data-driven when set, smart defaults otherwise) ──
   amenities?:       string[];

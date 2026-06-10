@@ -12,11 +12,16 @@ import {
   XCircle, 
   Eye, 
   MousePointerClick, 
-  Heart, 
   User, 
   LogOut,
   FolderOpen,
-  ArrowLeft
+  ArrowLeft,
+  Settings,
+  UploadCloud,
+  ListFilter,
+  EyeOff,
+  Unlock,
+  Check
 } from "lucide-react";
 import Link from "next/link";
 
@@ -33,12 +38,12 @@ interface AgentDashboardClientProps {
 
 export default function AgentDashboardClient({ agent, initialProperties }: AgentDashboardClientProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"listings" | "upload" | "account">("listings");
+  const [activeTab, setActiveTab] = useState<"listings" | "upload" | "settings">("listings");
   const [properties, setProperties] = useState<any[]>(initialProperties);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   
-  // Form State
+  // Listing Upload Form State
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [priceTHB, setPriceTHB] = useState("");
@@ -50,11 +55,150 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
   const [bathrooms, setBathrooms] = useState("1");
   const [sqm, setSqm] = useState("");
   const [coverImage, setCoverImage] = useState("");
+  const [extraImages, setExtraImages] = useState<string[]>([]);
   const [btsStation, setBtsStation] = useState("");
   const [petFriendly, setPetFriendly] = useState(false);
   const [nearBts, setNearBts] = useState(false);
+  
+  // New Specification Fields
+  const [floor, setFloor] = useState("");
+  const [totalFloors, setTotalFloors] = useState("");
+  const [availableFrom, setAvailableFrom] = useState("");
+  const [leaseTerms, setLeaseTerms] = useState("12 months");
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  
+  // Image Upload states
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingExtra, setUploadingExtra] = useState(false);
+  
+  // Notification states
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  // Agent Settings Form State
+  const [agentName, setAgentName] = useState(agent.name);
+  const [agentPassword, setAgentPassword] = useState("");
+  const [agentPasswordConfirm, setAgentPasswordConfirm] = useState("");
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsError, setSettingsError] = useState("");
+  const [settingsSuccess, setSettingsSuccess] = useState("");
+
+  // Amenities checklist defined in PropertyDetail.tsx
+  const ALL_AMENITIES = [
+    "Swimming Pool",
+    "Fitness Center",
+    "Garden",
+    "Co-working Space",
+    "Sauna",
+    "24h Security",
+    "Parking",
+    "Keycard Access"
+  ];
+
+  // Quick stats calculations
+  const totalListingsCount = properties.length;
+  const activeListingsCount = properties.filter((p) => p.status !== "unlisted").length;
+  const unlistedListingsCount = properties.filter((p) => p.status === "unlisted").length;
+  const totalViewsCount = properties.reduce((acc, p) => acc + (p.viewCount || 0), 0);
+  const totalClicksCount = properties.reduce((acc, p) => acc + (p.clicks || 0), 0);
+
+  const handleListingTypeChange = (type: "sale" | "rent" | "short_stay") => {
+    setListingType(type);
+    if (type === "short_stay") {
+      setLeaseTerms("1 month");
+    } else if (type === "rent") {
+      setLeaseTerms("12 months");
+    } else {
+      setLeaseTerms("");
+    }
+  };
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 3 * 1024 * 1024) {
+      setError("Cover image exceeds the 3MB size limit.");
+      return;
+    }
+
+    setUploadingCover(true);
+    setError("");
+    setSuccessMsg("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/agent/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to upload image.");
+
+      setCoverImage(data.url);
+      setSuccessMsg("Cover image uploaded successfully.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error uploading cover image.");
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
+  const handleExtraImagesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    if (extraImages.length + files.length > 5) {
+      setError("Maximum of 5 additional images allowed.");
+      return;
+    }
+
+    setUploadingExtra(true);
+    setError("");
+    setSuccessMsg("");
+
+    const uploadedUrls = [...extraImages];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.size > 3 * 1024 * 1024) {
+          setError(`File "${file.name}" exceeds 3MB limit and was skipped.`);
+          continue;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/agent/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Upload failed.");
+
+        uploadedUrls.push(data.url);
+      }
+      setExtraImages(uploadedUrls);
+      setSuccessMsg("Additional images uploaded successfully.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error uploading additional images.");
+    } finally {
+      setUploadingExtra(false);
+    }
+  };
+
+  const handleAmenityToggle = (amenity: string) => {
+    if (selectedAmenities.includes(amenity)) {
+      setSelectedAmenities(selectedAmenities.filter((a) => a !== amenity));
+    } else {
+      setSelectedAmenities([...selectedAmenities, amenity]);
+    }
+  };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +231,12 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
           btsStation: btsStation || undefined,
           petFriendly,
           nearBts,
+          floor: floor ? Number(floor) : undefined,
+          totalFloors: totalFloors ? Number(totalFloors) : undefined,
+          availableFrom: availableFrom || undefined,
+          leaseTerms: leaseTerms || undefined,
+          amenities: selectedAmenities,
+          images: extraImages,
         }),
       });
 
@@ -94,18 +244,24 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
       if (!res.ok) throw new Error(data.error || "Failed to upload listing.");
 
       setSuccessMsg("Property listing uploaded successfully!");
+      
       // Reset form
       setName("");
       setDescription("");
       setPriceTHB("");
       setSqm("");
       setCoverImage("");
+      setExtraImages([]);
       setBtsStation("");
       setDistrict("");
+      setFloor("");
+      setTotalFloors("");
+      setAvailableFrom("");
+      setSelectedAmenities([]);
       setPetFriendly(false);
       setNearBts(false);
 
-      // Refresh properties list
+      // Refresh listings
       const fetchListings = await fetch("/api/agent/properties");
       if (fetchListings.ok) {
         const listData = await fetchListings.json();
@@ -124,8 +280,32 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
     }
   };
 
+  const handleToggleStatus = async (id: number, currentStatus: string) => {
+    const nextStatus = currentStatus === "unlisted" ? "active" : "unlisted";
+    setActionLoading(id);
+
+    try {
+      const res = await fetch(`/api/agent/properties/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: nextStatus }),
+      });
+
+      if (res.ok) {
+        setProperties(properties.map((p) => p.id === id ? { ...p, status: nextStatus } : p));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to toggle property listing status.");
+      }
+    } catch {
+      alert("Error updating property status.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this property? This cannot be undone.")) return;
+    if (!confirm("Are you sure you want to delete this property? This action is permanent and cannot be undone.")) return;
     setActionLoading(id);
 
     try {
@@ -142,6 +322,42 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
       alert("Error deleting property.");
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSettingsError("");
+    setSettingsSuccess("");
+    setSettingsLoading(true);
+
+    if (agentPassword && agentPassword !== agentPasswordConfirm) {
+      setSettingsError("Passwords do not match.");
+      setSettingsLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/agent/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: agentName,
+          password: agentPassword || undefined,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update profile.");
+
+      setSettingsSuccess("Profile settings updated successfully!");
+      setAgentPassword("");
+      setAgentPasswordConfirm("");
+      router.refresh();
+    } catch (err) {
+      setSettingsError(err instanceof Error ? err.message : "Error updating settings.");
+    } finally {
+      setSettingsLoading(false);
     }
   };
 
@@ -189,14 +405,14 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
               <Plus size={16} /> Upload Property
             </button>
             <button
-              onClick={() => setActiveTab("account")}
+              onClick={() => setActiveTab("settings")}
               className="w-full flex items-center gap-2.5 px-4 py-3 rounded-xl text-[13px] font-medium text-left border-none cursor-pointer transition-all"
               style={{
-                background: activeTab === "account" ? "rgba(201,168,76,0.18)" : "transparent",
-                color: activeTab === "account" ? "#E2C97E" : "rgba(255,255,255,0.65)",
+                background: activeTab === "settings" ? "rgba(201,168,76,0.18)" : "transparent",
+                color: activeTab === "settings" ? "#E2C97E" : "rgba(255,255,255,0.65)",
               }}
             >
-              <User size={16} /> Account Status
+              <Settings size={16} /> Profile & Settings
             </button>
           </nav>
         )}
@@ -269,26 +485,48 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h1 className="text-[24px] font-bold text-[#1A1A1A] tracking-[-0.5px]">
-                  {activeTab === "listings" ? "My Property Listings" : activeTab === "upload" ? "Upload New Property" : "Account Status"}
+                  {activeTab === "listings" ? "My Property Listings" : activeTab === "upload" ? "Upload New Property" : "Profile & Settings"}
                 </h1>
                 <p className="text-[13px] text-[#999] font-light mt-0.5">
                   {activeTab === "listings" 
                     ? `Manage your portfolio of ${properties.length} active listings in Bangkok.` 
                     : activeTab === "upload" 
                     ? "Enter listing specs below. Once posted, listings are active immediately." 
-                    : "Review your agent credentials and verification status."}
+                    : "Update your workspace profile and password credentials."}
                 </p>
               </div>
               {activeTab === "listings" && (
                 <button
                   onClick={() => setActiveTab("upload")}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[12px] font-bold border-none cursor-pointer text-white"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[12px] font-bold border-none cursor-pointer text-white transition-opacity hover:opacity-95"
                   style={{ background: "#1C3A2F" }}
                 >
                   <Plus size={14} /> Add Property
                 </button>
               )}
             </div>
+
+            {/* Quick Analytics Stats cards (shown on My Listings tab) */}
+            {activeTab === "listings" && (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div className="p-5 rounded-2xl border" style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.8px] text-gray-400">Total Listings</div>
+                  <div className="text-[24px] font-bold text-[#1C3A2F] mt-1">{totalListingsCount}</div>
+                </div>
+                <div className="p-5 rounded-2xl border" style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.8px] text-gray-400">Active Listed</div>
+                  <div className="text-[24px] font-bold text-[#2E7D4F] mt-1">{activeListingsCount}</div>
+                </div>
+                <div className="p-5 rounded-2xl border" style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.8px] text-gray-400">Draft / Unlisted</div>
+                  <div className="text-[24px] font-bold text-[#8B6914] mt-1">{unlistedListingsCount}</div>
+                </div>
+                <div className="p-5 rounded-2xl border" style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.8px] text-gray-400">Total Views / Clicks</div>
+                  <div className="text-[24px] font-bold text-[#C9A84C] mt-1">{totalViewsCount} / {totalClicksCount}</div>
+                </div>
+              </div>
+            )}
 
             {/* TAB: LISTINGS */}
             {activeTab === "listings" && (
@@ -297,59 +535,79 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                   <thead>
                     <tr style={{ background: "#FAF8F3", borderBottom: borderStyle }}>
                       <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Property</th>
-                      <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Details</th>
+                      <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Specs</th>
                       <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Price</th>
-                      <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Analytics</th>
-                      <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Verification</th>
+                      <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Status</th>
+                      <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Engagement</th>
                       <th className="text-right text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {properties.map((prop) => (
-                      <tr key={prop.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
-                        <td className="px-4 py-4 min-w-[200px]">
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-lg bg-cover bg-center bg-[#EDE8DF]" style={{ backgroundImage: `url(${prop.coverImage})` }} />
-                            <div className="min-w-0">
-                              <div className="text-[13px] font-bold text-[#1A1A1A] truncate">{prop.name}</div>
-                              <div className="text-[11px] text-gray-400 mt-0.5 truncate">{prop.area} · {prop.propertyType}</div>
+                    {properties.map((prop) => {
+                      const isUnlisted = prop.status === "unlisted";
+                      return (
+                        <tr key={prop.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
+                          <td className="px-4 py-4 min-w-[200px]">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 rounded-lg bg-cover bg-center bg-[#EDE8DF]" style={{ backgroundImage: `url(${prop.coverImage || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=100&auto=format&q=80"})` }} />
+                              <div className="min-w-0">
+                                <div className="text-[13px] font-bold text-[#1A1A1A] truncate">{prop.name}</div>
+                                <div className="text-[11px] text-gray-400 mt-0.5 truncate">{prop.area} · {prop.propertyType}</div>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-[12px] text-gray-600">
-                          {prop.bedrooms} Bed · {prop.bathrooms} Bath · {prop.sqm ? `${prop.sqm} sqm` : "N/A"}
-                        </td>
-                        <td className="px-4 py-4 text-[13px] font-bold text-[#1C3A2F]">
-                          ฿{prop.priceTHB.toLocaleString()}{prop.priceLabel || "/month"}
-                        </td>
-                        <td className="px-4 py-4 text-center">
-                          <div className="flex items-center justify-center gap-3 text-[12px] text-gray-500">
-                            <span className="flex items-center gap-1"><Eye size={12} /> {prop.viewCount || 0}</span>
-                            <span className="flex items-center gap-1"><MousePointerClick size={12} /> {prop.clicks || 0}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-center">
-                          {prop.verificationBadge ? (
-                            <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
-                              <CheckCircle2 size={10} /> Verified
-                            </span>
-                          ) : (
-                            <span className="text-[10px] font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
-                              <AlertCircle size={10} /> Unverified
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-4 py-4 text-right">
-                          <button
-                            onClick={() => handleDelete(prop.id)}
-                            disabled={actionLoading === prop.id}
-                            className="p-2 text-red-500 hover:text-red-700 bg-transparent border-none cursor-pointer rounded transition-colors"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="px-4 py-4 text-[12px] text-gray-600">
+                            <div>{prop.bedrooms} Bed · {prop.bathrooms} Bath</div>
+                            {prop.floor && <div className="text-[10px] text-gray-400 mt-0.5">Floor: {prop.floor} / {prop.totalFloors || "—"}</div>}
+                          </td>
+                          <td className="px-4 py-4 text-[13px] font-bold text-[#1C3A2F]">
+                            ฿{prop.priceTHB.toLocaleString()}{prop.priceLabel || (prop.listingType === "sale" ? "" : "/month")}
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            {isUnlisted ? (
+                              <span className="text-[10px] font-semibold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-amber-200">
+                                <EyeOff size={10} /> Unlisted
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-emerald-200">
+                                <CheckCircle2 size={10} /> Listed
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            <div className="flex items-center justify-center gap-3 text-[12px] text-gray-500">
+                              <span className="flex items-center gap-1" title="Views"><Eye size={12} /> {prop.viewCount || 0}</span>
+                              <span className="flex items-center gap-1" title="Clicks"><MousePointerClick size={12} /> {prop.clicks || 0}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <button
+                                onClick={() => handleToggleStatus(prop.id, prop.status || "active")}
+                                disabled={actionLoading === prop.id}
+                                className="px-2 py-1.5 rounded text-[11px] font-bold border cursor-pointer transition-colors"
+                                style={{
+                                  background: isUnlisted ? "#1C3A2F" : "#FFFFFF",
+                                  color: isUnlisted ? "#FFFFFF" : "#1C3A2F",
+                                  borderColor: "#1C3A2F"
+                                }}
+                                title={isUnlisted ? "Make listing public" : "Unlist listing"}
+                              >
+                                {isUnlisted ? "Publish" : "Unlist"}
+                              </button>
+                              <button
+                                onClick={() => handleDelete(prop.id)}
+                                disabled={actionLoading === prop.id}
+                                className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 bg-transparent border-none cursor-pointer rounded transition-colors"
+                                title="Delete Listing"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                     {properties.length === 0 && (
                       <tr>
                         <td colSpan={6} className="text-center py-16 text-gray-400 text-[13px]">
@@ -377,7 +635,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                 )}
 
                 <form onSubmit={handleUpload} className="flex flex-col gap-6">
-                  {/* Grid Rows */}
+                  {/* Title & Price */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Property Name / Title *</label>
@@ -406,17 +664,18 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     </div>
                   </div>
 
+                  {/* Listing Type, Property Type & Neighborhood */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Listing Type *</label>
                       <select
                         value={listingType}
-                        onChange={(e) => setListingType(e.target.value as any)}
+                        onChange={(e) => handleListingTypeChange(e.target.value as any)}
                         className="w-full px-4 py-3 rounded-xl text-[14px] focus:outline-none focus:border-[#C9A84C]"
                         style={inputStyle}
                       >
                         <option value="rent">Rent / Long Lease</option>
-                        <option value="short_stay">Short Rent / Vacation</option>
+                        <option value="short_stay">Short Rent / Short Stay</option>
                         <option value="sale">For Sale</option>
                       </select>
                     </div>
@@ -452,7 +711,30 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  {/* Lease Terms (Conditional for Short Stay) */}
+                  {listingType === "short_stay" && (
+                    <div className="p-4 rounded-xl border flex flex-col md:flex-row gap-4 items-center" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                      <div className="flex-1">
+                        <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Short Term Rental Duration *</label>
+                        <select
+                          value={leaseTerms}
+                          onChange={(e) => setLeaseTerms(e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl text-[14px] focus:outline-none focus:border-[#C9A84C]"
+                          style={inputStyle}
+                        >
+                          <option value="1 month rent">1 Month Rent</option>
+                          <option value="2 months rent">2 Months Rent</option>
+                          <option value="3 months to 6 months rent">3 Months to 6 Months</option>
+                        </select>
+                      </div>
+                      <div className="text-[12px] text-gray-500 font-light mt-4 md:mt-0 max-w-sm">
+                        Specify the minimum duration the tenant can stay for this short-stay vacation or sub-let property.
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Basic Specifications: Beds, Baths, Sqm, District */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Bedrooms</label>
                       <select
@@ -506,31 +788,168 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     </div>
                   </div>
 
+                  {/* Floor and Availability Specifications */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Property Floor Number</label>
+                      <input
+                        type="number"
+                        value={floor}
+                        onChange={(e) => setFloor(e.target.value)}
+                        placeholder="e.g. 14"
+                        className="w-full px-4 py-3 rounded-xl text-[14px]"
+                        style={inputStyle}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Total Building Floors</label>
+                      <input
+                        type="number"
+                        value={totalFloors}
+                        onChange={(e) => setTotalFloors(e.target.value)}
+                        placeholder="e.g. 32"
+                        className="w-full px-4 py-3 rounded-xl text-[14px]"
+                        style={inputStyle}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Date Available From</label>
+                      <input
+                        type="date"
+                        value={availableFrom}
+                        onChange={(e) => setAvailableFrom(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl text-[14px]"
+                        style={inputStyle}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Description */}
                   <div>
                     <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Description</label>
                     <textarea
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Add a detailed description about the listing, amenities, lease terms..."
+                      placeholder="Add a detailed description about the listing, furnishings, orientation, view..."
                       rows={4}
                       className="w-full px-4 py-3 rounded-xl text-[14px] focus:outline-none focus:border-[#C9A84C]"
                       style={{ ...inputStyle, resize: "none" }}
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Amenities Checklist */}
+                  <div className="p-5 rounded-2xl border" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                    <label className="block text-[11px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] mb-4">Select Amenities Available</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {ALL_AMENITIES.map((amenity) => {
+                        const checked = selectedAmenities.includes(amenity);
+                        return (
+                          <label key={amenity} className="flex items-center gap-2.5 text-[13px] text-gray-700 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => handleAmenityToggle(amenity)}
+                              className="w-4.5 h-4.5 accent-[#1C3A2F] rounded cursor-pointer"
+                            />
+                            <span>{amenity}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Image Upload Area */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 rounded-2xl border" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                    {/* Cover Image Upload */}
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Cover Image URL</label>
-                      <input
-                        type="text"
-                        value={coverImage}
-                        onChange={(e) => setCoverImage(e.target.value)}
-                        placeholder="e.g. https://images.unsplash.com/..."
-                        className="w-full px-4 py-3 rounded-xl text-[14px]"
-                        style={inputStyle}
-                      />
+                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-[#1C3A2F] mb-2">Cover Image *</label>
+                      <div
+                        className="border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all relative overflow-hidden h-[180px] bg-white hover:border-[#C9A84C]"
+                        style={{ borderColor: "#E5E0D8" }}
+                      >
+                        {coverImage ? (
+                          <>
+                            <img src={coverImage} alt="Cover Preview" className="absolute inset-0 w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                              <button
+                                type="button"
+                                onClick={() => setCoverImage("")}
+                                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] rounded-lg border-none cursor-pointer"
+                              >
+                                Replace Photo
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <UploadCloud className="text-[#C9A84C] mb-2" size={36} />
+                            <div className="text-[12px] font-bold text-gray-700">Upload Cover Photo</div>
+                            <div className="text-[10px] text-gray-400 mt-1">PNG, JPG up to 3MB limit</div>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleCoverUpload}
+                              className="absolute inset-0 opacity-0 cursor-pointer"
+                            />
+                          </>
+                        )}
+                        {uploadingCover && (
+                          <div className="absolute inset-0 bg-white/85 flex items-center justify-center text-[12px] font-semibold text-[#1C3A2F]">
+                            Uploading Cover...
+                          </div>
+                        )}
+                      </div>
                     </div>
 
+                    {/* Additional Images Upload */}
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-[#1C3A2F] mb-2">Additional Gallery Images (Max 5)</label>
+                      <div
+                        className="border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all relative overflow-hidden h-[100px] bg-white hover:border-[#C9A84C]"
+                        style={{ borderColor: "#E5E0D8" }}
+                      >
+                        <UploadCloud className="text-[#C9A84C] mb-1" size={24} />
+                        <div className="text-[11px] font-bold text-gray-700">Select Gallery Photos</div>
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleExtraImagesUpload}
+                          disabled={extraImages.length >= 5}
+                          className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                        />
+                        {uploadingExtra && (
+                          <div className="absolute inset-0 bg-white/85 flex items-center justify-center text-[12px] font-semibold text-[#1C3A2F]">
+                            Uploading Gallery...
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Extra images preview strip */}
+                      {extraImages.length > 0 && (
+                        <div className="flex gap-2.5 mt-3 flex-wrap">
+                          {extraImages.map((imgUrl, idx) => (
+                            <div key={idx} className="w-14 h-14 rounded-lg relative overflow-hidden border bg-[#F0EAE0]">
+                              <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+                              <button
+                                type="button"
+                                onClick={() => setExtraImages(extraImages.filter((_, i) => i !== idx))}
+                                className="absolute top-0 right-0 p-1 bg-red-600 hover:bg-red-700 text-white rounded-bl border-none cursor-pointer"
+                                title="Remove Image"
+                              >
+                                <Trash2 size={10} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* BTS and Walkable checkmarks */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Nearest BTS/MRT Station</label>
                       <input
@@ -542,31 +961,32 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                         style={inputStyle}
                       />
                     </div>
+
+                    <div className="flex items-center gap-6 md:pt-6">
+                      <label className="flex items-center gap-2 text-[13px] text-gray-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={petFriendly}
+                          onChange={(e) => setPetFriendly(e.target.checked)}
+                          className="w-4.5 h-4.5 accent-[#1C3A2F]"
+                        />
+                        Pet Friendly Building
+                      </label>
+
+                      <label className="flex items-center gap-2 text-[13px] text-gray-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={nearBts}
+                          onChange={(e) => setNearBts(e.target.checked)}
+                          className="w-4.5 h-4.5 accent-[#1C3A2F]"
+                        />
+                        Walking Distance to BTS/MRT
+                      </label>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-6 py-2">
-                    <label className="flex items-center gap-2 text-[13px] text-gray-700 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={petFriendly}
-                        onChange={(e) => setPetFriendly(e.target.checked)}
-                        className="w-4 h-4 accent-[#1C3A2F]"
-                      />
-                      Pet Friendly Building
-                    </label>
-
-                    <label className="flex items-center gap-2 text-[13px] text-gray-700 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={nearBts}
-                        onChange={(e) => setNearBts(e.target.checked)}
-                        className="w-4 h-4 accent-[#1C3A2F]"
-                      />
-                      Within walking distance to BTS/MRT
-                    </label>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-3 pt-4 border-t">
+                  {/* Form Actions */}
+                  <div className="flex items-center justify-end gap-3 pt-4 border-t" style={{ borderColor: "#E5E0D8" }}>
                     <button
                       type="button"
                       onClick={() => setActiveTab("listings")}
@@ -578,7 +998,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     <button
                       type="submit"
                       disabled={loading}
-                      className="px-6 py-3 rounded-xl text-[13px] font-bold border-none cursor-pointer text-white disabled:opacity-60"
+                      className="px-6 py-3 rounded-xl text-[13px] font-bold border-none cursor-pointer text-white disabled:opacity-60 transition-opacity hover:opacity-95"
                       style={{ background: "#1C3A2F" }}
                     >
                       {loading ? "Posting..." : "Post Listing"}
@@ -588,40 +1008,106 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
               </div>
             )}
 
-            {/* TAB: ACCOUNT STATUS */}
-            {activeTab === "account" && (
-              <div className="p-6 rounded-2xl border" style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}>
-                <div className="flex items-center gap-4 p-5 rounded-2xl border mb-6" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-[#C9A84C] text-[#1C3A2F] text-lg font-bold">
-                    {agent.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+            {/* TAB: PROFILE & SETTINGS */}
+            {activeTab === "settings" && (
+              <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1.8fr] gap-6">
+                {/* Left col: account overview summary */}
+                <div className="p-6 rounded-2xl border flex flex-col gap-5 bg-white" style={{ borderColor: "#E5E0D8" }}>
+                  <div className="flex items-center gap-4 p-4 rounded-xl" style={{ background: "#FAF8F3" }}>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-[#C9A84C] text-[#1C3A2F] text-lg font-bold">
+                      {agent.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <h3 className="text-[15px] font-bold text-[#1C3A2F]">{agentName}</h3>
+                      <p className="text-[12px] text-gray-400 font-light mt-0.5 truncate max-w-[150px]">{agent.email}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-[16px] font-bold text-[#1C3A2F]">{agent.name}</h3>
-                    <p className="text-[12px] text-gray-400 font-light mt-0.5">{agent.email} · Partner ID: {agent.id}</p>
+
+                  <div className="flex flex-col gap-3.5 text-[13px]">
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-400">Account Role</span>
+                      <span className="font-semibold text-[#1A1A1A]">Agent Partner</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-400">Registration Date</span>
+                      <span className="font-medium text-[#1A1A1A]">
+                        {new Date(agent.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="text-gray-400">Verification State</span>
+                      <span className="font-bold text-emerald-700 uppercase tracking-[0.5px]">active</span>
+                    </div>
+                    <div className="flex justify-between py-2">
+                      <span className="text-gray-400">Permissions</span>
+                      <span className="font-semibold text-emerald-700">Full Upload Access</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                  <div className="flex justify-between py-3 border-b text-[13px]">
-                    <span className="text-gray-500">Account Type</span>
-                    <span className="font-semibold text-[#1A1A1A]">Agent Partner</span>
-                  </div>
-                  <div className="flex justify-between py-3 border-b text-[13px]">
-                    <span className="text-gray-500">Registration Date</span>
-                    <span className="font-medium text-[#1A1A1A]">
-                      {new Date(agent.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-3 border-b text-[13px]">
-                    <span className="text-gray-500">Verification State</span>
-                    <span className="font-bold uppercase tracking-[0.5px]" style={{ color: status === "approved" ? "#2E7D4F" : "#8B6914" }}>
-                      {status === "approved" ? "active" : status}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-3 text-[13px]">
-                    <span className="text-gray-500">Upload Permissions</span>
-                    <span className="font-semibold text-[#2E7D4F]">Active (Approved to Post)</span>
-                  </div>
+                {/* Right col: settings update form */}
+                <div className="p-6 rounded-2xl border bg-white" style={{ borderColor: "#E5E0D8" }}>
+                  <h3 className="text-[16px] font-bold text-[#1C3A2F] mb-6">Update Profile Credentials</h3>
+                  
+                  {settingsError && (
+                    <div className="p-4 rounded-xl text-[13px] mb-5 border font-medium bg-red-50 border-red-200 text-red-700">
+                      ⚠️ {settingsError}
+                    </div>
+                  )}
+                  {settingsSuccess && (
+                    <div className="p-4 rounded-xl text-[13px] mb-5 border font-medium bg-emerald-50 border-emerald-200 text-emerald-700">
+                      ✅ {settingsSuccess}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSaveSettings} className="flex flex-col gap-5">
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Agent Display Name *</label>
+                      <input
+                        type="text"
+                        value={agentName}
+                        onChange={(e) => setAgentName(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 rounded-xl text-[14px] focus:outline-none focus:border-[#C9A84C]"
+                        style={inputStyle}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Change Password (Optional)</label>
+                      <input
+                        type="password"
+                        value={agentPassword}
+                        onChange={(e) => setAgentPassword(e.target.value)}
+                        placeholder="Enter new password (min. 6 characters)"
+                        className="w-full px-4 py-3 rounded-xl text-[14px] focus:outline-none focus:border-[#C9A84C]"
+                        style={inputStyle}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Confirm Password</label>
+                      <input
+                        type="password"
+                        value={agentPasswordConfirm}
+                        onChange={(e) => setAgentPasswordConfirm(e.target.value)}
+                        placeholder="Confirm new password"
+                        className="w-full px-4 py-3 rounded-xl text-[14px] focus:outline-none focus:border-[#C9A84C]"
+                        style={inputStyle}
+                      />
+                    </div>
+
+                    <div className="flex justify-end pt-3">
+                      <button
+                        type="submit"
+                        disabled={settingsLoading}
+                        className="px-6 py-3 rounded-xl text-[13px] font-bold border-none cursor-pointer text-white disabled:opacity-60 transition-opacity hover:opacity-95"
+                        style={{ background: "#1C3A2F" }}
+                      >
+                        {settingsLoading ? "Saving Changes..." : "Save Settings"}
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             )}

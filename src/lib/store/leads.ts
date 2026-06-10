@@ -112,3 +112,25 @@ export async function deleteLead(id: string): Promise<boolean> {
   await persist(next);
   return true;
 }
+
+export async function updateAgentProfile(
+  email: string,
+  patch: { name?: string; passwordPlain?: string }
+): Promise<boolean> {
+  const all = await load();
+  const lower = email.toLowerCase();
+  const idx = all.findIndex((u) => u.email.toLowerCase() === lower);
+  if (idx === -1) return false;
+
+  const updated: LeadUser = { ...all[idx] };
+  if (patch.name) {
+    updated.name = patch.name;
+  }
+  if (patch.passwordPlain) {
+    updated.passwordHash = await hash(patch.passwordPlain, 10);
+  }
+
+  all[idx] = updated;
+  await persist(all);
+  return true;
+}
