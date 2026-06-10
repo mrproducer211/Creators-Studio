@@ -25,6 +25,7 @@ const NEIGHBORHOOD_METADATA: Record<string, {
   bestFor: string;
   pros: string[];
   vibeCards: { title: string; subtitle: string; image: string }[];
+  lifestyleDesc?: string;
 }> = {
   ari: {
     district: "Phaya Thai",
@@ -36,14 +37,17 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Walkable neighborhood with a strong community feel",
       "Amazing cafes, bakeries and local restaurants",
       "Easy access to BTS and main roads",
-      "Perfect for remote work and creative lifestyle"
+      "Perfect for remote work and creative lifestyle",
+      "Leafy side streets with minimal high-rise traffic",
+      "Charming local markets alongside modern supermarkets"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "Excellent", image: "/images/lifestyles/ari_cafe.png" },
       { title: "Dining", subtitle: "Great variety", image: "/images/lifestyles/ari_dining.png" },
       { title: "Nightlife", subtitle: "Relaxed", image: "/images/lifestyles/ari_nightlife.png" },
       { title: "Parks & Green", subtitle: "Abundant", image: "/images/lifestyles/ari_parks.png" }
-    ]
+    ],
+    lifestyleDesc: "A charming residential enclave that has evolved into one of Bangkok's trendiest creative hubs. Ari maintains a laid-back, community-centric atmosphere, blending mid-century modern homes with leafy streets, pocket parks, and artisanal spaces. The neighborhood is celebrated for its thriving specialty coffee culture, independent bakeries, cozy bistros, and locally-owned boutiques. It attracts a mix of local creatives, tech founders, digital nomads, and young families who value a slower pace of life with urban conveniences."
   },
   sathorn: {
     district: "Sathon",
@@ -55,14 +59,18 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Heart of the financial district with top-class towers",
       "Proximity to Lumphini Park for outdoor recreation",
       "Prestigious dining venues and rooftop bars",
-      "High concentration of international schools nearby"
+      "High concentration of international schools nearby",
+      "Quiet, tree-lined residential side-streets (sois)",
+      "Convenient tollway access and multi-lane roads",
+      "Top-tier healthcare centers and embassies within reach"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "High Quality", image: "/images/lifestyles/sathorn_cafe.png" },
       { title: "Dining", subtitle: "World-class", image: "/images/lifestyles/sathorn_dining.png" },
       { title: "Nightlife", subtitle: "Sophisticated", image: "/images/lifestyles/sathorn_nightlife.png" },
       { title: "Parks & Green", subtitle: "Lumpini Park close", image: "/images/lifestyles/sathorn_parks.png" }
-    ]
+    ],
+    lifestyleDesc: "A perfect blend of premium corporate lifestyle and serene residential comfort. Sathorn is defined by its towering glass skyscrapers, corporate headquarters, and luxury condominium developments, contrasted with quiet, tree-lined side streets (sois). It is home to upscale Michelin-starred dining, exclusive rooftop bars, and tranquil green spaces like Lumphini Park. By day, it is a bustling financial hub; by evening, it transforms into an elegant dining, networking, and wellness sanctuary for working professionals, expatriates, and modern families."
   },
   "thong-lo": {
     district: "Watthana",
@@ -74,14 +82,17 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Epicenter of Bangkok's trendy dining & nightlife",
       "Beautiful high-end community malls and plazas",
       "Very walkable sub-sois with premium shopping",
-      "Excellent Japanese food and sushi culture"
+      "Excellent Japanese food and sushi culture",
+      "Prestige address with high capital appreciation",
+      "Close to elite international hospitals and schools"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "Artisanal", image: "/images/lifestyles/thong_lo_cafe.png" },
       { title: "Dining", subtitle: "Fine Dining", image: "/images/lifestyles/thong_lo_dining.png" },
       { title: "Nightlife", subtitle: "Elite Speakeasies", image: "/images/lifestyles/thong_lo_nightlife.png" },
       { title: "Parks & Green", subtitle: "Benjasiri nearby", image: "/images/lifestyles/thong_lo_parks.png" }
-    ]
+    ],
+    lifestyleDesc: "Bangkok's undisputed epicenter of fashion, high-end dining, and vibrant nightlife. Thong Lo (Sukhumvit 55) is a glamorous and energetic neighborhood lined with luxury lifestyle malls, designer boutiques, speakeasy bars, and world-class culinary concepts. It is highly popular among Japanese expats, affluent locals, and global travelers who seek a sophisticated urban lifestyle. Beyond the main road, its quiet sub-sois hide high-end residential towers, wellness spas, and hidden cafes, offering an oasis of calm amidst the excitement."
   },
   asok: {
     district: "Watthana",
@@ -93,14 +104,17 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Ultimate transit hub linking BTS Skytrain & MRT Subway",
       "Direct access to Terminal 21 shopping mall",
       "Superb collection of co-working spaces and gyms",
-      "Walkable distance to Benjakitti Forest Park"
+      "Walkable distance to Benjakitti Forest Park",
+      "Thriving business district with corporate offices",
+      "Diverse dining options ranging from street food to fine dining"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "Fast-paced", image: "/images/lifestyles/asok_cafe.png" },
       { title: "Dining", subtitle: "Global Food Court", image: "/images/lifestyles/asok_dining.png" },
       { title: "Nightlife", subtitle: "High Energy", image: "/images/lifestyles/asok_nightlife.png" },
       { title: "Parks & Green", subtitle: "Benjakitti Park", image: "/images/lifestyles/asok_parks.png" }
-    ]
+    ],
+    lifestyleDesc: "The ultimate commercial crossroads of Bangkok, where business, retail, and convenience meet. Asok is a high-energy urban transit hub where the BTS Skytrain and MRT Subway systems intersect, making commute effortless. The area is dominated by towering office plazas, co-working spaces, luxury hotels, and the landmark Terminal 21 shopping mall. It is a highly active neighborhood that caters to fast-paced professionals and urbanites who want everything—from fitness centers to international dining—right at their doorstep, with Benjakitti Forest Park just a short walk away."
   },
   silom: {
     district: "Bang Rak",
@@ -112,14 +126,17 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Fantastic mix of financial center and historic lanes",
       "Legendary street food and night markets",
       "Inclusive community and vibrant nightlife scene",
-      "Quick access to Lumphini Park trails"
+      "Quick access to Lumphini Park trails",
+      "Dual transit connectivity via BTS and MRT",
+      "Proximity to upscale shopping and retail core"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "Cozy Corners", image: "/images/lifestyles/silom_cafe.png" },
       { title: "Dining", subtitle: "Legendary Street", image: "/images/lifestyles/silom_dining.png" },
       { title: "Nightlife", subtitle: "Vibrant & Late", image: "/images/lifestyles/silom_nightlife.png" },
       { title: "Parks & Green", subtitle: "Lumphini Adjacent", image: "/images/lifestyles/silom_parks.png" }
-    ]
+    ],
+    lifestyleDesc: "A dynamic neighborhood of contrasts, blending Bangkok's historic commerce with modern financial power. Often referred to as the 'Wall Street of Thailand' by day, Silom is home to major banking headquarters and multinational corporations. By night, it morphs into a vibrant, inclusive, and diverse entertainment district. The neighborhood boasts some of the city's best street food lanes, historic heritage buildings, and the expansive greenery of Lumphini Park at its eastern edge. It is perfect for those who thrive in a high-energy, walk-friendly environment."
   },
   "on-nut": {
     district: "Phra Khanong",
@@ -131,14 +148,17 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Incredible value-for-money rental properties",
       "Massive supermarkets and local food courts",
       "Quieter environment away from downtown noise",
-      "Excellent BTS connections to central districts"
+      "Excellent BTS connections to central districts",
+      "Thriving community of digital nomads and expats",
+      "Abundant street food and local retail options"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "Community Cafes", image: "/images/lifestyles/on_nut_cafe.png" },
       { title: "Dining", subtitle: "Local Food Courts", image: "/images/lifestyles/on_nut_dining.png" },
       { title: "Nightlife", subtitle: "Beer Gardens", image: "/images/lifestyles/on_nut_nightlife.png" },
       { title: "Parks & Green", subtitle: "Pocket Parks", image: "/images/lifestyles/on_nut_parks.png" }
-    ]
+    ],
+    lifestyleDesc: "A relaxed, value-oriented residential neighborhood that offers a perfect entry point to Sukhumvit living. On Nut has become a favorite among digital nomads and budget-conscious expats due to its affordable modern condos, local food markets, and hypermarkets like Lotus's and Big C. The vibe is laid-back and local, with a growing number of community malls, cozy cafes, and co-working spots popping up. It provides easy BTS access to the downtown core while offering a quieter, cost-effective base to live and work."
   },
   ekkamai: {
     district: "Watthana",
@@ -150,14 +170,17 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Quieter, leafy residential sub-sois and lanes",
       "Outstanding specialty coffee roasters and brunch spots",
       "Pet-friendly spaces and rental compounds",
-      "Right next to Thong Lo without the high congestion"
+      "Right next to Thong Lo without the high congestion",
+      "Excellent community centers and lifestyle shopping",
+      "Great connection to the Eastern Bus Terminal and expressways"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "Specialty Roasters", image: "/images/lifestyles/ekkamai_cafe.png" },
       { title: "Dining", subtitle: "Fusion & Brunch", image: "/images/lifestyles/ekkamai_dining.png" },
       { title: "Nightlife", subtitle: "Craft Beer Pubs", image: "/images/lifestyles/ekkamai_nightlife.png" },
       { title: "Parks & Green", subtitle: "Garden Cafes", image: "/images/lifestyles/ekkamai_parks.png" }
-    ]
+    ],
+    lifestyleDesc: "A leafy, upscale residential neighborhood that seamlessly blends chic lifestyle venues with quiet family living. Ekkamai runs parallel to Thong Lo, sharing much of its trendy appeal but with a slightly more relaxed, residential feel. It is known for its spacious garden villas, specialty coffee roasters, independent bookshops, and family-friendly community spaces. It is a highly walkable area with a strong focus on high-quality leisure, making it incredibly popular with pet owners, long-term expat families, and coffee connoisseurs."
   },
   sukhumvit: {
     district: "Watthana",
@@ -169,14 +192,17 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Access to luxury EmDistrict malls (EmQuartier, EmSphere)",
       "Vibrant international community and service teams",
       "Beautiful Benjasiri Park directly next to BTS station",
-      "Top concentration of global restaurants and grocers"
+      "Top concentration of global restaurants and grocers",
+      "Premium high-rise residences with city skyline views",
+      "Excellent wellness centers and luxury day spas"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "Boutique Bakeries", image: "/images/lifestyles/sukhumvit_cafe.png" },
       { title: "Dining", subtitle: "International Fine", image: "/images/lifestyles/sukhumvit_dining.png" },
       { title: "Nightlife", subtitle: "Rooftop lounges", image: "/images/lifestyles/sukhumvit_nightlife.png" },
       { title: "Parks & Green", subtitle: "Benjasiri Park", image: "/images/lifestyles/sukhumvit_parks.png" }
-    ]
+    ],
+    lifestyleDesc: "The prestigious retail and lifestyle heart of downtown Bangkok. Centered around Phrom Phong, this neighborhood represents international luxury, defined by the world-class EmDistrict shopping malls (EmPorium, EmQuartier, EmSphere). The area is exceptionally cosmopolitan, home to a large international expat community, upscale Japanese supermarkets, and premium international schools. With Benjasiri Park providing a lush green escape in the middle of the retail action, it offers an unmatched combination of luxury convenience and urban lifestyle."
   }
 };
 
@@ -197,7 +223,8 @@ const DEFAULT_METADATA = {
     { title: "Dining", subtitle: "Excellent options", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&auto=format&q=80" },
     { title: "Nightlife", subtitle: "Cozy & Relaxed", image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=500&auto=format&q=80" },
     { title: "Parks & Green", subtitle: "Accessible spaces", image: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&auto=format&q=80" }
-  ]
+  ],
+  lifestyleDesc: "A perfect blend of lifestyle and local culture. The neighborhood is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok."
 };
 
 export default function NeighborhoodClient({ neighborhood, initialProperties }: Props) {
@@ -521,7 +548,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                 Lifestyle & Vibe
               </h3>
               <p className="text-xs md:text-sm leading-relaxed text-gray-600 font-light">
-                A perfect blend of lifestyle and local culture. {neighborhood.name} is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok.
+                {meta.lifestyleDesc || `A perfect blend of lifestyle and local culture. ${neighborhood.name} is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok.`}
               </p>
               
               {/* Vibe cards row */}
@@ -583,7 +610,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
 
                 {/* Dynamic Map container - Desktop Only */}
                 <div className="hidden md:flex w-full flex-col gap-2 md:justify-end">
-                  <div className="w-full h-[155px] relative rounded-xl overflow-hidden border border-[#EDE8DF] shadow-inner">
+                  <div className="w-full h-[210px] relative rounded-xl overflow-hidden border border-[#EDE8DF] shadow-inner">
                     <NeighborhoodMap lat={neighborhood.lat} lng={neighborhood.lng} name={neighborhood.name} />
                     
                     {/* View on Map floating button */}
