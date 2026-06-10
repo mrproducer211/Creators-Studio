@@ -47,6 +47,23 @@ const PRESET_HUBS = [
   { name: "True Digital Park", address: "Sukhumvit Rd, Punnawithi, Phra Khanong", lat: 13.6858, lng: 100.6111 },
 ];
 
+const geocodeAddress = (addressOrName: string): { lat: number; lng: number } => {
+  const query = addressOrName.toLowerCase();
+  if (query.includes("sathorn")) return { lat: 13.7226, lng: 100.5293 };
+  if (query.includes("sukhumvit") || query.includes("phrom phong") || query.includes("phromphong")) return { lat: 13.7314, lng: 100.5694 };
+  if (query.includes("asok") || query.includes("asoke")) return { lat: 13.7431, lng: 100.5592 };
+  if (query.includes("ari")) return { lat: 13.7797, lng: 100.5447 };
+  if (query.includes("silom")) return { lat: 13.7258, lng: 100.5273 };
+  if (query.includes("on nut") || query.includes("onnut")) return { lat: 13.7056, lng: 100.6012 };
+  if (query.includes("rama 9") || query.includes("rama9")) return { lat: 13.7583, lng: 100.5658 };
+  if (query.includes("bang na") || query.includes("bangna")) return { lat: 13.6678, lng: 100.6056 };
+  if (query.includes("phaya thai") || query.includes("phayathai")) return { lat: 13.7570, lng: 100.5338 };
+  if (query.includes("ekkamai") || query.includes("ekamai")) return { lat: 13.7283, lng: 100.5852 };
+  if (query.includes("paragon") || query.includes("siam")) return { lat: 13.7468, lng: 100.5348 };
+  if (query.includes("iconsiam")) return { lat: 13.7268, lng: 100.5112 };
+  return { lat: 13.7367, lng: 100.5612 };
+};
+
 export default function DashboardClient({ allProperties, session }: DashboardClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -170,11 +187,13 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
       setCommuteError("Please provide a name for this hub.");
       return;
     }
-    const latNum = Number(newHubLat);
-    const lngNum = Number(newHubLng);
-    if (isNaN(latNum) || latNum < 12 || latNum > 15 || isNaN(lngNum) || lngNum < 99 || lngNum > 102) {
-      setCommuteError("Please provide valid coordinates within Bangkok bounds.");
-      return;
+    let latNum = Number(newHubLat);
+    let lngNum = Number(newHubLng);
+
+    if (newHubPreset === "custom" || !newHubPreset || isNaN(latNum) || latNum === 0) {
+      const coords = geocodeAddress(newHubName + " " + newHubAddress);
+      latNum = coords.lat;
+      lngNum = coords.lng;
     }
 
     try {
@@ -887,7 +906,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                   {/* Presets Selection */}
                   <div className="md:col-span-2">
                     <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Popular Presets (Auto-Coordinates)
+                      Popular Commute Destinations
                     </label>
                     <select
                       value={newHubPreset}
@@ -895,12 +914,13 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                       className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px] bg-white"
                       style={{ fontFamily: "inherit" }}
                     >
-                      <option value="">-- Choose a preset destination (or enter custom coordinates below) --</option>
+                      <option value="">-- Choose a preset destination (or select custom location below) --</option>
                       {PRESET_HUBS.map((preset) => (
                         <option key={preset.name} value={preset.name}>
                           {preset.name} ({preset.address})
                         </option>
                       ))}
+                      <option value="custom">Custom Location (type name/address below)</option>
                     </select>
                   </div>
 
@@ -952,36 +972,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                     />
                   </div>
 
-                  {/* Lat / Lng */}
-                  <div>
-                    <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Latitude
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 13.7226"
-                      value={newHubLat}
-                      onChange={(e) => setNewHubLat(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px]"
-                      style={{ fontFamily: "inherit" }}
-                      required
-                    />
-                  </div>
 
-                  <div>
-                    <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Longitude
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 100.5293"
-                      value={newHubLng}
-                      onChange={(e) => setNewHubLng(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px]"
-                      style={{ fontFamily: "inherit" }}
-                      required
-                    />
-                  </div>
 
                   {commuteError && (
                     <div className="md:col-span-2 text-xs text-red-500 font-medium flex items-center gap-1 mt-1">
