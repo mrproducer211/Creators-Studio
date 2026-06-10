@@ -39,10 +39,10 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Perfect for remote work and creative lifestyle"
     ],
     vibeCards: [
-      { title: "Cafe Culture", subtitle: "Excellent", image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&auto=format&q=80" },
-      { title: "Dining", subtitle: "Great variety", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&auto=format&q=80" },
-      { title: "Nightlife", subtitle: "Relaxed", image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=500&auto=format&q=80" },
-      { title: "Parks & Green", subtitle: "Abundant", image: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&auto=format&q=80" }
+      { title: "Cafe Culture", subtitle: "Excellent", image: "/images/lifestyles/ari_cafe.png" },
+      { title: "Dining", subtitle: "Great variety", image: "/images/lifestyles/ari_dining.png" },
+      { title: "Nightlife", subtitle: "Relaxed", image: "/images/lifestyles/ari_nightlife.png" },
+      { title: "Parks & Green", subtitle: "Abundant", image: "/images/lifestyles/ari_parks.png" }
     ]
   },
   sathorn: {
@@ -58,10 +58,10 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "High concentration of international schools nearby"
     ],
     vibeCards: [
-      { title: "Cafe Culture", subtitle: "High Quality", image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500&auto=format&q=80" },
-      { title: "Dining", subtitle: "World-class", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&auto=format&q=80" },
-      { title: "Nightlife", subtitle: "Sophisticated", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&auto=format&q=80" },
-      { title: "Parks & Green", subtitle: "Lumpini Park close", image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=500&auto=format&q=80" }
+      { title: "Cafe Culture", subtitle: "High Quality", image: "/images/lifestyles/sathorn_cafe.png" },
+      { title: "Dining", subtitle: "World-class", image: "/images/lifestyles/sathorn_dining.png" },
+      { title: "Nightlife", subtitle: "Sophisticated", image: "/images/lifestyles/sathorn_nightlife.png" },
+      { title: "Parks & Green", subtitle: "Lumpini Park close", image: "/images/lifestyles/sathorn_parks.png" }
     ]
   },
   "thong-lo": {
@@ -77,10 +77,10 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Excellent Japanese food and sushi culture"
     ],
     vibeCards: [
-      { title: "Cafe Culture", subtitle: "Artisanal", image: "https://images.unsplash.com/photo-1469957761103-55928d17208d?w=500&auto=format&q=80" },
-      { title: "Dining", subtitle: "Fine Dining", image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&q=80" },
-      { title: "Nightlife", subtitle: "Elite Speakeasies", image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500&auto=format&q=80" },
-      { title: "Parks & Green", subtitle: "Benjasiri nearby", image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=500&auto=format&q=80" }
+      { title: "Cafe Culture", subtitle: "Artisanal", image: "/images/lifestyles/thong_lo_cafe.png" },
+      { title: "Dining", subtitle: "Fine Dining", image: "/images/lifestyles/thong_lo_dining.png" },
+      { title: "Nightlife", subtitle: "Elite Speakeasies", image: "/images/lifestyles/thong_lo_nightlife.png" },
+      { title: "Parks & Green", subtitle: "Benjasiri nearby", image: "/images/lifestyles/thong_lo_parks.png" }
     ]
   },
   asok: {
@@ -96,10 +96,10 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Walkable distance to Benjakitti Forest Park"
     ],
     vibeCards: [
-      { title: "Cafe Culture", subtitle: "Fast-paced", image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&auto=format&q=80" },
-      { title: "Dining", subtitle: "Global Food Court", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&auto=format&q=80" },
-      { title: "Nightlife", subtitle: "High Energy", image: "https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=500&auto=format&q=80" },
-      { title: "Parks & Green", subtitle: "Benjakitti Park", image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&auto=format&q=80" }
+      { title: "Cafe Culture", subtitle: "Fast-paced", image: "/images/lifestyles/asok_cafe.png" },
+      { title: "Dining", subtitle: "Global Food Court", image: "/images/lifestyles/asok_dining.png" },
+      { title: "Nightlife", subtitle: "High Energy", image: "/images/lifestyles/asok_nightlife.png" },
+      { title: "Parks & Green", subtitle: "Benjakitti Park", image: "/images/lifestyles/asok_parks.png" }
     ]
   },
   silom: {
@@ -115,10 +115,10 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Quick access to Lumphini Park trails"
     ],
     vibeCards: [
-      { title: "Cafe Culture", subtitle: "Cozy Corners", image: "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=500&auto=format&q=80" },
-      { title: "Dining", subtitle: "Legendary Street", image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=500&auto=format&q=80" },
-      { title: "Nightlife", subtitle: "Vibrant & Late", image: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=500&auto=format&q=80" },
-      { title: "Parks & Green", subtitle: "Lumphini Adjacent", image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&auto=format&q=80" }
+      { title: "Cafe Culture", subtitle: "Cozy Corners", image: "/images/lifestyles/silom_cafe.png" },
+      { title: "Dining", subtitle: "Legendary Street", image: "/images/lifestyles/silom_dining.png" },
+      { title: "Nightlife", subtitle: "Vibrant & Late", image: "/images/lifestyles/silom_nightlife.png" },
+      { title: "Parks & Green", subtitle: "Lumphini Adjacent", image: "/images/lifestyles/silom_parks.png" }
     ]
   },
   "on-nut": {
@@ -134,10 +134,10 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Excellent BTS connections to central districts"
     ],
     vibeCards: [
-      { title: "Cafe Culture", subtitle: "Community Cafes", image: "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=500&auto=format&q=80" },
-      { title: "Dining", subtitle: "Local Food Courts", image: "https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=500&auto=format&q=80" },
-      { title: "Nightlife", subtitle: "Beer Gardens", image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500&auto=format&q=80" },
-      { title: "Parks & Green", subtitle: "Pocket Parks", image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=500&auto=format&q=80" }
+      { title: "Cafe Culture", subtitle: "Community Cafes", image: "/images/lifestyles/on_nut_cafe.png" },
+      { title: "Dining", subtitle: "Local Food Courts", image: "/images/lifestyles/on_nut_dining.png" },
+      { title: "Nightlife", subtitle: "Beer Gardens", image: "/images/lifestyles/on_nut_nightlife.png" },
+      { title: "Parks & Green", subtitle: "Pocket Parks", image: "/images/lifestyles/on_nut_parks.png" }
     ]
   },
   ekkamai: {
@@ -153,10 +153,10 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Right next to Thong Lo without the high congestion"
     ],
     vibeCards: [
-      { title: "Cafe Culture", subtitle: "Specialty Roasters", image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=500&auto=format&q=80" },
-      { title: "Dining", subtitle: "Fusion & Brunch", image: "https://images.unsplash.com/photo-1513442542250-854d436a49f2?w=500&auto=format&q=80" },
-      { title: "Nightlife", subtitle: "Craft Beer Pubs", image: "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=500&auto=format&q=80" },
-      { title: "Parks & Green", subtitle: "Garden Cafes", image: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=500&auto=format&q=80" }
+      { title: "Cafe Culture", subtitle: "Specialty Roasters", image: "/images/lifestyles/ekkamai_cafe.png" },
+      { title: "Dining", subtitle: "Fusion & Brunch", image: "/images/lifestyles/ekkamai_dining.png" },
+      { title: "Nightlife", subtitle: "Craft Beer Pubs", image: "/images/lifestyles/ekkamai_nightlife.png" },
+      { title: "Parks & Green", subtitle: "Garden Cafes", image: "/images/lifestyles/ekkamai_parks.png" }
     ]
   },
   sukhumvit: {
@@ -172,10 +172,10 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Top concentration of global restaurants and grocers"
     ],
     vibeCards: [
-      { title: "Cafe Culture", subtitle: "Boutique Bakeries", image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&q=80" },
-      { title: "Dining", subtitle: "International Fine", image: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=500&auto=format&q=80" },
-      { title: "Nightlife", subtitle: "Rooftop lounges", image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500&auto=format&q=80" },
-      { title: "Parks & Green", subtitle: "Benjasiri Park", image: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=500&auto=format&q=80" }
+      { title: "Cafe Culture", subtitle: "Boutique Bakeries", image: "/images/lifestyles/sukhumvit_cafe.png" },
+      { title: "Dining", subtitle: "International Fine", image: "/images/lifestyles/sukhumvit_dining.png" },
+      { title: "Nightlife", subtitle: "Rooftop lounges", image: "/images/lifestyles/sukhumvit_nightlife.png" },
+      { title: "Parks & Green", subtitle: "Benjasiri Park", image: "/images/lifestyles/sukhumvit_parks.png" }
     ]
   }
 };
@@ -535,6 +535,21 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                       src={card.image}
                       alt={card.title}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (target.src.includes("/images/lifestyles/")) {
+                          // Fallback to Unsplash images matching the card type if the local custom image doesn't exist yet
+                          if (card.title.toLowerCase().includes("cafe")) {
+                            target.src = "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&auto=format&q=80";
+                          } else if (card.title.toLowerCase().includes("dining")) {
+                            target.src = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&auto=format&q=80";
+                          } else if (card.title.toLowerCase().includes("nightlife")) {
+                            target.src = "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=500&auto=format&q=80";
+                          } else {
+                            target.src = "https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&auto=format&q=80";
+                          }
+                        }
+                      }}
                     />
                     {/* Gradient overlay */}
                     <div
