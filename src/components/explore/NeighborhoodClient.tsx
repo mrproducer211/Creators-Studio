@@ -60,9 +60,7 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Proximity to Lumphini Park for outdoor recreation",
       "Prestigious dining venues and rooftop bars",
       "High concentration of international schools nearby",
-      "Quiet, tree-lined residential side-streets (sois)",
-      "Convenient tollway access and multi-lane roads",
-      "Top-tier healthcare centers and embassies within reach"
+      "Quiet, tree-lined residential side-streets (sois)"
     ],
     vibeCards: [
       { title: "Cafe Culture", subtitle: "High Quality", image: "/images/lifestyles/sathorn_cafe.png" },
@@ -547,7 +545,10 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
               <h3 className="text-xs font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
                 Lifestyle & Vibe
               </h3>
-              <p className="text-xs md:text-sm leading-relaxed text-gray-600 font-light">
+              <p className="text-xs leading-relaxed text-gray-600 font-light md:hidden">
+                A perfect blend of lifestyle and local culture. {neighborhood.name} is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok.
+              </p>
+              <p className="text-xs md:text-sm leading-relaxed text-gray-600 font-light hidden md:block">
                 {meta.lifestyleDesc || `A perfect blend of lifestyle and local culture. ${neighborhood.name} is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok.`}
               </p>
               
