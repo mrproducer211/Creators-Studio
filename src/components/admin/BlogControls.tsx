@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function BlogControls() {
   const router = useRouter();
@@ -81,13 +82,13 @@ export default function BlogControls() {
     <div className="flex flex-col gap-3 mb-6">
       <div className="flex flex-wrap items-center gap-2">
         {/* + New Post (Custom routing) */}
-        <a
+        <Link
           href="/admin/blog/new"
           className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold no-underline"
           style={{ background: "#1C3A2F", color: "#FFFFFF", ...buttonStyle }}
         >
           + Create Post
-        </a>
+        </Link>
 
         {/* AI Generate Button */}
         <button

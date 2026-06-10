@@ -70,7 +70,7 @@ export default function InterestSection() {
             <div className="flex gap-2.5">
               <select
                 suppressHydrationWarning
-                className="rounded-xl px-3.5 py-3 text-[13px] outline-none"
+                className="flex-shrink-0 rounded-xl px-3.5 py-3 text-[13px] outline-none"
                 style={inputStyle}
                 value={method}
                 onChange={(e) => setMethod(e.target.value)}
@@ -81,7 +81,7 @@ export default function InterestSection() {
               </select>
               <input
                 suppressHydrationWarning
-                className="flex-1 rounded-xl px-3.5 py-3 text-[13px] outline-none transition-colors"
+                className="flex-1 w-full min-w-0 rounded-xl px-3.5 py-3 text-[13px] outline-none transition-colors"
                 style={inputStyle}
                 type="text"
                 placeholder={t.interest.placeholderNumber}

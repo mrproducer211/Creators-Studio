@@ -7,11 +7,11 @@ export default function BrowseModes() {
 
   const modes = [
     {
-      icon: "♥",
+      icon: "✨",
       name: t.browse.swipeName,
       desc: t.browse.swipeDesc,
       featured: true,
-      href: "/swipe",
+      href: "/explore/match",
     },
     {
       icon: "▦",
@@ -21,11 +21,11 @@ export default function BrowseModes() {
       href: "/explore",
     },
     {
-      icon: "▶",
+      icon: "⇄",
       name: t.browse.reelName,
       desc: t.browse.reelDesc,
       featured: false,
-      href: "/reels",
+      href: "/swipe",
     },
   ];
 

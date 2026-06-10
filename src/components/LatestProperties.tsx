@@ -85,7 +85,7 @@ function MagCard({
         className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer border-none"
         style={{ background: "rgba(255,255,255,0.14)", backdropFilter: "blur(8px)" }}
       >
-        {saved ? "❤️" : "🤍"}
+        {saved ? "💚" : "🤍"}
       </button>
 
       {/* Bottom info — overflow-hidden prevents text escaping the card */}

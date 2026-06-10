@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "NHP — New Homes Property Bangkok",
+  title: "New Home Property — Live. Belong. Bangkok.",
   description:
     "Bangkok's premium property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
 };

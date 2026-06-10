@@ -7,7 +7,7 @@ import { getDbProperties } from "@/lib/db/dbLoader";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "NHP Match — Bangkok Neighborhood Lifestyle Finder",
+  title: "Auto Finder — Bangkok Neighborhood Lifestyle Finder",
   description: "Find your ideal Bangkok neighborhood and condos with AI and commute mapping.",
 };
 
@@ -17,7 +17,7 @@ export default async function MatchPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen" style={{ background: "#F7F3EC" }}>
+      <main className="min-h-0 lg:min-h-screen" style={{ background: "#F7F3EC" }}>
         <Suspense fallback={null}>
           <MatchExplorer properties={properties} />
         </Suspense>

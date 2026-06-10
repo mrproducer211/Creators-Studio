@@ -19,8 +19,10 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!menuOpen) {
-      setDiscoverOpen(false);
-      setLookingForOpen(false);
+      setTimeout(() => {
+        setDiscoverOpen(false);
+        setLookingForOpen(false);
+      }, 0);
     }
   }, [menuOpen]);
 
@@ -33,14 +35,20 @@ export default function Navbar() {
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14"
         style={{ background: "rgba(247,243,236,0.97)", backdropFilter: "blur(16px)", borderBottom: "1px solid #E5E0D8" }}
       >
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 no-underline flex-shrink-0">
+        {/* Mobile Logo: Text only "New Home Property" */}
+        <Link href="/" className="flex md:hidden flex-col leading-none no-underline">
+          <span className="text-[18px] font-extrabold tracking-[-0.5px]" style={{ color: "#1C3A2F" }}>New Home Property</span>
+          <span className="text-[9px] font-semibold tracking-[0.3px] mt-0.5" style={{ color: "#C9A84C" }}>Live. Belong. Bangkok.</span>
+        </Link>
+
+        {/* Desktop Logo: Green Box + Name */}
+        <Link href="/" className="hidden md:flex items-center gap-2.5 no-underline flex-shrink-0">
           <div className="rounded-[8px] flex items-center justify-center font-bold" style={{ width: "38px", height: "38px", fontSize: "15px", background: "#1C3A2F", color: "#C9A84C", letterSpacing: "-0.5px" }}>
             NHP
           </div>
           <div className="flex flex-col leading-tight">
             <span className="text-[15px] font-bold" style={{ color: "#1C3A2F" }}>New Home Property</span>
-            <span className="text-[11px] font-medium" style={{ color: "#999" }}>Bangkok, Thailand</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.5px]" style={{ color: "#C9A84C" }}>Live. Belong. Bangkok.</span>
           </div>
         </Link>
 
@@ -50,10 +58,9 @@ export default function Navbar() {
           <Link href="/explore"               className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.explore}</Link>
           <Link href="/swipe"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.swipe}</Link>
           <Link href="/reels"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.reels}</Link>
-          <Link href="/explore/match"         className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#C9A84C", fontWeight: "bold" }}>✨ NHP Match</Link>
+          <Link href="/explore/match"         className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#C9A84C", fontWeight: "bold" }}>✨ Auto Finder</Link>
           <Link href="/explore?type=sale"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.buy}</Link>
           <Link href="/explore?type=rent"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.rent}</Link>
-          <Link href="/explore?type=short_stay" className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.shortStay}</Link>
 
           {/* Language toggle */}
           <div className="flex items-center rounded-lg overflow-hidden" style={{ border: "1.5px solid #E5E0D8" }}>
@@ -78,81 +85,95 @@ export default function Navbar() {
         {/* Right actions */}
         <div className="flex items-center gap-2">
 
-          {/* Saved badge */}
-          <Link
-            href="/saved"
-            className="relative flex items-center gap-1.5 px-3 py-2 rounded-full no-underline transition-all"
-            style={count > 0 ? { background: "#1C3A2F", color: "#FFFFFF" } : { background: "transparent", color: "#1C3A2F" }}
-          >
-            <span className="text-sm">❤️</span>
-            {count > 0 && (
-              <span className="text-[12px] font-semibold">{count}</span>
-            )}
-          </Link>
+          {/* Mobile Right Icons (Heart & Chat) */}
+          <div className="flex md:hidden items-center gap-4 mr-1">
+            {/* Heart Icon */}
+            <Link href="/saved" className="text-gray-700 hover:text-black transition-colors" aria-label="Saved properties">
+              <svg className="w-[22px] h-[22px]" fill="none" stroke="#1C3A2F" strokeWidth="1.8" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+              </svg>
+            </Link>
+            {/* Chat Icon removed */}
+          </div>
 
-          {/* Auth state */}
-          {status === "loading" ? (
-            <div className="w-8 h-8 rounded-full animate-pulse" style={{ background: "#EDE8DF" }} />
-          ) : user ? (
-            /* User avatar + dropdown */
-            <div className="relative">
-              <button
-                onClick={() => setUserMenu((v) => !v)}
-                className="flex items-center gap-2 cursor-pointer border-none bg-transparent p-0"
-              >
-                {user.image ? (
-                  <img src={user.image} alt={user.name ?? ""} className="w-8 h-8 rounded-full object-cover" />
-                ) : (
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: "#1C3A2F", color: "#C9A84C" }}>
-                    {initials}
+          {/* Desktop Right Actions (Saved badge & Auth state) */}
+          <div className="hidden md:flex items-center gap-2">
+            {/* Saved badge */}
+            <Link
+              href="/saved"
+              className="relative flex items-center gap-1.5 px-3 py-2 rounded-full no-underline transition-all"
+              style={count > 0 ? { background: "#1C3A2F", color: "#FFFFFF" } : { background: "transparent", color: "#1C3A2F" }}
+            >
+              <span className="text-sm">💚</span>
+              {count > 0 && (
+                <span className="text-[12px] font-semibold">{count}</span>
+              )}
+            </Link>
+
+            {/* Auth state */}
+            {status === "loading" ? (
+              <div className="w-8 h-8 rounded-full animate-pulse" style={{ background: "#EDE8DF" }} />
+            ) : user ? (
+              /* User avatar + dropdown */
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenu((v) => !v)}
+                  className="flex items-center gap-2 cursor-pointer border-none bg-transparent p-0"
+                >
+                  {user.image ? (
+                    <img src={user.image} alt={user.name ?? ""} className="w-8 h-8 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: "#1C3A2F", color: "#C9A84C" }}>
+                      {initials}
+                    </div>
+                  )}
+                  <span className="hidden md:block text-[13px] font-medium" style={{ color: "#1C3A2F" }}>
+                    {user.name?.split(" ")[0]}
+                  </span>
+                </button>
+
+                {userMenu && (
+                  <div
+                    className="absolute right-0 top-10 rounded-2xl shadow-xl overflow-hidden"
+                    style={{ width: 200, background: "#FFFFFF", border: "1px solid #E5E0D8", zIndex: 60 }}
+                    onMouseLeave={() => setUserMenu(false)}
+                  >
+                    <div className="px-4 py-3" style={{ borderBottom: "1px solid #EDE8DF" }}>
+                      <p className="text-[13px] font-semibold" style={{ color: "#1A1A1A" }}>{user.name}</p>
+                      <p className="text-[11px]" style={{ color: "#999" }}>{user.email}</p>
+                    </div>
+                    <Link href="/saved" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                      💚 {t.nav.saved}
+                      {count > 0 && <span className="ml-auto text-xs font-semibold px-1.5 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
+                    </Link>
+                    {(session.user as { role?: string }).role === "admin" && (
+                      <Link href="/admin" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                        ⚙️ {t.nav.adminDashboard}
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      className="w-full flex items-center gap-2.5 px-4 py-3 text-[13px] cursor-pointer border-none bg-transparent text-left transition-colors hover:bg-gray-50"
+                      style={{ color: "#E05252", fontFamily: "inherit", borderTop: "1px solid #EDE8DF" }}
+                    >
+                      {t.nav.signOut}
+                    </button>
                   </div>
                 )}
-                <span className="hidden md:block text-[13px] font-medium" style={{ color: "#1C3A2F" }}>
-                  {user.name?.split(" ")[0]}
-                </span>
-              </button>
-
-              {userMenu && (
-                <div
-                  className="absolute right-0 top-10 rounded-2xl shadow-xl overflow-hidden"
-                  style={{ width: 200, background: "#FFFFFF", border: "1px solid #E5E0D8", zIndex: 60 }}
-                  onMouseLeave={() => setUserMenu(false)}
-                >
-                  <div className="px-4 py-3" style={{ borderBottom: "1px solid #EDE8DF" }}>
-                    <p className="text-[13px] font-semibold" style={{ color: "#1A1A1A" }}>{user.name}</p>
-                    <p className="text-[11px]" style={{ color: "#999" }}>{user.email}</p>
-                  </div>
-                  <Link href="/saved" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                    ❤️ {t.nav.saved}
-                    {count > 0 && <span className="ml-auto text-xs font-semibold px-1.5 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
-                  </Link>
-                  {(session.user as { role?: string }).role === "admin" && (
-                    <Link href="/admin" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                      ⚙️ {t.nav.adminDashboard}
-                    </Link>
-                  )}
-                  <button
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="w-full flex items-center gap-2.5 px-4 py-3 text-[13px] cursor-pointer border-none bg-transparent text-left transition-colors hover:bg-gray-50"
-                    style={{ color: "#E05252", fontFamily: "inherit", borderTop: "1px solid #EDE8DF" }}
-                  >
-                    {t.nav.signOut}
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            /* Not signed in */
-            <Link
-              href="/auth/signin"
-              className="hidden md:inline-flex items-center px-3.5 py-[7px] rounded-lg text-xs font-medium no-underline transition-all"
-              style={{ border: "1.5px solid #1C3A2F", color: "#1C3A2F" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "#1C3A2F"; (e.currentTarget as HTMLAnchorElement).style.color = "#F7F3EC"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = "#1C3A2F"; }}
-            >
-              {t.nav.signIn}
-            </Link>
-          )}
+              </div>
+            ) : (
+              /* Not signed in */
+              <Link
+                href="/auth/signin"
+                className="hidden md:inline-flex items-center px-3.5 py-[7px] rounded-lg text-xs font-medium no-underline transition-all"
+                style={{ border: "1.5px solid #1C3A2F", color: "#1C3A2F" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "#1C3A2F"; (e.currentTarget as HTMLAnchorElement).style.color = "#F7F3EC"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = "#1C3A2F"; }}
+              >
+                {t.nav.signIn}
+              </Link>
+            )}
+          </div>
 
           {/* Mobile hamburger */}
           <button
@@ -280,14 +301,7 @@ export default function Navbar() {
                   >
                     {t.nav.buying}
                   </Link>
-                  <Link
-                    href="/explore?type=short_stay"
-                    onClick={() => setMenuOpen(false)}
-                    className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline border-t"
-                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
-                  >
-                    {t.nav.shortStay}
-                  </Link>
+
                   <Link
                     href="/explore?pets=true"
                     onClick={() => setMenuOpen(false)}
@@ -306,7 +320,7 @@ export default function Navbar() {
               className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
               style={{ color: "#C9A84C", borderColor: "#EDE8DF", fontWeight: "bold" }}
             >
-              <span>✨ NHP Match</span>
+              <span>✨ Auto Finder</span>
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#C9A84C", color: "#FFFFFF" }}>AI</span>
             </Link>
 
@@ -347,7 +361,7 @@ export default function Navbar() {
               <Link href="/saved" onClick={() => setMenuOpen(false)}
                 className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
                 style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
-                <span className="flex items-center gap-1.5">❤️ {t.nav.saved}</span>
+                <span className="flex items-center gap-1.5">💚 {t.nav.saved}</span>
                 {count > 0 && <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
               </Link>
             )}

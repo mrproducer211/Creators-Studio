@@ -84,4 +84,5 @@ export interface ExploreFilters {
   search: string;
   petFriendly: boolean;
   nearBts: boolean;
+  newHubs?: boolean;
 }

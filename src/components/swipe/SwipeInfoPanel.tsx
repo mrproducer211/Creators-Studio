@@ -75,7 +75,7 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
                   { icon: "🛏", val: property.bedrooms === 0 ? "Studio" : property.bedrooms, label: "Beds" },
                   { icon: "🚿", val: property.bathrooms, label: "Baths" },
                   ...(property.sqm ? [{ icon: "📐", val: property.sqm, label: "m²" }] : []),
-                  { icon: "❤️", val: property.likes, label: "Likes" },
+                  { icon: "💚", val: property.likes, label: "Likes" },
                 ].map((s) => (
                   <div key={s.label} className="flex-1 text-center">
                     <div className="text-[20px]">{s.icon}</div>
@@ -126,13 +126,13 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
                 />
                 <div className="flex gap-2.5">
                   <select value={method} onChange={(e) => setMethod(e.target.value)}
-                    className="rounded-xl px-4 py-3 text-[14px] outline-none" style={inputStyle}>
+                    className="flex-shrink-0 rounded-xl px-4 py-3 text-[14px] outline-none" style={inputStyle}>
                     <option>WhatsApp</option>
                     <option>Line</option>
                     <option>Telegram</option>
                   </select>
                   <input
-                    className="flex-1 rounded-xl px-4 py-3 text-[14px] outline-none"
+                    className="flex-1 w-full min-w-0 rounded-xl px-4 py-3 text-[14px] outline-none"
                     style={inputStyle}
                     placeholder="Phone / username"
                     value={contact}

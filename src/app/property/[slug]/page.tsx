@@ -44,51 +44,28 @@ function buildingHint(name: string): string {
   return name.split(/[—–-]/)[0].trim().toLowerCase();
 }
 
-/* Smart suggestion logic:
-   1. Same building (matching name hint)
-   2. Same area
-   3. Nearby areas
-   Returns up to 4 unique suggestions.
-*/
-function getSuggestions(current: PropertyCard, all: PropertyCard[]): PropertyCard[] {
-  const seen = new Set<number>([current.id]);
-  const out: PropertyCard[] = [];
-
-  // 1. Same building
-  const hint = buildingHint(current.name);
-  for (const p of all) {
-    if (out.length === 4) break;
-    if (seen.has(p.id)) continue;
-    if (buildingHint(p.name) === hint) { out.push(p); seen.add(p.id); }
-  }
-
-  // 2. Same area
-  for (const p of all) {
-    if (out.length === 4) break;
-    if (seen.has(p.id)) continue;
-    if (p.area === current.area) { out.push(p); seen.add(p.id); }
-  }
-
-  // 3. Nearby areas
-  const nearby = NEARBY_AREAS[current.area] ?? [];
-  for (const p of all) {
-    if (out.length === 4) break;
-    if (seen.has(p.id)) continue;
-    if (nearby.includes(p.area)) { out.push(p); seen.add(p.id); }
-  }
-
-  return out;
-}
-
 export default async function PropertyPage({ params }: Props) {
   const { slug } = await params;
   const all          = await getDbProperties();
   const property = all.find((p) => p.slug === slug);
   if (!property) notFound();
 
-  const similar      = getSuggestions(property, all);
-  const sameBuilding = similar.filter((p) => buildingHint(p.name) === buildingHint(property.name));
-  const nearby       = similar.filter((p) => buildingHint(p.name) !== buildingHint(property.name));
+  const bHint = buildingHint(property.name);
+
+  // 1. Same building properties (excluding current)
+  const sameBuilding = all
+    .filter((p) => p.id !== property.id && buildingHint(p.name) === bHint)
+    .slice(0, 4);
+
+  // 2. Nearby properties (excluding current and same building, matching area or adjacent areas)
+  const nearbyAreas = NEARBY_AREAS[property.area] ?? [];
+  const nearby = all
+    .filter((p) => 
+      p.id !== property.id && 
+      buildingHint(p.name) !== bHint && 
+      (p.area === property.area || nearbyAreas.includes(p.area))
+    )
+    .slice(0, 4);
 
   return (
     <>

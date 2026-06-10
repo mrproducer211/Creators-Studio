@@ -95,7 +95,7 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         <Link href="/" className="flex items-center gap-3 no-underline">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
           <div>
-            <div className="text-[15px] font-semibold" style={{ color: "#FFFFFF" }}>New Homes Property</div>
+            <div className="text-[15px] font-semibold" style={{ color: "#FFFFFF" }}>New Home Property</div>
             <div className="text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>Bangkok, Thailand</div>
           </div>
         </Link>
@@ -117,7 +117,7 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         </div>
 
         <p className="text-[12px] font-light" style={{ color: "rgba(255,255,255,0.3)" }}>
-          © 2026 New Homes Property · Bangkok
+          © 2026 New Home Property · Bangkok
         </p>
       </div>
 
@@ -127,7 +127,7 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
           {/* Mobile logo */}
           <Link href="/" className="lg:hidden flex items-center gap-2 no-underline mb-8">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style={{ background: "#1C3A2F", color: "#C9A84C" }}>NHP</div>
-            <span className="text-[15px] font-semibold" style={{ color: "#1C3A2F" }}>New Homes Property</span>
+            <span className="text-[15px] font-semibold" style={{ color: "#1C3A2F" }}>New Home Property</span>
           </Link>
 
           <h1 className="text-[26px] font-bold mb-1" style={{ color: "#1A1A1A", letterSpacing: "-0.5px" }}>

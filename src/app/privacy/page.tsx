@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "Privacy Policy — NHP Bangkok",
-  description: "Learn about how New Homes Property (NHP) Bangkok collects, utilizes, and secures your personal and enquiry information.",
+  description: "Learn about how New Home Property (NHP) Bangkok collects, utilizes, and secures your personal and enquiry information.",
 };
 
 export default function PrivacyPage() {
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
         <div className="max-w-3xl mx-auto px-4 py-12">
           <div className="rounded-2xl p-6 md:p-8 border mb-8" style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}>
             <p className="text-[13px] leading-[1.7] text-gray-500 font-light mb-6">
-              New Homes Property (NHP) Bangkok is committed to safeguarding your online privacy. This policy outlines how we handle, process, and secure user information across our platform and applications.
+              New Home Property (NHP) Bangkok is committed to safeguarding your online privacy. This policy outlines how we handle, process, and secure user information across our platform and applications.
             </p>
 
             {sections.map((s) => (

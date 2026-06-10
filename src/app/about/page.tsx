@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "About NHP Bangkok — Premium Property Platform",
-  description: "Learn about New Homes Property (NHP) Bangkok, the leading real estate platform for expats, digital nomads, and international residents.",
+  description: "Learn about New Home Property (NHP) Bangkok, the leading real estate platform for expats, digital nomads, and international residents.",
 };
 
 export default function AboutPage() {
@@ -26,10 +26,10 @@ export default function AboutPage() {
               Our Story
             </span>
             <h1 className="text-[28px] md:text-[38px] font-bold leading-tight mb-4 text-white" style={{ letterSpacing: "-0.5px" }}>
-              About New Homes Property
+              About New Home Property
             </h1>
             <p className="text-[14px] md:text-[16px] font-light max-w-xl mx-auto leading-relaxed" style={{ color: "rgba(255,255,255,0.7)" }}>
-              Bangkok's premium property platform designed specifically to make renting, buying, and staying in Thailand completely effortless for the international community.
+              Bangkok&apos;s premium property platform designed specifically to make renting, buying, and staying in Thailand completely effortless for the international community.
             </p>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default function AboutPage() {
               We combined high-quality photography, automated transit walk calculations, interactive swipe decks, and instant messaging connections (WhatsApp, Line) to construct a real estate search engine that feels alive, intuitive, and trustworthy.
             </p>
             <p className="text-[14px] leading-[1.8] text-gray-600 font-light">
-              Whether you are a digital nomad booking a short stay in Thong Lo, an expat signing a 12-month lease in On Nut, or a family enrolling children near Bangkok's top international schools, NHP is your trusted guide.
+              Whether you are a digital nomad booking a short stay in Thong Lo, an expat signing a 12-month lease in On Nut, or a family enrolling children near Bangkok&apos;s top international schools, NHP is your trusted guide.
             </p>
           </div>
 

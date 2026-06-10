@@ -56,77 +56,104 @@ export async function getDbProperties() {
     
     // Map Drizzle output model to PropertyCard shape
     if (list && list.length > 0) {
-      return list.map((p) => ({
-        id: p.id,
-        slug: p.slug,
-        name: p.name,
-        description: p.description || "",
-        listingType: p.listingType,
-        propertyType: p.propertyType,
-        priceTHB: Number(p.priceTHB),
-        priceUSD: p.priceUSD ? Number(p.priceUSD) : undefined,
-        priceLabel: p.priceLabel || undefined,
-        bedrooms: p.bedrooms,
-        bathrooms: p.bathrooms,
-        sqm: p.sqm || undefined,
-        area: p.area,
-        district: p.district || undefined,
-        latitude: p.latitude || undefined,
-        longitude: p.longitude || undefined,
-        coverImage: p.coverImage || undefined,
-        images: p.images || [],
-        videoUrl: p.videoUrl || undefined,
-        likes: p.likes,
-        saves: p.saves,
-        clicks: p.clicks,
-        viewCount: p.views,
-        featured: p.featured,
-        hasVideo: p.hasVideo,
-        petFriendly: p.petFriendly,
-        nearBts: p.nearBts,
-        verificationBadge: p.verificationBadge,
-        expiryDate: p.expiryDate ? p.expiryDate.toISOString() : undefined,
-        createdAt: p.createdAt.toISOString(),
-        updatedAt: p.updatedAt ? p.updatedAt.toISOString() : p.createdAt.toISOString(),
-        amenities: p.amenities || [],
-        features: p.features || [],
-        schools: p.schools || [],
-        transit: p.transit || [],
-        neighborhood: p.neighborhood || "",
-        telegramMediaGroupId: p.telegramMediaGroupId || undefined,
-        floor: p.floor || undefined,
-        totalFloors: p.totalFloors || undefined,
-        buildingBuilt: p.buildingBuilt || undefined,
-        lastRenovated: p.lastRenovated || undefined,
-        furnishing: (p.furnishing as "furnished" | "partially_furnished" | "unfurnished" | null) || undefined,
-        availableFrom: p.availableFrom || undefined,
-        lastVerifiedAt: p.lastVerifiedAt || undefined,
-        btsStation: p.btsStation || undefined,
-        btsWalkMin: p.btsWalkMin || undefined,
-        mrtStation: p.mrtStation || undefined,
-        mrtWalkMin: p.mrtWalkMin || undefined,
-        foreignQuota: p.foreignQuota || undefined,
-        visaFriendly: p.visaFriendly || undefined,
-        leaseTerms: p.leaseTerms || undefined,
-        depositTerms: p.depositTerms || undefined,
-        maintenance: p.maintenance || undefined,
-      }));
+      return list.map((p) => {
+        let priceTHB = Number(p.priceTHB);
+        let priceUSD = p.priceUSD ? Number(p.priceUSD) : undefined;
+        let priceLabel = p.priceLabel || undefined;
+
+        if (priceLabel && priceLabel.toLowerCase().includes("night")) {
+          priceTHB = priceTHB * 30;
+          if (priceUSD) priceUSD = priceUSD * 30;
+          priceLabel = "/month";
+        }
+
+        return {
+          id: p.id,
+          slug: p.slug,
+          name: p.name,
+          description: p.description || "",
+          listingType: p.listingType,
+          propertyType: p.propertyType,
+          priceTHB,
+          priceUSD,
+          priceLabel,
+          bedrooms: p.bedrooms,
+          bathrooms: p.bathrooms,
+          sqm: p.sqm || undefined,
+          area: p.area,
+          district: p.district || undefined,
+          latitude: p.latitude || undefined,
+          longitude: p.longitude || undefined,
+          coverImage: p.coverImage || undefined,
+          images: p.images || [],
+          videoUrl: p.videoUrl || undefined,
+          likes: p.likes,
+          saves: p.saves,
+          clicks: p.clicks,
+          viewCount: p.views,
+          featured: p.featured,
+          hasVideo: p.hasVideo,
+          petFriendly: p.petFriendly,
+          nearBts: p.nearBts,
+          verificationBadge: p.verificationBadge,
+          expiryDate: p.expiryDate ? p.expiryDate.toISOString() : undefined,
+          createdAt: p.createdAt.toISOString(),
+          updatedAt: p.updatedAt ? p.updatedAt.toISOString() : p.createdAt.toISOString(),
+          amenities: p.amenities || [],
+          features: p.features || [],
+          schools: p.schools || [],
+          transit: p.transit || [],
+          neighborhood: p.neighborhood || "",
+          telegramMediaGroupId: p.telegramMediaGroupId || undefined,
+          floor: p.floor || undefined,
+          totalFloors: p.totalFloors || undefined,
+          buildingBuilt: p.buildingBuilt || undefined,
+          lastRenovated: p.lastRenovated || undefined,
+          furnishing: (p.furnishing as "furnished" | "partially_furnished" | "unfurnished" | null) || undefined,
+          availableFrom: p.availableFrom || undefined,
+          lastVerifiedAt: p.lastVerifiedAt || undefined,
+          btsStation: p.btsStation || undefined,
+          btsWalkMin: p.btsWalkMin || undefined,
+          mrtStation: p.mrtStation || undefined,
+          mrtWalkMin: p.mrtWalkMin || undefined,
+          foreignQuota: p.foreignQuota || undefined,
+          visaFriendly: p.visaFriendly || undefined,
+          leaseTerms: p.leaseTerms || undefined,
+          depositTerms: p.depositTerms || undefined,
+          maintenance: p.maintenance || undefined,
+        };
+      });
     }
   } catch (err) {
     console.warn("DB properties fetch failed, using fallback mock data:", err);
   }
-  return MOCK_PROPERTIES.map((p) => ({
-    ...p,
-    clicks: p.clicks ?? 0,
-    amenities: p.amenities ?? [],
-    features: p.features ?? [],
-    schools: p.schools ?? [],
-    transit: p.transit ?? [],
-    neighborhood: p.neighborhood ?? "",
-    verificationBadge: p.verificationBadge ?? false,
-    expiryDate: p.expiryDate ?? undefined,
-    updatedAt: p.updatedAt || p.createdAt,
-  }));
+  return MOCK_PROPERTIES.map((p) => {
+    let priceTHB = p.priceTHB;
+    let priceUSD = p.priceUSD;
+    let priceLabel = p.priceLabel ?? undefined;
+
+    if (priceLabel && priceLabel.toLowerCase().includes("night")) {
+      priceTHB = priceTHB * 30;
+      if (priceUSD) priceUSD = priceUSD * 30;
+      priceLabel = "/month";
+    }
+
+    return {
+      ...p,
+      priceTHB,
+      priceUSD,
+      priceLabel,
+      clicks: p.clicks ?? 0,
+      amenities: p.amenities ?? [],
+      features: p.features ?? [],
+      schools: p.schools ?? [],
+      transit: p.transit ?? [],
+      neighborhood: p.neighborhood ?? "",
+      verificationBadge: p.verificationBadge ?? false,
+      expiryDate: p.expiryDate ?? undefined,
+      updatedAt: p.updatedAt || p.createdAt,
+    };
+  });
 }
 
 /**

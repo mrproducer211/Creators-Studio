@@ -168,7 +168,7 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
       longitude: finalLng || undefined,
       images: imagesText.split("\n").map((s) => s.trim()).filter(Boolean),
       features: featuresText.split("\n").map((s) => s.trim()).filter(Boolean),
-      priceLabel: state.listingType === "sale" ? "" : (state.priceLabel || (state.listingType === "rent" ? "/month" : "/night")),
+      priceLabel: state.listingType === "sale" ? "" : (state.priceLabel || "/month"),
       expiryDate: state.expiryDate || undefined,
     };
 
@@ -290,7 +290,6 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
                 <select className={inputCls} style={inputStyle} value={state.priceLabel ?? ""} onChange={(e) => setField("priceLabel", e.target.value)}>
                   <option value="">(none — for sale)</option>
                   <option value="/month">/month</option>
-                  <option value="/night">/night</option>
                 </select>
               </Field>
             </div>

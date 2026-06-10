@@ -24,7 +24,9 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem("nhp-currency");
     if (stored === "THB" || stored === "USD" || stored === "EUR" || stored === "CNY") {
-      setCurrencyState(stored as Currency);
+      setTimeout(() => {
+        setCurrencyState(stored as Currency);
+      }, 0);
     }
   }, []);
 

@@ -99,7 +99,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
           style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(4px)" }}
           aria-label={saved ? "Unsave" : "Save"}
         >
-          {saved ? "❤️" : "🤍"}
+          {saved ? "💚" : "🤍"}
         </button>
       </div>
 
@@ -140,10 +140,6 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
           <button
             onClick={async (e) => {
               e.stopPropagation();
-              if (!session) {
-                window.location.href = `/auth/signin?callbackUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`;
-                return;
-              }
               if (!liked) {
                 setLiked(true);
                 try {
@@ -158,13 +154,16 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
               }
             }}
             className="flex items-center gap-1 text-[11px] font-medium cursor-pointer bg-transparent border-none p-0 transition-colors"
-            style={{ color: liked ? "#E05252" : "#bbb", fontFamily: "inherit" }}
+            style={{ color: liked ? "#10B981" : "#bbb", fontFamily: "inherit" }}
             aria-label="Like"
           >
-            ❤️ {property.likes + (liked ? 1 : 0)}
+            💚 {property.likes + (liked ? 1 : 0)}
           </button>
           <button
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`${href}?enquiry=true`);
+            }}
             className="ml-auto px-3.5 py-2 rounded-lg text-[11px] font-semibold cursor-pointer border-none transition-opacity hover:opacity-80"
             style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}
           >

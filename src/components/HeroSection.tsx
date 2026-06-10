@@ -12,13 +12,14 @@ const FEATURED_FALLBACK = MOCK_PROPERTIES.find((p) => p.featured) ?? MOCK_PROPER
    DESKTOP HERO  —  faithful port of nhp-v3.html
 ───────────────────────────────────────────── */
 function DesktopHero({
-  activeTab, setActiveTab, query, setQuery, featured,
+  activeTab, setActiveTab, query, setQuery, featured, handleSearch,
 }: {
   activeTab: number;
   setActiveTab: (i: number) => void;
   query: string;
   setQuery: (v: string) => void;
   featured: PropertyCard;
+  handleSearch: () => void;
 }) {
   const { t }                    = useLanguage();
   const { formatPrice }          = useCurrency();
@@ -30,13 +31,6 @@ function DesktopHero({
     const id = setInterval(() => setActiveDot((d) => (d + 1) % DOTS), 2800);
     return () => clearInterval(id);
   }, []);
-
-  const handleSearch = () => {
-    const map: Record<number, string> = { 0: "sale", 1: "rent", 2: "short_stay" };
-    const params = new URLSearchParams({ type: map[activeTab] });
-    if (query) params.set("search", query);
-    window.location.href = `/explore?${params.toString()}`;
-  };
 
   return (
     <section
@@ -143,7 +137,7 @@ function DesktopHero({
             padding: "6px 6px 6px 22px",
             boxShadow: "0 8px 40px rgba(0,0,0,0.28), 0 1px 4px rgba(0,0,0,0.08)",
             maxWidth: 480,
-            marginBottom: 22,
+            marginBottom: activeTab === 2 ? 14 : 22,
           }}
         >
           <input
@@ -151,7 +145,7 @@ function DesktopHero({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder={t.hero.placeholder}
+            placeholder={activeTab === 2 ? "I'm looking for a pet-friendly condo in On Nut near BTS under 35,000 baht." : t.hero.placeholder}
             style={{
               flex: 1,
               border: "none",
@@ -206,6 +200,49 @@ function DesktopHero({
             {t.hero.search.toUpperCase()}
           </button>
         </div>
+
+        {/* Suggested Searches chips */}
+        {activeTab === 2 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", maxWidth: "480px", marginBottom: "20px" }}>
+            <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", width: "100%", marginBottom: "4px" }}>
+              Suggested Searches:
+            </span>
+            {[
+              "Pet-friendly condo near BTS under 35k",
+              "2-bedroom condo in Thonglor with pool",
+              "Family home near schools in Bang Na",
+              "Luxury condo in Phrom Phong",
+              "Studio in Ari under 20k",
+              "Remote-work friendly condo with cafes nearby"
+            ].map((chip) => (
+              <button
+                key={chip}
+                onClick={() => setQuery(chip)}
+                style={{
+                  background: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  borderRadius: "100px",
+                  padding: "5px 12px",
+                  fontSize: "11px",
+                  color: "#E2C97E",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  transition: "background 0.2s, border-color 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)";
+                  e.currentTarget.style.borderColor = "#E2C97E";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                }}
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Stats row — left-aligned, pulled close to search bar */}
         <div style={{ display: "flex", gap: 32, paddingTop: 4 }}>
@@ -430,6 +467,17 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
 
   const featuredVal = featured || FEATURED_FALLBACK;
 
+  const handleSearch = () => {
+    if (activeTab === 2) {
+      window.location.href = `/explore/smart?q=${encodeURIComponent(query)}`;
+    } else {
+      const map: Record<number, string> = { 0: "sale", 1: "rent" };
+      const params = new URLSearchParams({ type: map[activeTab] });
+      if (query) params.set("search", query);
+      window.location.href = `/explore?${params.toString()}`;
+    }
+  };
+
   return (
     <>
       {/* Desktop (lg+) — v3 design */}
@@ -439,6 +487,7 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
         query={query}
         setQuery={setQuery}
         featured={featuredVal}
+        handleSearch={handleSearch}
       />
 
       {/* Mobile (< lg) — original forest hero, unchanged */}
@@ -493,21 +542,50 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
             <div className="flex items-center gap-1.5 px-1 pb-1">
               <input
                 type="text"
-                placeholder={t.hero.placeholder}
+                placeholder={activeTab === 2 ? "I'm looking for a pet-friendly condo in On Nut near BTS under 35,000 baht." : t.hero.placeholder}
                 className="flex-1 border-none outline-none text-[13px] bg-transparent px-1.5 py-1"
                 style={{ color: "#1A1A1A", fontFamily: "inherit" }}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
               <button
                 suppressHydrationWarning
                 className="px-4 py-2.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors duration-150 border-none whitespace-nowrap"
                 style={{ background: "#C9A84C", color: "#1C3A2F" }}
-                onClick={() => (window.location.href = "/explore")}
+                onClick={handleSearch}
               >
                 {t.hero.search}
               </button>
             </div>
+
+            {/* Suggested Searches chips on mobile */}
+            {activeTab === 2 && (
+              <div className="mt-3 px-1 pb-2">
+                <span className="text-[10px] uppercase tracking-wider text-black opacity-40 block mb-2 font-semibold">
+                  Suggested Searches
+                </span>
+                <div className="flex flex-wrap gap-1.5 animate-fadeIn">
+                  {[
+                    "Pet-friendly condo near BTS under 35k",
+                    "2-bedroom condo in Thonglor with pool",
+                    "Family home near schools in Bang Na",
+                    "Luxury condo in Phrom Phong",
+                    "Studio in Ari under 20k",
+                    "Remote-work friendly condo with cafes nearby"
+                  ].map((chip) => (
+                    <button
+                      key={chip}
+                      onClick={() => setQuery(chip)}
+                      className="text-[11px] px-2.5 py-1 rounded-full border border-gray-300 text-[#1C3A2F] cursor-pointer font-medium"
+                      style={{ background: "#F7F3EC" }}
+                    >
+                      {chip}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex mb-3">

@@ -14,7 +14,9 @@ export async function POST(req: NextRequest) {
     const { reason, preferences, avoidances, budget, stayDuration, workplace } = await req.json();
 
     const cleanReason = reason || "Just Exploring Bangkok";
-    const selectedPrefs = Array.isArray(preferences) ? preferences : [];
+    const selectedPrefs = Array.isArray(preferences)
+      ? preferences.map((p: string) => p.replace(/^[^a-zA-Z0-9\s]+/, "").trim())
+      : [];
     const selectedAvoidances = Array.isArray(avoidances) ? avoidances : [];
     const maxBudget = Number(budget) || 50000;
     const cleanDuration = stayDuration || "6-12 Months";
@@ -100,7 +102,7 @@ Return a JSON object matching this exact schema:
             const parsed = JSON.parse(textResponse);
             if (parsed.matches && Array.isArray(parsed.matches)) {
               matches = topMatches.map((m) => {
-                const apiMatch = parsed.matches.find((item: any) => item.slug === m.slug);
+                const apiMatch = parsed.matches.find((item: { slug: string; explanation?: string; whyWeChose?: string[] }) => item.slug === m.slug);
                 return {
                   slug: m.slug,
                   matchPercentage: m.matchPercentage,

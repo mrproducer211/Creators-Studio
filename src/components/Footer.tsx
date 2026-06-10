@@ -67,7 +67,7 @@ export default function Footer() {
           className="block text-base font-semibold mb-1.5"
           style={{ color: "#FFFFFF" }}
         >
-          New Homes Property
+          New Home Property
         </strong>
         <p
           className="text-xs leading-[1.65] font-light max-w-[280px]"

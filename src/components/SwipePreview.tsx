@@ -115,7 +115,7 @@ export default function SwipePreview() {
                   className="absolute top-3 right-3 w-[30px] h-[30px] rounded-full flex items-center justify-center text-sm border-none cursor-pointer z-10"
                   style={{ background: "rgba(255,255,255,0.9)" }}
                 >
-                  {saved ? "❤️" : "🤍"}
+                  {saved ? "💚" : "🤍"}
                 </button>
               )}
             </div>

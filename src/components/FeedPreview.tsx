@@ -86,7 +86,7 @@ function PropertyCard({ property }: { property: PropertyType }) {
           className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-[15px] cursor-pointer border-none transition-colors z-10"
           style={{ background: "rgba(255,255,255,0.9)" }}
         >
-          {saved ? "❤️" : "🤍"}
+          {saved ? "💚" : "🤍"}
         </button>
         {property.hasVideo && (
           <div
@@ -155,10 +155,6 @@ function PropertyCard({ property }: { property: PropertyType }) {
         <div className="flex items-center gap-3.5">
           <button
             onClick={async () => {
-              if (!session) {
-                window.location.href = `/auth/signin?callbackUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`;
-                return;
-              }
               if (!liked) {
                 setLiked(true);
                 try {
@@ -173,9 +169,9 @@ function PropertyCard({ property }: { property: PropertyType }) {
               }
             }}
             className="flex items-center gap-1.5 text-xs font-medium cursor-pointer bg-none border-none transition-colors duration-150 p-0"
-            style={{ color: liked ? "#E05252" : "#999", fontFamily: "inherit" }}
+            style={{ color: liked ? "#10B981" : "#999", fontFamily: "inherit" }}
           >
-            ❤️ {property.likes + (liked ? 1 : 0)}
+            💚 {property.likes + (liked ? 1 : 0)}
           </button>
           <button
             className="flex items-center gap-1.5 text-xs font-medium cursor-pointer bg-none border-none p-0"
@@ -197,7 +193,7 @@ function PropertyCard({ property }: { property: PropertyType }) {
             🔖 {saved ? "Saved" : "Save"}
           </button>
           <a
-            href={`/property/${property.slug}`}
+            href={`/property/${property.slug}?enquiry=true`}
             className="ml-auto px-3.5 py-2 rounded-lg text-xs font-medium cursor-pointer border-none transition-colors duration-150 no-underline"
             style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}
           >

@@ -90,7 +90,6 @@ export default function ExploreFiltersBar({ filters, total, onChange, onReset }:
 
   const minPresets = [
     { label: t.filters.noMin,                  value: 0 },
-    { label: `฿1,500${t.filters.perNight}`,    value: 1500 },
     { label: `฿10,000${t.filters.perMonth}`,   value: 10000 },
     { label: `฿20,000${t.filters.perMonth}`,   value: 20000 },
     { label: `฿40,000${t.filters.perMonth}`,   value: 40000 },
@@ -101,7 +100,6 @@ export default function ExploreFiltersBar({ filters, total, onChange, onReset }:
 
   const maxPresets = [
     { label: t.filters.noMax,                  value: Infinity },
-    { label: `฿3,000${t.filters.perNight}`,    value: 3000 },
     { label: `฿30,000${t.filters.perMonth}`,   value: 30000 },
     { label: `฿60,000${t.filters.perMonth}`,   value: 60000 },
     { label: `฿100,000${t.filters.perMonth}`,  value: 100000 },
@@ -120,6 +118,10 @@ export default function ExploreFiltersBar({ filters, total, onChange, onReset }:
       "Silom": "silom",
       "On Nut": "onNut",
       "Ari": "ari",
+      "Rama 9": "rama9",
+      "Bang Na": "bangNa",
+      "Huai Khwang": "huaiKhwang",
+      "Phaya Thai": "phayaThai",
     };
     const key = map[area];
     return key ? t.category.areas[key] : area;

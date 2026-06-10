@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -10,8 +11,129 @@ const CARD_H  = 210;  // px — each small card height (landscape: 278×210)
 const GAP     = 10;   // px — gap between all cards
 const BIG_H   = CARD_H * 2 + GAP; // 430px — anchor card height exactly equals 2×grid rows
 
+const NEIGHBORHOOD_VIBES: Record<string, {
+  vibe: string;
+  tags: string[];
+  bestFor: string;
+  pros: string;
+  cons: string;
+  whoLovesIt: string;
+}> = {
+  "sukhumvit": {
+    vibe: "Central expat core, bustling, endless shopping & dining",
+    tags: ["🚇 BTS Hub", "🏬 Shopping", "🌎 Expat Central"],
+    bestFor: "First-time expats and convenience seekers",
+    pros: "Infinite dining, top shopping malls (EmQuartier), clean transit connectivity",
+    cons: "Very busy, high traffic, feels less local",
+    whoLovesIt: "Working professionals & shopping lovers",
+  },
+  "sathorn": {
+    vibe: "Sleek business district with upscale dining & green parks nearby",
+    tags: ["💼 Business Core", "🌳 Green Parks", "✨ Upscale"],
+    bestFor: "Working professionals and families",
+    pros: "Top-tier restaurants, close to Lumpini Park, quiet residential side-streets",
+    cons: "Rush-hour traffic congestion, quiet on weekends",
+    whoLovesIt: "Corporate execs & expat families",
+  },
+  "thong-lo": {
+    vibe: "High-end nightlife, designer cafes, and trendy lifestyle plazas",
+    tags: ["✨ Luxury", "☕ Cafe Hub", "🍸 Nightlife"],
+    bestFor: "Upscale lifestyle, dining, and nightlife",
+    pros: "Top dining scene, high-end design, walkable community malls (The Commons)",
+    cons: "High cost of living, expensive rents",
+    whoLovesIt: "Trendsetters, foodies, & nightlife lovers",
+  },
+  "asok": {
+    vibe: "Bustling transit intersection linking BTS and MRT with dense urban living",
+    tags: ["🚇 BTS-MRT Intersect", "🏬 Terminal 21", "🏙️ Central"],
+    bestFor: "Active commuters and city lovers",
+    pros: "Dual transit access, excellent gyms, walkable shopping",
+    cons: "Heavy street traffic, busy office rush hours",
+    whoLovesIt: "Commuters & urbanites",
+  },
+  "ekkamai": {
+    vibe: "Trendy residential zone with craft breweries, boutiques, and quiet alleys",
+    tags: ["🏡 Residential", "🍺 Beer Gardens", "🐾 Pet Friendly"],
+    bestFor: "Cool neighborhood vibe and pet owners",
+    pros: "Great cafes, local vibe, pet-friendly venues",
+    cons: "Further from downtown MRT line, transit can be busy",
+    whoLovesIt: "Digital nomads & pet owners",
+  },
+  "silom": {
+    vibe: "Vibrant contrast of historic streets, financial offices, and legendary street food",
+    tags: ["🍲 Street Food", "💼 Business", "🚇 BTS-MRT"],
+    bestFor: "Expat foodies and street culture",
+    pros: "World-class street food, BTS & MRT access, close to Lumpini Park",
+    cons: "Crowded sidewalks, noisy nightlife districts",
+    whoLovesIt: "Foodies & urban explorers",
+  },
+  "on-nut": {
+    vibe: "Affordable expat haven with local food courts, big supermarkets, and easy BTS access",
+    tags: ["🌱 Budget Friendly", "🚇 BTS Adjacent", "🍜 Food Courts"],
+    bestFor: "Digital nomads and value seekers",
+    pros: "Low rental prices, cheap local food, excellent supermarkets (Lotus's)",
+    cons: "Slightly outside central Sukhumvit zone",
+    whoLovesIt: "Budget expats & digital nomads",
+  },
+  "ari": {
+    vibe: "Relaxed hipster haven with vintage boutiques, specialty coffee, and local markets",
+    tags: ["🌿 Hip & Chill", "☕ Specialty Cafes", "🏡 Low-Rise"],
+    bestFor: "Specialty coffee lovers and low-rise living",
+    pros: "Quiet low-rise streets, amazing cafe scene, local community feel",
+    cons: "No large shopping malls, north of downtown core",
+    whoLovesIt: "Creatives, remote workers, & cafe lovers",
+  },
+  "rama-9": {
+    vibe: "Modern retail hub, bustling city traffic, and active corporate offices",
+    tags: ["🚇 MRT Hub", "🏬 Central Rama 9", "🏙️ New CBD"],
+    bestFor: "Young professionals and corporate employees",
+    pros: "Mega malls, abundant high-rise condo options, great MRT connectivity",
+    cons: "Heavy rush hour traffic congestion, can feel concrete-heavy",
+    whoLovesIt: "Commuters & office workers",
+  },
+  "bang-na": {
+    vibe: "Spacious suburbs with international schools, golf courses, and mega plazas",
+    tags: ["🏫 Expat Families", "🏬 Mega Bangna", "🏡 Suburban Space"],
+    bestFor: "Families wanting larger spaces and school access",
+    pros: "Large malls (Mega Bangna), international schools, peaceful neighborhood residential complexes",
+    cons: "Far from central Bangkok CBD, transit times can be long",
+    whoLovesIt: "Families & golf lovers",
+  },
+  "huai-khwang": {
+    vibe: "Vibrant local markets, active night spots, and a bustling new Chinatown food culture",
+    tags: ["🍜 New Chinatown", "🛍️ Night Markets", "🌱 Value Living"],
+    bestFor: "Foodies and budget-conscious city dwellers",
+    pros: "Vibrant street food, affordable rent options, authentic Chinese restaurants",
+    cons: "Very busy sidewalks, older buildings, traffic congestion",
+    whoLovesIt: "Food lovers & budget expats",
+  },
+  "phaya-thai": {
+    vibe: "Transit node connecting to Airport Rail Link, clinical hubs, and student hangouts",
+    tags: ["✈️ Airport Link", "🎓 Students", "🚇 BTS Adjacent"],
+    bestFor: "Students and frequent airport travelers",
+    pros: "Direct airport link access, close to universities and hospitals, quieter than central Sukhumvit",
+    cons: "Fewer high-end dining options, less nightlife",
+    whoLovesIt: "Students, doctors, & travelers",
+  },
+};
+
+interface VibeCheckCard {
+  slug: string;
+  name: string;
+  count: number;
+  image: string;
+  href: string;
+  vibe: string;
+  tags: string[];
+  bestFor: string;
+  pros: string;
+  cons: string;
+  whoLovesIt: string;
+}
+
 export default function CategorySection() {
   const { t } = useLanguage();
+  const [vibeCheckCard, setVibeCheckCard] = useState<VibeCheckCard | null>(null);
 
   const SECTIONS = [
     {
@@ -20,13 +142,13 @@ export default function CategorySection() {
         label: t.category.lookingIn,
         name:  t.category.nearBts,
         image: "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=900&auto=format&q=85",
-        href:  "/explore",
+        href:  "/explore?bts=true",
       },
       cards: [
-        { slug: "sukhumvit", name: t.category.areas.sukhumvit, count: MOCK_PROPERTIES.filter(p => p.area === "Sukhumvit").length + 18, image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&q=80", href: "/explore" },
-        { slug: "sathorn",   name: t.category.areas.sathorn,   count: MOCK_PROPERTIES.filter(p => p.area === "Sathorn").length + 14,   image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&q=80", href: "/explore" },
-        { slug: "thong-lo",  name: t.category.areas.thongLo,    count: MOCK_PROPERTIES.filter(p => p.area === "Thong Lo").length + 12,  image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&auto=format&q=80", href: "/explore" },
-        { slug: "asok",      name: t.category.areas.asok,       count: MOCK_PROPERTIES.filter(p => p.area === "Asok").length + 9,       image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&auto=format&q=80", href: "/explore" },
+        { slug: "sukhumvit", name: t.category.areas.sukhumvit, count: MOCK_PROPERTIES.filter(p => p.area === "Sukhumvit").length + 18, image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&q=80", href: "/neighborhood/sukhumvit" },
+        { slug: "sathorn",   name: t.category.areas.sathorn,   count: MOCK_PROPERTIES.filter(p => p.area === "Sathorn").length + 14,   image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&q=80", href: "/neighborhood/sathorn" },
+        { slug: "thong-lo",  name: t.category.areas.thongLo,    count: MOCK_PROPERTIES.filter(p => p.area === "Thong Lo").length + 12,  image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&auto=format&q=80", href: "/neighborhood/thong-lo" },
+        { slug: "asok",      name: t.category.areas.asok,       count: MOCK_PROPERTIES.filter(p => p.area === "Asok").length + 9,       image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&auto=format&q=80", href: "/neighborhood/asok" },
       ],
     },
     {
@@ -35,13 +157,28 @@ export default function CategorySection() {
         label: t.category.lookingIn,
         name:  t.category.petFriendly,
         image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&auto=format&q=85",
-        href:  "/explore",
+        href:  "/explore?pets=true",
       },
       cards: [
-        { slug: "ekkamai",  name: t.category.areas.ekkamai, count: MOCK_PROPERTIES.filter(p => p.area === "Ekkamai").length + 11, image: "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=600&auto=format&q=80", href: "/explore" },
-        { slug: "silom",    name: t.category.areas.silom,   count: 16, image: "https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=600&auto=format&q=80", href: "/explore" },
-        { slug: "on-nut",   name: t.category.areas.onNut,   count: MOCK_PROPERTIES.filter(p => p.area === "On Nut").length + 9,   image: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&auto=format&q=80", href: "/explore" },
-        { slug: "ari",      name: t.category.areas.ari,     count: 13, image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&q=80", href: "/explore" },
+        { slug: "ekkamai",  name: t.category.areas.ekkamai, count: MOCK_PROPERTIES.filter(p => p.area === "Ekkamai").length + 11, image: "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=600&auto=format&q=80", href: "/neighborhood/ekkamai" },
+        { slug: "silom",    name: t.category.areas.silom,   count: 16, image: "https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=600&auto=format&q=80", href: "/neighborhood/silom" },
+        { slug: "on-nut",   name: t.category.areas.onNut,   count: MOCK_PROPERTIES.filter(p => p.area === "On Nut").length + 9,   image: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&auto=format&q=80", href: "/neighborhood/on-nut" },
+        { slug: "ari",      name: t.category.areas.ari,     count: 13, image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&q=80", href: "/neighborhood/ari" },
+      ],
+    },
+    {
+      anchor: {
+        slug:  "new-hubs",
+        label: t.category.lookingIn,
+        name:  t.category.newHubs,
+        image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&auto=format&q=85",
+        href:  "/explore?newHubs=true",
+      },
+      cards: [
+        { slug: "rama-9",      name: t.category.areas.rama9,      count: MOCK_PROPERTIES.filter(p => p.area === "Rama 9").length + 12,      image: "https://images.unsplash.com/photo-1590073844006-33379778ae09?w=600&auto=format&q=80", href: "/neighborhood/rama-9" },
+        { slug: "bang-na",     name: t.category.areas.bangNa,     count: MOCK_PROPERTIES.filter(p => p.area === "Bang Na").length + 15,     image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&auto=format&q=80", href: "/neighborhood/bang-na" },
+        { slug: "huai-khwang",  name: t.category.areas.huaiKhwang,  count: MOCK_PROPERTIES.filter(p => p.area === "Huai Khwang").length + 10,  image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&q=80", href: "/neighborhood/huai-khwang" },
+        { slug: "phaya-thai",  name: t.category.areas.phayaThai,  count: MOCK_PROPERTIES.filter(p => p.area === "Phaya Thai").length + 8,   image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&q=80", href: "/neighborhood/phaya-thai" },
       ],
     },
   ];
@@ -124,20 +261,24 @@ export default function CategorySection() {
                       alt={card.name}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    {/* gradient overlay — bg-gradient-to-t from-black/70 via-black/20 to-transparent */}
+                    {/* gradient overlay */}
                     <div
                       className="absolute inset-0"
                       style={{ background: "linear-gradient(to top, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.18) 50%, transparent 100%)" }}
                     />
                     {/* text — bottom-left */}
-                    <div className="absolute bottom-0 left-0 p-4">
+                    <div className="absolute bottom-0 left-0 p-4 w-full">
                       <h4 className="text-[14px] font-semibold leading-tight mb-0.5" style={{ color: "#FFFFFF" }}>
                         {card.name}
                       </h4>
+
                       <p className="text-[11px] opacity-80" style={{ color: "rgba(255,255,255,0.85)" }}>
                         {card.count.toLocaleString()} {t.category.propsForYou}
                       </p>
                     </div>
+
+
+
                     {/* hover border */}
                     <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ border: "1.5px solid rgba(201,168,76,0.4)" }} />
                   </a>
@@ -191,32 +332,41 @@ export default function CategorySection() {
                 className="flex-1 grid grid-cols-2"
                 style={{ gap: 8 }}
               >
-                {section.cards.map((card) => (
-                  <a
-                    key={card.slug}
-                    href={card.href}
-                    className="relative overflow-hidden rounded-xl no-underline"
-                    style={{ aspectRatio: "3 / 2" }}
-                  >
-                    <img
-                      src={card.image}
-                      alt={card.name}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                    <div
-                      className="absolute inset-0"
-                      style={{ background: "linear-gradient(to top, rgba(0,0,0,0.76) 0%, rgba(0,0,0,0.08) 60%, transparent 100%)" }}
-                    />
-                    <div className="absolute bottom-0 left-0 p-2">
-                      <h4 className="text-[11px] font-semibold leading-tight truncate" style={{ color: "#FFFFFF" }}>
-                        {card.name}
-                      </h4>
-                      <p className="text-[9px] opacity-70" style={{ color: "#FFFFFF" }}>
-                        {card.count.toLocaleString()} {t.category.props}
-                      </p>
-                    </div>
-                  </a>
-                ))}
+                {section.cards.map((card) => {
+
+
+                  return (
+                    <a
+                      key={card.slug}
+                      href={card.href}
+                      className="relative overflow-hidden rounded-xl no-underline"
+                      style={{ aspectRatio: "3 / 2" }}
+                    >
+                      <img
+                        src={card.image}
+                        alt={card.name}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+
+
+                      <div
+                        className="absolute inset-0"
+                        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.76) 0%, rgba(0,0,0,0.08) 60%, transparent 100%)" }}
+                      />
+                      <div className="absolute bottom-0 left-0 p-2 w-full">
+                        <h4 className="text-[11px] font-semibold leading-tight truncate" style={{ color: "#FFFFFF" }}>
+                          {card.name}
+                        </h4>
+
+
+
+                        <p className="text-[9px] opacity-70" style={{ color: "#FFFFFF" }}>
+                          {card.count.toLocaleString()} {t.category.props}
+                        </p>
+                      </div>
+                    </a>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -225,6 +375,80 @@ export default function CategorySection() {
           <div style={{ width: 16, flexShrink: 0 }} />
         </div>
       </div>
+
+      {/* Vibe Check Bottom Drawer Sheet for Mobile */}
+      {vibeCheckCard && (
+        <div className="fixed inset-0 z-50 flex items-end md:hidden" onClick={() => setVibeCheckCard(null)}>
+          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(2px)" }} />
+          <div
+            className="relative w-full rounded-t-3xl p-6 animate-slide-up"
+            style={{ background: "#F7F3EC", color: "#1C3A2F", zIndex: 60, maxHeight: "75vh", overflowY: "auto" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <span className="text-[9px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] block mb-0.5">🌿 Vibe Check</span>
+                <h3 className="text-[20px] font-bold leading-tight" style={{ color: "#1C3A2F" }}>{vibeCheckCard.name}</h3>
+              </div>
+              <button
+                onClick={() => setVibeCheckCard(null)}
+                className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer border-none text-xs"
+                style={{ background: "#EDE8DF", color: "#1C3A2F" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex flex-col gap-4 text-[13px] leading-relaxed">
+              <p className="italic font-light" style={{ color: "#555" }}>&quot;{vibeCheckCard.vibe}&quot;</p>
+
+              {/* Badges */}
+              <div className="flex flex-wrap gap-1.5">
+                {vibeCheckCard.tags.map((tag: string) => (
+                  <span key={tag} className="px-2.5 py-0.5 rounded text-[9px] font-bold tracking-wide uppercase" style={{ background: "#EDE8DF", color: "#1C3A2F" }}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Best For */}
+              <div className="p-3 rounded-xl" style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.2)" }}>
+                <span className="text-[9px] font-bold uppercase tracking-[1px] text-[#C9A84C] block mb-0.5">Best For</span>
+                <p className="font-semibold text-[12px]">{vibeCheckCard.bestFor}</p>
+              </div>
+
+              {/* Pros & Cons */}
+              <div className="grid grid-cols-1 gap-2.5">
+                <div className="p-3 rounded-xl bg-white" style={{ border: "1px solid #E5E0D8" }}>
+                  <span className="text-[9px] font-bold uppercase tracking-[1px] text-emerald-600 block mb-0.5">👍 Pros</span>
+                  <p className="font-light text-[#555]">{vibeCheckCard.pros}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white" style={{ border: "1px solid #E5E0D8" }}>
+                  <span className="text-[9px] font-bold uppercase tracking-[1px] text-rose-500 block mb-0.5">👎 Cons</span>
+                  <p className="font-light text-[#555]">{vibeCheckCard.cons}</p>
+                </div>
+              </div>
+
+              {/* Who loves it */}
+              <div className="p-3 rounded-xl bg-white" style={{ border: "1px solid #E5E0D8" }}>
+                <span className="text-[9px] font-bold uppercase tracking-[1px] text-[#C9A84C] block mb-0.5">👥 Who Lives Here</span>
+                <p className="font-light text-[#555]">{vibeCheckCard.whoLovesIt}</p>
+              </div>
+
+              {/* Explore Link */}
+              <a
+                href={`/neighborhood/${vibeCheckCard.slug}`}
+                className="w-full py-3.5 rounded-xl text-center font-bold text-sm no-underline transition-colors mt-2 block"
+                style={{ background: "#1C3A2F", color: "#FFFFFF" }}
+              >
+                Explore {vibeCheckCard.name} Guide →
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

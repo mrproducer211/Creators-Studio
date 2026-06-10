@@ -18,6 +18,7 @@ const DEFAULT_FILTERS: ExploreFilters = {
   search: "",
   petFriendly: false,
   nearBts: false,
+  newHubs: false,
 };
 
 function filtersFromParams(params: URLSearchParams): ExploreFilters {
@@ -36,6 +37,9 @@ function filtersFromParams(params: URLSearchParams): ExploreFilters {
   
   const nearBts = params.get("bts") || params.get("nearBts");
   if (nearBts === "true") f.nearBts = true;
+
+  const newHubs = params.get("newHubs");
+  if (newHubs === "true") f.newHubs = true;
   
   return f;
 }
@@ -68,6 +72,11 @@ function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] 
   if (f.petFriendly) result = result.filter((p) => p.petFriendly);
   if (f.nearBts)     result = result.filter((p) => p.nearBts);
 
+  if (f.newHubs) {
+    const hubs = ["Rama 9", "Bang Na", "Huai Khwang", "Phaya Thai"];
+    result = result.filter((p) => hubs.includes(p.area));
+  }
+
   switch (f.sort) {
     case "price_asc":  result.sort((a, b) => Number(a.priceTHB) - Number(b.priceTHB)); break;
     case "price_desc": result.sort((a, b) => Number(b.priceTHB) - Number(a.priceTHB)); break;
@@ -78,7 +87,7 @@ function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] 
 }
 
 export default function ExploreClient({ properties }: { properties: PropertyCard[] }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const searchParams = useSearchParams();
   const [filters, setFilters] = useState<ExploreFilters>(() => filtersFromParams(searchParams));
 
@@ -91,6 +100,25 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
 
   const filtered = useMemo(() => applyFilters(properties, filters), [properties, filters]);
   const update = (patch: Partial<ExploreFilters>) => setFilters((p) => ({ ...p, ...patch }));
+
+  const dynamicTitle = useMemo(() => {
+    if (filters.area) {
+      return lang === "th"
+        ? `ค้นหาอสังหาริมทรัพย์ในกรุงเทพฯ ย่าน ${filters.area}`
+        : `Explore properties in Bangkok ${filters.area}`;
+    }
+    if (filters.nearBts) {
+      return lang === "th"
+        ? "ค้นหาอสังหาริมทรัพย์ใกล้รถไฟฟ้าในกรุงเทพฯ"
+        : "Explore properties near BTS in Bangkok";
+    }
+    if (filters.petFriendly) {
+      return lang === "th"
+        ? "ค้นหาอสังหาริมทรัพย์ที่เลี้ยงสัตว์ได้ในกรุงเทพฯ"
+        : "Explore pet friendly properties in Bangkok";
+    }
+    return t.explore.title;
+  }, [filters, lang, t]);
 
   return (
     <>
@@ -106,10 +134,10 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
           className="text-[26px] font-bold leading-[1.25] mb-2"
           style={{ color: "#FFFFFF", letterSpacing: "-0.5px" }}
         >
-          {t.explore.title}
+          {dynamicTitle}
         </h1>
         <p className="text-[13px] font-light" style={{ color: "rgba(255,255,255,0.6)" }}>
-          {properties.length} {t.explore.subtitle}
+          {filtered.length} {t.explore.subtitle}
         </p>
       </div>
 

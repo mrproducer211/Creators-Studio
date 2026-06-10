@@ -6,6 +6,7 @@ import CategorySection from "@/components/CategorySection";
 import LatestProperties from "@/components/LatestProperties";
 import BlogSection from "@/components/BlogSection";
 import TalkToUs from "@/components/TalkToUs";
+import TrustBadges from "@/components/TrustBadges";
 import Footer from "@/components/Footer";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAllPosts } from "@/lib/store/blog";
@@ -39,6 +40,7 @@ export default async function Home() {
         <BlogSection posts={allPosts.slice(0, 4)} />
         <TalkToUs />
       </main>
+      <TrustBadges />
       <Footer />
     </>
   );

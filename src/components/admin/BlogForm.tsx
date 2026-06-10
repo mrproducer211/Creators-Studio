@@ -24,9 +24,6 @@ function toSlug(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-const GOOGLE_HEADER_FONTS = ["Outfit", "Playfair Display", "Lora", "Space Grotesk", "Merriweather"];
-const GOOGLE_TEXT_FONTS = ["Inter", "Lora", "Merriweather", "Roboto", "Outfit"];
-
 export default function BlogForm({ initial, isNew }: { initial?: BlogPost; isNew: boolean }) {
   const router = useRouter();
   const [state, setState] = useState<BlogFormState>((initial as BlogFormState) ?? EMPTY);

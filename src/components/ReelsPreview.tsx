@@ -1,10 +1,10 @@
 const REELS = [
   { gradient: "linear-gradient(180deg, #254D3E 0%, #1C3A2F 100%)", price: "฿18.5M", name: "Sky Residences Sukhumvit", badge: "2 Bed · For Sale" },
   { gradient: "linear-gradient(180deg, #7A5C12 0%, #C9A84C 100%)", price: "฿45K/mo", name: "Modern Studio Asok", badge: "Studio · Long Rent" },
-  { gradient: "linear-gradient(180deg, #111 0%, #2E6150 100%)", price: "฿3,200/night", name: "Executive Suite Silom", badge: "2 Bed · Short Stay" },
+  { gradient: "linear-gradient(180deg, #111 0%, #2E6150 100%)", price: "฿96K/mo", name: "Executive Suite Silom", badge: "2 Bed · Short Stay" },
   { gradient: "linear-gradient(180deg, #2E6150 0%, #7A5C12 100%)", price: "฿12M", name: "Townhouse Sathorn", badge: "3 Bed · For Sale" },
   { gradient: "linear-gradient(180deg, #1C3A2F 0%, #111 100%)", price: "฿65K/mo", name: "Penthouse On Nut", badge: "4 Bed · Long Rent" },
-  { gradient: "linear-gradient(180deg, #C9A84C 0%, #1C3A2F 100%)", price: "฿8,000/night", name: "Villa Thong Lo", badge: "3 Bed · Short Stay" },
+  { gradient: "linear-gradient(180deg, #C9A84C 0%, #1C3A2F 100%)", price: "฿240K/mo", name: "Villa Thong Lo", badge: "3 Bed · Short Stay" },
 ];
 
 export default function ReelsPreview() {

@@ -268,7 +268,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
               className="flex items-center gap-1.5 px-3 py-2 rounded-full cursor-pointer border-none transition-all"
               style={{ background: saved.length > 0 ? "#C9A84C" : "rgba(255,255,255,0.08)", color: saved.length > 0 ? "#1C3A2F" : "rgba(255,255,255,0.6)", fontFamily: "inherit" }}
             >
-              <span>❤️</span><span className="text-[13px] font-semibold">{saved.length}</span>
+              <span>💚</span><span className="text-[13px] font-semibold">{saved.length}</span>
             </button>
           </div>
         </div>
@@ -285,7 +285,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
               <div className="flex flex-col gap-2.5 w-full max-w-[280px]">
                 {saved.length > 0 && (
                   <button onClick={() => setShowSaved(true)} className="py-3 rounded-2xl text-sm font-semibold cursor-pointer border-none" style={{ background: "#C9A84C", color: "#1C3A2F", fontFamily: "inherit" }}>
-                    View {saved.length} Saved ❤️
+                    View {saved.length} Saved 💚
                   </button>
                 )}
                 <button onClick={() => setFilter("all")} className="py-3 rounded-2xl text-sm font-semibold cursor-pointer border-2" style={{ background: "transparent", color: "#FFFFFF", borderColor: "rgba(255,255,255,0.3)", fontFamily: "inherit" }}>
@@ -368,7 +368,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
       {matchCard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none" style={{ background: "rgba(15,31,24,0.75)" }}>
           <div className="text-center">
-            <div className="text-6xl mb-3 animate-bounce">❤️</div>
+            <div className="text-6xl mb-3 animate-bounce">💚</div>
             <p className="text-[22px] font-bold" style={{ color: "#E2C97E" }}>Saved!</p>
             <p className="text-[14px] font-light mt-1" style={{ color: "rgba(255,255,255,0.6)" }}>{matchCard.name}</p>
           </div>
@@ -486,18 +486,18 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                 <div className="flex gap-3">
                   <input
                     type="number"
-                    placeholder="Min Price"
+                    placeholder="Min"
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : "")}
-                    className="flex-1 px-4 py-3 rounded-xl text-[13px] outline-none border-[1.5px]"
+                    className="flex-1 w-full min-w-0 px-3 py-3 rounded-xl text-[13px] outline-none border-[1.5px]"
                     style={{ border: "1.5px solid #E5E0D8", background: "#FFFFFF", color: "#1A1A1A", fontFamily: "inherit" }}
                   />
                   <input
                     type="number"
-                    placeholder="Max Price"
+                    placeholder="Max"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : "")}
-                    className="flex-1 px-4 py-3 rounded-xl text-[13px] outline-none border-[1.5px]"
+                    className="flex-1 w-full min-w-0 px-3 py-3 rounded-xl text-[13px] outline-none border-[1.5px]"
                     style={{ border: "1.5px solid #E5E0D8", background: "#FFFFFF", color: "#1A1A1A", fontFamily: "inherit" }}
                   />
                 </div>

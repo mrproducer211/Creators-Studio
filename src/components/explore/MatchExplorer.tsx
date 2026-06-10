@@ -1,11 +1,29 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { PropertyCard } from "@/types/property";
+import { PropertyCard, ListingType } from "@/types/property";
 import { NEIGHBORHOODS, Neighborhood, DESTINATIONS } from "@/data/neighborhoods";
+import POSTS from "@/data/blogPosts";
 import ExplorePropertyCard from "./ExplorePropertyCard";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { 
+  Palmtree, 
+  Laptop, 
+  Briefcase, 
+  Building2, 
+  GraduationCap, 
+  Users, 
+  Heart, 
+  Crown, 
+  Compass,
+  Car,
+  Volume2,
+  Wine,
+  Clock,
+  Coins,
+  Building,
+  Activity
+} from "lucide-react";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 const MapComponent = dynamic(() => import("./MapComponent"), { ssr: false });
@@ -84,8 +102,59 @@ const DESTINATIONS_LIST = [
   "Custom Location",
 ];
 
+const renderReasonIcon = (label: string) => {
+  const iconSize = 22;
+  const strokeWidth = 1.75;
+
+  switch (label) {
+    case "Vacation / Long Stay":
+      return <Palmtree size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Remote Work":
+      return <Laptop size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "New Job":
+      return <Briefcase size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Business / Entrepreneur":
+      return <Building2 size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Study":
+      return <GraduationCap size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Family Relocation":
+      return <Users size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Pet-Friendly Lifestyle":
+      return <Heart size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Luxury Lifestyle":
+      return <Crown size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Just Exploring Bangkok":
+    default:
+      return <Compass size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+  }
+};
+
+const renderAvoidanceIcon = (label: string) => {
+  const iconSize = 20;
+  const strokeWidth = 1.75;
+
+  switch (label) {
+    case "Heavy Traffic":
+      return <Car size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Noise":
+      return <Volume2 size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Nightlife":
+      return <Wine size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Tourist Crowds":
+      return <Users size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Long Commutes":
+      return <Clock size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Expensive Areas":
+      return <Coins size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Dense High-Rise Areas":
+      return <Building size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+    case "Busy City Centers":
+    default:
+      return <Activity size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
+  }
+};
+
 export default function MatchExplorer({ properties }: Props) {
-  const { t } = useLanguage();
   const { formatPrice } = useCurrency();
 
   // Wizard States
@@ -97,11 +166,20 @@ export default function MatchExplorer({ properties }: Props) {
   const [stayDuration, setStayDuration] = useState<string>("6-12 Months");
   const [workplaceOption, setWorkplaceOption] = useState<string>("None / Not working");
   const [customWorkplace, setCustomWorkplace] = useState<string>("");
-
-  const [loading, setLoading] = useState<boolean>(false);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [isImmersive, setIsImmersive] = useState<boolean>(false);
-  const [activeLayer, setActiveLayer] = useState<string>("lifestyle");
+  const [mobileView, setMobileView] = useState<"list" | "map">("list");
+  const [activeLayer, setActiveLayer] = useState<string>("match");
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   
   // Matched Results
   const [matchedResults, setMatchedResults] = useState<MatchResult[]>([]);
@@ -114,18 +192,94 @@ export default function MatchExplorer({ properties }: Props) {
   const matchedSlugs = useMemo(() => matchedResults.map((r) => r.slug), [matchedResults]);
   const maxCommute = 20;
 
+
+
   // Selected neighborhood object
   const selectedNeighborhood = useMemo(() => {
     return NEIGHBORHOODS.find((n) => n.slug === selectedSlug) || NEIGHBORHOODS[0];
   }, [selectedSlug]);
 
-  // Recommended condos for current immersive neighborhood
+  // Recommended condos for current immersive neighborhood, filtered by user budget, listing type, and lifestyle attributes
   const recommendedCondos = useMemo(() => {
     if (!selectedNeighborhood) return [];
-    return properties
-      .filter((p) => p.area.toLowerCase() === selectedNeighborhood.name.toLowerCase())
-      .slice(0, 4);
-  }, [selectedNeighborhood, properties]);
+    
+    // Determine target listing type based on stay duration
+    // Short durations -> short_stay, long durations -> rent
+    const isShortStay = stayDuration === "1-3 Months" || stayDuration === "3-6 Months";
+    const targetListingTypes: ListingType[] = isShortStay 
+      ? ["short_stay", "rent"] 
+      : ["rent"]; // default to rent for longer stays
+
+    // Check if pet friendly is required
+    const requiresPetFriendly = selectedReasons.includes("Pet-Friendly Lifestyle") || 
+                                selectedPrefs.includes("🐶 Pet Friendly");
+
+    const filtered = properties.filter((p) => {
+      // 1. Must match neighborhood area name
+      if (p.area.toLowerCase() !== selectedNeighborhood.name.toLowerCase()) return false;
+      
+      // 2. Filter by budget (with a 15% buffer for flexibility)
+      if (p.priceTHB > budget * 1.15) return false;
+
+      return true;
+    });
+
+    // Sort matching properties: prioritize those matching specific lifestyle flags
+    filtered.sort((a, b) => {
+      let scoreA = 0;
+      let scoreB = 0;
+
+      // Prioritize correct listing type
+      if (targetListingTypes.includes(a.listingType)) scoreA += 5;
+      if (targetListingTypes.includes(b.listingType)) scoreB += 5;
+
+      // Prioritize pet friendly if requested
+      if (requiresPetFriendly) {
+        if (a.petFriendly) scoreA += 10;
+        if (b.petFriendly) scoreB += 10;
+      }
+
+      // Prioritize near BTS if transit public transport is preferred
+      const prefersTransit = selectedPrefs.includes("🚆 Excellent Public Transport");
+      if (prefersTransit) {
+        if (a.nearBts) scoreA += 5;
+        if (b.nearBts) scoreB += 5;
+      }
+
+      // Prioritize properties closer to budget (closer to budget is better, but under budget is best)
+      const diffA = Math.abs(a.priceTHB - budget);
+      const diffB = Math.abs(b.priceTHB - budget);
+      if (diffA < diffB) scoreA += 2;
+      else if (diffB < diffA) scoreB += 2;
+
+      return scoreB - scoreA;
+    });
+
+    return filtered.slice(0, 4);
+  }, [selectedNeighborhood, properties, budget, stayDuration, selectedReasons, selectedPrefs]);
+
+  // Find relevant blog posts/guides from database for the selected neighborhood
+  const relevantArticles = useMemo(() => {
+    if (!selectedNeighborhood) return [];
+    
+    const slug = selectedNeighborhood.slug.toLowerCase();
+    const name = selectedNeighborhood.name.toLowerCase();
+
+    // Filter posts that reference this neighborhood in keywords, title, or excerpt
+    let matched = POSTS.filter((post) => {
+      const inKeywords = post.keywords.some((k) => k.toLowerCase().includes(slug) || k.toLowerCase().includes(name));
+      const inTitle = post.title.toLowerCase().includes(slug) || post.title.toLowerCase().includes(name);
+      const inExcerpt = post.excerpt.toLowerCase().includes(slug) || post.excerpt.toLowerCase().includes(name);
+      return inKeywords || inTitle || inExcerpt;
+    });
+
+    // Fallback to top guides if no specific post matches
+    if (matched.length === 0) {
+      matched = POSTS.slice(0, 3);
+    }
+
+    return matched.slice(0, 3);
+  }, [selectedNeighborhood]);
 
   // Determine active workplace name string
   const activeWorkplaceName = useMemo(() => {
@@ -139,7 +293,7 @@ export default function MatchExplorer({ properties }: Props) {
   }, [workplaceOption, customWorkplace]);
 
   // Workplace Coordinates Lookup
-  const getWorkplaceCoords = (wName: string): [number, number] | null => {
+  const getWorkplaceCoords = useCallback((wName: string): [number, number] | null => {
     if (!wName) return null;
     const dest = DESTINATIONS.find(d => d.name.toLowerCase() === wName.toLowerCase());
     if (dest) return [dest.lat, dest.lng];
@@ -151,55 +305,271 @@ export default function MatchExplorer({ properties }: Props) {
     if (p && p.latitude && p.longitude) return [Number(p.latitude), Number(p.longitude)];
 
     return null;
-  };
+  }, [properties]);
 
   const workplaceCoords = useMemo(() => {
     return getWorkplaceCoords(activeWorkplaceName);
-  }, [activeWorkplaceName, properties]);
+  }, [activeWorkplaceName, getWorkplaceCoords]);
+
+  // Client-side real-time compatibility scoring for all neighborhoods
+  const liveScores = useMemo(() => {
+    const reason = selectedReasons[0] || "Just Exploring Bangkok";
+    
+    // Clean emojis from preferences for accurate matching (matching the API behavior)
+    const cleanedPrefs = selectedPrefs.map((p) => p.replace(/^[^a-zA-Z0-9\s]+/, "").trim());
+    const cleanedAvoids = selectedAvoids;
+    const maxBudget = budget;
+    const workplace = activeWorkplaceName;
+    const hasWorkplace = !!workplace;
+
+    // Weights
+    const wLifestyle = hasWorkplace ? 0.40 : 0.60;
+    const wBudget    = 0.25;
+    const wCommute   = hasWorkplace ? 0.20 : 0.00;
+    const wCommunity = 0.15;
+
+    const scoresMap: Record<string, number> = {};
+
+    // Helper to calculate distance in km using Haversine formula
+    const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+      const R = 6371; // km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    };
+
+    const getCommuteMinutes = (n: Neighborhood, workplaceName: string): number => {
+      if (n.commuteMinutes && n.commuteMinutes[workplaceName] !== undefined) {
+        return n.commuteMinutes[workplaceName];
+      }
+      if (workplaceCoords) {
+        const [wLat, wLng] = workplaceCoords;
+        const dist = getDistance(n.lat, n.lng, wLat, wLng);
+        return Math.round(dist * 3.5 + (dist > 0 ? 2 : 0));
+      }
+      return 15;
+    };
+
+    NEIGHBORHOODS.forEach((n) => {
+      // 1. Lifestyle Compatibility
+      let lifestyleScore = 70;
+      if (cleanedPrefs.length > 0) {
+        let totalMatch = 0;
+        cleanedPrefs.forEach((pref) => {
+          let scoreVal = 7;
+          switch (pref) {
+            case "Cafe Culture":
+              scoreVal = n.scores.cafeCulture;
+              break;
+            case "Quiet & Peaceful":
+              scoreVal = 10 - n.scores.nightlife;
+              break;
+            case "Excellent Public Transport":
+            case "City Center":
+            case "Fitness Lifestyle":
+            case "Walkability":
+              scoreVal = n.scores.walkability;
+              break;
+            case "Nightlife":
+              scoreVal = n.scores.nightlife;
+              break;
+            case "Shopping":
+              scoreVal = Math.round((n.scores.walkability + n.scores.luxury) / 2);
+              break;
+            case "Coworking Spaces":
+              scoreVal = n.scores.remoteWork;
+              break;
+            case "Family Friendly":
+              scoreVal = n.scores.familyFriendly;
+              break;
+            case "Pet Friendly":
+              scoreVal = n.scores.petFriendly;
+              break;
+            case "International Community":
+              scoreVal = n.scores.expatCommunity;
+              break;
+            case "Japanese Community":
+              scoreVal = n.scores.japaneseCommunity;
+              break;
+            case "Chinese Community":
+              scoreVal = n.scores.chineseCommunity;
+              break;
+            case "Parks & Green Spaces":
+              scoreVal = Math.round((n.scores.walkability + n.scores.familyFriendly) / 2);
+              break;
+            case "Relaxed Lifestyle":
+              scoreVal = 10 - n.scores.nightlife;
+              break;
+            case "Local Thai Culture":
+              scoreVal = 10 - n.scores.luxury;
+              break;
+            case "Luxury Living":
+              scoreVal = n.scores.luxury;
+              break;
+          }
+          totalMatch += scoreVal * 10;
+        });
+        lifestyleScore = totalMatch / cleanedPrefs.length;
+      }
+
+      // 2. Budget Compatibility
+      let budgetScore = 100;
+      if (maxBudget < n.averageRentMin) {
+        const diff = n.averageRentMin - maxBudget;
+        budgetScore = Math.max(20, 100 - (diff / 250));
+      } else if (maxBudget >= n.averageRentMax) {
+        budgetScore = 100;
+      } else {
+        const range = n.averageRentMax - n.averageRentMin;
+        const progress = range > 0 ? (maxBudget - n.averageRentMin) / range : 1;
+        budgetScore = 70 + progress * 30;
+      }
+
+      // 3. Commute Compatibility
+      let commuteScore = 100;
+      if (hasWorkplace) {
+        const mins = getCommuteMinutes(n, workplace);
+        if (mins === 0) commuteScore = 100;
+        else if (mins <= 10) commuteScore = 95;
+        else if (mins <= 20) commuteScore = 85;
+        else if (mins <= 30) commuteScore = 60;
+        else if (mins <= 45) commuteScore = 30;
+        else commuteScore = 10;
+      }
+
+      // 4. Community & Environment Score
+      let communityScore = 80;
+      switch (reason) {
+        case "Vacation / Long Stay":
+        case "Just Exploring Bangkok":
+          communityScore = n.scores.walkability * 10;
+          break;
+        case "Remote Work":
+        case "New Job":
+        case "Business / Entrepreneur":
+          communityScore = n.scores.remoteWork * 10;
+          break;
+        case "Study":
+          communityScore = n.scores.studentSuitability * 10;
+          break;
+        case "Family Relocation":
+          communityScore = n.scores.familyFriendly * 10;
+          break;
+        case "Pet-Friendly Lifestyle":
+          communityScore = n.scores.petFriendly * 10;
+          break;
+        case "Luxury Lifestyle":
+          communityScore = n.scores.luxury * 10;
+          break;
+      }
+
+      // Weighted Score
+      let finalScore = Math.round(
+        lifestyleScore * wLifestyle +
+        budgetScore * wBudget +
+        commuteScore * wCommute +
+        communityScore * wCommunity
+      );
+
+      // 5. Apply Avoidance Deductions
+      let avoidanceDeduction = 0;
+      if (cleanedAvoids.length > 0) {
+        cleanedAvoids.forEach((av) => {
+          let deduction = 0;
+          switch (av) {
+            case "Heavy Traffic":
+              deduction = n.avoidanceStats.traffic * 1.5;
+              break;
+            case "Noise":
+              deduction = n.avoidanceStats.noise * 1.5;
+              break;
+            case "Nightlife":
+              deduction = n.scores.nightlife * 1.5;
+              break;
+            case "Tourist Crowds":
+              deduction = n.avoidanceStats.touristCrowds * 1.5;
+              break;
+            case "Long Commutes":
+              if (hasWorkplace) {
+                const mins = getCommuteMinutes(n, workplace);
+                if (mins > 20) {
+                  deduction = Math.min(15, (mins - 20) * 0.8);
+                }
+              }
+              break;
+            case "Expensive Areas":
+              if (n.averageRentMin > 25000) {
+                deduction = Math.min(15, ((n.averageRentMin - 25000) / 1000) * 1.5);
+              }
+              break;
+            case "Dense High-Rise Areas":
+              deduction = n.avoidanceStats.density * 1.5;
+              break;
+            case "Busy City Centers":
+              deduction = n.avoidanceStats.busyness * 1.5;
+              break;
+          }
+          avoidanceDeduction += deduction;
+        });
+      }
+
+      finalScore = Math.max(40, finalScore - Math.round(avoidanceDeduction));
+      scoresMap[n.slug] = Math.min(99, Math.max(45, finalScore));
+    });
+
+    return scoresMap;
+  }, [selectedReasons, selectedPrefs, selectedAvoids, budget, activeWorkplaceName, workplaceCoords]);
 
   // Default initial matches on load
   useEffect(() => {
-    setMatchedResults([
-      { 
-        slug: "asok", 
-        matchPercentage: 95,
-        fitLabel: "Excellent Fit",
-        explanation: "Perfect transit hub match. Placed directly at the BTS/MRT intersection core with abundant urban conveniences.",
-        whyWeChose: [
-          "Walkover access to Terminal 21 mall",
-          "High density of workspaces and offices",
-          "Ultimate BTS & MRT interchange core",
-          "Excellent coworking density",
-          "Highly walkable city center"
-        ]
-      },
-      { 
-        slug: "sukhumvit", 
-        matchPercentage: 88,
-        fitLabel: "Excellent Fit",
-        explanation: "Upscale residential lifestyle. Proximity to luxury malls and pristine green spaces like Benjasiri Park.",
-        whyWeChose: [
-          "Close to luxury EmDistrict malls",
-          "Direct access to Benjasiri Park",
-          "Highly walkable expat center",
-          "Elite, secure condominium options",
-          "Strong international community feel"
-        ]
-      },
-      { 
-        slug: "thong-lo", 
-        matchPercentage: 82,
-        fitLabel: "Strong Match",
-        explanation: "Premier lifestyle hotspot. Host to Bangkok's boutique restaurants, craft coffee bars, and active socialites.",
-        whyWeChose: [
-          "Epicenter of style and nightlife",
-          "Vibrant Japanese community hubs",
-          "Luxury dining and high-end cafes",
-          "Premium luxury condominiums",
-          "Active, trendy environment"
-        ]
-      }
-    ]);
+    setTimeout(() => {
+      setMatchedResults([
+        { 
+          slug: "asok", 
+          matchPercentage: 95,
+          fitLabel: "Excellent Fit",
+          explanation: "Perfect transit hub match. Placed directly at the BTS/MRT intersection core with abundant urban conveniences.",
+          whyWeChose: [
+            "Walkover access to Terminal 21 mall",
+            "High density of workspaces and offices",
+            "Ultimate BTS & MRT interchange core",
+            "Excellent coworking density",
+            "Highly walkable city center"
+          ]
+        },
+        { 
+          slug: "sukhumvit", 
+          matchPercentage: 88,
+          fitLabel: "Excellent Fit",
+          explanation: "Upscale residential lifestyle. Proximity to luxury malls and pristine green spaces like Benjasiri Park.",
+          whyWeChose: [
+            "Close to luxury EmDistrict malls",
+            "Direct access to Benjasiri Park",
+            "Highly walkable expat center",
+            "Elite, secure condominium options",
+            "Strong international community feel"
+          ]
+        },
+        { 
+          slug: "thong-lo", 
+          matchPercentage: 82,
+          fitLabel: "Strong Match",
+          explanation: "Premier lifestyle hotspot. Host to Bangkok's boutique restaurants, craft coffee bars, and active socialites.",
+          whyWeChose: [
+            "Epicenter of style and nightlife",
+            "Vibrant Japanese community hubs",
+            "Luxury dining and high-end cafes",
+            "Premium luxury condominiums",
+            "Active, trendy environment"
+          ]
+        }
+      ]);
+    }, 0);
   }, []);
 
   const handleReasonToggle = (label: string) => {
@@ -252,7 +622,6 @@ export default function MatchExplorer({ properties }: Props) {
   }, [selectedPrefs, selectedReasons, selectedAvoids]);
 
   const handleCalculateMatches = async () => {
-    setLoading(true);
     // Move to Profile Generation Report step first (Step 7)
     setStep(7);
     
@@ -262,7 +631,7 @@ export default function MatchExplorer({ properties }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           reason: selectedReasons[0] || "Just Exploring Bangkok",
-          preferences: selectedPrefs,
+          preferences: selectedPrefs.map((p) => p.replace(/^[^a-zA-Z0-9\s]+/, "").trim()),
           avoidances: selectedAvoids,
           budget,
           stayDuration,
@@ -279,8 +648,6 @@ export default function MatchExplorer({ properties }: Props) {
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -319,15 +686,23 @@ export default function MatchExplorer({ properties }: Props) {
   }, [compareSlugs]);
 
   return (
-    <div className="flex-1 flex flex-col lg:grid lg:grid-cols-12 min-h-[calc(100vh-56px)] mt-14" style={{ background: "#F7F3EC" }}>
+    <div 
+      className="flex-1 flex flex-col lg:grid lg:grid-cols-12 mt-14" 
+      style={{ 
+        background: "#F7F3EC",
+        minHeight: isMobile ? "0px" : "calc(100vh - 56px)"
+      }}
+    >
       
       {/* LEFT COLUMN: Premium relocation wizard or matched results */}
       <div
-        className="lg:col-span-5 flex flex-col overflow-y-auto relative"
+        id="match-explorer-left-column"
+        className="lg:col-span-5 flex flex-col relative w-full lg:flex"
         style={{
-          maxHeight: "calc(100vh - 56px)",
-          borderRight: "1px solid #E5E0D8",
-          padding: step === 0 ? "0px" : "32px 24px",
+          maxHeight: isMobile ? "none" : "calc(100vh - 56px)",
+          overflowY: isMobile ? "visible" : "auto",
+          borderRight: isMobile ? "none" : "1px solid #E5E0D8",
+          padding: step === 0 ? "0px" : (isMobile ? "20px 16px" : "32px 24px"),
         }}
       >
         
@@ -335,7 +710,7 @@ export default function MatchExplorer({ properties }: Props) {
         {step === 0 && !hasSearched && (
           <div className="flex-1 flex flex-col justify-center items-center text-center p-8 bg-[#1C3A2F] text-[#F7F3EC] min-h-[500px]">
             <span className="text-[10px] font-bold uppercase tracking-[3px] text-[#C9A84C] mb-3">
-              NHP Jade Premium
+              New Home Property Premium
             </span>
             <h1 className="text-[34px] font-bold leading-tight mb-4 max-w-[320px] font-outfit" style={{ letterSpacing: "-1px" }}>
               Where Would You Belong In Bangkok?
@@ -348,7 +723,7 @@ export default function MatchExplorer({ properties }: Props) {
               className="px-8 py-4 rounded-full font-bold text-[13px] bg-[#C9A84C] text-[#1C3A2F] cursor-pointer border-none shadow-lg transition-transform hover:scale-105"
               style={{ fontFamily: "inherit" }}
             >
-              Start Your Match →
+              Start Auto Finder →
             </button>
           </div>
         )}
@@ -359,7 +734,7 @@ export default function MatchExplorer({ properties }: Props) {
             {/* Header progress line */}
             <div className="mb-6">
               <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider text-[#C9A84C] mb-2">
-                <span>Relocation Advisor</span>
+                <span>Auto Finder</span>
                 <span>Step {step} of 6</span>
               </div>
               <div className="w-full h-[3px] bg-gray-200 rounded-full overflow-hidden">
@@ -374,21 +749,38 @@ export default function MatchExplorer({ properties }: Props) {
                   <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">Why are you coming to Bangkok?</h2>
                   <p className="text-[12.5px] text-[#666] mb-5 font-light">Select all reasons that apply to save as your relocation intent.</p>
                   
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-2 gap-3">
                     {REASONS.map((r) => {
                       const isSelected = selectedReasons.includes(r.label);
                       return (
                         <button
                           key={r.label}
                           onClick={() => handleReasonToggle(r.label)}
-                          className="flex flex-col items-center justify-center p-4 rounded-2xl border text-center transition-all bg-[#FFFFFF] hover:border-[#C9A84C] cursor-pointer"
+                          className="flex flex-col items-center justify-center p-5 rounded-2xl border text-center transition-all bg-[#FFFFFF] hover:border-[#C9A84C] hover:shadow-lg hover:-translate-y-0.5 cursor-pointer relative overflow-hidden group duration-300"
                           style={{
-                            borderColor: isSelected ? "#1C3A2F" : "#E5E0D8",
+                            borderColor: isSelected ? "#C9A84C" : "#E5E0D8",
                             borderWidth: isSelected ? "2px" : "1.5px",
+                            background: isSelected ? "linear-gradient(135deg, #FFFFFF 0%, #FAF7F2 100%)" : "#FFFFFF",
+                            boxShadow: isSelected ? "0 10px 25px rgba(201, 168, 76, 0.12)" : "0 4px 12px rgba(0, 0, 0, 0.02)",
                           }}
                         >
-                          <span className="text-[26px] mb-2">{r.icon}</span>
-                          <span className="text-[11.5px] font-bold text-[#1C3A2F]">{r.label}</span>
+                          <div 
+                            className="w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-3"
+                            style={{
+                              background: isSelected ? "#1C3A2F" : "#F7F3EC",
+                              color: isSelected ? "#C9A84C" : "#1C3A2F",
+                              boxShadow: isSelected ? "0 4px 12px rgba(28, 58, 47, 0.2)" : "none",
+                              border: isSelected ? "1.5px solid #C9A84C" : "1.5px solid transparent",
+                            }}
+                          >
+                            {renderReasonIcon(r.label)}
+                          </div>
+                          <span className="text-[12.5px] font-bold text-[#1C3A2F] font-outfit tracking-wide transition-colors duration-300">{r.label}</span>
+                          {isSelected && (
+                            <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-[#1C3A2F] text-[#C9A84C] flex items-center justify-center text-[10px] font-extrabold shadow-sm border border-[#C9A84C]">
+                              ✓
+                            </div>
+                          )}
                         </button>
                       );
                     })}
@@ -430,21 +822,38 @@ export default function MatchExplorer({ properties }: Props) {
                   <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight font-outfit">What do you want to avoid?</h2>
                   <p className="text-[12.5px] text-[#666] mb-5 font-light">Select up to 3 parameters. Negative preferences shape matching scores significantly.</p>
                   
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-2 gap-3">
                     {AVOIDANCES.map((av) => {
                       const isSelected = selectedAvoids.includes(av.label);
                       return (
                         <button
                           key={av.label}
                           onClick={() => handleAvoidToggle(av.label)}
-                          className="flex items-center gap-3 p-3.5 rounded-2xl border text-left transition-all bg-[#FFFFFF] hover:border-[#C9A84C] cursor-pointer"
+                          className="flex items-center gap-3 p-3.5 rounded-2xl border text-left transition-all bg-[#FFFFFF] hover:border-[#EF4444] hover:shadow-md hover:-translate-y-0.5 cursor-pointer relative overflow-hidden group duration-300"
                           style={{
                             borderColor: isSelected ? "#EF4444" : "#E5E0D8",
                             borderWidth: isSelected ? "2px" : "1.5px",
+                            background: isSelected ? "linear-gradient(135deg, #FFFFFF 0%, #FFFDFD 100%)" : "#FFFFFF",
+                            boxShadow: isSelected ? "0 8px 20px rgba(239, 68, 68, 0.08)" : "0 4px 12px rgba(0, 0, 0, 0.01)",
                           }}
                         >
-                          <span className="text-[20px]">{av.icon}</span>
-                          <span className="text-[12px] font-bold text-[#1C3A2F]">{av.label}</span>
+                          <div 
+                            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-3 shrink-0"
+                            style={{
+                              background: isSelected ? "#EF4444" : "#F7F3EC",
+                              color: isSelected ? "#FFFFFF" : "#1C3A2F",
+                              boxShadow: isSelected ? "0 4px 10px rgba(239, 68, 68, 0.2)" : "none",
+                              border: isSelected ? "1.5px solid #EF4444" : "1.5px solid transparent",
+                            }}
+                          >
+                            {renderAvoidanceIcon(av.label)}
+                          </div>
+                          <span className="text-[12.5px] font-bold text-[#1C3A2F] font-outfit tracking-wide transition-colors duration-300 pr-4">{av.label}</span>
+                          {isSelected && (
+                            <div className="absolute top-2.5 right-2.5 w-4.5 h-4.5 rounded-full bg-[#EF4444] text-white flex items-center justify-center text-[9px] font-extrabold shadow-sm">
+                              ✓
+                            </div>
+                          )}
                         </button>
                       );
                     })}
@@ -597,7 +1006,7 @@ export default function MatchExplorer({ properties }: Props) {
               </div>
 
               <p className="text-[12.5px] text-[#666] font-light leading-relaxed">
-                Our relocation engine matched this lifestyle blueprint against Bangkok's neighborhoods to find where you belong.
+                Our relocation engine matched this lifestyle blueprint against Bangkok&apos;s neighborhoods to find where you belong.
               </p>
             </div>
 
@@ -669,7 +1078,7 @@ export default function MatchExplorer({ properties }: Props) {
                           {n.name}
                         </h3>
                         <span className="text-[11px] font-bold italic text-[#C9A84C]">
-                          "{n.personality}"
+                          &quot;{n.personality}&quot;
                         </span>
                       </div>
 
@@ -766,8 +1175,8 @@ export default function MatchExplorer({ properties }: Props) {
                   <tbody>
                     <tr className="border-b border-gray-100">
                       <td className="p-3 font-bold text-[#888]">Personality</td>
-                      <td className="p-3 font-semibold text-[#1C3A2F] italic">"{compareNeighborhoods[0].personality}"</td>
-                      <td className="p-3 font-semibold text-[#1C3A2F] italic">"{compareNeighborhoods[1].personality}"</td>
+                      <td className="p-3 font-semibold text-[#1C3A2F] italic">&quot;{compareNeighborhoods[0].personality}&quot;</td>
+                      <td className="p-3 font-semibold text-[#1C3A2F] italic">&quot;{compareNeighborhoods[1].personality}&quot;</td>
                     </tr>
                     <tr className="border-b border-gray-100 bg-gray-50/50">
                       <td className="p-3 font-bold text-[#888]">Avg Rent</td>
@@ -974,9 +1383,42 @@ export default function MatchExplorer({ properties }: Props) {
               )}
             </div>
 
+            {/* Deep Dive Relocation Guides */}
+            {relevantArticles.length > 0 && (
+              <div className="bg-[#FFFFFF] p-5 rounded-3xl border border-[#E5E0D8] mb-6">
+                <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-3 pb-2 border-b border-gray-100 flex items-center gap-1.5 font-outfit">
+                  📖 Deep Dive Relocation Guides
+                </h3>
+                <p className="text-[11.5px] text-[#666] mb-4 font-light leading-relaxed">
+                  Read our premium editorial guides to understand more about the lifestyle, transit, and rental pricing in the {selectedNeighborhood.name} area.
+                </p>
+                <div className="flex flex-col gap-2.5">
+                  {relevantArticles.map((article) => (
+                    <a
+                      key={article.slug}
+                      href={`/blog/${article.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3.5 rounded-2xl bg-[#F7F3EC]/50 hover:bg-[#EDE8DF] border border-[#E5E0D8] transition-all flex items-center justify-between group no-underline text-inherit"
+                    >
+                      <div className="flex-1 pr-3">
+                        <h4 className="text-[12.5px] font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors mb-1 font-outfit">
+                          {article.title}
+                        </h4>
+                        <p className="text-[11px] text-[#666] font-light line-clamp-1 m-0">
+                          {article.excerpt}
+                        </p>
+                      </div>
+                      <span className="text-[#C9A84C] font-bold text-sm group-hover:translate-x-1 transition-transform ml-2 shrink-0">→</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Step 14: Condo Recommendations (Gated at the very end) */}
             <div id="condo-recommendations-list" className="pt-6 border-t border-[#E5E0D8]">
-              <span className="text-[10px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] block mb-1">Result of your Match</span>
+              <span className="text-[10px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] block mb-1">Result of Auto Finder</span>
               <h3 className="text-[15px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4">
                 🏡 Handpicked Condos in {selectedNeighborhood.name}
               </h3>
@@ -995,7 +1437,10 @@ export default function MatchExplorer({ properties }: Props) {
       </div>
 
       {/* RIGHT COLUMN: Interactive Leaflet Map Layer Explorer */}
-      <div className="lg:col-span-7 h-full flex flex-col relative" style={{ height: "calc(100vh - 56px)" }}>
+      <div 
+        className="hidden lg:flex lg:col-span-7 h-full flex-col relative" 
+        style={{ height: "calc(100vh - 56px)" }}
+      >
         
         {/* Dynamic Map Layers selector floating at top */}
         <div className="absolute top-4 left-4 right-4 bg-white/95 backdrop-blur-sm p-3.5 rounded-2xl shadow-lg z-10 flex flex-wrap gap-1.5 items-center justify-between" style={{ border: "1px solid #E5E0D8" }}>
@@ -1003,11 +1448,12 @@ export default function MatchExplorer({ properties }: Props) {
             <h4 className="text-[10.5px] font-bold uppercase tracking-wider font-outfit" style={{ color: "#1C3A2F" }}>
               Bangkok Neighborhood Explorer™
             </h4>
-            <span className="text-[9px] font-medium text-[#888]">Select a layer to view suitability score overlays</span>
+            <span className="text-[9px] font-medium text-[#888]">Select a layer to view suitability overlays</span>
           </div>
-
+ 
           <div className="flex flex-wrap gap-1">
             {[
+              { id: "match", label: "My Match Fit ⚡" },
               { id: "lifestyle", label: "Lifestyle" },
               { id: "commute", label: "Commute" },
               { id: "budget", label: "Budget" },
@@ -1029,36 +1475,136 @@ export default function MatchExplorer({ properties }: Props) {
             ))}
           </div>
         </div>
-
-        <MapComponent
-          neighborhoods={NEIGHBORHOODS}
-          selectedSlug={selectedSlug}
-          onSelect={setSelectedSlug}
-          workplace={activeWorkplaceName}
-          workplaceCoords={workplaceCoords}
-          maxCommute={maxCommute}
-          matchedSlugs={matchedSlugs}
-          selectedLayer={activeLayer}
-        />
+ 
+        {!isMobile && (
+          <MapComponent
+            neighborhoods={NEIGHBORHOODS}
+            selectedSlug={selectedSlug}
+            onSelect={setSelectedSlug}
+            workplace={activeWorkplaceName}
+            workplaceCoords={workplaceCoords}
+            maxCommute={maxCommute}
+            matchedSlugs={matchedSlugs}
+            selectedLayer={activeLayer}
+            liveScores={liveScores}
+          />
+        )}
         
+        {/* Floating Neighborhood Quick Preview Card (visible during wizard or results) */}
+        {selectedNeighborhood && (
+          <div 
+            className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm p-4 rounded-3xl shadow-xl z-20 flex flex-col gap-2.5 transition-all max-w-[280px]"
+            style={{ border: "1px solid #E5E0D8", width: "calc(100% - 32px)", zIndex: 1010 }}
+          >
+            <div className="flex justify-between items-start gap-2">
+              <div>
+                <span className="text-[9px] font-bold uppercase tracking-wider text-[#C9A84C]">
+                  {selectedNeighborhood.personality}
+                </span>
+                <h4 className="text-[15px] font-bold text-[#1C3A2F] leading-tight mt-0.5 font-outfit">
+                  {selectedNeighborhood.name}
+                </h4>
+              </div>
+              <div 
+                className="px-2 py-0.5 rounded-lg text-[10px] font-extrabold text-white whitespace-nowrap"
+                style={{ 
+                  background: (liveScores[selectedNeighborhood.slug] || 50) >= 85 ? "#10B981" : (liveScores[selectedNeighborhood.slug] || 50) >= 65 ? "#F59E0B" : "#EF4444" 
+                }}
+              >
+                {liveScores[selectedNeighborhood.slug] || 50}% Fit
+              </div>
+            </div>
+ 
+            <p className="text-[11.5px] text-[#555] font-light leading-relaxed m-0 line-clamp-2">
+              {selectedNeighborhood.description}
+            </p>
+ 
+            <div className="flex justify-between items-center text-[10px] font-bold text-[#888] pt-1.5 border-t border-gray-100">
+              <span>🚇 {selectedNeighborhood.nearestTransit}</span>
+              <span>💰 {formatPrice(selectedNeighborhood.averageRentMin).replace(/\.00$/, '')} - {formatPrice(selectedNeighborhood.averageRentMax).replace(/\.00$/, '')}</span>
+            </div>
+ 
+            <div className="flex gap-1.5 mt-0.5">
+              {!hasSearched ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setWorkplaceOption("Custom Location");
+                      setCustomWorkplace(selectedNeighborhood.name);
+                      setStep(6); // Go to workplace step
+                    }}
+                    className="flex-1 py-1.5 px-2 rounded-lg text-[9px] font-bold bg-[#EDE8DF] text-[#1C3A2F] border-none cursor-pointer hover:bg-opacity-95 transition-all"
+                    style={{ fontFamily: "inherit" }}
+                  >
+                    📍 Set as Workplace
+                  </button>
+                  <button
+                    onClick={() => {
+                      alert(`Complete the survey to unlock the deep 24-hour itinerary, guides, and condo matches for ${selectedNeighborhood.name}!`);
+                    }}
+                    className="py-1.5 px-2 rounded-lg text-[9px] font-bold bg-[#1C3A2F] text-white border-none cursor-pointer hover:bg-opacity-95 transition-all"
+                    style={{ fontFamily: "inherit" }}
+                  >
+                    Quick Guide
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsImmersive(true);
+                    document.getElementById("match-explorer-left-column")?.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="w-full py-2 rounded-xl text-center font-bold text-[10.5px] cursor-pointer border-none bg-[#1C3A2F] text-white hover:bg-opacity-95 transition-all"
+                  style={{ fontFamily: "inherit" }}
+                >
+                  Explore Area Guide & Condos →
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+ 
         {/* Map Legend */}
-        <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm p-3.5 rounded-2xl shadow-lg z-10" style={{ border: "1px solid #E5E0D8" }}>
+        <div 
+          className={`absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm p-3.5 rounded-2xl shadow-lg z-10 animate-fadeIn ${
+            selectedNeighborhood ? "hidden sm:block" : "block"
+          }`} 
+          style={{ border: "1px solid #E5E0D8" }}>
           <h4 className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: "#1C3A2F" }}>
             Suitability Legend
           </h4>
           <div className="flex flex-col gap-1.5 text-[11px] font-medium">
-            <div className="flex items-center gap-2">
-              <div className="w-3.5 h-3.5 rounded-full" style={{ background: "#10B981" }} />
-              <span>🟢 High Fit Score (8-10)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3.5 h-3.5 rounded-full" style={{ background: "#F59E0B" }} />
-              <span>🟡 Moderate Fit Score (5-7)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3.5 h-3.5 rounded-full" style={{ background: "#EF4444" }} />
-              <span>🔴 Low Fit Score (1-4)</span>
-            </div>
+            {activeLayer === "match" ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="w-3.5 h-3.5 rounded-full" style={{ background: "#10B981" }} />
+                  <span>🟢 High Compatibility (85% - 99%)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3.5 h-3.5 rounded-full" style={{ background: "#F59E0B" }} />
+                  <span>🟡 Moderate Compatibility (65% - 84%)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3.5 h-3.5 rounded-full" style={{ background: "#EF4444" }} />
+                  <span>🔴 Low Compatibility (45% - 64%)</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="w-3.5 h-3.5 rounded-full" style={{ background: "#10B981" }} />
+                  <span>🟢 High Fit Score (8-10)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3.5 h-3.5 rounded-full" style={{ background: "#F59E0B" }} />
+                  <span>🟡 Moderate Fit Score (5-7)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3.5 h-3.5 rounded-full" style={{ background: "#EF4444" }} />
+                  <span>🔴 Low Fit Score (1-4)</span>
+                </div>
+              </>
+            )}
             {activeWorkplaceName && (
               <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-gray-100">
                 <div className="w-4 h-4 rounded-full border border-white flex items-center justify-center text-[7px]" style={{ background: "#2563EB", color: "#FFFFFF" }}>💼</div>
@@ -1067,6 +1613,8 @@ export default function MatchExplorer({ properties }: Props) {
             )}
           </div>
         </div>
+
+
       </div>
     </div>
   );
