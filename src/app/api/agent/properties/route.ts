@@ -72,6 +72,8 @@ export async function POST(req: NextRequest) {
       leaseTerms,
       amenities,
       images,
+      furnishing,
+      status,
     } = body;
 
     if (!name || !listingType || !propertyType || !priceTHB || !area) {
@@ -112,7 +114,8 @@ export async function POST(req: NextRequest) {
       totalFloors: totalFloors ? Number(totalFloors) : undefined,
       availableFrom: availableFrom || undefined,
       leaseTerms: leaseTerms || undefined,
-      status: "active", // default status
+      furnishing: furnishing || undefined,
+      status: status === "unlisted" ? "unlisted" : "active", // custom status support
     } as any);
 
     return NextResponse.json({ success: true, property: newProp });
