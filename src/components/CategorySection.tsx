@@ -189,86 +189,38 @@ export default function CategorySection() {
       {/* ── MOBILE: horizontal scroll ── */}
       <div
         className="md:hidden overflow-x-auto no-scrollbar"
-        style={{ paddingLeft: 16 }}
+        style={{ paddingLeft: 16, paddingRight: 16 }}
       >
-        <div className="flex" style={{ gap: 12 }}>
-          {SECTIONS.map((section) => (
-            <div
-              key={section.anchor.slug}
-              className="flex items-stretch flex-shrink-0"
-              style={{ width: "calc(100vw - 54px)", gap: 8 }}
+        <div className="flex pb-3" style={{ gap: 10, width: "max-content" }}>
+          {SECTIONS.flatMap((section) => section.cards as Array<{ slug: string; name: string; count: number; image: string; href: string }>).map((card) => (
+            <a
+              key={card.slug}
+              href={card.href}
+              className="relative overflow-hidden rounded-2xl no-underline flex-shrink-0 group"
+              style={{
+                width: "calc((100vw - 32px - 20px) / 3.3)",
+                aspectRatio: "1 / 1",
+              }}
             >
-              {/* Tall anchor card — fixed 95px, stretches to match grid height */}
-              <a
-                href={section.anchor.href}
-                className="relative overflow-hidden rounded-xl no-underline flex-shrink-0"
-                style={{ width: 95 }}
-              >
-                <img
-                  src={section.anchor.image}
-                  alt={section.anchor.name}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div
-                  className="absolute inset-0"
-                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)" }}
-                />
-                <div className="absolute bottom-0 left-0 right-0 pb-3 px-2 flex flex-col items-center text-center">
-                  <p className="text-[9px] font-light mb-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>
-                    {section.anchor.label}
-                  </p>
-                  <h3 className="text-[12px] font-bold leading-tight" style={{ color: "#FFFFFF" }}>
-                    {section.anchor.name}
-                  </h3>
-                </div>
-              </a>
-
-              {/* 2×2 landscape grid — flex-1 fills remaining section width */}
+              <img
+                src={card.image}
+                alt={card.name}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
               <div
-                className="flex-1 grid grid-cols-2"
-                style={{ gap: 8 }}
-              >
-                {section.cards.map((card) => {
-
-
-                  return (
-                    <a
-                      key={card.slug}
-                      href={card.href}
-                      className="relative overflow-hidden rounded-xl no-underline"
-                      style={{ aspectRatio: "3 / 2" }}
-                    >
-                      <img
-                        src={card.image}
-                        alt={card.name}
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-
-
-                      <div
-                        className="absolute inset-0"
-                        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.76) 0%, rgba(0,0,0,0.08) 60%, transparent 100%)" }}
-                      />
-                      <div className="absolute bottom-0 left-0 p-2 w-full">
-                        <h4 className="text-[11px] font-semibold leading-tight truncate" style={{ color: "#FFFFFF" }}>
-                          {card.name}
-                        </h4>
-
-
-
-                        <p className="text-[9px] opacity-70" style={{ color: "#FFFFFF" }}>
-                          {card.count.toLocaleString()} {t.category.props}
-                        </p>
-                      </div>
-                    </a>
-                  );
-                })}
+                className="absolute inset-0"
+                style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 60%, transparent 100%)" }}
+              />
+              <div className="absolute bottom-0 left-0 p-2.5 w-full text-left">
+                <h4 className="text-[11px] font-bold leading-tight mb-0.5 truncate" style={{ color: "#FFFFFF" }}>
+                  {card.name}
+                </h4>
+                <p className="text-[9px] opacity-80 truncate" style={{ color: "rgba(255,255,255,0.85)" }}>
+                  {card.count.toLocaleString()} {t.category.props}
+                </p>
               </div>
-            </div>
+            </a>
           ))}
-
-          {/* Right breathing room so last section doesn't hug screen edge */}
-          <div style={{ width: 16, flexShrink: 0 }} />
         </div>
       </div>
 

@@ -517,7 +517,7 @@ export default function SmartSearchClient({ properties }: Props) {
 
           {/* Section 2: Neighborhood Insight */}
           {detectedNeighborhood ? (
-            <div className="p-5 flex flex-col gap-4 animate-fadeIn">
+            <div className="hidden lg:flex p-5 flex-col gap-4 animate-fadeIn">
               <div className="pb-2 border-b border-gray-100">
                 <span className="font-bold text-[14px] text-[#1C3A2F] uppercase tracking-wider block">
                   About {detectedNeighborhood.name}
@@ -553,7 +553,7 @@ export default function SmartSearchClient({ properties }: Props) {
               </div>
             </div>
           ) : (
-            <div className="p-5 flex flex-col gap-3">
+            <div className="hidden lg:flex p-5 flex-col gap-3">
               <span className="font-bold text-[14px] text-[#1C3A2F] uppercase tracking-wider pb-2 border-b border-gray-100">
                 Neighborhood Insight
               </span>
@@ -777,6 +777,42 @@ export default function SmartSearchClient({ properties }: Props) {
                   isHighlighted={hoveredPropertyId === item.property.id}
                 />
               ))}
+            </div>
+          )}
+
+          {/* About Neighborhood (Mobile Only) */}
+          {detectedNeighborhood && (
+            <div className="lg:hidden bg-white p-5 rounded-3xl border border-[#E5E0D8] shadow-sm flex flex-col gap-4 animate-fadeIn">
+              <div className="pb-2 border-b border-gray-100">
+                <span className="font-bold text-[14px] text-[#1C3A2F] uppercase tracking-wider block">
+                  About {detectedNeighborhood.name}
+                </span>
+              </div>
+              <p className="text-[12px] text-gray-500 leading-relaxed font-light font-outfit">
+                {detectedNeighborhood.description}
+              </p>
+              <div className="flex flex-col gap-3 mt-1">
+                <RatingRow label="BTS Access" score={detectedNeighborhood.scores.walkability} />
+                <RatingRow label="Walkability" score={detectedNeighborhood.scores.walkability} />
+                <RatingRow label="Cafe Culture" score={detectedNeighborhood.scores.cafeCulture} />
+                <RatingRow label="Nightlife" score={detectedNeighborhood.scores.nightlife} />
+                <RatingRow label="Community Feel" score={detectedNeighborhood.scores.expatCommunity} />
+              </div>
+              <div className="mt-2">
+                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wide block mb-2">
+                  Good For:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {detectedNeighborhood.residentTypes.map((type, idx) => (
+                    <span
+                      key={idx}
+                      className="text-[10.5px] px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600 font-semibold"
+                    >
+                      {type}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 

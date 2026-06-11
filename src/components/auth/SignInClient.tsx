@@ -126,7 +126,7 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-[400px]">
           {/* Mobile logo */}
-          <Link href="/" className="lg:hidden flex items-center gap-2 no-underline mb-8">
+          <Link href="/" className="lg:hidden flex items-center justify-center gap-2 no-underline mb-8 mx-auto w-fit">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style={{ background: "#1C3A2F", color: "#C9A84C" }}>NHP</div>
             <span className="text-[15px] font-semibold" style={{ color: "#1C3A2F" }}>New Home Property</span>
           </Link>

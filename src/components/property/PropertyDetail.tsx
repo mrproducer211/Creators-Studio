@@ -347,6 +347,9 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
   const saved                     = isSaved(propertyId);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
   const rawImages = useMemo(() => images.filter(Boolean), [images]);
   // Pad to always show 4 thumbnails — cycle through available images when fewer exist
   const safeImages = rawImages.length === 0
@@ -366,6 +369,27 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
     const len = rawImages.length || 1;
     return (a + 1) % len;
   }), [rawImages.length]);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    if (isLeftSwipe) {
+      next();
+    } else if (isRightSwipe) {
+      prev();
+    }
+  };
 
   useEffect(() => {
     if (!lightboxOpen) return;
@@ -424,6 +448,9 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
       <div
         className="relative overflow-hidden rounded-2xl flex-1 min-w-0 h-full"
         style={{ background: "#1C3A2F" }}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
         {rawImages[active % (rawImages.length || 1)] && !imgErrors[active % (rawImages.length || 1)] ? (
           <img

@@ -46,3 +46,11 @@ body {
 .animate-pop-bounce {
   animation: pop-bounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
+
+/* Prevent iOS auto-zoom on input focus */
+@media (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+

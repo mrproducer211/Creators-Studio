@@ -4,6 +4,7 @@ import { validateProperty } from "@/lib/validation";
 import { getPropertyById, updateProperty, deleteProperty, getPropertyBySlug } from "@/lib/store/properties";
 import { getCanonicalArea } from "@/lib/area";
 import { db } from "@/lib/db";
+import { PropertyCard } from "@/types/property";
 import { properties as propertiesTable } from "@/lib/db/schema";
 import { eq, and, ne } from "drizzle-orm";
 import { createAuditLog } from "@/lib/db/dbLoader";

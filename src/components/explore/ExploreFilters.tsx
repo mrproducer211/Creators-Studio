@@ -341,11 +341,20 @@ export default function ExploreFiltersBar({ filters, total, onChange, onReset }:
               {/* Header */}
               <div className="flex items-center justify-between py-3 mb-4" style={{ borderBottom: "1px solid #EDE8DF" }}>
                 <h3 className="text-[16px] font-bold" style={{ color: "#1A1A1A" }}>{t.filters.filtersTitle}</h3>
-                {count > 0 && (
-                  <button onClick={onReset} className="text-[13px] font-medium cursor-pointer border-none bg-transparent underline" style={{ color: "#E05252", fontFamily: "inherit" }}>
-                    {t.filters.clearAll}
+                <div className="flex items-center gap-3">
+                  {count > 0 && (
+                    <button onClick={onReset} className="text-[13px] font-medium cursor-pointer border-none bg-transparent underline" style={{ color: "#E05252", fontFamily: "inherit" }}>
+                      {t.filters.clearAll}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setSheetOpen(false)}
+                    className="w-8 h-8 rounded-full flex items-center justify-center border-none cursor-pointer text-[13px] font-bold"
+                    style={{ background: "#EDE8DF", color: "#1C3A2F", fontFamily: "inherit" }}
+                  >
+                    ✕
                   </button>
-                )}
+                </div>
               </div>
 
               {/* Looking for */}
