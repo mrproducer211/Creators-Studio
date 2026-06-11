@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { 
-  Building2, 
   Plus, 
   Trash2, 
   CheckCircle2, 
@@ -13,16 +12,12 @@ import {
   XCircle, 
   Eye, 
   MousePointerClick, 
-  User, 
-  LogOut,
   FolderOpen,
   Settings,
   UploadCloud,
   EyeOff,
   ChevronRight,
   ChevronLeft,
-  FileText,
-  ShieldAlert,
   Calendar,
   MessageSquare
 } from "lucide-react";
@@ -164,6 +159,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
   const [leaseTerms, setLeaseTerms] = useState("12 months");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [furnishing, setFurnishing] = useState<"furnished" | "partially_furnished" | "unfurnished">("furnished");
+  const [featuresText, setFeaturesText] = useState("");
   
   // Wizard steps state: 1 = Basic, 2 = Specs & Media, 3 = Review
   const [uploadStep, setUploadStep] = useState<1 | 2 | 3>(1);
@@ -338,6 +334,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
           availableFrom: availableFrom || undefined,
           leaseTerms: leaseTerms || undefined,
           amenities: selectedAmenities,
+          features: featuresText.split("\n").map((s) => s.trim()).filter(Boolean),
           images: extraImages,
           furnishing,
           status: submitStatus,
@@ -372,6 +369,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
       setNearBts(false);
       setFurnishing("furnished");
       setCustomArea("");
+      setFeaturesText("");
       setUploadStep(1);
 
       // Refresh listings
@@ -463,7 +461,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
       } else {
         alert(data.error || "Failed to renew property.");
       }
-    } catch (err) {
+    } catch {
       alert("Error renewing property.");
     } finally {
       setActionLoading(null);
@@ -1656,6 +1654,19 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Add a details summary about view, furniture, orientation..."
+                        rows={3}
+                        className="w-full px-4 py-3 rounded-xl text-[14px]"
+                        style={{ ...inputStyle, resize: "none" }}
+                      />
+                    </div>
+
+                    {/* Key Unique Features (Highlights) */}
+                    <div>
+                      <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Key Unique Room Features (One per line)</label>
+                      <textarea
+                        value={featuresText}
+                        onChange={(e) => setFeaturesText(e.target.value)}
+                        placeholder="e.g. Sofa&#10;Television&#10;Air conditioning&#10;Fridge&#10;Microwave"
                         rows={3}
                         className="w-full px-4 py-3 rounded-xl text-[14px]"
                         style={{ ...inputStyle, resize: "none" }}

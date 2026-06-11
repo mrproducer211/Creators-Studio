@@ -187,6 +187,18 @@ export const shortlistComments = pgTable("shortlist_comments", {
   createdAt:   timestamp("created_at").notNull().defaultNow(),
 });
 
+export const leads = pgTable("leads", {
+  id:                  varchar("id", { length: 100 }).primaryKey(),
+  name:                varchar("name", { length: 255 }).notNull(),
+  email:               varchar("email", { length: 255 }).notNull().unique(),
+  passwordHash:        text("password_hash").notNull(),
+  role:                varchar("role", { length: 50 }).notNull().default("user"),
+  agentStatus:         varchar("agent_status", { length: 50 }),
+  postingRestricted:   boolean("posting_restricted").notNull().default(false),
+  requireVerification: boolean("require_verification").notNull().default(false),
+  createdAt:           timestamp("created_at").notNull().defaultNow(),
+});
+
 export type Property  = typeof properties.$inferSelect;
 export type NewProperty = typeof properties.$inferInsert;
 export type Enquiry   = typeof enquiries.$inferSelect;
@@ -209,4 +221,7 @@ export type ShortlistProperty = typeof shortlistProperties.$inferSelect;
 export type NewShortlistProperty = typeof shortlistProperties.$inferInsert;
 export type ShortlistComment = typeof shortlistComments.$inferSelect;
 export type NewShortlistComment = typeof shortlistComments.$inferInsert;
+export type LeadUserTable = typeof leads.$inferSelect;
+export type NewLeadUserTable = typeof leads.$inferInsert;
+
 

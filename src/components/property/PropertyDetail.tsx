@@ -337,9 +337,90 @@ const Icon = {
   pin:        () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
 };
 
+function getAmenityIcon(label: string) {
+  const norm = label.toLowerCase();
+  
+  if (norm.includes("pool") || norm.includes("swimming")) {
+    return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M2 20s2-2 5-2 5 2 7 2 5-2 5-2 2 2 3 2"/><path d="M2 16s2-2 5-2 5 2 7 2 5-2 5-2 2 2 3 2"/><path d="M6 11V5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v6"/><path d="M14 11V5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v11"/></svg>;
+  }
+  if (norm.includes("gym") || norm.includes("fitness")) {
+    return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M6.5 6.5 17.5 17.5"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>;
+  }
+  if (norm.includes("garden") || norm.includes("park")) {
+    return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 10a6 6 0 0 0-6-6H3v3a6 6 0 0 0 6 6h3z"/><path d="M12 22V12"/><path d="M12 12a6 6 0 0 1 6-6h3v3a6 6 0 0 1-6 6h-3z"/></svg>;
+  }
+  if (norm.includes("coworking") || norm.includes("co-working") || norm.includes("workspace") || norm.includes("lounge")) {
+    return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="12" x="2" y="3" rx="2"/><path d="M12 15v5M5 20h14"/></svg>;
+  }
+  if (norm.includes("sauna") || norm.includes("steam") || norm.includes("jacuzzi")) {
+    return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v4M8 4v4M16 4v4M4 14h16c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2z"/></svg>;
+  }
+  if (norm.includes("security") || norm.includes("cctv") || norm.includes("guard")) {
+    return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>;
+  }
+  if (norm.includes("parking") || norm.includes("garage")) {
+    return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>;
+  }
+  if (norm.includes("keycard") || norm.includes("card") || norm.includes("access")) {
+    return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>;
+  }
+  
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>;
+}
+
+function getPlaceImage(area: string, category: string, placeName: string, fallbackUrl?: string): string {
+  const normArea = area.toLowerCase().replace(/\s+/g, "_");
+  const normName = placeName.toLowerCase();
+  
+  if (category === "BTS/MRT" || normName.includes("bts") || normName.includes("mrt")) {
+    return "https://images.unsplash.com/photo-1568992688467-f47055745d7a?w=400&auto=format&q=80";
+  }
+  if (normName.includes("emquartier") || normName.includes("emporium")) {
+    return "https://images.unsplash.com/photo-1569937728357-4971c45f974c?w=400&auto=format&q=80";
+  }
+  if (normName.includes("terminal 21")) {
+    return "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&auto=format&q=80";
+  }
+  if (normName.includes("jodd fairs") || normName.includes("market")) {
+    return "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&auto=format&q=80";
+  }
+  if (normName.includes("commons")) {
+    return "https://images.unsplash.com/photo-1582298538104-ed2d6bb5ab82?w=400&auto=format&q=80";
+  }
+  
+  const validAreas = ["ari", "asok", "ekkamai", "on_nut", "sathorn", "silom", "sukhumvit", "thong_lo"];
+  if (validAreas.includes(normArea)) {
+    if (category === "Cafes" || category === "Co-working") {
+      return `/images/lifestyles/${normArea}_cafe.png`;
+    }
+    if (category === "Restaurants" || category === "Dining") {
+      return `/images/lifestyles/${normArea}_dining.png`;
+    }
+    if (category === "Parks" || category === "Fitness") {
+      return `/images/lifestyles/${normArea}_parks.png`;
+    }
+    if (category === "Nightlife") {
+      return `/images/lifestyles/${normArea}_nightlife.png`;
+    }
+  }
+  
+  if (fallbackUrl) return fallbackUrl;
+  
+  if (category === "Parks" || normName.includes("park")) {
+    return "https://images.unsplash.com/photo-1596700447384-e40ab4a4a4a4?w=400&auto=format&q=80";
+  }
+  if (category === "Cafes") {
+    return "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&auto=format&q=80";
+  }
+  if (category === "Restaurants") {
+    return "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&auto=format&q=80";
+  }
+  return "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&q=80";
+}
+
 /* ─────────────────────────────────────────────
    Gallery — main image + thumbnails
-───────────────────────────────────────────── */
+   ───────────────────────────────────────────── */
 function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; name: string; isFeatured: boolean; propertyId: number }) {
   const [active, setActive]       = useState(0);
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
@@ -1345,13 +1426,16 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                   Highlights
                 </h4>
                 <ul className="list-none p-0 m-0 space-y-2.5">
-                  {[
-                    "Fully furnished",
-                    "City view",
-                    "Modern kitchen with microwave",
-                    "Washing machine",
-                    "High-speed internet ready"
-                  ].map((hl, i) => (
+                  {(property.features && property.features.length > 0
+                    ? property.features
+                    : [
+                        "Fully furnished",
+                        "Air conditioning",
+                        "Television",
+                        "Sofa",
+                        "Modern kitchen"
+                      ]
+                  ).map((hl, i) => (
                     <li key={i} className="flex items-start text-[13px] text-gray-500 font-light">
                       <span className="text-[#C9A84C] font-bold mr-2.5 flex-shrink-0 text-[13px]">✓</span>
                       <span>{hl}</span>
@@ -1370,19 +1454,18 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                   </h3>
                   
                   <div className="grid grid-cols-2 gap-y-5 gap-x-3">
-                    {[
-                      { label: "Swimming Pool", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M2 20s2-2 5-2 5 2 7 2 5-2 5-2 2 2 3 2"/><path d="M2 16s2-2 5-2 5 2 7 2 5-2 5-2 2 2 3 2"/><path d="M6 11V5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v6"/><path d="M14 11V5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v11"/></svg> },
-                      { label: "Fitness Center", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M6.5 6.5 17.5 17.5"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg> },
-                      { label: "Garden", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 10a6 6 0 0 0-6-6H3v3a6 6 0 0 0 6 6h3z"/><path d="M12 22V12"/><path d="M12 12a6 6 0 0 1 6-6h3v3a6 6 0 0 1-6 6h-3z"/></svg> },
-                      { label: "Co-working Space", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="12" x="2" y="3" rx="2"/><path d="M12 15v5M5 20h14"/></svg> },
-                      { label: "Sauna", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v4M8 4v4M16 4v4M4 14h16c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2z"/></svg> },
-                      { label: "24h Security", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> },
-                      { label: "Parking", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg> },
-                      { label: "Keycard Access", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> }
-                    ].map((amenity, idx) => (
+                    {(property.amenities && property.amenities.length > 0
+                      ? property.amenities
+                      : [
+                          "Swimming Pool",
+                          "Fitness Center",
+                          "24h Security",
+                          "Parking"
+                        ]
+                    ).map((amenity, idx) => (
                       <div key={idx} className="flex items-center gap-2.5 text-[13px] text-gray-600 font-light">
-                        <span className="text-[#1C3A2F] flex-shrink-0">{amenity.icon}</span>
-                        <span className="truncate">{amenity.label}</span>
+                        <span className="text-[#1C3A2F] flex-shrink-0">{getAmenityIcon(amenity)}</span>
+                        <span className="truncate">{amenity}</span>
                       </div>
                     ))}
                   </div>
@@ -1532,7 +1615,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                     style={{ aspectRatio: "3 / 4" }}
                   >
                     <img
-                      src={place.image}
+                      src={getPlaceImage(property.area, place.category, place.name, place.image)}
                       alt={place.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />

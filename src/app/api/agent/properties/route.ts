@@ -17,7 +17,7 @@ function slugify(text: string) {
     .replace(/\-\-+/g, "-"); // Replace multiple - with single -
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   const guard = await requireAgentApi();
   if ("error" in guard) return guard.error;
 
@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
       availableFrom,
       leaseTerms,
       amenities,
+      features,
       images,
       furnishing,
       status,
@@ -137,7 +138,7 @@ export async function POST(req: NextRequest) {
       viewCount: 0,
       images: images || [],
       amenities: amenities || [],
-      features: [],
+      features: features || [],
       schools: [],
       transit: [],
       agentEmail, // Associate listing with the agent

@@ -32,7 +32,24 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
     if (res?.error) {
       setError("Incorrect email or password.");
     } else {
-      router.push(callbackUrl);
+      try {
+        const sessionRes = await fetch("/api/auth/session");
+        if (sessionRes.ok) {
+          const session = await sessionRes.json();
+          const role = session?.user?.role;
+          if (role === "admin") {
+            router.push("/admin");
+          } else if (role === "agent") {
+            router.push("/agent/dashboard");
+          } else {
+            router.push(callbackUrl);
+          }
+        } else {
+          router.push(callbackUrl);
+        }
+      } catch {
+        router.push(callbackUrl);
+      }
       router.refresh();
     }
   };
@@ -64,7 +81,24 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         setError("Account created, but automatic sign-in failed. Please sign in manually.");
         setTab("signin");
       } else {
-        router.push(callbackUrl);
+        try {
+          const sessionRes = await fetch("/api/auth/session");
+          if (sessionRes.ok) {
+            const session = await sessionRes.json();
+            const role = session?.user?.role;
+            if (role === "admin") {
+              router.push("/admin");
+            } else if (role === "agent") {
+              router.push("/agent/dashboard");
+            } else {
+              router.push(callbackUrl);
+            }
+          } else {
+            router.push(callbackUrl);
+          }
+        } catch {
+          router.push(callbackUrl);
+        }
         router.refresh();
       }
     } catch (err) {

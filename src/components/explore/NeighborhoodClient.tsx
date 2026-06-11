@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSaved } from "@/contexts/SavedContext";
 import Link from "next/link";
-import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Map, Check } from "lucide-react";
+import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check } from "lucide-react";
 
 // Dynamically load Map component to prevent window SSR errors
 const NeighborhoodMap = dynamic(() => import("./NeighborhoodMap"), { ssr: false });

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -15,6 +16,20 @@ const FALLBACK_GRADIENTS = [
   "linear-gradient(135deg,#1C3A2F,#111)",
   "linear-gradient(135deg,#C9A84C,#1C3A2F)",
 ];
+
+interface HubData {
+  name: string;
+  latitude: number | string;
+  longitude: number | string;
+  transitMode: string;
+}
+
+interface CommuteData {
+  name: string;
+  minutes: number;
+  distance: number;
+  transitMode: string;
+}
 
 function badgeStyle(t: string) {
   if (t === "sale") return { background: "#1C3A2F", color: "#E2C97E" };
@@ -34,7 +49,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
   const sub                     = property.listingType === "sale" ? "" : (property.priceLabel ?? "");
   const fallback                = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length];
   const href                    = `/property/${property.slug}`;
-  const [commutes, setCommutes] = useState<any[]>([]);
+  const [commutes, setCommutes] = useState<CommuteData[]>([]);
 
   useEffect(() => {
     try {
@@ -44,7 +59,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
         const pLat = Number(property.latitude);
         const pLng = Number(property.longitude);
         if (!isNaN(pLat) && !isNaN(pLng)) {
-          const list = hubs.map((h: any) => {
+          const list = hubs.map((h: HubData) => {
             const hLat = Number(h.latitude);
             const hLng = Number(h.longitude);
             const R = 6371;
@@ -164,7 +179,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
         {/* Commute Times */}
         {commutes.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-2.5">
-            {commutes.map((c: any) => (
+            {commutes.map((c: CommuteData) => (
               <span
                 key={c.name}
                 className="text-[9.5px] font-bold px-2 py-0.5 rounded-lg flex items-center gap-1"

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -7,22 +8,14 @@ import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import ExplorePropertyCard from "@/components/explore/ExplorePropertyCard";
-import { NEIGHBORHOODS, DESTINATIONS, Neighborhood } from "@/data/neighborhoods";
+import { NEIGHBORHOODS } from "@/data/neighborhoods";
 import {
-  User,
   Bookmark,
-  Bell,
-  BarChart3,
   Heart,
-  Home,
   MapPin,
   Car,
-  Train,
   Search,
-  Share2,
   Trash2,
-  Plus,
-  Check,
   Loader2,
   Compass,
   MessageSquare,
@@ -68,9 +61,9 @@ const geocodeAddress = (addressOrName: string): { lat: number; lng: number } => 
 export default function DashboardClient({ allProperties, session }: DashboardClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { savedIds, count, toggle: toggleSaved } = useSaved();
-  const { lang, setLang, t } = useLanguage();
-  const { currency, setCurrency, formatPrice } = useCurrency();
+  const { savedIds, count } = useSaved();
+  const { lang, setLang } = useLanguage();
+  const { currency, setCurrency } = useCurrency();
   const user = session?.user;
 
   // Active Tab
@@ -80,9 +73,11 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
   useEffect(() => {
     const tabParam = searchParams.get("tab");
     if (tabParam && ["feed", "searches", "commute", "collab", "saved", "settings"].includes(tabParam)) {
-      setActiveTab(tabParam as any);
+      if (activeTab !== tabParam) {
+        setActiveTab(tabParam as any);
+      }
     }
-  }, [searchParams]);
+  }, [searchParams, activeTab]);
 
   const handleTabChange = (tab: typeof activeTab) => {
     setActiveTab(tab);

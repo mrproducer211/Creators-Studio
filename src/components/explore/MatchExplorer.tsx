@@ -26,13 +26,11 @@ import {
   Activity,
   BarChart3,
   Coffee,
-  Moon,
   Footprints,
   PawPrint,
   Globe,
   Train,
-  Calendar,
-  Check
+  Calendar
 } from "lucide-react";
 import { useCurrency } from "@/contexts/CurrencyContext";
 

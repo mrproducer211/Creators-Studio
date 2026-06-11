@@ -325,6 +325,17 @@ function parseTelegramMessage(text: string, messageId: number) {
     "highfloor": "High Floor Unit",
     "brandnew": "Brand New Condition",
     "renovate": "Newly Renovated",
+    "sofa": "Sofa",
+    "tv": "Television",
+    "television": "Television",
+    "air": "Air Conditioning",
+    "ac": "Air Conditioning",
+    "aircon": "Air Conditioning",
+    "washing": "Washing Machine",
+    "washer": "Washing Machine",
+    "fridge": "Refrigerator",
+    "refrigerator": "Refrigerator",
+    "microwave": "Microwave",
   };
 
   // 1. Scan for hashtags
@@ -350,10 +361,22 @@ function parseTelegramMessage(text: string, messageId: number) {
       .filter(Boolean);
     for (const item of items) {
       const cleanItem = item.charAt(0).toUpperCase() + item.slice(1);
-      const isFeature = item.toLowerCase().includes("balcony") ||
-                        item.toLowerCase().includes("bathtub") ||
-                        item.toLowerCase().includes("view") ||
-                        item.toLowerCase().includes("fitted");
+      const lItem = item.toLowerCase();
+      const isFeature = lItem.includes("balcony") ||
+                        lItem.includes("bathtub") ||
+                        lItem.includes("view") ||
+                        lItem.includes("fitted") ||
+                        lItem.includes("sofa") ||
+                        /\btv\b/i.test(lItem) ||
+                        lItem.includes("television") ||
+                        lItem.includes("air condition") ||
+                        /\bac\b/i.test(lItem) ||
+                        /\ba\/c\b/i.test(lItem) ||
+                        lItem.includes("fridge") ||
+                        lItem.includes("refrigerator") ||
+                        lItem.includes("washing") ||
+                        lItem.includes("washer") ||
+                        lItem.includes("microwave");
       if (isFeature) {
         if (!features.includes(cleanItem)) features.push(cleanItem);
       } else {
