@@ -4,6 +4,7 @@ import { addEnquiry } from "@/lib/store/enquiries";
 import { db, isDbConfigured } from "@/lib/db";
 import { enquiries as enquiriesTable, properties as propertiesTable } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { auth } from "@/auth";
 
 // Simple in-memory rate limiter (resets on cold start — good enough for MVP)
 const rateLimitMap = new Map<string, number[]>();
@@ -42,6 +43,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Input too long." }, { status: 400 });
   }
 
+  // Fetch session to check role
+  const session = await auth();
+  const loggedInRole = (session?.user as { role?: string })?.role || "user";
+
   // Build base URL
   const baseUrl = process.env.NEXTAUTH_URL ?? `https://${req.headers.get("host") ?? "nhp-bangkok.com"}`;
 
@@ -68,6 +73,7 @@ export async function POST(req: NextRequest) {
         method: body.method!,
         message: body.message || null,
         status: "new",
+        userRole: loggedInRole,
       });
     } else {
       await addEnquiry({
@@ -83,6 +89,7 @@ export async function POST(req: NextRequest) {
         source:       body.source!,
         tourDate:     body.tourDate,
         tourTime:     body.tourTime,
+        userRole:     loggedInRole,
       });
     }
   } catch (err) {

@@ -15,7 +15,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const all = await getDbProperties();
+  const all = await getDbProperties({ includeUnlisted: true });
   const p = all.find((x) => x.slug === slug);
   if (!p) return { title: "Property Not Found — NHP" };
   return {
@@ -45,20 +45,23 @@ function buildingHint(name: string): string {
 
 export default async function PropertyPage({ params }: Props) {
   const { slug } = await params;
-  const all          = await getDbProperties();
+  const all          = await getDbProperties({ includeUnlisted: true });
   const property = all.find((p) => p.slug === slug);
   if (!property) notFound();
 
   const bHint = buildingHint(property.name);
 
+  // Recommendations should be active properties only
+  const activeListings = all.filter((p) => p.status !== "unlisted");
+
   // 1. Same building properties (excluding current)
-  const sameBuilding = all
+  const sameBuilding = activeListings
     .filter((p) => p.id !== property.id && buildingHint(p.name) === bHint)
     .slice(0, 4);
 
   // 2. Nearby properties (excluding current and same building, matching area or adjacent areas)
   const nearbyAreas = NEARBY_AREAS[property.area] ?? [];
-  const nearby = all
+  const nearby = activeListings
     .filter((p) => 
       p.id !== property.id && 
       buildingHint(p.name) !== bHint && 

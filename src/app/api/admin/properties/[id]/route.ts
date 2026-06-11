@@ -164,6 +164,93 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
   return NextResponse.json({ property: updated });
 }
 
+export async function PATCH(req: NextRequest, ctx: Ctx) {
+  const guard = await requireAdminApi();
+  if ("error" in guard) return guard.error;
+  const adminUser = guard.user;
+
+  const id = await parseId(ctx.params);
+  if (id == null) return NextResponse.json({ error: "Invalid id." }, { status: 400 });
+
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+  }
+
+  const { status, pendingVerification, expiryDate } = body;
+  const patch: any = {};
+  if (status !== undefined) patch.status = status;
+  if (pendingVerification !== undefined) patch.pendingVerification = pendingVerification;
+  if (expiryDate !== undefined) {
+    patch.expiryDate = expiryDate ? new Date(expiryDate).toISOString() : null;
+  }
+
+  if (Object.keys(patch).length === 0) {
+    return NextResponse.json({ error: "No fields to update." }, { status: 400 });
+  }
+
+  // DB logic
+  const dbUrl = process.env.DATABASE_URL || "";
+  const isDbValid = dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://");
+
+  if (isDbValid) {
+    try {
+      const dbPatch: any = {};
+      if (patch.status !== undefined) {
+        dbPatch.status = patch.status === "unlisted" ? "draft" : patch.status;
+      }
+      if (patch.pendingVerification !== undefined) dbPatch.pendingVerification = patch.pendingVerification;
+      if (patch.expiryDate !== undefined) {
+        dbPatch.expiryDate = patch.expiryDate ? new Date(patch.expiryDate) : null;
+      }
+
+      const [updated] = await db
+        .update(propertiesTable)
+        .set(dbPatch)
+        .where(eq(propertiesTable.id, id))
+        .returning();
+
+      if (updated) {
+        await createAuditLog(
+          adminUser.email,
+          "edit_property",
+          `Patched listing #${id} in database`
+        );
+        return NextResponse.json({
+          property: {
+            ...updated,
+            priceTHB: Number(updated.priceTHB),
+            priceUSD: updated.priceUSD ? Number(updated.priceUSD) : undefined,
+            status: updated.status === "draft" ? "unlisted" : updated.status,
+          }
+        });
+      }
+    } catch (err) {
+      console.warn("DB patch failed, falling back to local file store:", err);
+    }
+  }
+
+  // File store logic
+  const localPatch: any = {};
+  if (patch.status !== undefined) localPatch.status = patch.status;
+  if (patch.pendingVerification !== undefined) localPatch.pendingVerification = patch.pendingVerification;
+  if (patch.expiryDate !== undefined) {
+    localPatch.expiryDate = patch.expiryDate || undefined;
+  }
+
+  const updated = await updateProperty(id, localPatch);
+  if (!updated) return NextResponse.json({ error: "Not found." }, { status: 404 });
+  await createAuditLog(
+    adminUser.email,
+    "edit_property",
+    `Patched listing #${id} in local JSON store`
+  );
+
+  return NextResponse.json({ property: updated });
+}
+
 export async function DELETE(_req: NextRequest, ctx: Ctx) {
   const guard = await requireAdminApi();
   if ("error" in guard) return guard.error;

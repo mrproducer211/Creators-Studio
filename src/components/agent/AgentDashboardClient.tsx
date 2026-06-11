@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { 
@@ -34,6 +35,8 @@ interface AgentDashboardClientProps {
     email: string;
     agentStatus?: "pending" | "approved" | "rejected";
     createdAt: string;
+    postingRestricted?: boolean;
+    requireVerification?: boolean;
   };
   initialProperties: any[];
 }
@@ -44,6 +47,12 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
   const [properties, setProperties] = useState<any[]>(initialProperties);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (agent.postingRestricted && activeTab === "upload") {
+      setActiveTab("listings");
+    }
+  }, [agent.postingRestricted, activeTab]);
 
   // Leads & Bookings states
   const [enquiries, setEnquiries] = useState<any[]>([]);
@@ -339,7 +348,9 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
       if (!res.ok) throw new Error(data.error || "Failed to upload listing.");
 
       setSuccessMsg(
-        submitStatus === "unlisted"
+        data.property?.pendingVerification
+          ? "Property listing submitted for administrator verification!"
+          : submitStatus === "unlisted"
           ? "Property listing saved as draft successfully!"
           : "Property listing published successfully!"
       );
@@ -394,7 +405,12 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
       });
 
       if (res.ok) {
-        setProperties(properties.map((p) => p.id === id ? { ...p, status: nextStatus } : p));
+        const data = await res.json();
+        const updatedProp = data.property || { ...properties.find((p) => p.id === id), status: nextStatus };
+        setProperties(properties.map((p) => p.id === id ? updatedProp : p));
+        if (updatedProp.pendingVerification) {
+          alert("Publishing this listing requires administrator verification. It has been submitted for review.");
+        }
       } else {
         const data = await res.json().catch(() => ({}));
         alert(data.error || "Failed to update property listing status.");
@@ -422,6 +438,54 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
       }
     } catch {
       alert("Error deleting property.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRenewProperty = async (id: number) => {
+    setActionLoading(id);
+    try {
+      const res = await fetch(`/api/properties/${id}/renew`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // Refresh listings
+        const fetchListings = await fetch("/api/agent/properties");
+        if (fetchListings.ok) {
+          const listData = await fetchListings.json();
+          setProperties(listData.properties || []);
+        }
+        alert(data.property?.pendingVerification 
+          ? "Property submitted for verification!" 
+          : "Property successfully republished!");
+      } else {
+        alert(data.error || "Failed to renew property.");
+      }
+    } catch (err) {
+      alert("Error renewing property.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDismissExpiryPrompt = async (id: number) => {
+    setActionLoading(id);
+    try {
+      const res = await fetch(`/api/agent/properties/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ expiryDate: null }),
+      });
+      if (res.ok) {
+        setProperties(properties.map((p) => p.id === id ? { ...p, expiryDate: undefined } : p));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to dismiss prompt.");
+      }
+    } catch {
+      alert("Error dismissing prompt.");
     } finally {
       setActionLoading(null);
     }
@@ -555,19 +619,21 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
             >
               <Calendar size={16} /> Bookings & Tours
             </button>
-            <button
-              onClick={() => {
-                setActiveTab("upload");
-                setUploadStep(1);
-              }}
-              className="w-full flex items-center gap-2.5 px-4 py-3 rounded-xl text-[13px] font-medium text-left border-none cursor-pointer transition-all"
-              style={{
-                background: activeTab === "upload" ? "rgba(201,168,76,0.18)" : "transparent",
-                color: activeTab === "upload" ? "#E2C97E" : "rgba(255,255,255,0.65)",
-              }}
-            >
-              <Plus size={16} /> Upload Property
-            </button>
+            {!agent.postingRestricted && (
+              <button
+                onClick={() => {
+                  setActiveTab("upload");
+                  setUploadStep(1);
+                }}
+                className="w-full flex items-center gap-2.5 px-4 py-3 rounded-xl text-[13px] font-medium text-left border-none cursor-pointer transition-all"
+                style={{
+                  background: activeTab === "upload" ? "rgba(201,168,76,0.18)" : "transparent",
+                  color: activeTab === "upload" ? "#E2C97E" : "rgba(255,255,255,0.65)",
+                }}
+              >
+                <Plus size={16} /> Upload Property
+              </button>
+            )}
             <button
               onClick={() => setActiveTab("settings")}
               className="w-full flex items-center gap-2.5 px-4 py-3 rounded-xl text-[13px] font-medium text-left border-none cursor-pointer transition-all"
@@ -640,17 +706,19 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
             <Calendar size={18} />
             <span className="text-[9px] font-medium">Bookings</span>
           </button>
-          <button
-            onClick={() => {
-              setActiveTab("upload");
-              setUploadStep(1);
-            }}
-            className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer flex-1"
-            style={{ color: activeTab === "upload" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
-          >
-            <Plus size={18} />
-            <span className="text-[9px] font-medium">Upload</span>
-          </button>
+          {!agent.postingRestricted && (
+            <button
+              onClick={() => {
+                setActiveTab("upload");
+                setUploadStep(1);
+              }}
+              className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer flex-1"
+              style={{ color: activeTab === "upload" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
+            >
+              <Plus size={18} />
+              <span className="text-[9px] font-medium">Upload</span>
+            </button>
+          )}
           <button
             onClick={() => setActiveTab("settings")}
             className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer flex-1"
@@ -724,7 +792,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     : "Update your workspace profile and password credentials."}
                 </p>
               </div>
-              {activeTab === "listings" && (
+              {activeTab === "listings" && !agent.postingRestricted && (
                 <button
                   onClick={() => {
                     setActiveTab("upload");
@@ -778,73 +846,112 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     <tbody>
                       {properties.map((prop) => {
                         const isUnlisted = prop.status === "unlisted";
+                        const isExpired = prop.status === "unlisted" && prop.expiryDate && new Date() > new Date(prop.expiryDate);
                         return (
-                          <tr key={prop.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
-                            <td className="px-4 py-4 min-w-[200px]">
-                              <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-lg bg-cover bg-center bg-[#EDE8DF]" style={{ backgroundImage: `url(${prop.coverImage || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=100&auto=format&q=80"})` }} />
-                                <div className="min-w-0">
-                                  <div className="text-[13px] font-bold text-[#1A1A1A] truncate">{prop.name}</div>
-                                  <div className="text-[11px] text-gray-400 mt-0.5 truncate">{prop.area} · {prop.propertyType}</div>
+                          <React.Fragment key={prop.id}>
+                            <tr style={{ borderBottom: isExpired ? "none" : "1px solid #F0EAE0" }}>
+                              <td className="px-4 py-4 min-w-[200px]">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-12 h-12 rounded-lg bg-cover bg-center bg-[#EDE8DF]" style={{ backgroundImage: `url(${prop.coverImage || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=100&auto=format&q=80"})` }} />
+                                  <div className="min-w-0">
+                                    <div className="text-[13px] font-bold text-[#1A1A1A] truncate">{prop.name}</div>
+                                    <div className="text-[11px] text-gray-400 mt-0.5 truncate">{prop.area} · {prop.propertyType}</div>
+                                  </div>
                                 </div>
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 text-[12px] text-gray-600">
-                              <div>{prop.bedrooms} Bed · {prop.bathrooms} Bath</div>
-                              <div className="text-[10px] text-gray-400 mt-0.5 capitalize">{prop.furnishing || "Furnished"}</div>
-                            </td>
-                            <td className="px-4 py-4 text-[13px] font-bold text-[#1C3A2F]">
-                              ฿{prop.priceTHB.toLocaleString()}{prop.priceLabel || (prop.listingType === "sale" ? "" : "/month")}
-                            </td>
-                            <td className="px-4 py-4 text-center">
-                              {isUnlisted ? (
-                                <span className="text-[10px] font-semibold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-amber-200">
-                                  <EyeOff size={10} /> Draft (Unlisted)
-                                </span>
-                              ) : (
-                                <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-emerald-200">
-                                  <CheckCircle2 size={10} /> Listed
-                                </span>
-                              )}
-                            </td>
-                            <td className="px-4 py-4 text-center">
-                              <div className="flex items-center justify-center gap-3 text-[12px] text-gray-500">
-                                <span className="flex items-center gap-1" title="Views"><Eye size={12} /> {prop.viewCount || 0}</span>
-                                <span className="flex items-center gap-1" title="Clicks"><MousePointerClick size={12} /> {prop.clicks || 0}</span>
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 text-right">
-                              <div className="flex items-center justify-end gap-1">
-                                <button
-                                  onClick={() => handleToggleStatus(prop.id, prop.status || "active")}
-                                  disabled={actionLoading === prop.id}
-                                  className="px-2.5 py-1.5 rounded text-[11px] font-bold border cursor-pointer transition-colors"
-                                  style={{
-                                    background: isUnlisted ? "#1C3A2F" : "#FFFFFF",
-                                    color: isUnlisted ? "#FFFFFF" : "#1C3A2F",
-                                    borderColor: "#1C3A2F"
-                                  }}
-                                  title={isUnlisted ? "Publish Listing" : "Unlist Listing"}
-                                >
-                                  {isUnlisted ? "Publish" : "Unlist"}
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(prop.id)}
-                                  disabled={actionLoading === prop.id}
-                                  className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 bg-transparent border-none cursor-pointer rounded transition-colors"
-                                  title="Delete Listing"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
+                              </td>
+                              <td className="px-4 py-4 text-[12px] text-gray-600">
+                                <div>{prop.bedrooms} Bed · {prop.bathrooms} Bath</div>
+                                <div className="text-[10px] text-gray-400 mt-0.5 capitalize">{prop.furnishing || "Furnished"}</div>
+                              </td>
+                              <td className="px-4 py-4 text-[13px] font-bold text-[#1C3A2F]">
+                                ฿{prop.priceTHB.toLocaleString()}{prop.priceLabel || (prop.listingType === "sale" ? "" : "/month")}
+                              </td>
+                              <td className="px-4 py-4 text-center">
+                                {prop.pendingVerification ? (
+                                  <span className="text-[10px] font-semibold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-blue-200">
+                                    <AlertCircle size={10} /> Pending Verify
+                                  </span>
+                                ) : isExpired ? (
+                                  <span className="text-[10px] font-semibold bg-red-50 text-red-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-red-200 animate-pulse">
+                                    <AlertCircle size={10} /> Expired
+                                  </span>
+                                ) : isUnlisted ? (
+                                  <span className="text-[10px] font-semibold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-amber-200">
+                                    <EyeOff size={10} /> Draft (Unlisted)
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-emerald-200">
+                                    <CheckCircle2 size={10} /> Listed
+                                  </span>
+                                )}
+                              </td>
+                              <td className="px-4 py-4 text-center">
+                                <div className="flex items-center justify-center gap-3 text-[12px] text-gray-500">
+                                  <span className="flex items-center gap-1" title="Views"><Eye size={12} /> {prop.viewCount || 0}</span>
+                                  <span className="flex items-center gap-1" title="Clicks"><MousePointerClick size={12} /> {prop.clicks || 0}</span>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 text-right">
+                                <div className="flex items-center justify-end gap-1">
+                                  <button
+                                    onClick={() => handleToggleStatus(prop.id, prop.status || "active")}
+                                    disabled={actionLoading === prop.id || !!prop.pendingVerification || isExpired}
+                                    className="px-2.5 py-1.5 rounded text-[11px] font-bold border cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    style={{
+                                      background: isUnlisted ? "#1C3A2F" : "#FFFFFF",
+                                      color: isUnlisted ? "#FFFFFF" : "#1C3A2F",
+                                      borderColor: "#1C3A2F"
+                                    }}
+                                    title={prop.pendingVerification ? "Pending Admin Approval" : isExpired ? "Expired Listing" : isUnlisted ? "Publish Listing" : "Unlist Listing"}
+                                  >
+                                    {prop.pendingVerification ? "Pending" : isUnlisted ? "Publish" : "Unlist"}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(prop.id)}
+                                    disabled={actionLoading === prop.id}
+                                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 bg-transparent border-none cursor-pointer rounded transition-colors"
+                                    title="Delete Listing"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                            {isExpired && (
+                              <tr style={{ borderBottom: "1px solid #F0EAE0", background: "#FFFBEB" }}>
+                                <td colSpan={6} className="px-4 py-3">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-[12px] text-amber-800 font-semibold">
+                                      <AlertCircle size={14} className="text-amber-600" />
+                                      <span>Is this property still available?</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <button
+                                        onClick={() => handleRenewProperty(prop.id)}
+                                        disabled={actionLoading === prop.id}
+                                        className="px-3.5 py-1.5 rounded-lg text-[11px] font-bold bg-[#1C3A2F] text-white border-none cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+                                      >
+                                        Yes, Republish
+                                      </button>
+                                      <button
+                                        onClick={() => handleDismissExpiryPrompt(prop.id)}
+                                        disabled={actionLoading === prop.id}
+                                        className="px-3.5 py-1.5 rounded-lg text-[11px] font-semibold bg-white text-gray-600 border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors disabled:opacity-50"
+                                      >
+                                        No
+                                      </button>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
                         );
                       })}
                       {properties.length === 0 && (
                         <tr>
                           <td colSpan={6} className="text-center py-16 text-gray-400 text-[13px]">
-                            No listings posted yet. Click "+ Add Property" to upload your first listing!
+                            No listings posted yet. Click &quot;+ Add Property&quot; to upload your first listing!
                           </td>
                         </tr>
                       )}
@@ -856,8 +963,9 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                 <div className="md:hidden flex flex-col gap-3">
                   {properties.map((prop) => {
                     const isUnlisted = prop.status === "unlisted";
+                    const isExpired = prop.status === "unlisted" && prop.expiryDate && new Date() > new Date(prop.expiryDate);
                     return (
-                      <div key={prop.id} className="p-4 rounded-2xl border bg-white flex flex-col gap-4 shadow-sm" style={{ borderColor: "#E5E0D8" }}>
+                      <div key={prop.id} className="p-4 rounded-2xl border bg-white flex flex-col gap-4 shadow-sm relative overflow-hidden" style={{ borderColor: isExpired ? "#C9A84C" : "#E5E0D8" }}>
                         <div className="flex gap-3">
                           <div className="w-16 h-16 rounded-xl bg-cover bg-center bg-[#EDE8DF] flex-shrink-0" style={{ backgroundImage: `url(${prop.coverImage || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=100&auto=format&q=80"})` }} />
                           <div className="min-w-0 flex-1">
@@ -876,7 +984,15 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                           </div>
                           
                           <div>
-                            {isUnlisted ? (
+                            {prop.pendingVerification ? (
+                              <span className="text-[9px] font-semibold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1 border border-blue-200">
+                                <AlertCircle size={8} /> Pending
+                              </span>
+                            ) : isExpired ? (
+                              <span className="text-[9px] font-semibold bg-red-50 text-red-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1 border border-red-200">
+                                <AlertCircle size={8} /> Expired
+                              </span>
+                            ) : isUnlisted ? (
                               <span className="text-[9px] font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1 border border-amber-200">
                                 <EyeOff size={8} /> Draft
                               </span>
@@ -897,15 +1013,15 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                           <div className="flex items-center gap-1.5">
                             <button
                               onClick={() => handleToggleStatus(prop.id, prop.status || "active")}
-                              disabled={actionLoading === prop.id}
-                              className="px-3 py-1.5 rounded-lg text-[10px] font-bold border cursor-pointer transition-colors"
+                              disabled={actionLoading === prop.id || !!prop.pendingVerification || isExpired}
+                              className="px-3 py-1.5 rounded-lg text-[10px] font-bold border cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               style={{
                                 background: isUnlisted ? "#1C3A2F" : "#FFFFFF",
                                 color: isUnlisted ? "#FFFFFF" : "#1C3A2F",
                                 borderColor: "#1C3A2F"
                               }}
                             >
-                              {isUnlisted ? "Publish" : "Unlist"}
+                              {prop.pendingVerification ? "Pending" : isUnlisted ? "Publish" : "Unlist"}
                             </button>
                             <button
                               onClick={() => handleDelete(prop.id)}
@@ -916,12 +1032,37 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                             </button>
                           </div>
                         </div>
+
+                        {isExpired && (
+                          <div className="p-3 -mx-4 -mb-4 bg-[#FFFBEB] border-t border-amber-200 flex flex-col gap-2">
+                            <div className="flex items-center gap-1.5 text-[12px] text-amber-800 font-semibold">
+                              <AlertCircle size={14} className="text-amber-600" />
+                              <span>Is this property still available?</span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <button
+                                onClick={() => handleRenewProperty(prop.id)}
+                                disabled={actionLoading === prop.id}
+                                className="flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-[#1C3A2F] text-white border-none cursor-pointer disabled:opacity-50"
+                              >
+                                Yes, Republish
+                              </button>
+                              <button
+                                onClick={() => handleDismissExpiryPrompt(prop.id)}
+                                disabled={actionLoading === prop.id}
+                                className="flex-1 py-1.5 rounded-lg text-[11px] font-semibold bg-white text-gray-600 border border-gray-200 cursor-pointer disabled:opacity-50"
+                              >
+                                No
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
                   {properties.length === 0 && (
                     <div className="text-center py-16 text-gray-400 text-[12px] bg-white rounded-2xl border" style={{ borderColor: "#E5E0D8" }}>
-                      No listings posted yet. Tap "Add Property" to start.
+                      No listings posted yet. Tap &quot;Add Property&quot; to start.
                     </div>
                   )}
                 </div>
@@ -1037,7 +1178,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                             </div>
                             {enq.message && (
                               <div className="text-[12px] text-gray-500 bg-[#FAF8F3] p-2 rounded-lg mt-1 border border-[#EDE8DF] italic">
-                                "{enq.message}"
+                                &quot;{enq.message}&quot;
                               </div>
                             )}
                           </div>
@@ -1192,7 +1333,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                             </div>
                             {appt.message && (
                               <div className="text-[12px] text-gray-500 bg-[#FAF8F3] p-2 rounded-lg mt-1 border border-[#EDE8DF] italic">
-                                "{appt.message}"
+                                &quot;{appt.message}&quot;
                               </div>
                             )}
                           </div>

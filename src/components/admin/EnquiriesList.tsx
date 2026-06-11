@@ -3,6 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { StoredEnquiry } from "@/lib/store/enquiries";
+import type { LeadUser } from "@/lib/store/leads";
+
+interface ExtendedEnquiry extends StoredEnquiry {
+  userRole?: string;
+}
 
 function statusStyle(s: string) {
   if (s === "new")       return { background: "rgba(74,222,128,0.15)", color: "#2E7D4F" };
@@ -10,12 +15,26 @@ function statusStyle(s: string) {
   return { background: "#EDE8DF", color: "#888" };
 }
 
-export default function EnquiriesList({ enquiries }: { enquiries: StoredEnquiry[] }) {
+export default function EnquiriesList({ enquiries, leads }: { enquiries: ExtendedEnquiry[]; leads: LeadUser[] }) {
   const router = useRouter();
   const [filter, setFilter] = useState<"all" | "new" | "responded" | "archived">("all");
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const filtered = filter === "all" ? enquiries : enquiries.filter((e) => e.status === filter);
+
+  // Build role lookup map
+  const leadRoleMap = new Map<string, string>();
+  leads.forEach((l) => {
+    leadRoleMap.set(l.email.toLowerCase(), l.role);
+    leadRoleMap.set(l.name.toLowerCase(), l.role);
+  });
+
+  const getSubmitterRole = (e: ExtendedEnquiry) => {
+    if (e.userRole) return e.userRole;
+    const contactLower = e.contact.toLowerCase();
+    const nameLower = e.name.toLowerCase();
+    return leadRoleMap.get(contactLower) || leadRoleMap.get(nameLower) || "user";
+  };
 
   const setStatus = async (id: string, status: StoredEnquiry["status"]) => {
     setBusyId(id);
@@ -62,6 +81,31 @@ export default function EnquiriesList({ enquiries }: { enquiries: StoredEnquiry[
                     <span className="text-[10px] font-semibold uppercase tracking-[0.5px] px-2 py-0.5 rounded-full" style={statusStyle(e.status)}>
                       {e.status}
                     </span>
+                    {(() => {
+                      const role = getSubmitterRole(e);
+                      const isAgent = role === "agent";
+                      const isAdmin = role === "admin";
+                      const badgeBg = isAgent 
+                        ? "rgba(201,168,76,0.15)"
+                        : isAdmin
+                        ? "rgba(28,58,47,0.1)"
+                        : "rgba(46,125,79,0.1)";
+                      const badgeColor = isAgent
+                        ? "#8B6914"
+                        : isAdmin
+                        ? "#1C3A2F"
+                        : "#2E7D4F";
+                      const badgeBorder = isAgent
+                        ? "1px solid rgba(201,168,76,0.3)"
+                        : isAdmin
+                        ? "1px solid rgba(28,58,47,0.2)"
+                        : "1px solid rgba(46,125,79,0.2)";
+                      return (
+                        <span className="text-[9px] font-bold uppercase tracking-[0.5px] px-2 py-0.5 rounded-full" style={{ background: badgeBg, color: badgeColor, border: badgeBorder }}>
+                          {role}
+                        </span>
+                      );
+                    })()}
                     <span className="text-[10px] uppercase tracking-[0.5px]" style={{ color: "#999" }}>
                       via {e.method} · {e.source}
                     </span>

@@ -29,6 +29,27 @@ export default function AgentsTable({ initialAgents }: { initialAgents: LeadUser
     }
   };
 
+  const handleToggleRestriction = async (id: string, field: "postingRestricted" | "requireVerification", value: boolean) => {
+    setBusy(id);
+    try {
+      const res = await fetch("/api/admin/agents", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, [field]: value }),
+      });
+      if (res.ok) {
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to update agent restrictions.");
+      }
+    } catch {
+      alert("Error updating agent restrictions.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const borderStyle = "1px solid #E5E0D8";
 
   return (
@@ -38,8 +59,9 @@ export default function AgentsTable({ initialAgents }: { initialAgents: LeadUser
           <tr style={{ background: "#FAF8F3", borderBottom: borderStyle }}>
             <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5" style={{ color: "#888" }}>Name</th>
             <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5" style={{ color: "#888" }}>Email Address</th>
-            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5" style={{ color: "#888" }}>Registered Date</th>
-            <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5" style={{ color: "#888" }}>Verification Status</th>
+            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5" style={{ color: "#888" }}>Posting Privileges</th>
+            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5" style={{ color: "#888" }}>Publishing Mode</th>
+            <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5" style={{ color: "#888" }}>Status</th>
             <th className="text-right text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5" style={{ color: "#888" }}>Actions</th>
           </tr>
         </thead>
@@ -52,14 +74,39 @@ export default function AgentsTable({ initialAgents }: { initialAgents: LeadUser
               <td className="px-4 py-4 text-[13px]" style={{ color: "#1C3A2F" }}>
                 {agent.email}
               </td>
-              <td className="px-4 py-4 text-[12px]" style={{ color: "#555" }}>
-                {new Date(agent.createdAt).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+              <td className="px-4 py-4">
+                <select
+                  value={agent.postingRestricted ? "restricted" : "allowed"}
+                  onChange={(e) => handleToggleRestriction(agent.id, "postingRestricted", e.target.value === "restricted")}
+                  disabled={busy === agent.id || agent.agentStatus !== "approved"}
+                  className="rounded-lg px-2.5 py-1.5 text-[12px] font-semibold outline-none cursor-pointer border transition-colors"
+                  style={{
+                    borderColor: "#E5E0D8",
+                    background: "#FAF8F3",
+                    color: agent.postingRestricted ? "#E05252" : "#2E7D4F",
+                    fontFamily: "inherit"
+                  }}
+                >
+                  <option value="allowed" style={{ color: "#2E7D4F" }}>Allowed</option>
+                  <option value="restricted" style={{ color: "#E05252" }}>Restricted</option>
+                </select>
+              </td>
+              <td className="px-4 py-4">
+                <select
+                  value={agent.requireVerification ? "verify" : "auto"}
+                  onChange={(e) => handleToggleRestriction(agent.id, "requireVerification", e.target.value === "verify")}
+                  disabled={busy === agent.id || agent.agentStatus !== "approved"}
+                  className="rounded-lg px-2.5 py-1.5 text-[12px] font-semibold outline-none cursor-pointer border transition-colors"
+                  style={{
+                    borderColor: "#E5E0D8",
+                    background: "#FAF8F3",
+                    color: agent.requireVerification ? "#8B6914" : "#2E7D4F",
+                    fontFamily: "inherit"
+                  }}
+                >
+                  <option value="auto" style={{ color: "#2E7D4F" }}>Auto-Publish</option>
+                  <option value="verify" style={{ color: "#8B6914" }}>Requires Verification</option>
+                </select>
               </td>
               <td className="px-4 py-4 text-center">
                 <span className="text-[10px] font-bold uppercase tracking-[0.5px] px-3 py-1 rounded-full inline-block"
@@ -73,7 +120,7 @@ export default function AgentsTable({ initialAgents }: { initialAgents: LeadUser
                   {agent.agentStatus === "approved" ? "active" : (agent.agentStatus || "pending")}
                 </span>
               </td>
-              <td className="px-4 py-4 text-right flex items-center justify-end gap-2">
+              <td className="px-4 py-4 text-right flex items-center justify-end gap-2" style={{ minHeight: "56px" }}>
                 {(agent.agentStatus === "pending" || agent.agentStatus === "rejected") && (
                   <button
                     onClick={() => handleUpdateStatus(agent.id, "approved")}
@@ -99,7 +146,7 @@ export default function AgentsTable({ initialAgents }: { initialAgents: LeadUser
           ))}
           {initialAgents.length === 0 && (
             <tr>
-              <td colSpan={5} className="text-center py-12 text-[13px]" style={{ color: "#999" }}>
+              <td colSpan={6} className="text-center py-12 text-[13px]" style={{ color: "#999" }}>
                 No agent partners registered yet.
               </td>
             </tr>

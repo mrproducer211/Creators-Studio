@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { PropertyCard } from "@/types/property";
@@ -10,6 +11,7 @@ import Link from "next/link";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import dynamic from "next/dynamic";
 import { StoredCommuteHub } from "@/lib/store/commuteHubs";
+import { useSession } from "next-auth/react";
 
 const CommuteMap = dynamic(() => import("./CommuteMap"), { ssr: false });
 
@@ -600,11 +602,23 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
    Enquiry form (used by Send Enquiry button)
 ───────────────────────────────────────────── */
 function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: () => void }) {
+  const { data: session }     = useSession();
   const [name, setName]       = useState("");
   const [contact, setContact] = useState("");
   const [method, setMethod]   = useState("WhatsApp");
   const [msg, setMsg]         = useState("");
   const { status, errorMsg, submit: sendEnquiry } = useEnquiry();
+
+  useEffect(() => {
+    if (session?.user) {
+      if (session.user.name && !name) {
+        setName(session.user.name);
+      }
+      if (session.user.email && !contact) {
+        setContact(session.user.email);
+      }
+    }
+  }, [session, name, contact]);
 
   const { formatPrice: formatPriceFn } = useCurrency();
 
@@ -711,12 +725,25 @@ function SimilarCard({ property }: { property: PropertyCard }) {
    Tour calendar — date + time picker modal
 ───────────────────────────────────────────── */
 function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: () => void }) {
+  const { data: session }   = useSession();
   const [selDate, setDate]  = useState<string | null>(null);
   const [selTime, setTime]  = useState<string | null>(null);
   const [name, setName]     = useState("");
   const [method, setMethod] = useState<"WhatsApp" | "Line">("WhatsApp");
   const [contact, setContact] = useState("");
   const { status, errorMsg, submit: sendEnquiry } = useEnquiry();
+
+  useEffect(() => {
+    if (session?.user) {
+      if (session.user.name && !name) {
+        setName(session.user.name);
+      }
+      if (session.user.email && !contact) {
+        setContact(session.user.email);
+      }
+    }
+  }, [session, name, contact]);
+
   const step: "pick" | "done" = status === "done" ? "done" : "pick";
 
   /* ── Calendar logic ── */
@@ -1185,6 +1212,12 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
 
   return (
     <div>
+      {property.status === "unlisted" && (
+        <div className="px-5 md:px-10 py-3.5 bg-amber-50 border-b border-amber-200 text-amber-800 text-[13px] font-medium flex items-center gap-2">
+          <svg className="w-4 h-4 flex-shrink-0 text-amber-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          <span>This listing is currently unlisted. It is only accessible via direct link.</span>
+        </div>
+      )}
 
       {/* ── Breadcrumb + Back to Search ── */}
       <div className="px-5 md:px-10 py-4 flex items-center justify-between" style={{ background: "#F7F3EC", borderBottom: "1px solid #EDE8DF" }}>
@@ -1714,45 +1747,28 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                   ];
                 })();
 
-                const areaImageMap: Record<string, string> = {
-                  "Ari": "https://images.unsplash.com/photo-1579705745811-a32be7cd1083?w=300&auto=format&q=80",
-                  "Thong Lo": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=300&auto=format&q=80",
-                  "Sathorn": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&auto=format&q=80",
-                  "default": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=300&auto=format&q=80"
-                };
-                const loveAreaImg = areaImageMap[property.area] || areaImageMap["default"];
-
                 return (
                   <div className="rounded-2xl p-5" style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}>
-                    <div className="grid grid-cols-[1.5fr_1fr] gap-3">
-                      <div>
-                        <h3 className="text-[11px] font-bold uppercase tracking-[1.5px] mb-3 font-outfit" style={{ color: "#1C3A2F" }}>
-                          Why you&apos;ll love {property.area}
-                        </h3>
-                        <ul className="list-none p-0 m-0 space-y-2">
-                          {loveAreaBulletPoints.map((bp, i) => (
-                            <li key={i} className="flex items-start text-[12px] leading-tight" style={{ color: "#555" }}>
-                              <span className="font-semibold mr-1.5 flex-shrink-0" style={{ color: "#C9A84C" }}>✓</span>
-                              <span>{bp}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="mt-4">
-                          <Link
-                            href={`/explore?area=${property.area}`}
-                            className="text-[11px] font-semibold hover:underline no-underline inline-flex items-center gap-1"
-                            style={{ color: "#C9A84C" }}
-                          >
-                            Learn more about {property.area} <span className="text-[9px]">→</span>
-                          </Link>
-                        </div>
-                      </div>
-                      <div className="relative rounded-xl overflow-hidden h-full min-h-[120px]">
-                        <img
-                          src={loveAreaImg}
-                          alt={property.area}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
+                    <div>
+                      <h3 className="text-[11px] font-bold uppercase tracking-[1.5px] mb-3 font-outfit" style={{ color: "#1C3A2F" }}>
+                        Why you&apos;ll love {property.area}
+                      </h3>
+                      <ul className="list-none p-0 m-0 space-y-2">
+                        {loveAreaBulletPoints.map((bp, i) => (
+                          <li key={i} className="flex items-start text-[12px] leading-tight" style={{ color: "#555" }}>
+                            <span className="font-semibold mr-1.5 flex-shrink-0" style={{ color: "#C9A84C" }}>✓</span>
+                            <span>{bp}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="mt-4">
+                        <Link
+                          href={`/explore?area=${property.area}`}
+                          className="text-[11px] font-semibold hover:underline no-underline inline-flex items-center gap-1"
+                          style={{ color: "#C9A84C" }}
+                        >
+                          Learn more about {property.area} <span className="text-[9px]">→</span>
+                        </Link>
                       </div>
                     </div>
                   </div>

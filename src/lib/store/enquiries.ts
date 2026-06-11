@@ -16,6 +16,7 @@ export interface StoredEnquiry {
   tourDate?:    string;
   tourTime?:    string;
   status:       "new" | "responded" | "archived";
+  userRole?:    string;
 }
 
 const FILE = "enquiries.json";

@@ -34,6 +34,8 @@ export interface PropertyCard {
   verificationBadge?: boolean;
   expiryDate?: string;
   telegramMediaGroupId?: string;
+  pendingVerification?: boolean;
+  agentEmail?: string;
   createdAt: string;
   updatedAt?: string;
   status?: "active" | "unlisted";

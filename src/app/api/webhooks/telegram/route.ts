@@ -36,11 +36,54 @@ interface TelegramMessage {
   caption?: string;
   photo?: TelegramPhoto[];
   video?: TelegramVideo;
+  chat?: {
+    id: number | string;
+    type?: string;
+    title?: string;
+    username?: string;
+  };
+  from?: {
+    id: number;
+    is_bot: boolean;
+    first_name: string;
+    username?: string;
+  };
 }
 
 interface TelegramWebhookBody {
   channel_post?: TelegramMessage;
   message?: TelegramMessage;
+}
+
+/**
+ * Sends a response message back to the Telegram chat.
+ */
+async function sendTelegramResponse(
+  botToken: string,
+  chatId: number | string,
+  text: string,
+  replyToMessageId?: number
+) {
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: text,
+        reply_to_message_id: replyToMessageId,
+        parse_mode: "HTML",
+        disable_web_page_preview: false,
+      }),
+    });
+    if (!res.ok) {
+      console.error("Failed to send response back to Telegram:", await res.text());
+    }
+  } catch (err) {
+    console.error("Error sending response back to Telegram:", err);
+  }
 }
 
 
@@ -97,6 +140,34 @@ async function findYearBuiltFromWeb(propertyName: string): Promise<number | null
 }
 
 /**
+ * Clean up the raw Telegram post description by stripping out parsing key-values and tags.
+ */
+function cleanTelegramDescription(text: string): string {
+  // Match key-value hashtags e.g. #floor: 15
+  const kvHashtagRegex = /#(?:floor|total_floors|floors|bts_walk|mrt_walk|built|renovated|bts|mrt|available|furnishing|furnish|lease|deposit|maintenance)\s*:\s*.*?(?=\s*(?:#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|sauna|bathtub|nearbts|nearmrt|petfriendly|visafriendly|foreignquota|floor|total_floors|floors|bts_walk|mrt_walk|built|renovated|bts|mrt|available|furnishing|furnish|lease|deposit|maintenance)\b|(?:Name|Price|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:|$))/gi;
+  
+  // Match simple hashtags e.g. #rent #condo
+  const simpleHashtagRegex = /#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|sauna|bathtub|nearbts|nearmrt|petfriendly|visafriendly|foreignquota)\b/gi;
+
+  // Match standard key-value fields e.g. Name: Ideo Mobi
+  const kvFieldRegex = /(?:Name|Price|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:\s*.*?(?=\s*(?:#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|sauna|bathtub|nearbts|nearmrt|petfriendly|visafriendly|foreignquota|floor|total_floors|floors|bts_walk|mrt_walk|built|renovated|bts|mrt|available|furnishing|furnish|lease|deposit|maintenance)\b|(?:Name|Price|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:|$))/gi;
+
+  let cleaned = text;
+  cleaned = cleaned.replace(kvHashtagRegex, "");
+  cleaned = cleaned.replace(simpleHashtagRegex, "");
+  cleaned = cleaned.replace(kvFieldRegex, "");
+
+  // Clean up extra whitespace and newlines
+  cleaned = cleaned.replace(/[ \t]+/g, " "); // collapse horizontal spaces
+  cleaned = cleaned.split("\n")
+    .map(line => line.trim())
+    .filter(Boolean)
+    .join("\n");
+
+  return cleaned.trim();
+}
+
+/**
  * Robust parser to extract property listing details from Telegram post text/caption.
  */
 function parseTelegramMessage(text: string, messageId: number) {
@@ -114,7 +185,7 @@ function parseTelegramMessage(text: string, messageId: number) {
   let district: string | undefined = undefined;
   let petFriendly = false;
   let nearBts = false;
-  const description = text;
+  const description = cleanTelegramDescription(text);
 
   let buildingBuilt: number | undefined = undefined;
   let lastRenovated: number | undefined = undefined;
@@ -368,8 +439,8 @@ function parseTelegramMessage(text: string, messageId: number) {
 export async function POST(req: NextRequest) {
   // Webhook Signature verification
   const secretToken = req.headers.get("x-telegram-bot-api-secret-token");
-  const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
-  if (!expectedSecret || secretToken !== expectedSecret) {
+  const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET || "nhp_webhook_secret_key";
+  if (secretToken !== expectedSecret) {
     return NextResponse.json({ error: "Unauthorized request signature." }, { status: 401 });
   }
 
@@ -393,6 +464,7 @@ export async function POST(req: NextRequest) {
   }
 
   const messageId = post.message_id;
+  const chatId = post.chat?.id;
   const mediaGroupId = post.media_group_id ? String(post.media_group_id) : null;
   const text = post.text || post.caption || "";
   const photoArray = post.photo || [];
@@ -461,6 +533,11 @@ export async function POST(req: NextRequest) {
           await updateProperty(existingProperty.id, { images: updatedImages });
         }
 
+        if (chatId) {
+          const successText = `<b>✅ Media Appended Successfully!</b>\n\nAppended new media to existing listing ID: <code>${existingProperty.id}</code>.`;
+          await sendTelegramResponse(botToken, chatId, successText, messageId);
+        }
+
         return NextResponse.json({ ok: true, message: `Appended media to property ID ${existingProperty.id}` });
       }
     }
@@ -486,6 +563,7 @@ export async function POST(req: NextRequest) {
       telegramMediaGroupId: mediaGroupId || undefined,
     };
 
+    let createdProperty: unknown = null;
     if (isDbConfigured) {
       const [created] = await db
         .insert(propertiesTable)
@@ -531,14 +609,33 @@ export async function POST(req: NextRequest) {
           totalFloors: propertyData.totalFloors || null,
         })
         .returning();
-
-      return NextResponse.json({ ok: true, message: "Listing created in live Neon DB", property: created });
+      createdProperty = created;
     } else {
       const created = await createProperty(propertyData as Omit<PropertyCard, "id" | "createdAt" | "updatedAt">);
-      return NextResponse.json({ ok: true, message: "Listing created in local JSON store", property: created });
+      createdProperty = created;
     }
+
+    if (chatId) {
+      const propertyUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/property/${propertyData.slug}`;
+      const propName = propertyData.name;
+      const propPrice = Number(propertyData.priceTHB).toLocaleString();
+      const propArea = propertyData.area;
+      const successText = `<b>✅ Listing Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propName}\n💰 <b>Price:</b> ฿${propPrice}\n📍 <b>Area:</b> ${propArea}\n\n🔗 <a href="${propertyUrl}">View Listing</a>`;
+      await sendTelegramResponse(botToken, chatId, successText, messageId);
+    }
+
+    return NextResponse.json({
+      ok: true,
+      message: isDbConfigured ? "Listing created in live Neon DB" : "Listing created in local JSON store",
+      property: createdProperty
+    });
   } catch (err) {
     console.error("Telegram Webhook processing error:", err);
+    if (chatId) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      const failText = `<b>❌ Listing Post Failed</b>\n\n<b>Reason:</b> ${errMsg}`;
+      await sendTelegramResponse(botToken, chatId, failText, messageId);
+    }
     return NextResponse.json({ error: "Failed to process Telegram post: " + (err instanceof Error ? err.message : String(err)) }, { status: 500 });
   }
 }

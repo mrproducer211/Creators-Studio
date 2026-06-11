@@ -348,18 +348,6 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
               </Field>
             </div>
 
-            {/* Video File */}
-            <div>
-              <Field label="Video Tour URL (Shown in Reels)" hint="Paste MP4 video URL or upload direct from your computer.">
-                <div className="flex gap-2">
-                  <input className={inputCls} style={inputStyle} value={state.videoUrl ?? ""} onChange={(e) => setField("videoUrl", e.target.value)} placeholder="https://..." />
-                  <label className="flex-shrink-0 px-4 py-3 rounded-xl text-[12px] font-semibold cursor-pointer text-white flex items-center justify-center min-w-[110px]" style={{ background: "#1C3A2F" }}>
-                    {uploadingField === "videoUrl" ? "Uploading..." : "Upload Video"}
-                    <input type="file" accept="video/mp4" className="hidden" onChange={(e) => handleFileUpload(e, "videoUrl")} disabled={uploadingField !== null} />
-                  </label>
-                </div>
-              </Field>
-            </div>
           </div>
         </div>
 
@@ -503,7 +491,6 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
           <h3 className="text-[14px] font-bold mb-4" style={{ color: "#1C3A2F" }}>Visibility & Verification Flags</h3>
           <div className="flex flex-col gap-3">
             <FlagToggle label="Featured Listing" hint="Promotes property on homepage" checked={state.featured} onChange={(v) => setField("featured", v)} />
-            <FlagToggle label="Has Video Tour" hint="Will place property in Reels feed" checked={state.hasVideo} onChange={(v) => setField("hasVideo", v)} />
             <FlagToggle label="Pet Friendly" checked={state.petFriendly} onChange={(v) => setField("petFriendly", v)} />
             <FlagToggle label="Near BTS / MRT" checked={state.nearBts} onChange={(v) => setField("nearBts", v)} />
             <FlagToggle label="Verified Listing Badge" hint="Indicates title deed verified" checked={state.verificationBadge ?? false} onChange={(v) => setField("verificationBadge", v)} />

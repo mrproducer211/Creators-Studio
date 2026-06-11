@@ -33,6 +33,52 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
       );
   }, [properties, search, filter]);
 
+  const approve = async (id: number) => {
+    setBusyId(id);
+    try {
+      const res = await fetch(`/api/admin/properties/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "active", pendingVerification: false }),
+      });
+      if (res.ok) {
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to approve listing.");
+      }
+    } catch {
+      alert("Error approving listing.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const extend = async (id: number, currentExpiryStr?: string) => {
+    setBusyId(id);
+    try {
+      const currentExpiry = currentExpiryStr ? new Date(currentExpiryStr) : new Date();
+      const baseDate = currentExpiry > new Date() ? currentExpiry : new Date();
+      const newExpiry = new Date(baseDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+      
+      const res = await fetch(`/api/admin/properties/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ expiryDate: newExpiry.toISOString(), status: "active" }), // also make active if extended
+      });
+      if (res.ok) {
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to extend expiry.");
+      }
+    } catch {
+      alert("Error extending expiry.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   const del = async (id: number, name: string) => {
     if (!confirm(`Delete "${name}"? This can't be undone.`)) return;
     setBusyId(id);
@@ -90,69 +136,102 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
             </tr>
           </thead>
           <tbody>
-            {filtered.map((p) => (
-              <tr key={p.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    {p.coverImage ? (
-                      <img src={p.coverImage} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-lg flex-shrink-0" style={{ background: "linear-gradient(135deg,#254D3E,#1C3A2F)" }} />
-                    )}
-                    <div className="min-w-0">
-                      <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.name}</div>
-                      <div className="text-[11px] truncate" style={{ color: "#999" }}>{p.slug}</div>
+            {filtered.map((p) => {
+              const isExpired = p.expiryDate && new Date() > new Date(p.expiryDate);
+              return (
+                <tr key={p.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      {p.coverImage ? (
+                        <img src={p.coverImage} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg flex-shrink-0" style={{ background: "linear-gradient(135deg,#254D3E,#1C3A2F)" }} />
+                      )}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.name}</div>
+                          {p.pendingVerification && (
+                            <span className="text-[8px] font-bold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200 uppercase tracking-[0.3px]">Pending Approve</span>
+                          )}
+                          {p.status === "unlisted" && !p.pendingVerification && (
+                            <span className="text-[8px] font-bold bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200 uppercase tracking-[0.3px]">{isExpired ? "Expired (Unlisted)" : "Unlisted"}</span>
+                          )}
+                        </div>
+                        <div className="text-[11px] truncate flex items-center gap-2" style={{ color: "#999" }}>
+                          <span>{p.slug}</span>
+                          {p.expiryDate && (
+                            <span className="font-semibold" style={{ color: isExpired ? "#E05252" : "#8B6914" }}>
+                              ⏱️ Expires: {new Date(p.expiryDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-3 py-3">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.5px] px-2 py-1 rounded-full" style={badgeStyle(p.listingType)}>
-                    {badgeLabel(p.listingType)}
-                  </span>
-                </td>
-                <td className="px-3 py-3 text-[12px]" style={{ color: "#555" }}>{p.area}</td>
-                <td className="px-3 py-3 text-right text-[12px] font-semibold" style={{ color: "#1C3A2F" }}>
-                  ฿{Number(p.priceTHB).toLocaleString("th-TH")}{p.priceLabel}
-                </td>
-                <td className="px-3 py-3">
-                  <div className="flex items-center justify-center gap-1.5">
-                    {p.featured  && <span title="Featured"    className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(201,168,76,0.18)", color: "#8B6914" }}>FEAT</span>}
-                    {p.hasVideo  && <span title="Has video"   className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(28,58,47,0.1)", color: "#1C3A2F" }}>VID</span>}
-                    {p.petFriendly && <span title="Pet friendly" className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(46,97,80,0.15)", color: "#2E6150" }}>PET</span>}
-                    {p.nearBts   && <span title="Near BTS/MRT" className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(74,144,222,0.15)", color: "#2A5A99" }}>BTS</span>}
-                  </div>
-                </td>
-                <td className="px-3 py-3 text-center">
-                  <div className="inline-flex items-center gap-2.5 text-[11px] font-semibold text-[#666]">
-                    <span title="Views">👁️ {p.viewCount ?? 0}</span>
-                    <span title="Clicks">🖱️ {p.clicks ?? 0}</span>
-                    <span title="Likes">❤️ {p.likes}</span>
-                    <span title="Saves">⭐ {p.saves}</span>
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <div className="flex items-center gap-1.5 justify-end">
-                    <a href={`/property/${p.slug}`} target="_blank" rel="noopener noreferrer"
-                      className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium no-underline" style={{ background: "#F7F3EC", color: "#1C3A2F", border: "1px solid #E5E0D8" }}>
-                      View
-                    </a>
-                    <a href={`/admin/properties/${p.id}`}
-                      className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium no-underline" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>
-                      Edit
-                    </a>
-                    <button onClick={() => del(p.id, p.name)} disabled={busyId === p.id}
-                      suppressHydrationWarning
-                      className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium cursor-pointer border-none disabled:opacity-50"
-                      style={{ background: "rgba(224,82,82,0.1)", color: "#E05252", fontFamily: "inherit" }}>
-                      {busyId === p.id ? "…" : "Delete"}
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="px-3 py-3">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.5px] px-2 py-1 rounded-full" style={badgeStyle(p.listingType)}>
+                      {badgeLabel(p.listingType)}
+                    </span>
+                  </td>
+                  <td className="px-3 py-3 text-[12px]" style={{ color: "#555" }}>{p.area}</td>
+                  <td className="px-3 py-3 text-right text-[12px] font-semibold" style={{ color: "#1C3A2F" }}>
+                    ฿{Number(p.priceTHB).toLocaleString("th-TH")}{p.priceLabel}
+                  </td>
+                  <td className="px-3 py-3">
+                    <div className="flex items-center justify-center gap-1.5">
+                      {p.featured  && <span title="Featured"    className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(201,168,76,0.18)", color: "#8B6914" }}>FEAT</span>}
+                      {p.hasVideo  && <span title="Has video"   className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(28,58,47,0.1)", color: "#1C3A2F" }}>VID</span>}
+                      {p.petFriendly && <span title="Pet friendly" className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(46,97,80,0.15)", color: "#2E6150" }}>PET</span>}
+                      {p.nearBts   && <span title="Near BTS/MRT" className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: "rgba(74,144,222,0.15)", color: "#2A5A99" }}>BTS</span>}
+                    </div>
+                  </td>
+                  <td className="px-3 py-3 text-center">
+                    <div className="inline-flex items-center gap-2.5 text-[11px] font-semibold text-[#666]">
+                      <span title="Views">👁️ {p.viewCount ?? 0}</span>
+                      <span title="Clicks">🖱️ {p.clicks ?? 0}</span>
+                      <span title="Likes">❤️ {p.likes}</span>
+                      <span title="Saves">⭐ {p.saves}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex items-center gap-1.5 justify-end">
+                      {p.pendingVerification && (
+                        <button onClick={() => approve(p.id)} disabled={busyId === p.id}
+                          className="px-2.5 py-1.5 rounded-lg text-[11px] font-bold border-none cursor-pointer text-white hover:opacity-95"
+                          style={{ background: "#2E7D4F", fontFamily: "inherit" }}>
+                          {busyId === p.id ? "…" : "Approve"}
+                        </button>
+                      )}
+                      {(p.expiryDate || isExpired) && (
+                        <button onClick={() => extend(p.id, p.expiryDate)} disabled={busyId === p.id}
+                          className="px-2.5 py-1.5 rounded-lg text-[11px] font-bold border cursor-pointer hover:bg-[#FAF8F3]"
+                          style={{ background: "transparent", borderColor: "#EDE8DF", color: "#8B6914", fontFamily: "inherit" }}
+                          title="Extend expiry date by 30 days">
+                          {isExpired ? "Renew (+30d)" : "+30 Days"}
+                        </button>
+                      )}
+                      <a href={`/property/${p.slug}`} target="_blank" rel="noopener noreferrer"
+                        className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium no-underline" style={{ background: "#F7F3EC", color: "#1C3A2F", border: "1px solid #E5E0D8" }}>
+                        View
+                      </a>
+                      <a href={`/admin/properties/${p.id}`}
+                        className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium no-underline" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>
+                        Edit
+                      </a>
+                      <button onClick={() => del(p.id, p.name)} disabled={busyId === p.id}
+                        suppressHydrationWarning
+                        className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium cursor-pointer border-none disabled:opacity-50"
+                        style={{ background: "rgba(224,82,82,0.1)", color: "#E05252", fontFamily: "inherit" }}>
+                        {busyId === p.id ? "…" : "Delete"}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-[13px] text-center py-10" style={{ color: "#999" }}>
+                <td colSpan={7} className="text-[13px] text-center py-10" style={{ color: "#999" }}>
                   No properties match the current filter.
                 </td>
               </tr>

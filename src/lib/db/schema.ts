@@ -85,6 +85,8 @@ export const properties = pgTable("properties", {
   verificationBadge: boolean("verification_badge").notNull().default(false),
   expiryDate:        timestamp("expiry_date"),
   telegramMediaGroupId: varchar("telegram_media_group_id", { length: 100 }),
+  pendingVerification: boolean("pending_verification").notNull().default(false),
+  agentEmail:        varchar("agent_email", { length: 255 }),
 
   // Timestamps
   createdAt:    timestamp("created_at").notNull().defaultNow(),
@@ -99,6 +101,7 @@ export const enquiries = pgTable("enquiries", {
   method:       varchar("method", { length: 50 }).notNull(), // whatsapp / line / telegram
   message:      text("message"),
   status:       varchar("status", { length: 50 }).notNull().default("new"), // new, contacted, closed
+  userRole:     varchar("user_role", { length: 50 }).notNull().default("user"),
   createdAt:    timestamp("created_at").notNull().defaultNow(),
 });
 

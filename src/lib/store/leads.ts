@@ -9,6 +9,8 @@ export interface LeadUser {
   createdAt: string;
   role: "user" | "agent";
   agentStatus?: "pending" | "approved" | "rejected";
+  postingRestricted?: boolean;
+  requireVerification?: boolean;
 }
 
 const FILE = "leads.json";
@@ -99,6 +101,23 @@ export async function updateAgentStatus(id: string, status: "approved" | "reject
   all[idx] = {
     ...all[idx],
     agentStatus: status,
+  };
+  
+  await persist(all);
+  return true;
+}
+
+export async function updateAgentRestrictions(
+  id: string,
+  patch: { postingRestricted?: boolean; requireVerification?: boolean }
+): Promise<boolean> {
+  const all = await load();
+  const idx = all.findIndex((u) => u.id === id);
+  if (idx === -1) return false;
+  
+  all[idx] = {
+    ...all[idx],
+    ...patch,
   };
   
   await persist(all);

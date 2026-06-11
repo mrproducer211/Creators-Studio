@@ -27,6 +27,8 @@ export default async function AgentDashboardPage() {
         email: agent.email,
         agentStatus: agent.agentStatus,
         createdAt: agent.createdAt,
+        postingRestricted: agent.postingRestricted ?? false,
+        requireVerification: agent.requireVerification ?? false,
       }}
       initialProperties={agentProperties}
     />

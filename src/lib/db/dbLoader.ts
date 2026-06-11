@@ -12,6 +12,7 @@ import { getAllLocalAppointments } from "@/lib/store/appointments";
 import { getAllEnquiries } from "@/lib/store/enquiries";
 import { getSystemSettings } from "@/lib/store/settings";
 import { PropertyCard } from "@/types/property";
+import { writeJson } from "@/lib/store/fileStore";
 
 /**
  * Safely fetches property listings from the live database.
@@ -19,10 +20,76 @@ import { PropertyCard } from "@/types/property";
  */
 import { getAllProperties, getPropertyById, updateProperty } from "@/lib/store/properties";
 
-export async function getDbProperties(): Promise<PropertyCard[]> {
+export async function checkAndRunListingExpiry() {
+  const now = new Date();
+  try {
+    const settings = await getSystemSettings();
+    if (isDbConfigured) {
+      // 1. Unlist if past explicit expiry date
+      await db
+        .update(propertiesTable)
+        .set({ status: "draft" })
+        .where(
+          and(
+            eq(propertiesTable.status, "active"),
+            lt(propertiesTable.expiryDate, now)
+          )
+        );
+
+      // 2. Unlist if past general rental expiry threshold
+      if (settings.rentalExpiryEnabled && settings.rentalExpiryDays > 0) {
+        const threshold = new Date(Date.now() - settings.rentalExpiryDays * 24 * 60 * 60 * 1000);
+        await db
+          .update(propertiesTable)
+          .set({ status: "draft" })
+          .where(
+            and(
+              eq(propertiesTable.status, "active"),
+              eq(propertiesTable.listingType, "rent"),
+              lt(propertiesTable.createdAt, threshold)
+            )
+          );
+      }
+    } else {
+      const all = await getAllProperties();
+      let changed = false;
+      const updated = all.map((p) => {
+        if (p.status !== "unlisted") {
+          // Explicit expiry date check
+          if (p.expiryDate && now > new Date(p.expiryDate)) {
+            changed = true;
+            return { ...p, status: "unlisted" as const };
+          }
+          // General rental auto-expiry check
+          if (settings.rentalExpiryEnabled && settings.rentalExpiryDays > 0 && p.listingType === "rent") {
+            const threshold = new Date(Date.now() - settings.rentalExpiryDays * 24 * 60 * 60 * 1000);
+            if (new Date(p.createdAt) < threshold) {
+              changed = true;
+              return { ...p, status: "unlisted" as const };
+            }
+          }
+        }
+        return p;
+      });
+
+      if (changed) {
+        await writeJson("properties.json", updated);
+      }
+    }
+  } catch (err) {
+    console.error("Listing expiry check error:", err);
+  }
+}
+
+export async function getDbProperties(options?: { includeUnlisted?: boolean }): Promise<PropertyCard[]> {
+  const includeUnlisted = options?.includeUnlisted ?? false;
+
+  // Run auto expiry checker
+  await checkAndRunListingExpiry();
+
   if (!isDbConfigured) {
     const localList = await getAllProperties();
-    const visibleList = localList.filter((p) => p.status !== "unlisted");
+    const visibleList = includeUnlisted ? localList : localList.filter((p) => p.status !== "unlisted");
     return visibleList.map((p) => ({
       ...p,
       clicks: p.clicks ?? 0,
@@ -37,20 +104,6 @@ export async function getDbProperties(): Promise<PropertyCard[]> {
     }));
   }
   try {
-    // Check and run automatic rental expiry deletion
-    const settings = await getSystemSettings();
-    if (settings.rentalExpiryEnabled && settings.rentalExpiryDays > 0) {
-      const threshold = new Date(Date.now() - settings.rentalExpiryDays * 24 * 60 * 60 * 1000);
-      await db
-        .delete(propertiesTable)
-        .where(
-          and(
-            eq(propertiesTable.listingType, "rent"),
-            lt(propertiesTable.createdAt, threshold)
-          )
-        );
-    }
-
     const list = await db
       .select()
       .from(propertiesTable)
@@ -126,7 +179,7 @@ export async function getDbProperties(): Promise<PropertyCard[]> {
           status: (p.status as PropertyCard["status"]) || undefined,
         };
       });
-      return mapped.filter((p) => p.status !== "unlisted");
+      return includeUnlisted ? mapped : mapped.filter((p) => p.status !== "unlisted");
     }
   } catch (err) {
     console.warn("DB properties fetch failed, using fallback mock data:", err);
@@ -369,6 +422,7 @@ export async function getDbEnquiries() {
         message: e.message || null,
         status: e.status,
         createdAt: new Date(e.createdAt),
+        userRole: e.userRole || "user",
         propertyName: e.propertyName || null,
         propertySlug: e.propertySlug || null,
       }));
@@ -387,6 +441,7 @@ export async function getDbEnquiries() {
         message: enquiriesTable.message,
         status: enquiriesTable.status,
         createdAt: enquiriesTable.createdAt,
+        userRole: enquiriesTable.userRole,
         propertyName: propertiesTable.name,
         propertySlug: propertiesTable.slug,
       })

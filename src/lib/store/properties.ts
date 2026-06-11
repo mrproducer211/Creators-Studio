@@ -13,28 +13,9 @@ async function persist(list: PropertyCard[]): Promise<void> {
   await writeJson(FILE, list);
 }
 
-import { getSystemSettings } from "./settings";
-
 /* ────────── Public API ────────── */
 export async function getAllProperties(): Promise<PropertyCard[]> {
   const all = await load();
-
-  // Check and run automatic rental expiry deletion for local store
-  const settings = await getSystemSettings();
-  if (settings.rentalExpiryEnabled && settings.rentalExpiryDays > 0) {
-    const threshold = new Date(Date.now() - settings.rentalExpiryDays * 24 * 60 * 60 * 1000);
-    const filtered = all.filter((p) => {
-      if (p.listingType !== "rent") return true;
-      const createdDate = new Date(p.createdAt);
-      return createdDate >= threshold;
-    });
-
-    if (filtered.length !== all.length) {
-      await persist(filtered);
-      return filtered;
-    }
-  }
-
   return [...all];
 }
 
