@@ -52,7 +52,7 @@ function Toggle({ active, onClick, children }: { active: boolean; onClick: () =>
 }
 
 export default function ExploreFiltersBar({ filters, total, onChange, onReset }: Props) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [sheetOpen, setSheetOpen] = useState(false);
   const count = activeCount(filters);
 
@@ -211,6 +211,7 @@ export default function ExploreFiltersBar({ filters, total, onChange, onReset }:
                 const val = a === "All Areas" ? "" : a;
                 return <option key={a} value={val}>{label}</option>;
               })}
+              <option value="Other">{lang === "th" ? "พื้นที่อื่นในกรุงเทพฯ" : "Other Bangkok Areas"}</option>
             </select>
 
             {/* Beds */}
@@ -372,6 +373,7 @@ export default function ExploreFiltersBar({ filters, total, onChange, onReset }:
                   const val = a === "All Areas" ? "" : a;
                   return <option key={a} value={val}>{label}</option>;
                 })}
+                <option value="Other">{lang === "th" ? "พื้นที่อื่นในกรุงเทพฯ" : "Other Bangkok Areas"}</option>
               </select>
 
               {/* Budget */}

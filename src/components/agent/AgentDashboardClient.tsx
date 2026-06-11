@@ -137,6 +137,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
   const [listingType, setListingType] = useState<"sale" | "rent" | "short_stay">("rent");
   const [propertyType, setPropertyType] = useState<"condo" | "apartment" | "house" | "villa" | "townhouse">("condo");
   const [area, setArea] = useState("Sukhumvit");
+  const [customArea, setCustomArea] = useState("");
   const [district, setDistrict] = useState("");
   const [bedrooms, setBedrooms] = useState("1");
   const [bathrooms, setBathrooms] = useState("1");
@@ -296,7 +297,9 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
     setSuccessMsg("");
     setLoading(true);
 
-    if (!name.trim() || !priceTHB || !area) {
+    const finalArea = area === "Other" ? customArea.trim() : area;
+
+    if (!name.trim() || !priceTHB || !finalArea) {
       setError("Please fill out all required fields.");
       setLoading(false);
       return;
@@ -315,7 +318,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
           bedrooms: Number(bedrooms),
           bathrooms: Number(bathrooms),
           sqm: sqm ? Number(sqm) : undefined,
-          area,
+          area: finalArea,
           district: district || undefined,
           coverImage: coverImage || undefined,
           btsStation: btsStation || undefined,
@@ -357,6 +360,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
       setPetFriendly(false);
       setNearBts(false);
       setFurnishing("furnished");
+      setCustomArea("");
       setUploadStep(1);
 
       // Refresh listings
@@ -469,8 +473,9 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
       setError("Please enter a valid price in THB.");
       return false;
     }
-    if (!area) {
-      setError("Please select a neighborhood area.");
+    const finalArea = area === "Other" ? customArea.trim() : area;
+    if (!finalArea) {
+      setError("Please select or specify a neighborhood area.");
       return false;
     }
     return true;
@@ -1344,15 +1349,33 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                       <div>
                         <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Neighborhood Area *</label>
                         <select
-                          value={area}
-                          onChange={(e) => setArea(e.target.value)}
+                          value={["Sukhumvit", "Sathorn", "Thong Lo", "Asok", "Silom", "On Nut", "Ekkamai", "Ari", "Rama 9", "Bang Na", "Huai Khwang", "Phaya Thai"].includes(area) ? area : "Other"}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (val === "Other") {
+                              setArea("Other");
+                            } else {
+                              setArea(val);
+                            }
+                          }}
                           className="w-full px-4.5 py-3.5 rounded-xl text-[14px] focus:outline-none focus:border-[#C9A84C]"
                           style={inputStyle}
                         >
                           {["Sukhumvit", "Sathorn", "Thong Lo", "Asok", "Silom", "On Nut", "Ekkamai", "Ari", "Rama 9", "Bang Na", "Huai Khwang", "Phaya Thai"].map((a) => (
                             <option key={a} value={a}>{a}</option>
                           ))}
+                          <option value="Other">Other Bangkok Area (Specify...)</option>
                         </select>
+                        {area === "Other" && (
+                          <input
+                            type="text"
+                            value={customArea}
+                            onChange={(e) => setCustomArea(e.target.value)}
+                            placeholder="Specify Bangkok area (e.g. Samsen, Ladprao)"
+                            className="w-full px-4.5 py-3.5 rounded-xl text-[14px] mt-2 focus:outline-none focus:border-[#C9A84C]"
+                            style={inputStyle}
+                          />
+                        )}
                       </div>
 
                       <div>

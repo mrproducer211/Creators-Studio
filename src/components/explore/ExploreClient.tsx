@@ -58,7 +58,14 @@ function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] 
   }
   if (f.listingType !== "all") result = result.filter((p) => p.listingType === f.listingType);
   if (f.propertyType !== "all") result = result.filter((p) => p.propertyType === f.propertyType);
-  if (f.area) result = result.filter((p) => p.area === f.area);
+  if (f.area) {
+    if (f.area === "Other") {
+      const standardAreas = ["Sukhumvit", "Sathorn", "Thong Lo", "Asok", "Silom", "On Nut", "Ekkamai", "Ari", "Rama 9", "Bang Na", "Huai Khwang", "Phaya Thai"];
+      result = result.filter((p) => !standardAreas.includes(p.area));
+    } else {
+      result = result.filter((p) => p.area === f.area);
+    }
+  }
   if (f.bedrooms !== "any") {
     result = result.filter((p) =>
       f.bedrooms === 4 ? p.bedrooms >= 4 : p.bedrooms === f.bedrooms
