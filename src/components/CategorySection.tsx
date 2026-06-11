@@ -191,18 +191,18 @@ export default function CategorySection() {
         className="md:hidden overflow-x-auto no-scrollbar"
         style={{ paddingLeft: 16 }}
       >
-        <div className="flex pb-3" style={{ gap: 16 }}>
+        <div className="flex pb-4" style={{ gap: 20 }}>
           {SECTIONS.map((section) => (
             <div
               key={section.anchor.slug}
               className="flex items-stretch flex-shrink-0"
-              style={{ width: "calc(100vw - 44px)", gap: 10 }}
+              style={{ gap: 12, height: 238 }}
             >
-              {/* Tall anchor card — wider and taller */}
+              {/* Tall anchor card — 50% larger (95px -> 142px) */}
               <a
                 href={section.anchor.href}
                 className="relative overflow-hidden rounded-2xl no-underline flex-shrink-0 group"
-                style={{ width: 110 }}
+                style={{ width: 142 }}
               >
                 <img
                   src={section.anchor.image}
@@ -213,27 +213,30 @@ export default function CategorySection() {
                   className="absolute inset-0"
                   style={{ background: "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)" }}
                 />
-                <div className="absolute bottom-0 left-0 right-0 pb-4 px-2.5 flex flex-col items-center text-center">
-                  <p className="text-[10px] font-light mb-1" style={{ color: "rgba(255,255,255,0.6)" }}>
+                <div className="absolute bottom-0 left-0 right-0 pb-5 px-3 flex flex-col items-center text-center">
+                  <p className="text-[11px] font-light mb-1" style={{ color: "rgba(255,255,255,0.6)" }}>
                     {section.anchor.label}
                   </p>
-                  <h3 className="text-[14px] font-bold leading-tight" style={{ color: "#FFFFFF", letterSpacing: "-0.2px" }}>
+                  <h3 className="text-[16px] font-bold leading-tight" style={{ color: "#FFFFFF", letterSpacing: "-0.2px" }}>
                     {section.anchor.name}
                   </h3>
                 </div>
               </a>
 
-              {/* 2×2 landscape grid */}
+              {/* 2×2 landscape grid — 50% larger (aspect ratio 3/2 with W:170px, H:113px) */}
               <div
-                className="flex-1 grid grid-cols-2"
-                style={{ gap: 10 }}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "170px 170px",
+                  gridTemplateRows: "113px 113px",
+                  gap: 12,
+                }}
               >
                 {section.cards.map((card) => (
                   <a
                     key={card.slug}
                     href={card.href}
                     className="relative overflow-hidden rounded-2xl no-underline group"
-                    style={{ aspectRatio: "1.33 / 1" }}
                   >
                     <img
                       src={card.image}
@@ -244,11 +247,11 @@ export default function CategorySection() {
                       className="absolute inset-0"
                       style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 60%, transparent 100%)" }}
                     />
-                    <div className="absolute bottom-0 left-0 p-3 w-full text-left">
-                      <h4 className="text-[12px] font-bold leading-tight mb-0.5 truncate" style={{ color: "#FFFFFF" }}>
+                    <div className="absolute bottom-0 left-0 p-3.5 w-full text-left">
+                      <h4 className="text-[13px] font-bold leading-tight mb-0.5 truncate" style={{ color: "#FFFFFF" }}>
                         {card.name}
                       </h4>
-                      <p className="text-[10px] opacity-80 truncate" style={{ color: "rgba(255,255,255,0.85)" }}>
+                      <p className="text-[11px] opacity-80 truncate" style={{ color: "rgba(255,255,255,0.85)" }}>
                         {card.count.toLocaleString()} {t.category.props}
                       </p>
                     </div>
