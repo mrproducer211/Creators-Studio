@@ -181,7 +181,21 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
           status: (p.status as PropertyCard["status"]) || undefined,
         };
       });
-      return includeUnlisted ? mapped : mapped.filter((p) => p.status !== "unlisted");
+      const dbList = includeUnlisted ? mapped : mapped.filter((p) => p.status !== "unlisted");
+      const dbSlugs = new Set(dbList.map((p) => p.slug));
+      const mockList = MOCK_PROPERTIES.filter((p) => !dbSlugs.has(p.slug));
+      
+      const dbIds = new Set(dbList.map((p) => p.id));
+      let nextId = Math.max(...Array.from(dbIds), 0) + 1;
+      const safeMockList = mockList.map((p) => {
+        if (dbIds.has(p.id)) {
+          const newId = nextId++;
+          return { ...p, id: newId };
+        }
+        return p;
+      });
+
+      return [...dbList, ...safeMockList];
     }
   } catch (err) {
     console.warn("DB properties fetch failed, using fallback mock data:", err);

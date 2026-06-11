@@ -288,14 +288,27 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                     View {saved.length} Saved 💚
                   </button>
                 )}
-                <button onClick={() => setFilter("all")} className="py-3 rounded-2xl text-sm font-semibold cursor-pointer border-2" style={{ background: "transparent", color: "#FFFFFF", borderColor: "rgba(255,255,255,0.3)", fontFamily: "inherit" }}>
+                <button
+                  onClick={() => {
+                    setFilter("all");
+                    setPetFriendly(false);
+                    setNearBts(false);
+                    setMinPrice("");
+                    setMaxPrice("");
+                    setSearchLocation("");
+                    setStack([...properties]);
+                    setSkipped([]);
+                  }}
+                  className="py-3 rounded-2xl text-sm font-semibold cursor-pointer border-2"
+                  style={{ background: "transparent", color: "#FFFFFF", borderColor: "rgba(255,255,255,0.3)", fontFamily: "inherit" }}
+                >
                   Browse All Again
                 </button>
               </div>
             </div>
           ) : (
             visibleStack.map((p, visIdx) => (
-              <SwipeCard key={p.id} property={p} index={2 - visIdx} total={stack.length} onSwipe={doSwipe} />
+              <SwipeCard key={p.id} property={p} index={visibleStack.length - 1 - visIdx} total={stack.length} onSwipe={doSwipe} />
             ))
           )}
         </div>

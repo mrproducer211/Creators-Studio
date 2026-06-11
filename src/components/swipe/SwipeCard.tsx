@@ -141,7 +141,7 @@ export default function SwipeCard({ property, index, total, onSwipe }: Props) {
       {/* Gradient overlay */}
       <div
         className="absolute inset-0"
-        style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 40%, transparent 50%, rgba(0,0,0,0.75) 100%)" }}
+        style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.08) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.5) 100%)" }}
       />
 
       {/* LIKE badge */}

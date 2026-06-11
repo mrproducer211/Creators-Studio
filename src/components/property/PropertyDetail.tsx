@@ -665,7 +665,13 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
           </button>
 
           {/* Center container */}
-          <div className="relative max-w-5xl w-full h-[75vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+          <div 
+            className="relative max-w-5xl w-full h-[75vh] flex items-center justify-center" 
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
             {rawImages[active % (rawImages.length || 1)] && (
               <img 
                 src={rawImages[active % (rawImages.length || 1)]} 
