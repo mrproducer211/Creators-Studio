@@ -272,7 +272,7 @@ function DesktopHero({
       <div style={{ position: "relative", overflow: "hidden", minHeight: "100vh" }}>
         {/* Background photo */}
         <img
-          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=85&auto=format&fit=crop"
+          src="/images/homepage_hero.png"
           alt="Premium Bangkok Condo"
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
         />
