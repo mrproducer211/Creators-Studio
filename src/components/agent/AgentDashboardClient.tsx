@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { 
@@ -21,7 +21,9 @@ import {
   ChevronRight,
   ChevronLeft,
   FileText,
-  ShieldAlert
+  ShieldAlert,
+  Calendar,
+  MessageSquare
 } from "lucide-react";
 import Link from "next/link";
 
@@ -38,10 +40,95 @@ interface AgentDashboardClientProps {
 
 export default function AgentDashboardClient({ agent, initialProperties }: AgentDashboardClientProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"listings" | "upload" | "settings">("listings");
+  const [activeTab, setActiveTab] = useState<"listings" | "leads" | "bookings" | "upload" | "settings">("listings");
   const [properties, setProperties] = useState<any[]>(initialProperties);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
+
+  // Leads & Bookings states
+  const [enquiries, setEnquiries] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+
+  const fetchLeads = async () => {
+    setLeadsLoading(true);
+    try {
+      const res = await fetch("/api/agent/leads");
+      if (res.ok) {
+        const data = await res.json();
+        setEnquiries(data.enquiries || []);
+      }
+    } catch (err) {
+      console.error("Error fetching leads:", err);
+    } finally {
+      setLeadsLoading(false);
+    }
+  };
+
+  const fetchBookings = async () => {
+    setBookingsLoading(true);
+    try {
+      const res = await fetch("/api/agent/appointments");
+      if (res.ok) {
+        const data = await res.json();
+        setAppointments(data.appointments || []);
+      }
+    } catch (err) {
+      console.error("Error fetching bookings:", err);
+    } finally {
+      setBookingsLoading(false);
+    }
+  };
+
+  const handleUpdateLeadStatus = async (id: number | string, newStatus: string) => {
+    try {
+      const res = await fetch("/api/agent/leads", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      if (res.ok) {
+        setEnquiries(enquiries.map((e) => e.id === id ? { ...e, status: newStatus } : e));
+      } else {
+        alert("Failed to update lead status.");
+      }
+    } catch (err) {
+      console.error("Error updating lead status:", err);
+    }
+  };
+
+  const handleUpdateBookingStatus = async (id: number | string, newStatus: string) => {
+    try {
+      const res = await fetch("/api/agent/appointments", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      if (res.ok) {
+        setAppointments(appointments.map((a) => a.id === id ? { ...a, status: newStatus } : a));
+      } else {
+        alert("Failed to update booking status.");
+      }
+    } catch (err) {
+      console.error("Error updating booking status:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "leads") {
+      fetchLeads();
+    } else if (activeTab === "bookings") {
+      fetchBookings();
+    }
+  }, [activeTab]);
+
+  const getPropertyName = (item: any) => {
+    const prop = properties.find(
+      (p) => p.id === item.propertyId || p.slug === item.propertySlug
+    );
+    return prop ? prop.name : item.propertyName || "Unknown Property";
+  };
   
   // Listing Upload Form State
   const [name, setName] = useState("");
@@ -444,6 +531,26 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
               <FolderOpen size={16} /> My Listings
             </button>
             <button
+              onClick={() => setActiveTab("leads")}
+              className="w-full flex items-center gap-2.5 px-4 py-3 rounded-xl text-[13px] font-medium text-left border-none cursor-pointer transition-all"
+              style={{
+                background: activeTab === "leads" ? "rgba(201,168,76,0.18)" : "transparent",
+                color: activeTab === "leads" ? "#E2C97E" : "rgba(255,255,255,0.65)",
+              }}
+            >
+              <MessageSquare size={16} /> Leads & Enquiries
+            </button>
+            <button
+              onClick={() => setActiveTab("bookings")}
+              className="w-full flex items-center gap-2.5 px-4 py-3 rounded-xl text-[13px] font-medium text-left border-none cursor-pointer transition-all"
+              style={{
+                background: activeTab === "bookings" ? "rgba(201,168,76,0.18)" : "transparent",
+                color: activeTab === "bookings" ? "#E2C97E" : "rgba(255,255,255,0.65)",
+              }}
+            >
+              <Calendar size={16} /> Bookings & Tours
+            </button>
+            <button
               onClick={() => {
                 setActiveTab("upload");
                 setUploadStep(1);
@@ -506,18 +613,34 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
         <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#1C3A2F] border-t border-white/10 h-16 flex items-center justify-around z-50 text-white shadow-lg">
           <button
             onClick={() => setActiveTab("listings")}
-            className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer w-20"
+            className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer flex-1"
             style={{ color: activeTab === "listings" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
           >
             <FolderOpen size={18} />
             <span className="text-[9px] font-medium">Listings</span>
           </button>
           <button
+            onClick={() => setActiveTab("leads")}
+            className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer flex-1"
+            style={{ color: activeTab === "leads" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
+          >
+            <MessageSquare size={18} />
+            <span className="text-[9px] font-medium">Leads</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("bookings")}
+            className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer flex-1"
+            style={{ color: activeTab === "bookings" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
+          >
+            <Calendar size={18} />
+            <span className="text-[9px] font-medium">Bookings</span>
+          </button>
+          <button
             onClick={() => {
               setActiveTab("upload");
               setUploadStep(1);
             }}
-            className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer w-20"
+            className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer flex-1"
             style={{ color: activeTab === "upload" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
           >
             <Plus size={18} />
@@ -525,7 +648,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
           </button>
           <button
             onClick={() => setActiveTab("settings")}
-            className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer w-20"
+            className="flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white cursor-pointer flex-1"
             style={{ color: activeTab === "settings" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
           >
             <Settings size={18} />
@@ -574,11 +697,23 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
             <div className="flex items-center justify-between mb-6 lg:mb-8">
               <div>
                 <h1 className="text-[20px] lg:text-[24px] font-bold text-[#1A1A1A] tracking-[-0.5px]">
-                  {activeTab === "listings" ? "My Property Listings" : activeTab === "upload" ? "Upload New Property" : "Profile & Settings"}
+                  {activeTab === "listings" 
+                    ? "My Property Listings" 
+                    : activeTab === "leads" 
+                    ? "Leads & Enquiries" 
+                    : activeTab === "bookings" 
+                    ? "Bookings & Tours" 
+                    : activeTab === "upload" 
+                    ? "Upload New Property" 
+                    : "Profile & Settings"}
                 </h1>
                 <p className="text-[12px] lg:text-[13px] text-[#999] font-light mt-0.5">
                   {activeTab === "listings" 
                     ? `Manage your portfolio of ${properties.length} listings in Bangkok.` 
+                    : activeTab === "leads" 
+                    ? "Direct client enquiries submitted for your listings." 
+                    : activeTab === "bookings" 
+                    ? "Scheduled virtual or physical home viewing tours." 
                     : activeTab === "upload" 
                     ? `Step ${uploadStep} of 3: ${uploadStep === 1 ? "Basic Details" : uploadStep === 2 ? "Media & Amenities" : "Review & Publish"}` 
                     : "Update your workspace profile and password credentials."}
@@ -785,6 +920,311 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     </div>
                   )}
                 </div>
+              </>
+            )}
+
+            {/* TAB: LEADS */}
+            {activeTab === "leads" && (
+              <>
+                {leadsLoading ? (
+                  <div className="text-center py-12 text-[#999] text-[13px]">Loading leads...</div>
+                ) : (
+                  <>
+                    {/* Desktop view table */}
+                    <div className="hidden md:block overflow-x-auto rounded-2xl bg-white" style={{ border: borderStyle }}>
+                      <table className="w-full">
+                        <thead>
+                          <tr style={{ background: "#FAF8F3", borderBottom: borderStyle }}>
+                            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Property</th>
+                            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Visitor</th>
+                            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Contact / Method</th>
+                            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Message</th>
+                            <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Status</th>
+                            <th className="text-right text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {enquiries.map((enq) => {
+                            return (
+                              <tr key={enq.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
+                                <td className="px-4 py-4 min-w-[150px]">
+                                  <span className="text-[13px] font-bold text-[#1A1A1A] block truncate max-w-[180px]" title={getPropertyName(enq)}>
+                                    {getPropertyName(enq)}
+                                  </span>
+                                  <span className="text-[10px] text-gray-400 block mt-0.5">
+                                    {new Date(enq.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-4 text-[13px] font-semibold text-gray-700">
+                                  {enq.name}
+                                </td>
+                                <td className="px-4 py-4 text-[12px] text-gray-600">
+                                  <div className="font-medium">{enq.contact}</div>
+                                  <div className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-[0.5px]">via {enq.method}</div>
+                                </td>
+                                <td className="px-4 py-4 text-[12px] text-gray-500 max-w-[200px] truncate" title={enq.message}>
+                                  {enq.message || <span className="text-gray-300 italic">No message</span>}
+                                </td>
+                                <td className="px-4 py-4 text-center">
+                                  <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1 border ${
+                                    enq.status === "new" 
+                                      ? "bg-blue-50 text-blue-700 border-blue-200" 
+                                      : enq.status === "responded" || enq.status === "contacted"
+                                      ? "bg-amber-50 text-amber-700 border-amber-200"
+                                      : "bg-gray-50 text-gray-700 border-gray-200"
+                                  }`}>
+                                    {enq.status}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-4 text-right">
+                                  <select
+                                    value={enq.status}
+                                    onChange={(e) => handleUpdateLeadStatus(enq.id, e.target.value)}
+                                    className="px-2 py-1 rounded text-[11px] font-semibold bg-white border border-[#E5E0D8] text-gray-700 outline-none cursor-pointer"
+                                  >
+                                    <option value="new">New</option>
+                                    <option value="responded">Responded</option>
+                                    <option value="archived">Archived</option>
+                                  </select>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                          {enquiries.length === 0 && (
+                            <tr>
+                              <td colSpan={6} className="text-center py-16 text-gray-400 text-[13px]">
+                                No enquiries received yet.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile view cards */}
+                    <div className="md:hidden flex flex-col gap-3">
+                      {enquiries.map((enq) => (
+                        <div key={enq.id} className="p-4 rounded-2xl border bg-white flex flex-col gap-3 shadow-sm" style={{ borderColor: "#E5E0D8" }}>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="text-[11px] text-gray-400">Property</div>
+                              <div className="text-[13px] font-bold text-[#1C3A2F] truncate max-w-[200px]" title={getPropertyName(enq)}>
+                                {getPropertyName(enq)}
+                              </div>
+                            </div>
+                            <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full border ${
+                              enq.status === "new" 
+                                ? "bg-blue-50 text-blue-700 border-blue-200" 
+                                : enq.status === "responded" || enq.status === "contacted"
+                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                : "bg-gray-50 text-gray-700 border-gray-200"
+                            }`}>
+                              {enq.status}
+                            </span>
+                          </div>
+
+                          <div className="border-t border-b py-2 flex flex-col gap-1.5" style={{ borderColor: "#F0EAE0" }}>
+                            <div className="text-[12px] text-gray-600">
+                              <span className="font-bold text-gray-800">From:</span> {enq.name}
+                            </div>
+                            <div className="text-[12px] text-gray-600">
+                              <span className="font-bold text-gray-800">Contact:</span> {enq.contact} ({enq.method})
+                            </div>
+                            {enq.message && (
+                              <div className="text-[12px] text-gray-500 bg-[#FAF8F3] p-2 rounded-lg mt-1 border border-[#EDE8DF] italic">
+                                "{enq.message}"
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center justify-between text-[11px] text-gray-400 font-light">
+                            <span>{new Date(enq.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-medium text-gray-500">Update:</span>
+                              <select
+                                value={enq.status}
+                                onChange={(e) => handleUpdateLeadStatus(enq.id, e.target.value)}
+                                className="px-2 py-1 rounded text-[10px] font-semibold bg-white border border-[#E5E0D8] text-gray-700 outline-none cursor-pointer"
+                              >
+                                <option value="new">New</option>
+                                <option value="responded">Responded</option>
+                                <option value="archived">Archived</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {enquiries.length === 0 && (
+                        <div className="text-center py-16 text-gray-400 text-[12px] bg-white rounded-2xl border" style={{ borderColor: "#E5E0D8" }}>
+                          No enquiries received yet.
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
+            {/* TAB: BOOKINGS */}
+            {activeTab === "bookings" && (
+              <>
+                {bookingsLoading ? (
+                  <div className="text-center py-12 text-[#999] text-[13px]">Loading bookings...</div>
+                ) : (
+                  <>
+                    {/* Desktop view table */}
+                    <div className="hidden md:block overflow-x-auto rounded-2xl bg-white" style={{ border: borderStyle }}>
+                      <table className="w-full">
+                        <thead>
+                          <tr style={{ background: "#FAF8F3", borderBottom: borderStyle }}>
+                            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Property</th>
+                            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Visitor</th>
+                            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Tour Date / Time</th>
+                            <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Message</th>
+                            <th className="text-center text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Status</th>
+                            <th className="text-right text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3.5 text-gray-500">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {appointments.map((appt) => {
+                            return (
+                              <tr key={appt.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
+                                <td className="px-4 py-4 min-w-[150px]">
+                                  <span className="text-[13px] font-bold text-[#1A1A1A] block truncate max-w-[180px]" title={getPropertyName(appt)}>
+                                    {getPropertyName(appt)}
+                                  </span>
+                                  <span className="text-[10px] text-gray-400 block mt-0.5">
+                                    Request: {new Date(appt.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-4 text-[13px] font-semibold text-gray-700">
+                                  <div>{appt.name}</div>
+                                  <div className="text-[10px] text-gray-400 font-normal mt-0.5">{appt.email} · {appt.phone}</div>
+                                </td>
+                                <td className="px-4 py-4 text-[12px] text-gray-600">
+                                  <div className="font-bold text-[#1C3A2F]">{appt.date}</div>
+                                  <div className="text-[10px] text-gray-400 mt-0.5">{appt.timeSlot}</div>
+                                </td>
+                                <td className="px-4 py-4 text-[12px] text-gray-500 max-w-[200px] truncate" title={appt.message}>
+                                  {appt.message || <span className="text-gray-300 italic">No notes</span>}
+                                </td>
+                                <td className="px-4 py-4 text-center">
+                                  <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1 border ${
+                                    appt.status === "confirmed" 
+                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
+                                      : appt.status === "cancelled"
+                                      ? "bg-red-50 text-red-700 border-red-200"
+                                      : "bg-amber-50 text-amber-700 border-amber-200"
+                                  }`}>
+                                    {appt.status}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-4 text-right">
+                                  <div className="flex items-center justify-end gap-1.5">
+                                    {appt.status !== "confirmed" && (
+                                      <button
+                                        onClick={() => handleUpdateBookingStatus(appt.id, "confirmed")}
+                                        className="px-2.5 py-1.5 rounded text-[10px] font-bold bg-[#1C3A2F] text-white border-none cursor-pointer hover:opacity-90"
+                                      >
+                                        Confirm
+                                      </button>
+                                    )}
+                                    {appt.status !== "cancelled" && (
+                                      <button
+                                        onClick={() => handleUpdateBookingStatus(appt.id, "cancelled")}
+                                        className="px-2.5 py-1.5 rounded text-[10px] font-bold bg-white text-red-600 border border-red-200 cursor-pointer hover:bg-red-50"
+                                      >
+                                        Cancel
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                          {appointments.length === 0 && (
+                            <tr>
+                              <td colSpan={6} className="text-center py-16 text-gray-400 text-[13px]">
+                                No viewings scheduled yet.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile view cards */}
+                    <div className="md:hidden flex flex-col gap-3">
+                      {appointments.map((appt) => (
+                        <div key={appt.id} className="p-4 rounded-2xl border bg-white flex flex-col gap-3 shadow-sm" style={{ borderColor: "#E5E0D8" }}>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="text-[11px] text-gray-400">Property</div>
+                              <div className="text-[13px] font-bold text-[#1C3A2F] truncate max-w-[200px]" title={getPropertyName(appt)}>
+                                {getPropertyName(appt)}
+                              </div>
+                            </div>
+                            <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full border ${
+                              appt.status === "confirmed" 
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
+                                : appt.status === "cancelled"
+                                ? "bg-red-50 text-red-700 border-red-200"
+                                : "bg-amber-50 text-amber-700 border-amber-200"
+                            }`}>
+                              {appt.status}
+                            </span>
+                          </div>
+
+                          <div className="border-t border-b py-2 flex flex-col gap-1.5" style={{ borderColor: "#F0EAE0" }}>
+                            <div className="text-[12px] text-gray-600">
+                              <span className="font-bold text-gray-800">Visitor:</span> {appt.name}
+                            </div>
+                            <div className="text-[12px] text-gray-600">
+                              <span className="font-bold text-gray-800">Contact:</span> {appt.email} · {appt.phone}
+                            </div>
+                            <div className="text-[12px] text-[#1C3A2F] font-bold">
+                              🚆 Tour: {appt.date} @ {appt.timeSlot}
+                            </div>
+                            {appt.message && (
+                              <div className="text-[12px] text-gray-500 bg-[#FAF8F3] p-2 rounded-lg mt-1 border border-[#EDE8DF] italic">
+                                "{appt.message}"
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[10px] text-gray-400 font-light">
+                              Req: {new Date(appt.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              {appt.status !== "confirmed" && (
+                                <button
+                                  onClick={() => handleUpdateBookingStatus(appt.id, "confirmed")}
+                                  className="px-2.5 py-1.5 rounded-lg text-[9px] font-bold bg-[#1C3A2F] text-white border-none cursor-pointer"
+                                >
+                                  Confirm
+                                </button>
+                              )}
+                              {appt.status !== "cancelled" && (
+                                <button
+                                  onClick={() => handleUpdateBookingStatus(appt.id, "cancelled")}
+                                  className="px-2.5 py-1.5 rounded-lg text-[9px] font-bold bg-white text-red-600 border border-red-200 cursor-pointer"
+                                >
+                                  Cancel
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {appointments.length === 0 && (
+                        <div className="text-center py-16 text-gray-400 text-[12px] bg-white rounded-2xl border" style={{ borderColor: "#E5E0D8" }}>
+                          No viewings scheduled yet.
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </>
             )}
 

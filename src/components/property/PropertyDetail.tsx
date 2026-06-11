@@ -8,6 +8,10 @@ import { useSaved } from "@/contexts/SavedContext";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import Link from "next/link";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import dynamic from "next/dynamic";
+import { StoredCommuteHub } from "@/lib/store/commuteHubs";
+
+const CommuteMap = dynamic(() => import("./CommuteMap"), { ssr: false });
 
 /* ─────────────────────────────────────────────
    Helpers
@@ -453,7 +457,9 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
           </button>
           <button
             onClick={() => toggle(propertyId)}
-            className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer border-none transition-transform active:scale-90"
+            className={`w-9 h-9 rounded-full flex items-center justify-center cursor-pointer border-none transition-all duration-200 ${
+              saved ? "animate-pop-bounce scale-110" : "hover:scale-110 active:scale-90"
+            }`}
             style={{ background: "#FFFFFF", color: "#1C3A2F", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}
             aria-label="Save"
           >
@@ -1074,60 +1080,70 @@ function getNearbyPlaces(area: string): NearbyPlace[] {
 }
 
 interface PropertyDetailProps {
-  property:     PropertyCard;
+  property: PropertyCard;
   sameBuilding: PropertyCard[];
-  sameArea:     PropertyCard[];
-  nearby:       PropertyCard[];
+  nearby: PropertyCard[];
+  sameArea?: PropertyCard[];
+}
+
+interface CommuteItem {
+  name: string;
+  minutes: number;
+  distance: number;
+  transitMode: "transit" | "driving" | "walking";
 }
 
 export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<PropertyDetailProps, "sameArea">) {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [enquiryOpen, setEnquiryOpen] = useState(false);
-  const [commutes, setCommutes] = useState<any[]>([]);
+  const [rawHubs, setRawHubs] = useState<StoredCommuteHub[]>([]);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem("nhp_commute_hubs");
-      if (stored && property.latitude && property.longitude) {
-        const hubs = JSON.parse(stored);
-        const pLat = Number(property.latitude);
-        const pLng = Number(property.longitude);
-        if (!isNaN(pLat) && !isNaN(pLng)) {
-          const list = hubs.map((h: any) => {
-            const hLat = Number(h.latitude);
-            const hLng = Number(h.longitude);
-            const R = 6371;
-            const dLat = ((hLat - pLat) * Math.PI) / 180;
-            const dLon = ((hLng - pLng) * Math.PI) / 180;
-            const a =
-              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos((pLat * Math.PI) / 180) *
-                Math.cos((hLat * Math.PI) / 180) *
-                Math.sin(dLon / 2) *
-                Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const dist = R * c;
-
-            let mins = 15;
-            if (h.transitMode === "walking") {
-              mins = Math.round(dist * 12);
-            } else if (h.transitMode === "driving") {
-              mins = Math.round(dist * 3 + 5);
-            } else {
-              mins = Math.round(dist * 2.5 + 8);
-            }
-            return {
-              name: h.name,
-              minutes: Math.max(1, mins),
-              distance: dist,
-              transitMode: h.transitMode,
-            };
-          });
-          setCommutes(list);
-        }
+      if (stored) {
+        setRawHubs(JSON.parse(stored));
       }
     } catch {}
-  }, [property]);
+  }, []);
+
+  const commutes = useMemo<CommuteItem[]>(() => {
+    if (!property.latitude || !property.longitude) return [];
+    const pLat = Number(property.latitude);
+    const pLng = Number(property.longitude);
+    if (isNaN(pLat) || isNaN(pLng)) return [];
+
+    return rawHubs.map((h: StoredCommuteHub) => {
+      const hLat = Number(h.latitude);
+      const hLng = Number(h.longitude);
+      const R = 6371;
+      const dLat = ((hLat - pLat) * Math.PI) / 180;
+      const dLon = ((hLng - pLng) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((pLat * Math.PI) / 180) *
+          Math.cos((hLat * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const dist = R * c;
+
+      let mins = 15;
+      if (h.transitMode === "walking") {
+        mins = Math.round(dist * 12);
+      } else if (h.transitMode === "driving") {
+        mins = Math.round(dist * 3 + 5);
+      } else {
+        mins = Math.round(dist * 2.5 + 8);
+      }
+      return {
+        name: h.name,
+        minutes: Math.max(1, mins),
+        distance: dist,
+        transitMode: h.transitMode,
+      };
+    });
+  }, [rawHubs, property.latitude, property.longitude]);
 
   const nearbyPlaces = useMemo(() => getNearbyPlaces(property.area), [property.area]);
   const filteredPlaces = useMemo(() => {
@@ -1141,7 +1157,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
   const { formatPrice: formatPriceFn } = useCurrency();
 
   // Real-time View Tracking State
-  const [views, setViews] = useState(property.viewCount ?? viewCount(property));
+  const [views, setViews] = useState<number>(property.viewCount ?? viewCount(property));
 
   // Selected Place State for Interactive Map
 
@@ -1158,7 +1174,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
     })
       .then((res) => {
         if (res.ok) {
-          setViews((v) => v + 1);
+          setViews((v: number) => v + 1);
         }
       })
       .catch(() => {});
@@ -1235,7 +1251,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
               {/* Commute Times */}
               {commutes.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-3">
-                  {commutes.map((c: any) => (
+                  {commutes.map((c) => (
                     <span
                       key={c.name}
                       className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg"
@@ -1320,42 +1336,58 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                     </h3>
                     
                     {/* Light Cartographic Map Container */}
-                    <div className="rounded-xl overflow-hidden relative mb-4" style={{ height: 150, background: "#F0EBE1", border: "1px solid #E8E2D6" }}>
-                      {/* Road grid lines */}
-                      <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 300 150">
-                        {/* Horizontal roads */}
-                        <line x1="0" y1="40" x2="300" y2="42" stroke="#DDD7CA" strokeWidth="3" />
-                        <line x1="0" y1="75" x2="300" y2="73" stroke="#E3DDD0" strokeWidth="5" />
-                        <line x1="0" y1="110" x2="300" y2="112" stroke="#DDD7CA" strokeWidth="2.5" />
-                        {/* Vertical roads */}
-                        <line x1="60" y1="0" x2="58" y2="150" stroke="#DDD7CA" strokeWidth="2.5" />
-                        <line x1="150" y1="0" x2="152" y2="150" stroke="#E3DDD0" strokeWidth="4" />
-                        <line x1="230" y1="0" x2="228" y2="150" stroke="#DDD7CA" strokeWidth="2" />
-                        {/* Diagonal accent road */}
-                        <line x1="20" y1="0" x2="280" y2="150" stroke="#E3DDD0" strokeWidth="2" opacity="0.5" />
-                        {/* Small blocks / green areas */}
-                        <rect x="70" y="48" width="30" height="20" rx="3" fill="#C8D4BC" opacity="0.5" />
-                        <rect x="170" y="80" width="25" height="25" rx="3" fill="#C8D4BC" opacity="0.4" />
-                        <rect x="100" y="15" width="35" height="18" rx="3" fill="#D6CFC2" opacity="0.5" />
-                        <rect x="200" y="30" width="20" height="30" rx="3" fill="#D6CFC2" opacity="0.4" />
-                        <rect x="35" y="90" width="18" height="15" rx="2" fill="#C8D4BC" opacity="0.35" />
-                        <rect x="245" y="95" width="28" height="18" rx="3" fill="#D6CFC2" opacity="0.4" />
-                      </svg>
-                      {/* Pin + Label */}
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
-                        {/* Pin */}
-                        <div className="flex flex-col items-center">
-                          <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
-                            <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" fill="#1C3A2F"/>
-                            <circle cx="14" cy="13" r="5.5" fill="#ffffff"/>
-                          </svg>
-                        </div>
-                        {/* Property label */}
-                        <span className="mt-1 text-[8px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.9)", color: "#1C3A2F", whiteSpace: "nowrap", boxShadow: "0 1px 4px rgba(0,0,0,0.1)", maxWidth: "160px", overflow: "hidden", textOverflow: "ellipsis" }} title={property.name}>
-                          {cleanMapLabel(property.name)}
-                        </span>
+                    {property.latitude && property.longitude ? (
+                      <div className="mb-4" style={{ height: 220 }}>
+                        <CommuteMap
+                          propertyLat={Number(property.latitude)}
+                          propertyLng={Number(property.longitude)}
+                          propertyName={cleanMapLabel(property.name)}
+                          commuteHubs={rawHubs.map(h => ({
+                            name: h.name,
+                            latitude: h.latitude,
+                            longitude: h.longitude,
+                            transitMode: h.transitMode
+                          }))}
+                        />
                       </div>
-                    </div>
+                    ) : (
+                      <div className="rounded-xl overflow-hidden relative mb-4" style={{ height: 150, background: "#F0EBE1", border: "1px solid #E8E2D6" }}>
+                        {/* Road grid lines */}
+                        <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 300 150">
+                          {/* Horizontal roads */}
+                          <line x1="0" y1="40" x2="300" y2="42" stroke="#DDD7CA" strokeWidth="3" />
+                          <line x1="0" y1="75" x2="300" y2="73" stroke="#E3DDD0" strokeWidth="5" />
+                          <line x1="0" y1="110" x2="300" y2="112" stroke="#DDD7CA" strokeWidth="2.5" />
+                          {/* Vertical roads */}
+                          <line x1="60" y1="0" x2="58" y2="150" stroke="#DDD7CA" strokeWidth="2.5" />
+                          <line x1="150" y1="0" x2="152" y2="150" stroke="#E3DDD0" strokeWidth="4" />
+                          <line x1="230" y1="0" x2="228" y2="150" stroke="#DDD7CA" strokeWidth="2" />
+                          {/* Diagonal accent road */}
+                          <line x1="20" y1="0" x2="280" y2="150" stroke="#E3DDD0" strokeWidth="2" opacity="0.5" />
+                          {/* Small blocks / green areas */}
+                          <rect x="70" y="48" width="30" height="20" rx="3" fill="#C8D4BC" opacity="0.5" />
+                          <rect x="170" y="80" width="25" height="25" rx="3" fill="#C8D4BC" opacity="0.4" />
+                          <rect x="100" y="15" width="35" height="18" rx="3" fill="#D6CFC2" opacity="0.5" />
+                          <rect x="200" y="30" width="20" height="30" rx="3" fill="#D6CFC2" opacity="0.4" />
+                          <rect x="35" y="90" width="18" height="15" rx="2" fill="#C8D4BC" opacity="0.35" />
+                          <rect x="245" y="95" width="28" height="18" rx="3" fill="#D6CFC2" opacity="0.4" />
+                        </svg>
+                        {/* Pin + Label */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
+                          {/* Pin */}
+                          <div className="flex flex-col items-center">
+                            <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
+                              <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" fill="#1C3A2F"/>
+                              <circle cx="14" cy="13" r="5.5" fill="#ffffff"/>
+                            </svg>
+                          </div>
+                          {/* Property label */}
+                          <span className="mt-1 text-[8px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.9)", color: "#1C3A2F", whiteSpace: "nowrap", boxShadow: "0 1px 4px rgba(0,0,0,0.1)", maxWidth: "160px", overflow: "hidden", textOverflow: "ellipsis" }} title={property.name}>
+                            {cleanMapLabel(property.name)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Travel facilities list */}
                     <div className="space-y-2.5 mb-4">
@@ -1551,7 +1583,7 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                 {/* Commute Times */}
                 {commutes.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-4 mt-1">
-                    {commutes.map((c: any) => (
+                    {commutes.map((c) => (
                       <span
                         key={c.name}
                         className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg"

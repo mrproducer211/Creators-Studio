@@ -138,7 +138,9 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
         {/* Save — stop propagation so card click doesn't fire */}
         <button
           onClick={(e) => { e.stopPropagation(); toggle(property.id); }}
-          className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer border-none transition-transform active:scale-90"
+          className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer border-none transition-all duration-200 ${
+            saved ? "animate-pop-bounce scale-110" : "hover:scale-110 active:scale-90"
+          }`}
           style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(4px)" }}
           aria-label={saved ? "Unsave" : "Save"}
         >

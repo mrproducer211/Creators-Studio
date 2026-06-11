@@ -42,6 +42,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validate MIME type to ensure only raw image files are accepted
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json(
+        { error: "Invalid file type. Only JPEG, PNG, WEBP, and GIF images are allowed." },
+        { status: 400 }
+      );
+    }
+
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 

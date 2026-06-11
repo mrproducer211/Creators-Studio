@@ -123,10 +123,10 @@ export async function getDbProperties(): Promise<PropertyCard[]> {
           leaseTerms: p.leaseTerms || undefined,
           depositTerms: p.depositTerms || undefined,
           maintenance: p.maintenance || undefined,
-          status: (p as any).status || undefined,
+          status: (p.status as PropertyCard["status"]) || undefined,
         };
       });
-      return mapped.filter((p: any) => p.status !== "unlisted");
+      return mapped.filter((p) => p.status !== "unlisted");
     }
   } catch (err) {
     console.warn("DB properties fetch failed, using fallback mock data:", err);
