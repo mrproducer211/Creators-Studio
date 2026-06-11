@@ -3,6 +3,7 @@ import { requireAdminApi } from "@/lib/auth-helpers";
 import { validateProperty } from "@/lib/validation";
 import { createProperty, getPropertyBySlug } from "@/lib/store/properties";
 import { getDbProperties, createAuditLog } from "@/lib/db/dbLoader";
+import { getCanonicalArea } from "@/lib/area";
 import { db } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -38,6 +39,7 @@ export async function POST(req: NextRequest) {
   }
 
   const val = result.value;
+  val.area = getCanonicalArea(val.area);
 
   // Database creation
   const dbUrl = process.env.DATABASE_URL || "";

@@ -47,13 +47,13 @@ function filtersFromParams(params: URLSearchParams): ExploreFilters {
 function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] {
   let result = [...props];
   if (f.search) {
-    const q = f.search.toLowerCase();
+    const q = f.search.toLowerCase().replace(/\s+/g, "");
     result = result.filter(
       (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.area.toLowerCase().includes(q) ||
-        (p.district?.toLowerCase().includes(q) ?? false) ||
-        p.description.toLowerCase().includes(q)
+        p.name.toLowerCase().replace(/\s+/g, "").includes(q) ||
+        p.area.toLowerCase().replace(/\s+/g, "").includes(q) ||
+        (p.district?.toLowerCase().replace(/\s+/g, "").includes(q) ?? false) ||
+        p.description.toLowerCase().replace(/\s+/g, "").includes(q)
     );
   }
   if (f.listingType !== "all") result = result.filter((p) => p.listingType === f.listingType);

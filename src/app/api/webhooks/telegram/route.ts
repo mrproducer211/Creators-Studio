@@ -5,6 +5,7 @@ import { properties as propertiesTable } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { createProperty, getAllProperties, updateProperty } from "@/lib/store/properties";
 import { PropertyCard } from "@/types/property";
+import { getCanonicalArea } from "@/lib/area";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -244,19 +245,35 @@ function parseTelegramMessage(text: string, messageId: number) {
   const sqmMatch = text.match(/(?:#sqm|sqm)[:\s=]+(\d+)/i) || text.match(/(\d+)\s*(?:sqm|sq\.m\.|sq\s*meter|m2)/i);
   if (sqmMatch) sqm = Number(sqmMatch[1]);
 
-  // Area (known list)
-  const areas = ["Sukhumvit", "Sathorn", "Thong Lo", "Asok", "Ekkamai", "Silom", "On Nut", "Ari"];
-  for (const a of areas) {
-    const regex = new RegExp(a, "i");
-    if (regex.test(text)) {
-      area = a;
+  // Area (known list matching with aliases)
+  const areaRegexes = [
+    { canonical: "Bang Na", regex: /bang\s*na|udom\s*suk/i },
+    { canonical: "Sukhumvit", regex: /sukhumvit|phrom\s*phong/i },
+    { canonical: "Thong Lo", regex: /thong\s*lo/i },
+    { canonical: "Asok", regex: /asok/i },
+    { canonical: "Ekkamai", regex: /ekkamai/i },
+    { canonical: "Silom", regex: /silom/i },
+    { canonical: "On Nut", regex: /on\s*nut/i },
+    { canonical: "Ari", regex: /ari/i },
+    { canonical: "Sathorn", regex: /sathorn|sathon/i },
+    { canonical: "Rama 9", regex: /rama\s*9|ratchada/i },
+    { canonical: "Huai Khwang", regex: /huai\s*khwang/i },
+    { canonical: "Phaya Thai", regex: /phaya\s*thai/i },
+  ];
+
+  for (const item of areaRegexes) {
+    if (item.regex.test(text)) {
+      area = item.canonical;
       break;
     }
   }
+
   const areaMatch = text.match(/(?:#area|area)[:\s=]+([^\n]+)/i);
   if (areaMatch) {
     const parsedArea = areaMatch[1].trim();
-    area = parsedArea.charAt(0).toUpperCase() + parsedArea.slice(1);
+    area = getCanonicalArea(parsedArea);
+  } else {
+    area = getCanonicalArea(area);
   }
 
   // District

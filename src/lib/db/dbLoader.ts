@@ -13,6 +13,7 @@ import { getAllEnquiries } from "@/lib/store/enquiries";
 import { getSystemSettings } from "@/lib/store/settings";
 import { PropertyCard } from "@/types/property";
 import { writeJson } from "@/lib/store/fileStore";
+import { getCanonicalArea } from "@/lib/area";
 
 /**
  * Safely fetches property listings from the live database.
@@ -92,6 +93,7 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
     const visibleList = includeUnlisted ? localList : localList.filter((p) => p.status !== "unlisted");
     return visibleList.map((p) => ({
       ...p,
+      area: getCanonicalArea(p.area),
       clicks: p.clicks ?? 0,
       amenities: p.amenities ?? [],
       features: p.features ?? [],
@@ -135,7 +137,7 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
           bedrooms: p.bedrooms,
           bathrooms: p.bathrooms,
           sqm: p.sqm || undefined,
-          area: p.area,
+          area: getCanonicalArea(p.area),
           district: p.district || undefined,
           latitude: p.latitude || undefined,
           longitude: p.longitude || undefined,
@@ -197,6 +199,7 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
 
     return {
       ...p,
+      area: getCanonicalArea(p.area),
       priceTHB,
       priceUSD,
       priceLabel,

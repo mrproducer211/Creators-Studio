@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/auth-helpers";
 import { validateProperty } from "@/lib/validation";
 import { getPropertyById, updateProperty, deleteProperty, getPropertyBySlug } from "@/lib/store/properties";
+import { getCanonicalArea } from "@/lib/area";
 import { db } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";
 import { eq, and, ne } from "drizzle-orm";
@@ -74,6 +75,7 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
   const result = validateProperty(body);
   if (!result.ok) return NextResponse.json({ errors: result.errors }, { status: 422 });
   const val = result.value;
+  val.area = getCanonicalArea(val.area);
 
   // DB Logic
   const dbUrl = process.env.DATABASE_URL || "";
@@ -172,19 +174,20 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
   const id = await parseId(ctx.params);
   if (id == null) return NextResponse.json({ error: "Invalid id." }, { status: 400 });
 
-  let body: any;
+  let body: unknown;
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const { status, pendingVerification, expiryDate } = body;
-  const patch: any = {};
-  if (status !== undefined) patch.status = status;
-  if (pendingVerification !== undefined) patch.pendingVerification = pendingVerification;
+  const b = (body ?? {}) as Record<string, unknown>;
+  const { status, pendingVerification, expiryDate } = b;
+  const patch: { status?: string; pendingVerification?: boolean; expiryDate?: string | null } = {};
+  if (status !== undefined) patch.status = status as string;
+  if (pendingVerification !== undefined) patch.pendingVerification = pendingVerification as boolean;
   if (expiryDate !== undefined) {
-    patch.expiryDate = expiryDate ? new Date(expiryDate).toISOString() : null;
+    patch.expiryDate = expiryDate ? new Date(expiryDate as string).toISOString() : null;
   }
 
   if (Object.keys(patch).length === 0) {
@@ -197,9 +200,9 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
 
   if (isDbValid) {
     try {
-      const dbPatch: any = {};
+      const dbPatch: Partial<typeof propertiesTable.$inferInsert> = {};
       if (patch.status !== undefined) {
-        dbPatch.status = patch.status === "unlisted" ? "draft" : patch.status;
+        dbPatch.status = (patch.status === "unlisted" ? "draft" : patch.status) as "active" | "sold" | "rented" | "draft";
       }
       if (patch.pendingVerification !== undefined) dbPatch.pendingVerification = patch.pendingVerification;
       if (patch.expiryDate !== undefined) {
@@ -233,8 +236,8 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
   }
 
   // File store logic
-  const localPatch: any = {};
-  if (patch.status !== undefined) localPatch.status = patch.status;
+  const localPatch: Partial<PropertyCard> = {};
+  if (patch.status !== undefined) localPatch.status = patch.status as PropertyCard["status"];
   if (patch.pendingVerification !== undefined) localPatch.pendingVerification = patch.pendingVerification;
   if (patch.expiryDate !== undefined) {
     localPatch.expiryDate = patch.expiryDate || undefined;
