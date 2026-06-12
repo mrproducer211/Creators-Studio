@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PropertyCard } from "@/types/property";
@@ -270,11 +271,14 @@ function DesktopHero({
 
       {/* ── RIGHT: image col (matches .hero-image-col) ── */}
       <div style={{ position: "relative", overflow: "hidden", minHeight: "100vh" }}>
-        {/* Background photo */}
-        <img
-          src="/images/homepage_hero.png"
+        {/* Background photo — priority LCP image */}
+        <Image
+          src="/images/homepage_hero.webp"
           alt="Premium Bangkok Condo"
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          fill
+          priority
+          sizes="50vw"
+          style={{ objectFit: "cover" }}
         />
 
         {/* Left-edge overlay — blends into forest green (matches ::before) */}

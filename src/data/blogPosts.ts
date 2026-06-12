@@ -226,7 +226,7 @@ const POSTS: BlogPost[] = [
     metaTitle:   "Best International Schools in Bangkok 2026 — Expat Family Guide | NHP",
     metaDesc:    "A guide to Bangkok's top international schools mapped against the city's best expat neighbourhoods. NIST, ISB, Bromsgrove, VERSO and more — locations, fees and proximity.",
     excerpt:     "Relocating with children? We map the best international schools against the city's most liveable expat areas so the commute never becomes the sacrifice.",
-    image:       "/images/blog/bangkok_international_school.png",
+    image:       "/images/blog/bangkok_international_school.webp",
     readTime:    "7 min read",
     publishedAt: "2026-06-01",
     author:      "NHP Bangkok Team",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -37,14 +38,14 @@ export default function CategorySection() {
         slug:  "near-bts",
         label: t.category.lookingIn,
         name:  t.category.nearBts,
-        image: "/images/neighborhoods/near_bts_anchor.png",
+        image: "/images/neighborhoods/near_bts_anchor.webp",
         href:  "/explore?bts=true",
       },
       cards: [
-        { slug: "sukhumvit", name: t.category.areas.sukhumvit, count: MOCK_PROPERTIES.filter(p => p.area === "Sukhumvit").length + 18, image: "/images/neighborhoods/sukhumvit.png", href: "/neighborhood/sukhumvit" },
-        { slug: "sathorn",   name: t.category.areas.sathorn,   count: MOCK_PROPERTIES.filter(p => p.area === "Sathorn").length + 14,   image: "/images/neighborhoods/sathorn.png", href: "/neighborhood/sathorn" },
-        { slug: "thong-lo",  name: t.category.areas.thongLo,    count: MOCK_PROPERTIES.filter(p => p.area === "Thong Lo").length + 12,  image: "/images/neighborhoods/thong_lo.png", href: "/neighborhood/thong-lo" },
-        { slug: "asok",      name: t.category.areas.asok,       count: MOCK_PROPERTIES.filter(p => p.area === "Asok").length + 9,       image: "/images/neighborhoods/asok.png", href: "/neighborhood/asok" },
+        { slug: "sukhumvit", name: t.category.areas.sukhumvit, count: MOCK_PROPERTIES.filter(p => p.area === "Sukhumvit").length + 18, image: "/images/neighborhoods/sukhumvit.webp", href: "/neighborhood/sukhumvit" },
+        { slug: "sathorn",   name: t.category.areas.sathorn,   count: MOCK_PROPERTIES.filter(p => p.area === "Sathorn").length + 14,   image: "/images/neighborhoods/sathorn.webp", href: "/neighborhood/sathorn" },
+        { slug: "thong-lo",  name: t.category.areas.thongLo,    count: MOCK_PROPERTIES.filter(p => p.area === "Thong Lo").length + 12,  image: "/images/neighborhoods/thong_lo.webp", href: "/neighborhood/thong-lo" },
+        { slug: "asok",      name: t.category.areas.asok,       count: MOCK_PROPERTIES.filter(p => p.area === "Asok").length + 9,       image: "/images/neighborhoods/asok.webp", href: "/neighborhood/asok" },
       ],
     },
     {
@@ -52,14 +53,14 @@ export default function CategorySection() {
         slug:  "pet-friendly",
         label: t.category.lookingIn,
         name:  t.category.petFriendly,
-        image: "/images/neighborhoods/pet_friendly_anchor.png",
+        image: "/images/neighborhoods/pet_friendly_anchor.webp",
         href:  "/explore?pets=true",
       },
       cards: [
-        { slug: "ekkamai",  name: t.category.areas.ekkamai, count: MOCK_PROPERTIES.filter(p => p.area === "Ekkamai").length + 11, image: "/images/neighborhoods/ekkamai.png", href: "/neighborhood/ekkamai" },
-        { slug: "silom",    name: t.category.areas.silom,   count: 16, image: "/images/neighborhoods/silom.png", href: "/neighborhood/silom" },
-        { slug: "on-nut",   name: t.category.areas.onNut,   count: MOCK_PROPERTIES.filter(p => p.area === "On Nut").length + 9,   image: "/images/neighborhoods/on_nut.png", href: "/neighborhood/on-nut" },
-        { slug: "ari",      name: t.category.areas.ari,     count: 13, image: "/images/neighborhoods/ari.png", href: "/neighborhood/ari" },
+        { slug: "ekkamai",  name: t.category.areas.ekkamai, count: MOCK_PROPERTIES.filter(p => p.area === "Ekkamai").length + 11, image: "/images/neighborhoods/ekkamai.webp", href: "/neighborhood/ekkamai" },
+        { slug: "silom",    name: t.category.areas.silom,   count: 16, image: "/images/neighborhoods/silom.webp", href: "/neighborhood/silom" },
+        { slug: "on-nut",   name: t.category.areas.onNut,   count: MOCK_PROPERTIES.filter(p => p.area === "On Nut").length + 9,   image: "/images/neighborhoods/on_nut.webp", href: "/neighborhood/on-nut" },
+        { slug: "ari",      name: t.category.areas.ari,     count: 13, image: "/images/neighborhoods/ari.webp", href: "/neighborhood/ari" },
       ],
     },
     {
@@ -67,14 +68,14 @@ export default function CategorySection() {
         slug:  "new-hubs",
         label: t.category.lookingIn,
         name:  t.category.newHubs,
-        image: "/images/neighborhoods/new_hubs_anchor.png",
+        image: "/images/neighborhoods/new_hubs_anchor.webp",
         href:  "/explore?newHubs=true",
       },
       cards: [
-        { slug: "rama-9",      name: t.category.areas.rama9,      count: MOCK_PROPERTIES.filter(p => p.area === "Rama 9").length + 12,      image: "/images/neighborhoods/rama_9.png", href: "/neighborhood/rama-9" },
-        { slug: "bang-na",     name: t.category.areas.bangNa,     count: MOCK_PROPERTIES.filter(p => p.area === "Bang Na").length + 15,     image: "/images/neighborhoods/bang_na.png", href: "/neighborhood/bang-na" },
-        { slug: "huai-khwang",  name: t.category.areas.huaiKhwang,  count: MOCK_PROPERTIES.filter(p => p.area === "Huai Khwang").length + 10,  image: "/images/neighborhoods/huai_khwang.png", href: "/neighborhood/huai-khwang" },
-        { slug: "phaya-thai",  name: t.category.areas.phayaThai,  count: MOCK_PROPERTIES.filter(p => p.area === "Phaya Thai").length + 8,   image: "/images/neighborhoods/phaya_thai.png", href: "/neighborhood/phaya-thai" },
+        { slug: "rama-9",      name: t.category.areas.rama9,      count: MOCK_PROPERTIES.filter(p => p.area === "Rama 9").length + 12,      image: "/images/neighborhoods/rama_9.webp", href: "/neighborhood/rama-9" },
+        { slug: "bang-na",     name: t.category.areas.bangNa,     count: MOCK_PROPERTIES.filter(p => p.area === "Bang Na").length + 15,     image: "/images/neighborhoods/bang_na.webp", href: "/neighborhood/bang-na" },
+        { slug: "huai-khwang",  name: t.category.areas.huaiKhwang,  count: MOCK_PROPERTIES.filter(p => p.area === "Huai Khwang").length + 10,  image: "/images/neighborhoods/huai_khwang.webp", href: "/neighborhood/huai-khwang" },
+        { slug: "phaya-thai",  name: t.category.areas.phayaThai,  count: MOCK_PROPERTIES.filter(p => p.area === "Phaya Thai").length + 8,   image: "/images/neighborhoods/phaya_thai.webp", href: "/neighborhood/phaya-thai" },
       ],
     },
   ];
@@ -111,10 +112,12 @@ export default function CategorySection() {
                 className="relative overflow-hidden rounded-2xl no-underline flex-shrink-0 group"
                 style={{ width: BIG_W, height: BIG_H }}
               >
-                <img
+                <Image
                   src={section.anchor.image}
                   alt={section.anchor.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  fill
+                  sizes="260px"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 {/* gradient overlay */}
                 <div
@@ -152,10 +155,12 @@ export default function CategorySection() {
                     href={card.href}
                     className="relative overflow-hidden rounded-xl no-underline group"
                   >
-                    <img
+                    <Image
                       src={card.image}
                       alt={card.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 768px) 170px, 278px"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     {/* gradient overlay */}
                     <div
@@ -204,10 +209,12 @@ export default function CategorySection() {
                 className="relative overflow-hidden rounded-2xl no-underline flex-shrink-0 group"
                 style={{ width: 142 }}
               >
-                <img
+                <Image
                   src={section.anchor.image}
                   alt={section.anchor.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  fill
+                  sizes="142px"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div
                   className="absolute inset-0"
@@ -238,10 +245,12 @@ export default function CategorySection() {
                     href={card.href}
                     className="relative overflow-hidden rounded-2xl no-underline group"
                   >
-                    <img
+                    <Image
                       src={card.image}
                       alt={card.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      fill
+                      sizes="170px"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div
                       className="absolute inset-0"

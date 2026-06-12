@@ -391,16 +391,16 @@ function getPlaceImage(area: string, category: string, placeName: string, fallba
   const validAreas = ["ari", "asok", "ekkamai", "on_nut", "sathorn", "silom", "sukhumvit", "thong_lo"];
   if (validAreas.includes(normArea)) {
     if (category === "Cafes" || category === "Co-working") {
-      return `/images/lifestyles/${normArea}_cafe.png`;
+      return `/images/lifestyles/${normArea}_cafe.webp`;
     }
     if (category === "Restaurants" || category === "Dining") {
-      return `/images/lifestyles/${normArea}_dining.png`;
+      return `/images/lifestyles/${normArea}_dining.webp`;
     }
     if (category === "Parks" || category === "Fitness") {
-      return `/images/lifestyles/${normArea}_parks.png`;
+      return `/images/lifestyles/${normArea}_parks.webp`;
     }
     if (category === "Nightlife") {
-      return `/images/lifestyles/${normArea}_nightlife.png`;
+      return `/images/lifestyles/${normArea}_nightlife.webp`;
     }
   }
   

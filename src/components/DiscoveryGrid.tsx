@@ -150,7 +150,7 @@ export default function DiscoveryGrid({ featuredProperty }: { featuredProperty: 
 
             {/* Right Portrait Image (Live clean Arisa photo) */}
             <img
-              src="/images/arisa_phone_live.png"
+              src="/images/arisa_phone_live.webp"
               alt="Arisa"
               className="absolute bottom-0 right-0 h-[82%] sm:h-[86%] w-auto max-w-[44%] sm:max-w-[48%] object-contain object-bottom select-none pointer-events-none z-0"
             />

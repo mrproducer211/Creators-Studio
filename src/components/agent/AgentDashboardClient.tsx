@@ -654,12 +654,6 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
           
           <div className="flex items-center gap-3">
             <span className="text-[11px] text-white/70 truncate max-w-[120px] font-light">{agent.name}</span>
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="px-2.5 py-1 rounded text-[10px] font-medium border-none cursor-pointer text-white bg-white/10"
-            >
-              Sign Out
-            </button>
           </div>
         </div>
 
@@ -1953,6 +1947,17 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     <div className="flex justify-between py-2">
                       <span className="text-gray-400">Permissions</span>
                       <span className="font-semibold text-emerald-700">Full Upload Access</span>
+                    </div>
+
+                    {/* Mobile Only Sign Out Button */}
+                    <div className="lg:hidden mt-4 pt-4 border-t" style={{ borderColor: "#E5E0D8" }}>
+                      <button
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="w-full py-3 rounded-xl text-[13px] font-bold border cursor-pointer text-center text-red-600 bg-transparent transition-colors hover:bg-red-50"
+                        style={{ borderColor: "rgba(224,82,82,0.3)", fontFamily: "inherit" }}
+                      >
+                        Sign Out
+                      </button>
                     </div>
                   </div>
                 </div>

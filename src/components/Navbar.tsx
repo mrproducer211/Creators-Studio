@@ -7,8 +7,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { LayoutDashboard, Heart, Settings, LogOut } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
   const { data: session, status } = useSession();
   const { count }                  = useSaved();
   const { lang, setLang, t }       = useLanguage();
@@ -223,206 +225,258 @@ export default function Navbar() {
             style={{ background: "#F7F3EC", borderBottom: "1px solid #E5E0D8" }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Home */}
-            <Link
-              href="/"
-              onClick={() => setMenuOpen(false)}
-              className="px-5 py-3.5 text-[15px] font-medium no-underline border-b"
-              style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
-            >
-              {t.nav.home}
-            </Link>
-
-            {/* Discover Collapsible Parent */}
-            <div>
-              <button
-                onClick={() => setDiscoverOpen(!discoverOpen)}
-                className="w-full text-left px-5 py-3.5 text-[15px] font-medium border-b flex items-center justify-between cursor-pointer bg-transparent"
-                style={{ color: "#1C3A2F", borderColor: "#EDE8DF", fontFamily: "inherit" }}
-              >
-                <span>{t.nav.discover}</span>
-                <span
-                  className="text-[10px] transition-transform duration-200"
-                  style={{
-                    color: "#1C3A2F",
-                    transform: discoverOpen ? "rotate(180deg)" : "rotate(0deg)",
-                    display: "inline-block",
-                  }}
-                >
-                  ▼
-                </span>
-              </button>
-
-              {discoverOpen && (
-                <div
-                  className="flex flex-col bg-[rgba(28,58,47,0.03)] border-b transition-all"
-                  style={{ borderColor: "#EDE8DF" }}
-                >
-                  <Link
-                    href="/explore"
-                    onClick={() => setMenuOpen(false)}
-                    className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline"
-                    style={{ color: "#1C3A2F" }}
-                  >
-                    {t.nav.explore}
-                  </Link>
-                  <Link
-                    href="/swipe"
-                    onClick={() => setMenuOpen(false)}
-                    className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline border-t"
-                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
-                  >
-                    {t.nav.swipe}
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* I'm Looking For Collapsible Parent */}
-            <div>
-              <button
-                onClick={() => setLookingForOpen(!lookingForOpen)}
-                className="w-full text-left px-5 py-3.5 text-[15px] font-medium border-b flex items-center justify-between cursor-pointer bg-transparent"
-                style={{ color: "#1C3A2F", borderColor: "#EDE8DF", fontFamily: "inherit" }}
-              >
-                <span>{t.nav.imLookingFor}</span>
-                <span
-                  className="text-[10px] transition-transform duration-200"
-                  style={{
-                    color: "#1C3A2F",
-                    transform: lookingForOpen ? "rotate(180deg)" : "rotate(0deg)",
-                    display: "inline-block",
-                  }}
-                >
-                  ▼
-                </span>
-              </button>
-
-              {lookingForOpen && (
-                <div
-                  className="flex flex-col bg-[rgba(28,58,47,0.03)] border-b transition-all"
-                  style={{ borderColor: "#EDE8DF" }}
-                >
-                  <Link
-                    href="/explore?type=rent"
-                    onClick={() => setMenuOpen(false)}
-                    className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline"
-                    style={{ color: "#1C3A2F" }}
-                  >
-                    {t.nav.renting}
-                  </Link>
-                  <Link
-                    href="/explore?type=sale"
-                    onClick={() => setMenuOpen(false)}
-                    className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline border-t"
-                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
-                  >
-                    {t.nav.buying}
-                  </Link>
-
-                  <Link
-                    href="/explore?pets=true"
-                    onClick={() => setMenuOpen(false)}
-                    className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline border-t"
-                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
-                  >
-                    {t.nav.petFriendly}
-                  </Link>
-                </div>
-              )}
-            </div>
-            {/* NHP Match Link */}
-            <Link
-              href="/explore/match"
-              onClick={() => setMenuOpen(false)}
-              className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
-              style={{ color: "#1C3A2F", borderColor: "#EDE8DF", fontWeight: "bold" }}
-            >
-              <span>✨ Auto Finder</span>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>AI</span>
-            </Link>
-
-            {/* Mobile language toggle */}
-            <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: "1px solid #EDE8DF" }}>
-              <span className="text-[12px]" style={{ color: "#999" }}>{t.nav.language}</span>
-              <div className="flex items-center rounded-lg overflow-hidden ml-auto" style={{ border: "1.5px solid #E5E0D8" }}>
-                {(["en", "th"] as const).map((l) => (
-                  <button key={l} onClick={() => setLang(l)}
-                    className="cursor-pointer border-none text-[11px] font-bold"
-                    style={{ padding: "5px 12px", background: lang === l ? "#1C3A2F" : "transparent", color: lang === l ? "#F7F3EC" : "#888", fontFamily: "inherit" }}
-                  >{l.toUpperCase()}</button>
-                ))}
-              </div>
-            </div>
-
-            {/* Mobile currency toggle */}
-            <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: "1px solid #EDE8DF" }}>
-              <span className="text-[12px]" style={{ color: "#999" }}>Currency</span>
-              <div className="flex items-center rounded-lg overflow-hidden ml-auto" style={{ border: "1.5px solid #E5E0D8" }}>
-                {(["THB", "USD", "EUR", "CNY"] as const).map((curr) => (
-                  <button key={curr} onClick={() => setCurrency(curr)}
-                    className="cursor-pointer border-none text-[10px] font-bold"
-                    style={{
-                      padding: "5px 10px",
-                      background: currency === curr ? "#1C3A2F" : "transparent",
-                      color: currency === curr ? "#F7F3EC" : "#888",
-                      fontFamily: "inherit"
-                    }}
-                  >
-                    {curr === "THB" ? "฿ THB" : curr === "USD" ? "$ USD" : curr === "EUR" ? "€ EUR" : "¥ CNY"}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {user && (
+            {pathname === "/dashboard" && user && (session.user as { role?: string }).role !== "agent" && (session.user as { role?: string }).role !== "admin" ? (
               <>
-                {(session.user as { role?: string }).role === "agent" ? (
-                  <Link href="/agent/dashboard" onClick={() => setMenuOpen(false)}
-                    className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
-                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
-                    <LayoutDashboard size={18} className="text-[#C9A84C]" />
-                    <span>Agent Dashboard</span>
-                  </Link>
-                ) : (
-                  <Link href="/dashboard" onClick={() => setMenuOpen(false)}
-                    className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
-                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
-                    <LayoutDashboard size={18} className="text-[#C9A84C]" />
-                    <span>My Dashboard</span>
-                  </Link>
-                )}
-                <Link href="/dashboard?tab=saved" onClick={() => setMenuOpen(false)}
+                {/* Home */}
+                <Link
+                  href="/"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b"
+                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                >
+                  {t.nav.home}
+                </Link>
+
+                {/* My Dashboard */}
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
+                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                >
+                  <LayoutDashboard size={18} className="text-[#C9A84C]" />
+                  <span>My Dashboard</span>
+                </Link>
+
+                {/* Saved Properties */}
+                <Link
+                  href="/dashboard?tab=saved"
+                  onClick={() => setMenuOpen(false)}
                   className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
-                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                >
                   <span className="flex items-center gap-2.5">
                     <Heart size={18} className="text-[#C9A84C]" />
                     <span>Saved Properties</span>
                   </span>
                   {count > 0 && <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
                 </Link>
-                <Link href="/dashboard?tab=settings" onClick={() => setMenuOpen(false)}
-                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
-                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+
+                {/* Settings */}
+                <Link
+                  href="/dashboard?tab=settings"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline flex items-center gap-2.5"
+                  style={{ color: "#1C3A2F" }}
+                >
                   <Settings size={18} className="text-[#C9A84C]" />
                   <span>Settings</span>
                 </Link>
               </>
+            ) : (
+              <>
+                {/* Home */}
+                <Link
+                  href="/"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b"
+                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                >
+                  {t.nav.home}
+                </Link>
+
+                {/* Discover Collapsible Parent */}
+                <div>
+                  <button
+                    onClick={() => setDiscoverOpen(!discoverOpen)}
+                    className="w-full text-left px-5 py-3.5 text-[15px] font-medium border-b flex items-center justify-between cursor-pointer bg-transparent"
+                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF", fontFamily: "inherit" }}
+                  >
+                    <span>{t.nav.discover}</span>
+                    <span
+                      className="text-[10px] transition-transform duration-200"
+                      style={{
+                        color: "#1C3A2F",
+                        transform: discoverOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        display: "inline-block",
+                      }}
+                    >
+                      ▼
+                    </span>
+                  </button>
+
+                  {discoverOpen && (
+                    <div
+                      className="flex flex-col bg-[rgba(28,58,47,0.03)] border-b transition-all"
+                      style={{ borderColor: "#EDE8DF" }}
+                    >
+                      <Link
+                        href="/explore"
+                        onClick={() => setMenuOpen(false)}
+                        className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline"
+                        style={{ color: "#1C3A2F" }}
+                      >
+                        {t.nav.explore}
+                      </Link>
+                      <Link
+                        href="/swipe"
+                        onClick={() => setMenuOpen(false)}
+                        className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline border-t"
+                        style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                      >
+                        {t.nav.swipe}
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* I'm Looking For Collapsible Parent */}
+                <div>
+                  <button
+                    onClick={() => setLookingForOpen(!lookingForOpen)}
+                    className="w-full text-left px-5 py-3.5 text-[15px] font-medium border-b flex items-center justify-between cursor-pointer bg-transparent"
+                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF", fontFamily: "inherit" }}
+                  >
+                    <span>{t.nav.imLookingFor}</span>
+                    <span
+                      className="text-[10px] transition-transform duration-200"
+                      style={{
+                        color: "#1C3A2F",
+                        transform: lookingForOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        display: "inline-block",
+                      }}
+                    >
+                      ▼
+                    </span>
+                  </button>
+
+                  {lookingForOpen && (
+                    <div
+                      className="flex flex-col bg-[rgba(28,58,47,0.03)] border-b transition-all"
+                      style={{ borderColor: "#EDE8DF" }}
+                    >
+                      <Link
+                        href="/explore?type=rent"
+                        onClick={() => setMenuOpen(false)}
+                        className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline"
+                        style={{ color: "#1C3A2F" }}
+                      >
+                        {t.nav.renting}
+                      </Link>
+                      <Link
+                        href="/explore?type=sale"
+                        onClick={() => setMenuOpen(false)}
+                        className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline border-t"
+                        style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                      >
+                        {t.nav.buying}
+                      </Link>
+
+                      <Link
+                        href="/explore?pets=true"
+                        onClick={() => setMenuOpen(false)}
+                        className="pl-8 pr-5 py-3 text-[14px] font-medium no-underline border-t"
+                        style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                      >
+                        {t.nav.petFriendly}
+                      </Link>
+                    </div>
+                  )}
+                </div>
+                {/* NHP Match Link */}
+                <Link
+                  href="/explore/match"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
+                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF", fontWeight: "bold" }}
+                >
+                  <span>✨ Auto Finder</span>
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>AI</span>
+                </Link>
+
+                {/* Mobile language toggle */}
+                <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: "1px solid #EDE8DF" }}>
+                  <span className="text-[12px]" style={{ color: "#999" }}>{t.nav.language}</span>
+                  <div className="flex items-center rounded-lg overflow-hidden ml-auto" style={{ border: "1.5px solid #E5E0D8" }}>
+                    {(["en", "th"] as const).map((l) => (
+                      <button key={l} onClick={() => setLang(l)}
+                        className="cursor-pointer border-none text-[11px] font-bold"
+                        style={{ padding: "5px 12px", background: lang === l ? "#1C3A2F" : "transparent", color: lang === l ? "#F7F3EC" : "#888", fontFamily: "inherit" }}
+                      >{l.toUpperCase()}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Mobile currency toggle */}
+                <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: "1px solid #EDE8DF" }}>
+                  <span className="text-[12px]" style={{ color: "#999" }}>Currency</span>
+                  <div className="flex items-center rounded-lg overflow-hidden ml-auto" style={{ border: "1.5px solid #E5E0D8" }}>
+                    {(["THB", "USD", "EUR", "CNY"] as const).map((curr) => (
+                      <button key={curr} onClick={() => setCurrency(curr)}
+                        className="cursor-pointer border-none text-[10px] font-bold"
+                        style={{
+                          padding: "5px 10px",
+                          background: currency === curr ? "#1C3A2F" : "transparent",
+                          color: currency === curr ? "#F7F3EC" : "#888",
+                          fontFamily: "inherit"
+                        }}
+                      >
+                        {curr === "THB" ? "฿ THB" : curr === "USD" ? "$ USD" : curr === "EUR" ? "€ EUR" : "¥ CNY"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {user && (
+                  <>
+                    {(session.user as { role?: string }).role === "agent" ? (
+                      <Link href="/agent/dashboard" onClick={() => setMenuOpen(false)}
+                        className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
+                        style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                        <LayoutDashboard size={18} className="text-[#C9A84C]" />
+                        <span>Agent Dashboard</span>
+                      </Link>
+                    ) : (
+                      <Link href="/dashboard" onClick={() => setMenuOpen(false)}
+                        className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
+                        style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                        <LayoutDashboard size={18} className="text-[#C9A84C]" />
+                        <span>My Dashboard</span>
+                      </Link>
+                    )}
+                    <Link href="/dashboard?tab=saved" onClick={() => setMenuOpen(false)}
+                      className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
+                      style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                      <span className="flex items-center gap-2.5">
+                        <Heart size={18} className="text-[#C9A84C]" />
+                        <span>Saved Properties</span>
+                      </span>
+                      {count > 0 && <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
+                    </Link>
+                    <Link href="/dashboard?tab=settings" onClick={() => setMenuOpen(false)}
+                      className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center gap-2.5"
+                      style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}>
+                      <Settings size={18} className="text-[#C9A84C]" />
+                      <span>Settings</span>
+                    </Link>
+                  </>
+                )}
+                <div className="px-5 py-4 flex gap-3">
+                  {user ? (
+                    <button onClick={() => signOut({ callbackUrl: "/" })}
+                      className="flex-1 text-center py-3 rounded-xl text-sm font-semibold cursor-pointer border-none"
+                      style={{ background: "#1C3A2F", color: "#F7F3EC", fontFamily: "inherit" }}>
+                      {t.nav.signOut}
+                    </button>
+                  ) : (
+                    <>
+                      <Link href="/auth/signin" className="flex-1 text-center py-3 rounded-xl text-sm font-semibold no-underline" style={{ border: "1.5px solid #1C3A2F", color: "#1C3A2F" }}>{t.nav.signIn}</Link>
+                      <Link href="/explore" className="flex-1 text-center py-3 rounded-xl text-sm font-semibold no-underline" style={{ background: "#1C3A2F", color: "#F7F3EC" }}>Browse</Link>
+                    </>
+                  )}
+                </div>
+              </>
             )}
-            <div className="px-5 py-4 flex gap-3">
-              {user ? (
-                <button onClick={() => signOut({ callbackUrl: "/" })}
-                  className="flex-1 text-center py-3 rounded-xl text-sm font-semibold cursor-pointer border-none"
-                  style={{ background: "#1C3A2F", color: "#F7F3EC", fontFamily: "inherit" }}>
-                  {t.nav.signOut}
-                </button>
-              ) : (
-                <>
-                  <Link href="/auth/signin" className="flex-1 text-center py-3 rounded-xl text-sm font-semibold no-underline" style={{ border: "1.5px solid #1C3A2F", color: "#1C3A2F" }}>{t.nav.signIn}</Link>
-                  <Link href="/explore" className="flex-1 text-center py-3 rounded-xl text-sm font-semibold no-underline" style={{ background: "#1C3A2F", color: "#F7F3EC" }}>Browse</Link>
-                </>
-              )}
-            </div>
           </div>
         </div>
       )}

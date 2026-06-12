@@ -34,7 +34,7 @@ const POSTS = [
     category: "Family Living",
     title:    "Top International Schools Near Bangkok's Expat Neighbourhoods",
     excerpt:  "Relocating with children? We map the best international schools against the city's most liveable expat areas so the commute never becomes the sacrifice.",
-    image:    "/images/blog/bangkok_international_school.png",
+    image:    "/images/blog/bangkok_international_school.webp",
     readTime: "7 min read",
   },
 ];

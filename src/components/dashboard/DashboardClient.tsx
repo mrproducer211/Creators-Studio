@@ -583,9 +583,29 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* Sidebar Nav (Desktop) */}
-        <aside className="w-full lg:w-[260px] flex-shrink-0 flex lg:flex-col gap-1 overflow-x-auto no-scrollbar whitespace-nowrap bg-white p-2 rounded-2xl border border-[#E5E0D8]">
+      <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
+        {/* Mobile Tab Navigation Dropdown */}
+        <div className="w-full lg:hidden mb-4">
+          <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-[1.5px] mb-1.5">
+            Dashboard Menu
+          </label>
+          <select
+            value={activeTab}
+            onChange={(e) => handleTabChange(e.target.value as any)}
+            className="w-full px-4 py-3 rounded-xl border border-[#E5E0D8] outline-none text-[14px] font-semibold bg-white text-[#1C3A2F]"
+            style={{ fontFamily: "inherit" }}
+          >
+            <option value="feed">🧭 Profile & Match Feed</option>
+            <option value="saved">💚 Saved Properties</option>
+            <option value="searches">🔖 Saved Searches</option>
+            <option value="commute">🚗 Commute Planner</option>
+            <option value="collab">👥 Collaborative Lists</option>
+            <option value="settings">⚙️ Settings</option>
+          </select>
+        </div>
+
+        {/* Sidebar Nav (Desktop only) */}
+        <aside className="hidden lg:flex lg:flex-col lg:w-[260px] flex-shrink-0 gap-1 bg-white p-2 rounded-2xl border border-[#E5E0D8]">
           {[
             { id: "feed", label: "Profile & Match Feed", icon: <Compass size={16} /> },
             { id: "saved", label: "Saved Properties", icon: <Heart size={16} /> },
