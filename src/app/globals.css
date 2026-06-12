@@ -36,6 +36,12 @@ body {
   display: none;
 }
 
+/* Shimmer skeleton animation — used by PlacePhotoCard in Nearby Places */
+@keyframes nhp-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 @keyframes pop-bounce {
   0% { transform: scale(1); }
   40% { transform: scale(1.3); }

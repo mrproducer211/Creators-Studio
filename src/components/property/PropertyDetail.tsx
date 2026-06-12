@@ -419,6 +419,114 @@ function getPlaceImage(area: string, category: string, placeName: string, fallba
 }
 
 /* ─────────────────────────────────────────────
+   PlacePhotoCard — Nearby Places card with live
+   Google Places photo + shimmer skeleton fallback
+───────────────────────────────────────────── */
+interface PlacePhotoCardProps {
+  place: NearbyPlace & { area: string };
+  property: import("@/types/property").PropertyCard;
+  getDirectionsUrlFn: (property: import("@/types/property").PropertyCard, name: string) => string;
+}
+
+function PlacePhotoCard({ place, property, getDirectionsUrlFn }: PlacePhotoCardProps) {
+  const fallback = getPlaceImage(property.area, place.category, place.name, place.image);
+  const [imgSrc, setImgSrc] = useState<string>(fallback);
+  const [loading, setLoading] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setImageLoaded(false);
+    setImgSrc(fallback);
+
+    const url = `/api/places-photo?name=${encodeURIComponent(place.name)}&area=${encodeURIComponent(property.area)}`;
+
+    fetch(url)
+      .then((res) => res.json())
+      .then((data: { photoUrl?: string | null }) => {
+        if (!cancelled && data.photoUrl) {
+          setImgSrc(data.photoUrl);
+        }
+      })
+      .catch(() => { /* keep fallback */ })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [place.name, property.area]);
+
+  return (
+    <a
+      href={getDirectionsUrlFn(property, place.name)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="relative rounded-xl overflow-hidden group cursor-pointer block no-underline"
+      style={{ aspectRatio: "3 / 4" }}
+    >
+      {/* Shimmer skeleton shown while loading or image hasn't painted */}
+      {(loading || !imageLoaded) && (
+        <div
+          className="absolute inset-0 z-10"
+          style={{
+            background: "linear-gradient(90deg, #e8e3d9 25%, #f0ece4 50%, #e8e3d9 75%)",
+            backgroundSize: "200% 100%",
+            animation: "nhp-shimmer 1.4s infinite linear",
+          }}
+        />
+      )}
+
+      <img
+        src={imgSrc}
+        alt={place.name}
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        style={{ opacity: imageLoaded ? 1 : 0, transition: "opacity 0.4s" }}
+        onLoad={() => setImageLoaded(true)}
+        onError={() => {
+          // photo_reference URL failed → fall back to static
+          if (imgSrc !== fallback) {
+            setImgSrc(fallback);
+          }
+          setImageLoaded(true);
+        }}
+      />
+
+      {/* Google Maps badge when using a real photo */}
+      {!loading && imgSrc !== fallback && (
+        <div
+          className="absolute top-2 left-2 z-20 flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold"
+          style={{ background: "rgba(255,255,255,0.92)", color: "#1C3A2F" }}
+        >
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          Live
+        </div>
+      )}
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 50%, transparent 100%)" }} />
+
+      {/* Rating badge */}
+      <div className="absolute top-2 right-2 z-20 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: "rgba(255,255,255,0.92)", color: "#1C3A2F" }}>
+        ★ {place.rating}
+      </div>
+
+      {/* Bottom info */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 text-left z-20">
+        <div className="text-[12px] font-bold text-white leading-tight mb-0.5">{place.name}</div>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-white/80">{place.distance}</span>
+          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold" style={{ background: "rgba(201,168,76,0.85)", color: "#1C3A2F" }}>
+            {place.category}
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+/* ─────────────────────────────────────────────
    Gallery — main image + thumbnails
    ───────────────────────────────────────────── */
 function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; name: string; isFeatured: boolean; propertyId: number }) {
@@ -1609,39 +1717,15 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                 ))}
               </div>
 
-              {/* Places grid */}
+              {/* Places grid — each card fetches a real Google Places photo */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {filteredPlaces.slice(0, 6).map((place, idx) => (
-                  <a
+                  <PlacePhotoCard
                     key={idx}
-                    href={getDirectionsUrl(property, place.name)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="relative rounded-xl overflow-hidden group cursor-pointer block no-underline"
-                    style={{ aspectRatio: "3 / 4" }}
-                  >
-                    <img
-                      src={getPlaceImage(property.area, place.category, place.name, place.image)}
-                      alt={place.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 50%, transparent 100%)" }} />
-                    {/* Rating badge */}
-                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: "rgba(255,255,255,0.92)", color: "#1C3A2F" }}>
-                      ★ {place.rating}
-                    </div>
-                    {/* Bottom info */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3 text-left">
-                      <div className="text-[12px] font-bold text-white leading-tight mb-0.5">{place.name}</div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-white/80">{place.distance}</span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold" style={{ background: "rgba(201,168,76,0.85)", color: "#1C3A2F" }}>
-                          {place.category}
-                        </span>
-                      </div>
-                    </div>
-                  </a>
+                    place={{ ...place, area: property.area }}
+                    property={property}
+                    getDirectionsUrlFn={getDirectionsUrl}
+                  />
                 ))}
               </div>
 
