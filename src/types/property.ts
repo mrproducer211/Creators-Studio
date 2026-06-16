@@ -38,7 +38,7 @@ export interface PropertyCard {
   agentEmail?: string;
   createdAt: string;
   updatedAt?: string;
-  status?: "active" | "unlisted";
+  status?: "active" | "unlisted" | "sold" | "rented" | "draft";
 
   // ── Optional enrichment (data-driven when set, smart defaults otherwise) ──
   amenities?:       string[];

@@ -90,7 +90,7 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
 
   if (!isDbConfigured) {
     const localList = await getAllProperties();
-    const visibleList = includeUnlisted ? localList : localList.filter((p) => p.status !== "unlisted");
+    const visibleList = includeUnlisted ? localList : localList.filter((p) => p.status !== "unlisted" && p.status !== "draft");
     return visibleList.map((p) => ({
       ...p,
       area: getCanonicalArea(p.area),
@@ -181,7 +181,7 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
           status: (p.status as PropertyCard["status"]) || undefined,
         };
       });
-      const dbList = includeUnlisted ? mapped : mapped.filter((p) => p.status !== "unlisted");
+      const dbList = includeUnlisted ? mapped : mapped.filter((p) => p.status !== "unlisted" && p.status !== "draft");
       const dbSlugs = new Set(dbList.map((p) => p.slug));
       const mockList = MOCK_PROPERTIES.filter((p) => !dbSlugs.has(p.slug));
       

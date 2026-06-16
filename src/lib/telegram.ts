@@ -15,6 +15,25 @@ export interface EnquiryPayload {
   tourTime?:     string;   // "HH:MM"
 }
 
+export interface AppointmentPayload {
+  propertySlug?: string;
+  propertyName?: string;
+  name: string;
+  email: string;
+  phone: string;
+  date: string;
+  timeSlot: string;
+  message?: string;
+}
+
+function escapeHTML(text: string): string {
+  if (!text) return "";
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 function listingEmoji(t: string) {
   if (t === "sale")       return "🏷️ For Sale";
   if (t === "rent")       return "🔑 Long Rent";
@@ -48,35 +67,65 @@ export function buildTelegramMessage(p: EnquiryPayload, baseUrl: string): string
   });
 
   const isTour = p.source === "tour";
-  const title  = isTour ? "📅 *New Tour Request — NHP Bangkok*" : "🏠 *New Enquiry — NHP Bangkok*";
+  const title  = isTour ? "📅 <b>New Tour Request — NHP Bangkok</b>" : "🏠 <b>New Enquiry — NHP Bangkok</b>";
 
   return [
     title,
     ``,
-    `*Property:* ${p.propertyName}`,
-    `*Listing:* ${listingEmoji(p.listingType)}`,
-    `*Price:* ${p.price}`,
-    `*Area:* ${p.area}, Bangkok`,
-    `🔗 [View Property](${propertyUrl})`,
+    `<b>Property:</b> ${escapeHTML(p.propertyName)}`,
+    `<b>Listing:</b> ${escapeHTML(listingEmoji(p.listingType))}`,
+    `<b>Price:</b> ${escapeHTML(p.price)}`,
+    `<b>Area:</b> ${escapeHTML(p.area)}, Bangkok`,
+    `🔗 <a href="${propertyUrl}">View Property</a>`,
     ``,
     `━━━━━━━━━━━━━━━`,
     ...(isTour && p.tourDate && p.tourTime ? [
-      `📅 *Tour Details*`,
-      `*Date:* ${formatTourDate(p.tourDate)}`,
-      `*Time:* ${p.tourTime}`,
+      `📅 <b>Tour Details</b>`,
+      `<b>Date:</b> ${escapeHTML(formatTourDate(p.tourDate))}`,
+      `<b>Time:</b> ${escapeHTML(p.tourTime)}`,
       ``,
       `━━━━━━━━━━━━━━━`,
     ] : []),
-    `👤 *Contact*`,
-    `*Name:* ${p.name}`,
-    `*Via:* ${methodEmoji(p.method)}`,
-    `*Contact:* ${p.contact}`,
-    ...(p.message ? [`*Message:* ${p.message}`] : []),
+    `👤 <b>Contact</b>`,
+    `<b>Name:</b> ${escapeHTML(p.name)}`,
+    `<b>Via:</b> ${escapeHTML(methodEmoji(p.method))}`,
+    `<b>Contact:</b> ${escapeHTML(p.contact)}`,
+    ...(p.message ? [`<b>Message:</b> ${escapeHTML(p.message)}`] : []),
     ``,
     `━━━━━━━━━━━━━━━`,
-    `📍 Source: ${sourceLabel(p.source)}`,
+    `📍 Source: ${escapeHTML(sourceLabel(p.source))}`,
     `📅 Submitted ${now} (Bangkok time)`,
   ].join("\n");
+}
+
+export function buildAppointmentTelegramMessage(a: AppointmentPayload, baseUrl: string): string {
+  const now = new Date().toLocaleString("en-GB", {
+    day: "numeric", month: "long", year: "numeric",
+    hour: "2-digit", minute: "2-digit", timeZone: "Asia/Bangkok",
+  });
+
+  const propertyInfo = a.propertyName && a.propertySlug
+    ? `<b>Property:</b> ${escapeHTML(a.propertyName)}\n🔗 <a href="${baseUrl}/property/${a.propertySlug}">View Property</a>\n`
+    : "";
+
+  return [
+    `📅 <b>New Tour Booking — NHP Bangkok</b>`,
+    ``,
+    propertyInfo,
+    `📅 <b>Tour Details</b>`,
+    `<b>Date:</b> ${escapeHTML(formatTourDate(a.date))}`,
+    `<b>Time:</b> ${escapeHTML(a.timeSlot)}`,
+    ``,
+    `━━━━━━━━━━━━━━━`,
+    `👤 <b>Contact</b>`,
+    `<b>Name:</b> ${escapeHTML(a.name)}`,
+    `<b>Email:</b> ${escapeHTML(a.email)}`,
+    `<b>Phone:</b> ${escapeHTML(a.phone)}`,
+    ...(a.message ? [`<b>Message:</b> ${escapeHTML(a.message)}`] : []),
+    ``,
+    `━━━━━━━━━━━━━━━`,
+    `📅 Submitted ${now} (Bangkok time)`,
+  ].filter(line => line !== null).join("\n");
 }
 
 export async function sendTelegramMessage(text: string): Promise<void> {
@@ -104,7 +153,7 @@ export async function sendTelegramMessage(text: string): Promise<void> {
       body: JSON.stringify({
         chat_id:    chatId,
         text,
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         disable_web_page_preview: false,
       }),
     }

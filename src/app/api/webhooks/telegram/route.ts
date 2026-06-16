@@ -2,12 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { db, isDbConfigured } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { createProperty, getAllProperties, updateProperty } from "@/lib/store/properties";
+import { eq, and } from "drizzle-orm";
+import { createProperty, getAllProperties, updateProperty, deleteProperty } from "@/lib/store/properties";
 import { PropertyCard } from "@/types/property";
 import { getCanonicalArea } from "@/lib/area";
 import sharp from "sharp";
-import { readJson, writeJson } from "@/lib/store/fileStore";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -545,62 +544,130 @@ async function processTelegramMedia(
   }
 }
 
-interface TelegramSession {
-  images: string[];
-  videoUrl?: string;
-  caption?: string;
-  mediaGroupId?: string;
-  lastUpdated: number;
-}
+// In-memory rate limiting for feedback messages
+const feedbackTimestamps = new Map<string, number>();
 
-const SESSION_FILE = "telegram-sessions.json";
-const FEEDBACK_FILE = "telegram-feedback-timestamps.json";
-
-async function getSession(chatId: string | number): Promise<TelegramSession> {
-  const allSessions = await readJson<Record<string, TelegramSession>>(SESSION_FILE, {});
-  const session = allSessions[String(chatId)] || { images: [], lastUpdated: 0 };
-
-  // Expire sessions older than 15 minutes
-  if (session.lastUpdated && Date.now() - session.lastUpdated > 15 * 60 * 1000) {
-    return { images: [], lastUpdated: 0 };
-  }
-  return session;
-}
-
-async function saveSession(chatId: string | number, session: TelegramSession): Promise<void> {
-  const allSessions = await readJson<Record<string, TelegramSession>>(SESSION_FILE, {});
-  allSessions[String(chatId)] = { ...session, lastUpdated: Date.now() };
-  await writeJson(SESSION_FILE, allSessions);
-}
-
-async function clearSession(chatId: string | number): Promise<void> {
-  const allSessions = await readJson<Record<string, TelegramSession>>(SESSION_FILE, {});
-  delete allSessions[String(chatId)];
-  await writeJson(SESSION_FILE, allSessions);
-}
-
-async function shouldSendFeedback(chatId: string | number): Promise<boolean> {
-  const timestamps = await readJson<Record<string, number>>(FEEDBACK_FILE, {});
-  const lastSent = timestamps[String(chatId)] || 0;
-  if (Date.now() - lastSent < 3000) {
+function shouldSendFeedback(chatId: string | number): boolean {
+  const key = String(chatId);
+  const now = Date.now();
+  const lastSent = feedbackTimestamps.get(key) || 0;
+  if (now - lastSent < 3000) {
     return false;
   }
-  timestamps[String(chatId)] = Date.now();
-  await writeJson(FEEDBACK_FILE, timestamps);
+  feedbackTimestamps.set(key, now);
   return true;
 }
 
-async function publishListing(
+async function getDraftProperty(chatId: string | number, mediaGroupId: string | null): Promise<any | null> {
+  if (!isDbConfigured) return null;
+
+  // 1. Try to find by mediaGroupId first if provided
+  if (mediaGroupId) {
+    const draft = await db
+      .select()
+      .from(propertiesTable)
+      .where(
+        and(
+          eq(propertiesTable.telegramMediaGroupId, mediaGroupId),
+          eq(propertiesTable.status, "draft")
+        )
+      )
+      .limit(1);
+    if (draft.length > 0) return draft[0];
+  }
+
+  // 2. Try to find by slug = draft-chat-{chatId}
+  const draft = await db
+    .select()
+    .from(propertiesTable)
+    .where(
+      and(
+        eq(propertiesTable.slug, `draft-chat-${chatId}`),
+        eq(propertiesTable.status, "draft")
+      )
+    )
+    .limit(1);
+  if (draft.length > 0) return draft[0];
+
+  return null;
+}
+
+async function createDraftProperty(
+  chatId: string | number,
+  mediaGroupId: string | null,
+  imageUrl: string,
+  videoUrl?: string
+): Promise<any> {
+  const slug = mediaGroupId ? `draft-media-${mediaGroupId}` : `draft-chat-${chatId}`;
+
+  if (isDbConfigured) {
+    // Delete any existing draft with this slug first to avoid unique constraint violations
+    await db.delete(propertiesTable).where(eq(propertiesTable.slug, slug));
+
+    const [inserted] = await db
+      .insert(propertiesTable)
+      .values({
+        slug,
+        name: "Draft Listing",
+        description: "",
+        listingType: "sale",
+        propertyType: "condo",
+        status: "draft",
+        priceTHB: "0",
+        area: "Sukhumvit",
+        coverImage: imageUrl,
+        images: [imageUrl],
+        videoUrl: videoUrl || null,
+        hasVideo: !!videoUrl,
+        telegramMediaGroupId: mediaGroupId,
+        featured: false,
+        likes: 0,
+        saves: 0,
+        clicks: 0,
+      })
+      .returning();
+    return inserted;
+  }
+  return null;
+}
+
+async function appendMediaToDraft(
+  draftId: number,
+  imageUrl: string,
+  videoUrl?: string
+): Promise<void> {
+  if (!isDbConfigured) return;
+
+  const [draft] = await db
+    .select({ images: propertiesTable.images })
+    .from(propertiesTable)
+    .where(eq(propertiesTable.id, draftId))
+    .limit(1);
+
+  if (!draft) return;
+
+  const currentImages = draft.images || [];
+  if (!currentImages.includes(imageUrl)) {
+    currentImages.push(imageUrl);
+  }
+
+  await db
+    .update(propertiesTable)
+    .set({
+      images: currentImages,
+      ...(videoUrl ? { videoUrl, hasVideo: true } : {}),
+    })
+    .where(eq(propertiesTable.id, draftId));
+}
+
+async function publishDraftListing(
   botToken: string,
   chatId: string | number,
   messageId: number,
-  session: TelegramSession
+  draft: any,
+  rawText: string
 ): Promise<NextResponse> {
-  // Clear the session on disk immediately to prevent concurrent publish tasks from double-processing
-  await clearSession(chatId);
-
-  const text = session.caption || "";
-  const parsed = parseTelegramMessage(text, messageId);
+  const parsed = parseTelegramMessage(rawText, messageId);
 
   // Automatically search search engine for built year if not provided
   if (!parsed.buildingBuilt) {
@@ -610,32 +677,34 @@ async function publishListing(
     }
   }
 
-  // Cover image is the first image in session
-  const coverImage = session.images[0] || null;
+  // Cover image is the first image in draft images array
+  const coverImage = draft.images?.[0] || draft.coverImage || null;
 
-  // Add parsed fields and save
-  const propertyData: Omit<PropertyCard, "id" | "createdAt"> & { telegramMediaGroupId?: string } = {
+  // Compile all fields
+  const propertyData = {
     ...parsed,
-    coverImage: coverImage || undefined,
-    images: session.images,
-    hasVideo: !!session.videoUrl,
-    videoUrl: session.videoUrl,
-    telegramMediaGroupId: session.mediaGroupId || undefined,
+    coverImage,
+    images: draft.images || [],
+    hasVideo: draft.hasVideo || !!draft.videoUrl,
+    videoUrl: draft.videoUrl,
+    telegramMediaGroupId: draft.telegramMediaGroupId || null,
+    status: "active" as const, // Change status to active
   };
 
-  let createdProperty: unknown = null;
+  let updatedProperty: any = null;
   if (isDbConfigured) {
-    const [created] = await db
-      .insert(propertiesTable)
-      .values({
+    const [updated] = await db
+      .update(propertiesTable)
+      .set({
         slug: propertyData.slug,
         name: propertyData.name,
         description: propertyData.description,
         listingType: propertyData.listingType,
         propertyType: propertyData.propertyType,
+        status: propertyData.status,
         priceTHB: String(propertyData.priceTHB),
         priceUSD: propertyData.priceUSD ? String(propertyData.priceUSD) : null,
-        priceLabel: propertyData.priceLabel || null,
+        priceLabel: null,
         bedrooms: propertyData.bedrooms,
         bathrooms: propertyData.bathrooms,
         sqm: propertyData.sqm || null,
@@ -655,7 +724,7 @@ async function publishListing(
         lastRenovated: propertyData.lastRenovated || null,
         furnishing: propertyData.furnishing || null,
         availableFrom: propertyData.availableFrom || null,
-        lastVerifiedAt: propertyData.lastVerifiedAt || null,
+        lastVerifiedAt: null,
         btsStation: propertyData.btsStation || null,
         btsWalkMin: propertyData.btsWalkMin || null,
         mrtStation: propertyData.mrtStation || null,
@@ -668,11 +737,9 @@ async function publishListing(
         floor: propertyData.floor || null,
         totalFloors: propertyData.totalFloors || null,
       })
+      .where(eq(propertiesTable.id, draft.id))
       .returning();
-    createdProperty = created;
-  } else {
-    const created = await createProperty(propertyData as Omit<PropertyCard, "id" | "createdAt" | "updatedAt">);
-    createdProperty = created;
+    updatedProperty = updated;
   }
 
   if (chatId) {
@@ -686,8 +753,8 @@ async function publishListing(
 
   return NextResponse.json({
     ok: true,
-    message: isDbConfigured ? "Listing created in live Neon DB" : "Listing created in local JSON store",
-    property: createdProperty
+    message: "Listing published successfully",
+    property: updatedProperty
   });
 }
 
@@ -737,57 +804,67 @@ export async function POST(req: NextRequest) {
       const newCloudinaryUrl = await processTelegramMedia(botToken, photoArray, videoObj);
       
       if (newCloudinaryUrl) {
-        // Retrieve session, append image, and save
-        const session = await getSession(chatId);
-        session.images = session.images || [];
-        session.images.push(newCloudinaryUrl);
-        if (videoObj) {
-          session.videoUrl = newCloudinaryUrl;
+        // Check if there is an existing draft
+        const draft = await getDraftProperty(chatId, mediaGroupId);
+        if (draft) {
+          await appendMediaToDraft(draft.id, newCloudinaryUrl, videoObj ? newCloudinaryUrl : undefined);
+        } else {
+          await createDraftProperty(chatId, mediaGroupId, newCloudinaryUrl, videoObj ? newCloudinaryUrl : undefined);
         }
-        if (mediaGroupId) {
-          session.mediaGroupId = mediaGroupId;
-        }
-        await saveSession(chatId, session);
       }
     }
 
     // 2. Handle Text Caption (either alongside media, or as a standalone text message)
     if (text && text.trim() !== "") {
-      const session = await getSession(chatId);
-      session.caption = text;
-      await saveSession(chatId, session);
+      // Find the draft
+      let draft = await getDraftProperty(chatId, mediaGroupId);
+      
+      // If no draft exists, and this is a text message, we can't publish yet because there are no images.
+      if (!draft) {
+        if (chatId) {
+          const warningText = `<b>ℹ️ Upload Photos First</b>\n\nPlease send one or more photos of the property first, then send the description details to publish the listing.`;
+          await sendTelegramResponse(botToken, chatId, warningText, messageId);
+        }
+        return NextResponse.json({ ok: true, message: "Prompted user to upload photos first." });
+      }
+
+      // Save the text to the draft description so concurrent requests can see it
+      if (isDbConfigured) {
+        await db
+          .update(propertiesTable)
+          .set({ description: text })
+          .where(eq(propertiesTable.id, draft.id));
+      }
 
       // A. If this is a media message (i.e. we sent an album with caption, or a photo with caption)
       if (hasMedia) {
         // Wait 3 seconds to allow concurrent child images in the album to upload and append
         await new Promise((resolve) => setTimeout(resolve, 3000));
         
-        // Reload session to get all images
-        const finalSession = await getSession(chatId);
+        // Reload draft to get all images
+        let finalDraft = null;
+        if (isDbConfigured) {
+          const res = await db
+            .select()
+            .from(propertiesTable)
+            .where(eq(propertiesTable.id, draft.id))
+            .limit(1);
+          if (res.length > 0) finalDraft = res[0];
+        }
         
         // Double check if this session was already published (to prevent multiple publishes for the same message)
-        if (!finalSession.caption || finalSession.images.length === 0) {
+        if (!finalDraft || finalDraft.status !== "draft") {
           return NextResponse.json({ ok: true, message: "Already published by concurrent task or empty." });
         }
 
         // Publish the listing
-        const result = await publishListing(botToken, chatId, messageId, finalSession);
+        const result = await publishDraftListing(botToken, chatId, messageId, finalDraft, text);
         return result;
       }
       // B. If this is a text-only message (i.e. step-by-step description sent AFTER uploading photos)
       else {
-        // Retrieve session and check if it has images
-        const session = await getSession(chatId);
-        if (!session.images || session.images.length === 0) {
-          if (chatId) {
-            const warningText = `<b>ℹ️ Upload Photos First</b>\n\nPlease send one or more photos of the property first, then send the description details to publish the listing.`;
-            await sendTelegramResponse(botToken, chatId, warningText, messageId);
-          }
-          return NextResponse.json({ ok: true, message: "Prompted user to upload photos first." });
-        }
-
         // Publish the listing
-        const result = await publishListing(botToken, chatId, messageId, session);
+        const result = await publishDraftListing(botToken, chatId, messageId, draft, text);
         return result;
       }
     }
@@ -798,15 +875,17 @@ export async function POST(req: NextRequest) {
         await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
-      const session = await getSession(chatId);
-      const imageCount = session.images.length;
+      const draft = await getDraftProperty(chatId, mediaGroupId);
+      const imageCount = draft ? (draft.images?.length || 0) : 0;
       
-      // If session already has a caption, it means it is being published via the master request, so do NOT send feedback!
-      if (!session.caption) {
-        const sendFeedback = await shouldSendFeedback(chatId);
-        if (sendFeedback && chatId) {
-          const feedbackText = `<b>📷 Photo Received! (Total: ${imageCount})</b>\n\nUpload more photos, or send the property description details to publish the listing.`;
-          await sendTelegramResponse(botToken, chatId, feedbackText, messageId);
+      // If draft already has status !== 'draft', it was already published by the master request, so do nothing.
+      if (draft && draft.status === "draft") {
+        if (!draft.description) {
+          const sendFeedback = shouldSendFeedback(chatId);
+          if (sendFeedback && chatId) {
+            const feedbackText = `<b>📷 Photo Received! (Total: ${imageCount})</b>\n\nUpload more photos, or send the property description details to publish the listing.`;
+            await sendTelegramResponse(botToken, chatId, feedbackText, messageId);
+          }
         }
       }
       
