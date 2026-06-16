@@ -545,6 +545,152 @@ async function processTelegramMedia(
   }
 }
 
+interface TelegramSession {
+  images: string[];
+  videoUrl?: string;
+  caption?: string;
+  mediaGroupId?: string;
+  lastUpdated: number;
+}
+
+const SESSION_FILE = "telegram-sessions.json";
+const FEEDBACK_FILE = "telegram-feedback-timestamps.json";
+
+async function getSession(chatId: string | number): Promise<TelegramSession> {
+  const allSessions = await readJson<Record<string, TelegramSession>>(SESSION_FILE, {});
+  const session = allSessions[String(chatId)] || { images: [], lastUpdated: 0 };
+
+  // Expire sessions older than 15 minutes
+  if (session.lastUpdated && Date.now() - session.lastUpdated > 15 * 60 * 1000) {
+    return { images: [], lastUpdated: 0 };
+  }
+  return session;
+}
+
+async function saveSession(chatId: string | number, session: TelegramSession): Promise<void> {
+  const allSessions = await readJson<Record<string, TelegramSession>>(SESSION_FILE, {});
+  allSessions[String(chatId)] = { ...session, lastUpdated: Date.now() };
+  await writeJson(SESSION_FILE, allSessions);
+}
+
+async function clearSession(chatId: string | number): Promise<void> {
+  const allSessions = await readJson<Record<string, TelegramSession>>(SESSION_FILE, {});
+  delete allSessions[String(chatId)];
+  await writeJson(SESSION_FILE, allSessions);
+}
+
+async function shouldSendFeedback(chatId: string | number): Promise<boolean> {
+  const timestamps = await readJson<Record<string, number>>(FEEDBACK_FILE, {});
+  const lastSent = timestamps[String(chatId)] || 0;
+  if (Date.now() - lastSent < 3000) {
+    return false;
+  }
+  timestamps[String(chatId)] = Date.now();
+  await writeJson(FEEDBACK_FILE, timestamps);
+  return true;
+}
+
+async function publishListing(
+  botToken: string,
+  chatId: string | number,
+  messageId: number,
+  session: TelegramSession
+): Promise<NextResponse> {
+  // Clear the session on disk immediately to prevent concurrent publish tasks from double-processing
+  await clearSession(chatId);
+
+  const text = session.caption || "";
+  const parsed = parseTelegramMessage(text, messageId);
+
+  // Automatically search search engine for built year if not provided
+  if (!parsed.buildingBuilt) {
+    const detectedYear = await findYearBuiltFromWeb(parsed.name);
+    if (detectedYear) {
+      parsed.buildingBuilt = detectedYear;
+    }
+  }
+
+  // Cover image is the first image in session
+  const coverImage = session.images[0] || null;
+
+  // Add parsed fields and save
+  const propertyData: Omit<PropertyCard, "id" | "createdAt"> & { telegramMediaGroupId?: string } = {
+    ...parsed,
+    coverImage: coverImage || undefined,
+    images: session.images,
+    hasVideo: !!session.videoUrl,
+    videoUrl: session.videoUrl,
+    telegramMediaGroupId: session.mediaGroupId || undefined,
+  };
+
+  let createdProperty: unknown = null;
+  if (isDbConfigured) {
+    const [created] = await db
+      .insert(propertiesTable)
+      .values({
+        slug: propertyData.slug,
+        name: propertyData.name,
+        description: propertyData.description,
+        listingType: propertyData.listingType,
+        propertyType: propertyData.propertyType,
+        priceTHB: String(propertyData.priceTHB),
+        priceUSD: propertyData.priceUSD ? String(propertyData.priceUSD) : null,
+        priceLabel: propertyData.priceLabel || null,
+        bedrooms: propertyData.bedrooms,
+        bathrooms: propertyData.bathrooms,
+        sqm: propertyData.sqm || null,
+        area: propertyData.area,
+        district: propertyData.district || null,
+        coverImage: propertyData.coverImage || null,
+        images: propertyData.images || [],
+        videoUrl: propertyData.videoUrl || null,
+        featured: propertyData.featured,
+        hasVideo: propertyData.hasVideo,
+        petFriendly: propertyData.petFriendly,
+        nearBts: propertyData.nearBts,
+        telegramMediaGroupId: propertyData.telegramMediaGroupId || null,
+        amenities: propertyData.amenities || [],
+        features: propertyData.features || [],
+        buildingBuilt: propertyData.buildingBuilt || null,
+        lastRenovated: propertyData.lastRenovated || null,
+        furnishing: propertyData.furnishing || null,
+        availableFrom: propertyData.availableFrom || null,
+        lastVerifiedAt: propertyData.lastVerifiedAt || null,
+        btsStation: propertyData.btsStation || null,
+        btsWalkMin: propertyData.btsWalkMin || null,
+        mrtStation: propertyData.mrtStation || null,
+        mrtWalkMin: propertyData.mrtWalkMin || null,
+        foreignQuota: propertyData.foreignQuota || null,
+        visaFriendly: propertyData.visaFriendly || null,
+        leaseTerms: propertyData.leaseTerms || null,
+        depositTerms: propertyData.depositTerms || null,
+        maintenance: propertyData.maintenance || null,
+        floor: propertyData.floor || null,
+        totalFloors: propertyData.totalFloors || null,
+      })
+      .returning();
+    createdProperty = created;
+  } else {
+    const created = await createProperty(propertyData as Omit<PropertyCard, "id" | "createdAt" | "updatedAt">);
+    createdProperty = created;
+  }
+
+  if (chatId) {
+    const propertyUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/property/${propertyData.slug}`;
+    const propName = propertyData.name;
+    const propPrice = Number(propertyData.priceTHB).toLocaleString();
+    const propArea = propertyData.area;
+    const successText = `<b>✅ Listing Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propName}\n💰 <b>Price:</b> ฿${propPrice}\n📍 <b>Area:</b> ${propArea}\n\n🔗 <a href="${propertyUrl}">View Listing</a>`;
+    await sendTelegramResponse(botToken, chatId, successText, messageId);
+  }
+
+  return NextResponse.json({
+    ok: true,
+    message: isDbConfigured ? "Listing created in live Neon DB" : "Listing created in local JSON store",
+    property: createdProperty
+  });
+}
+
 export async function POST(req: NextRequest) {
   // Webhook Signature verification
   const secretToken = req.headers.get("x-telegram-bot-api-secret-token");
@@ -557,7 +703,7 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid JSON body." }, { status: 200 });
   }
 
   // Check if it's a channel post or a direct message update (for testing)
@@ -573,200 +719,101 @@ export async function POST(req: NextRequest) {
 
   const messageId = post.message_id;
   const chatId = post.chat?.id;
+  if (!chatId) {
+    return NextResponse.json({ ok: true, message: "No chat ID found." });
+  }
+
   const mediaGroupId = post.media_group_id ? String(post.media_group_id) : null;
   const text = post.text || post.caption || "";
   const photoArray = post.photo || [];
   const videoObj = post.video;
 
-  const isChild = !!(mediaGroupId && (!text || text.trim() === ""));
+  const hasMedia = photoArray.length > 0 || !!videoObj;
 
   try {
-    // 1. If it's a child request in an album, wait and poll for the master record.
-    // Defer media upload until the master record is found to avoid the race condition.
-    if (isChild && mediaGroupId) {
-      let existingProperty: any = null;
-      const maxRetries = 40; // 40 retries * 500ms = 20 seconds
-      for (let i = 0; i < maxRetries; i++) {
-        if (isDbConfigured) {
-          const dbResult = await db
-            .select()
-            .from(propertiesTable)
-            .where(eq(propertiesTable.telegramMediaGroupId, mediaGroupId))
-            .limit(1);
-          if (dbResult.length > 0) {
-            existingProperty = dbResult[0];
-            break;
-          }
-        } else {
-          const localProperties = await getAllProperties();
-          existingProperty = localProperties.find(p => p.telegramMediaGroupId === mediaGroupId) || null;
-          if (existingProperty) break;
+    // 1. Handle incoming media (photo or video)
+    if (hasMedia) {
+      // Download and upload to Cloudinary
+      const newCloudinaryUrl = await processTelegramMedia(botToken, photoArray, videoObj);
+      
+      if (newCloudinaryUrl) {
+        // Retrieve session, append image, and save
+        const session = await getSession(chatId);
+        session.images = session.images || [];
+        session.images.push(newCloudinaryUrl);
+        if (videoObj) {
+          session.videoUrl = newCloudinaryUrl;
         }
+        if (mediaGroupId) {
+          session.mediaGroupId = mediaGroupId;
+        }
+        await saveSession(chatId, session);
+      }
+    }
+
+    // 2. Handle Text Caption (either alongside media, or as a standalone text message)
+    if (text && text.trim() !== "") {
+      const session = await getSession(chatId);
+      session.caption = text;
+      await saveSession(chatId, session);
+
+      // A. If this is a media message (i.e. we sent an album with caption, or a photo with caption)
+      if (hasMedia) {
+        // Wait 3 seconds to allow concurrent child images in the album to upload and append
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        
+        // Reload session to get all images
+        const finalSession = await getSession(chatId);
+        
+        // Double check if this session was already published (to prevent multiple publishes for the same message)
+        if (!finalSession.caption || finalSession.images.length === 0) {
+          return NextResponse.json({ ok: true, message: "Already published by concurrent task or empty." });
+        }
+
+        // Publish the listing
+        const result = await publishListing(botToken, chatId, messageId, finalSession);
+        return result;
+      }
+      // B. If this is a text-only message (i.e. step-by-step description sent AFTER uploading photos)
+      else {
+        // Retrieve session and check if it has images
+        const session = await getSession(chatId);
+        if (!session.images || session.images.length === 0) {
+          if (chatId) {
+            const warningText = `<b>ℹ️ Upload Photos First</b>\n\nPlease send one or more photos of the property first, then send the description details to publish the listing.`;
+            await sendTelegramResponse(botToken, chatId, warningText, messageId);
+          }
+          return NextResponse.json({ ok: true, message: "Prompted user to upload photos first." });
+        }
+
+        // Publish the listing
+        const result = await publishListing(botToken, chatId, messageId, session);
+        return result;
+      }
+    }
+    // 3. Handle Media without caption (photos/videos sent step-by-step or in a caption-less album)
+    else if (hasMedia) {
+      // If it is part of an album, sleep for 500ms to allow the master request (with caption) to register first
+      if (mediaGroupId) {
         await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
-      if (existingProperty) {
-        // Process media only now!
-        const newCloudinaryUrl = await processTelegramMedia(botToken, photoArray, videoObj);
-        if (newCloudinaryUrl) {
-          const updatedImages = [...(existingProperty.images || [])];
-          updatedImages.push(newCloudinaryUrl);
-
-          if (isDbConfigured) {
-            await db
-              .update(propertiesTable)
-              .set({ images: updatedImages })
-              .where(eq(propertiesTable.id, existingProperty.id));
-          } else {
-            await updateProperty(existingProperty.id, { images: updatedImages });
-          }
-
-          if (chatId) {
-            const successText = `<b>✅ Media Appended Successfully!</b>\n\nAppended new media to existing listing ID: <code>${existingProperty.id}</code>.`;
-            await sendTelegramResponse(botToken, chatId, successText, messageId);
-          }
-        }
-        return NextResponse.json({ ok: true, message: `Appended media to property ID ${existingProperty.id}` });
-      } else {
-        // No master listing found after polling. We must warn the user, but deduplicate warnings.
-        let alreadyWarned = false;
-        try {
-          const warnFile = "telegram-warnings.json";
-          const warnings = await readJson<string[]>(warnFile, []);
-          if (warnings.includes(mediaGroupId)) {
-            alreadyWarned = true;
-          } else {
-            warnings.push(mediaGroupId);
-            if (warnings.length > 100) warnings.shift();
-            await writeJson(warnFile, warnings);
-          }
-        } catch (e) {
-          console.error("Error managing telegram warnings list:", e);
-        }
-
-        if (chatId && !alreadyWarned) {
-          const errorText = `<b>⚠️ Property Details Required</b>\n\nYou uploaded a photo but did not provide any description.\n\nPlease send the photo again with the property details (Name, Price, Bedrooms, Area, Description) written directly in the photo's caption so I can automatically list it.`;
-          await sendTelegramResponse(botToken, chatId, errorText, messageId);
-        }
-        return NextResponse.json({ error: "No master listing found for media group. Aborted." }, { status: 200 });
-      }
-    }
-
-    // 2. Standalone post or first message in a media group album
-    if (!text || text.trim() === "") {
-      let alreadyWarned = false;
-      if (mediaGroupId) {
-        try {
-          const warnFile = "telegram-warnings.json";
-          const warnings = await readJson<string[]>(warnFile, []);
-          if (warnings.includes(mediaGroupId)) {
-            alreadyWarned = true;
-          } else {
-            warnings.push(mediaGroupId);
-            if (warnings.length > 100) warnings.shift();
-            await writeJson(warnFile, warnings);
-          }
-        } catch (e) {
-          console.error("Error managing telegram warnings list:", e);
+      const session = await getSession(chatId);
+      const imageCount = session.images.length;
+      
+      // If session already has a caption, it means it is being published via the master request, so do NOT send feedback!
+      if (!session.caption) {
+        const sendFeedback = await shouldSendFeedback(chatId);
+        if (sendFeedback && chatId) {
+          const feedbackText = `<b>📷 Photo Received! (Total: ${imageCount})</b>\n\nUpload more photos, or send the property description details to publish the listing.`;
+          await sendTelegramResponse(botToken, chatId, feedbackText, messageId);
         }
       }
-
-      if (chatId && !alreadyWarned) {
-        const errorText = `<b>⚠️ Property Details Required</b>\n\nYou uploaded a photo but did not provide any description.\n\nPlease send the photo again with the property details (Name, Price, Bedrooms, Area, Description) written directly in the photo's caption so I can automatically list it.`;
-        await sendTelegramResponse(botToken, chatId, errorText, messageId);
-      }
-      return NextResponse.json({ error: "Image uploaded without details. Aborted listing creation." }, { status: 200 });
+      
+      return NextResponse.json({ ok: true, message: `Saved image to session (Total: ${imageCount})` });
     }
 
-    // Download/process media for the master request / standalone request
-    const newCloudinaryUrl = await processTelegramMedia(botToken, photoArray, videoObj);
-
-    const parsed = parseTelegramMessage(text, messageId);
-    
-    // Automatically search search engine for built year if not provided
-    if (!parsed.buildingBuilt) {
-      const detectedYear = await findYearBuiltFromWeb(parsed.name);
-      if (detectedYear) {
-        parsed.buildingBuilt = detectedYear;
-      }
-    }
-
-    // Add parsed fields and save
-    const propertyData: Omit<PropertyCard, "id" | "createdAt"> & { telegramMediaGroupId?: string } = {
-      ...parsed,
-      coverImage: newCloudinaryUrl || undefined,
-      images: newCloudinaryUrl ? [newCloudinaryUrl] : [],
-      hasVideo: !!videoObj,
-      videoUrl: (videoObj && newCloudinaryUrl) ? newCloudinaryUrl : undefined,
-      telegramMediaGroupId: mediaGroupId || undefined,
-    };
-
-    let createdProperty: unknown = null;
-    if (isDbConfigured) {
-      const [created] = await db
-        .insert(propertiesTable)
-        .values({
-          slug: propertyData.slug,
-          name: propertyData.name,
-          description: propertyData.description,
-          listingType: propertyData.listingType,
-          propertyType: propertyData.propertyType,
-          priceTHB: String(propertyData.priceTHB),
-          priceUSD: propertyData.priceUSD ? String(propertyData.priceUSD) : null,
-          priceLabel: propertyData.priceLabel || null,
-          bedrooms: propertyData.bedrooms,
-          bathrooms: propertyData.bathrooms,
-          sqm: propertyData.sqm || null,
-          area: propertyData.area,
-          district: propertyData.district || null,
-          coverImage: propertyData.coverImage || null,
-          images: propertyData.images || [],
-          videoUrl: propertyData.videoUrl || null,
-          featured: propertyData.featured,
-          hasVideo: propertyData.hasVideo,
-          petFriendly: propertyData.petFriendly,
-          nearBts: propertyData.nearBts,
-          telegramMediaGroupId: propertyData.telegramMediaGroupId || null,
-          amenities: propertyData.amenities || [],
-          features: propertyData.features || [],
-          buildingBuilt: propertyData.buildingBuilt || null,
-          lastRenovated: propertyData.lastRenovated || null,
-          furnishing: propertyData.furnishing || null,
-          availableFrom: propertyData.availableFrom || null,
-          lastVerifiedAt: propertyData.lastVerifiedAt || null,
-          btsStation: propertyData.btsStation || null,
-          btsWalkMin: propertyData.btsWalkMin || null,
-          mrtStation: propertyData.mrtStation || null,
-          mrtWalkMin: propertyData.mrtWalkMin || null,
-          foreignQuota: propertyData.foreignQuota || null,
-          visaFriendly: propertyData.visaFriendly || null,
-          leaseTerms: propertyData.leaseTerms || null,
-          depositTerms: propertyData.depositTerms || null,
-          maintenance: propertyData.maintenance || null,
-          floor: propertyData.floor || null,
-          totalFloors: propertyData.totalFloors || null,
-        })
-        .returning();
-      createdProperty = created;
-    } else {
-      const created = await createProperty(propertyData as Omit<PropertyCard, "id" | "createdAt" | "updatedAt">);
-      createdProperty = created;
-    }
-
-    if (chatId) {
-      const propertyUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/property/${propertyData.slug}`;
-      const propName = propertyData.name;
-      const propPrice = Number(propertyData.priceTHB).toLocaleString();
-      const propArea = propertyData.area;
-      const successText = `<b>✅ Listing Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propName}\n💰 <b>Price:</b> ฿${propPrice}\n📍 <b>Area:</b> ${propArea}\n\n🔗 <a href="${propertyUrl}">View Listing</a>`;
-      await sendTelegramResponse(botToken, chatId, successText, messageId);
-    }
-
-    return NextResponse.json({
-      ok: true,
-      message: isDbConfigured ? "Listing created in live Neon DB" : "Listing created in local JSON store",
-      property: createdProperty
-    });
+    return NextResponse.json({ ok: true, message: "No action taken (empty message)." });
   } catch (err) {
     console.error("Telegram Webhook processing error:", err);
     if (chatId) {
@@ -774,6 +821,6 @@ export async function POST(req: NextRequest) {
       const failText = `<b>❌ Listing Post Failed</b>\n\n<b>Reason:</b> ${errMsg}`;
       await sendTelegramResponse(botToken, chatId, failText, messageId);
     }
-    return NextResponse.json({ error: "Failed to process Telegram post: " + (err instanceof Error ? err.message : String(err)) }, { status: 500 });
+    return NextResponse.json({ error: "Failed to process Telegram post: " + (err instanceof Error ? err.message : String(err)) }, { status: 200 });
   }
 }
