@@ -568,19 +568,46 @@ export async function POST(req: NextRequest) {
     // 2. Combine multi-photo posts matching on mediaGroupId
     if (mediaGroupId) {
       let existingProperty: { id: number; images?: string[] | null } | null = null;
+      
+      const isChild = !text || text.trim() === "";
 
-      if (isDbConfigured) {
-        const dbResult = await db
-          .select()
-          .from(propertiesTable)
-          .where(eq(propertiesTable.telegramMediaGroupId, mediaGroupId))
-          .limit(1);
-        if (dbResult.length > 0) {
-          existingProperty = dbResult[0];
+      if (isChild) {
+        // This is a child request in an album. Wait for the master request to insert the property.
+        const maxRetries = 15; // 15 retries * 300ms = 4.5 seconds
+        for (let i = 0; i < maxRetries; i++) {
+          if (isDbConfigured) {
+            const dbResult = await db
+              .select()
+              .from(propertiesTable)
+              .where(eq(propertiesTable.telegramMediaGroupId, mediaGroupId))
+              .limit(1);
+            if (dbResult.length > 0) {
+              existingProperty = dbResult[0];
+              break;
+            }
+          } else {
+            const localProperties = await getAllProperties();
+            existingProperty = localProperties.find(p => p.telegramMediaGroupId === mediaGroupId) || null;
+            if (existingProperty) break;
+          }
+          // Sleep for 300ms
+          await new Promise((resolve) => setTimeout(resolve, 300));
         }
       } else {
-        const localProperties = await getAllProperties();
-        existingProperty = localProperties.find(p => p.telegramMediaGroupId === mediaGroupId) || null;
+        // This is the master request. Query for an existing record.
+        if (isDbConfigured) {
+          const dbResult = await db
+            .select()
+            .from(propertiesTable)
+            .where(eq(propertiesTable.telegramMediaGroupId, mediaGroupId))
+            .limit(1);
+          if (dbResult.length > 0) {
+            existingProperty = dbResult[0];
+          }
+        } else {
+          const localProperties = await getAllProperties();
+          existingProperty = localProperties.find(p => p.telegramMediaGroupId === mediaGroupId) || null;
+        }
       }
 
       if (existingProperty) {
@@ -609,6 +636,14 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Standalone post or first message in a media group album
+    if (!text || text.trim() === "") {
+      if (chatId) {
+        const errorText = `<b>⚠️ Property Details Required</b>\n\nYou uploaded a photo but did not provide any description.\n\nPlease send the photo again with the property details (Name, Price, Bedrooms, Area, Description) written directly in the photo's caption so I can automatically list it.`;
+        await sendTelegramResponse(botToken, chatId, errorText, messageId);
+      }
+      return NextResponse.json({ error: "Image uploaded without details. Aborted listing creation." }, { status: 400 });
+    }
+
     const parsed = parseTelegramMessage(text, messageId);
     
     // Automatically search search engine for built year if not provided

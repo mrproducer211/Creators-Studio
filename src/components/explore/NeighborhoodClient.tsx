@@ -334,13 +334,13 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
     ];
 
     return [
-      { title: `${neighborhood.name}: The Complete Neighborhood Guide`, category: "NEIGHBORHOOD GUIDE", readTime: "6 min read", image: images[0] },
-      { title: `10 Best Cafes in ${neighborhood.name} You Must Try`, category: "LIFESTYLE", readTime: "4 min read", image: images[1] },
-      { title: `Cost of Living in ${neighborhood.name} for Expats`, category: "LIVING IN BANGKOK", readTime: "5 min read", image: images[2] },
-      { title: `Getting Around ${neighborhood.name} Made Easy`, category: "TRANSPORTATION", readTime: "3 min read", image: images[3] },
-      { title: `Is ${neighborhood.name} Right for You? A Complete Review`, category: "EXPAT TIPS", readTime: "5 min read", image: images[4] }
+      { title: `${neighborhood.name}: The Complete Neighborhood Guide`, category: "NEIGHBORHOOD GUIDE", readTime: "6 min read", image: images[0], slug: `${neighborhood.slug}-complete-neighborhood-guide` },
+      { title: `10 Best Cafes in ${neighborhood.name} You Must Try`, category: "LIFESTYLE", readTime: "4 min read", image: images[1], slug: `${neighborhood.slug}-10-best-cafes` },
+      { title: `Cost of Living in ${neighborhood.name} for Expats`, category: "LIVING IN BANGKOK", readTime: "5 min read", image: images[2], slug: `${neighborhood.slug}-cost-of-living` },
+      { title: `Getting Around ${neighborhood.name} Made Easy`, category: "TRANSPORTATION", readTime: "3 min read", image: images[3], slug: `${neighborhood.slug}-getting-around` },
+      { title: `Is ${neighborhood.name} Right for You? A Complete Review`, category: "EXPAT TIPS", readTime: "5 min read", image: images[4], slug: `${neighborhood.slug}-complete-review` }
     ];
-  }, [neighborhood.name]);
+  }, [neighborhood.name, neighborhood.slug]);
 
   return (
     <div className="flex flex-col w-full pb-10" style={{ background: "#FAF8F3" }}>
@@ -807,7 +807,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
             {localGuides.map((guide) => (
               <Link
                 key={guide.title}
-                href="/blog"
+                href={`/blog/${guide.slug}`}
                 className="w-[200px] min-w-[200px] md:w-[220px] md:min-w-[220px] flex flex-col rounded-2xl overflow-hidden shadow-sm border group hover:shadow-md transition-shadow no-underline text-left"
                 style={{ background: "#FFFFFF", borderColor: "#EDE8DF" }}
               >
