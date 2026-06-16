@@ -648,7 +648,7 @@ export async function POST(req: NextRequest) {
           const errorText = `<b>⚠️ Property Details Required</b>\n\nYou uploaded a photo but did not provide any description.\n\nPlease send the photo again with the property details (Name, Price, Bedrooms, Area, Description) written directly in the photo's caption so I can automatically list it.`;
           await sendTelegramResponse(botToken, chatId, errorText, messageId);
         }
-        return NextResponse.json({ error: "No master listing found for media group. Aborted." }, { status: 400 });
+        return NextResponse.json({ error: "No master listing found for media group. Aborted." }, { status: 200 });
       }
     }
 
@@ -675,7 +675,7 @@ export async function POST(req: NextRequest) {
         const errorText = `<b>⚠️ Property Details Required</b>\n\nYou uploaded a photo but did not provide any description.\n\nPlease send the photo again with the property details (Name, Price, Bedrooms, Area, Description) written directly in the photo's caption so I can automatically list it.`;
         await sendTelegramResponse(botToken, chatId, errorText, messageId);
       }
-      return NextResponse.json({ error: "Image uploaded without details. Aborted listing creation." }, { status: 400 });
+      return NextResponse.json({ error: "Image uploaded without details. Aborted listing creation." }, { status: 200 });
     }
 
     // Download/process media for the master request / standalone request
