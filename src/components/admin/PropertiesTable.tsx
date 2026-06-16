@@ -20,6 +20,55 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "sale" | "rent" | "short_stay">("all");
   const [busyId, setBusyId] = useState<number | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+
+  const handleSelectRow = (id: number) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    const allFilteredIds = filtered.map((p) => p.id);
+    const areAllSelected = allFilteredIds.length > 0 && allFilteredIds.every((id) => selectedIds.includes(id));
+    if (areAllSelected) {
+      setSelectedIds((prev) => prev.filter((id) => !allFilteredIds.includes(id)));
+    } else {
+      setSelectedIds((prev) => {
+        const next = [...prev];
+        allFilteredIds.forEach((id) => {
+          if (!next.includes(id)) next.push(id);
+        });
+        return next;
+      });
+    }
+  };
+
+  const bulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`Are you sure you want to delete the ${selectedIds.length} selected listings? This cannot be undone.`)) return;
+
+    setIsBulkDeleting(true);
+    try {
+      const res = await fetch("/api/admin/properties/bulk", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedIds }),
+      });
+      if (res.ok) {
+        setSelectedIds([]);
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to delete selected listings.");
+      }
+    } catch {
+      alert("Error performing bulk delete.");
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -119,6 +168,19 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
           <option value="rent">Long Rent</option>
           <option value="short_stay">Short Stay</option>
         </select>
+        {selectedIds.length > 0 && (
+          <button
+            onClick={bulkDelete}
+            disabled={isBulkDeleting}
+            className="rounded-xl px-4 py-2.5 text-[13px] font-semibold cursor-pointer border-none text-white hover:opacity-90 transition-opacity"
+            style={{
+              background: "#E05252",
+              fontFamily: "inherit",
+            }}
+          >
+            {isBulkDeleting ? "Deleting..." : `Delete Selected (${selectedIds.length})`}
+          </button>
+        )}
       </div>
 
       {/* Table */}
@@ -126,6 +188,14 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
         <table className="w-full" style={{ borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#FAF8F3", borderBottom: "1px solid #E5E0D8" }}>
+              <th className="w-10 px-4 py-3 text-center">
+                <input
+                  type="checkbox"
+                  checked={filtered.length > 0 && filtered.every((p) => selectedIds.includes(p.id))}
+                  onChange={handleSelectAll}
+                  className="cursor-pointer rounded border-gray-300"
+                />
+              </th>
               <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-4 py-3" style={{ color: "#888" }}>Property</th>
               <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-3 py-3" style={{ color: "#888" }}>Type</th>
               <th className="text-left text-[11px] uppercase tracking-[0.8px] font-semibold px-3 py-3" style={{ color: "#888" }}>Area</th>
@@ -137,10 +207,18 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
           </thead>
           <tbody>
             {filtered.map((p) => {
-              const isExpired = p.expiryDate && new Date() > new Date(p.expiryDate);
-              return (
-                <tr key={p.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
-                  <td className="px-4 py-3">
+               const isExpired = p.expiryDate && new Date() > new Date(p.expiryDate);
+               return (
+                 <tr key={p.id} style={{ borderBottom: "1px solid #F0EAE0" }}>
+                   <td className="px-4 py-3 text-center">
+                     <input
+                       type="checkbox"
+                       checked={selectedIds.includes(p.id)}
+                       onChange={() => handleSelectRow(p.id)}
+                       className="cursor-pointer rounded border-gray-300"
+                     />
+                   </td>
+                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {p.coverImage ? (
                         <img src={p.coverImage} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
@@ -231,7 +309,7 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="text-[13px] text-center py-10" style={{ color: "#999" }}>
+                <td colSpan={8} className="text-[13px] text-center py-10" style={{ color: "#999" }}>
                   No properties match the current filter.
                 </td>
               </tr>

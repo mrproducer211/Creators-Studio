@@ -4,6 +4,7 @@ import { properties as propertiesTable } from "@/lib/db/schema";
 import { getDbProperties, createAuditLog } from "@/lib/db/dbLoader";
 import { createProperty } from "@/lib/store/properties";
 import { requireAdminApi } from "@/lib/auth-helpers";
+import { inArray } from "drizzle-orm";
 
 // GET /api/admin/properties/bulk — Export all listings as a JSON dump
 export async function GET() {
@@ -139,5 +140,47 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("Properties import error:", err);
     return NextResponse.json({ error: "Failed to process bulk import JSON" }, { status: 500 });
+  }
+}
+
+// DELETE /api/admin/properties/bulk — Bulk delete listings by ID
+export async function DELETE(req: Request) {
+  const authCheck = await requireAdminApi();
+  if ("error" in authCheck) {
+    return authCheck.error;
+  }
+  const adminUser = authCheck.user;
+
+  try {
+    const { ids } = await req.json();
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ error: "Invalid or empty IDs array" }, { status: 400 });
+    }
+
+    const dbUrl = process.env.DATABASE_URL || "";
+    const isDbValid = dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://");
+
+    if (isDbValid) {
+      await db
+        .delete(propertiesTable)
+        .where(inArray(propertiesTable.id, ids));
+    } else {
+      const { readJson, writeJson } = await import("@/lib/store/fileStore");
+      const FILE = "properties.json";
+      const list = await readJson<any[]>(FILE, []);
+      const filtered = list.filter((p) => !ids.includes(p.id));
+      await writeJson(FILE, filtered);
+    }
+
+    await createAuditLog(
+      adminUser.email,
+      "bulk_delete",
+      `Bulk deleted properties: [${ids.join(", ")}]`
+    );
+
+    return NextResponse.json({ success: true, deletedCount: ids.length });
+  } catch (err) {
+    console.error("Bulk delete error:", err);
+    return NextResponse.json({ error: "Failed to perform bulk delete" }, { status: 500 });
   }
 }

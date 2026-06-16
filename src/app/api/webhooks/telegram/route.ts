@@ -7,6 +7,7 @@ import { createProperty, getAllProperties, updateProperty } from "@/lib/store/pr
 import { PropertyCard } from "@/types/property";
 import { getCanonicalArea } from "@/lib/area";
 import sharp from "sharp";
+import { readJson, writeJson } from "@/lib/store/fileStore";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -477,6 +478,73 @@ function parseTelegramMessage(text: string, messageId: number) {
   };
 }
 
+/**
+ * Helper to download file from Telegram, compress with Sharp to WebP, and upload to Cloudinary.
+ */
+async function processTelegramMedia(
+  botToken: string,
+  photoArray: TelegramPhoto[],
+  videoObj: TelegramVideo | undefined
+): Promise<string | null> {
+  let fileId: string | null = null;
+  if (photoArray.length > 0) {
+    // Pick the largest photo resolution (last in array)
+    fileId = photoArray[photoArray.length - 1].file_id;
+  } else if (videoObj) {
+    fileId = videoObj.file_id;
+  }
+
+  if (!fileId) return null;
+
+  try {
+    const getFileUrl = `https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`;
+    const fileRes = await fetch(getFileUrl);
+    if (!fileRes.ok) {
+      console.error("Failed to getFile from Telegram:", await fileRes.text());
+      return null;
+    }
+    const fileJson = await fileRes.json();
+    const filePath = fileJson.result?.file_path;
+    if (!filePath) {
+      console.error("No file_path returned from getFile:", fileJson);
+      return null;
+    }
+
+    const downloadUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+    let uploadContent: string | Buffer = downloadUrl;
+
+    if (!videoObj) {
+      try {
+        const fileDataRes = await fetch(downloadUrl);
+        if (fileDataRes.ok) {
+          const arrayBuffer = await fileDataRes.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+
+          // Downscale to max 2000px and compress to WebP at 82% quality
+          const compressedBuffer = await sharp(buffer)
+            .resize({ width: 2000, height: 2000, fit: "inside", withoutEnlargement: true })
+            .webp({ quality: 82 })
+            .toBuffer();
+
+          const base64Data = compressedBuffer.toString("base64");
+          uploadContent = `data:image/webp;base64,${base64Data}`;
+        }
+      } catch (err) {
+        console.error("Telegram image compression failed, falling back to raw download:", err);
+      }
+    }
+
+    const uploadRes = await cloudinary.uploader.upload(uploadContent, {
+      folder: "nhp-telegram",
+      resource_type: videoObj ? "video" : "image",
+    });
+    return uploadRes.secure_url;
+  } catch (err) {
+    console.error("processTelegramMedia error:", err);
+    return null;
+  }
+}
+
 export async function POST(req: NextRequest) {
   // Webhook Signature verification
   const secretToken = req.headers.get("x-telegram-bot-api-secret-token");
@@ -495,7 +563,6 @@ export async function POST(req: NextRequest) {
   // Check if it's a channel post or a direct message update (for testing)
   const post = body.channel_post || body.message;
   if (!post) {
-    // Return 200 to acknowledge other Telegram update types (like callbacks)
     return NextResponse.json({ ok: true, message: "No post message found to process." });
   }
 
@@ -511,90 +578,15 @@ export async function POST(req: NextRequest) {
   const photoArray = post.photo || [];
   const videoObj = post.video;
 
-  let newCloudinaryUrl: string | null = null;
+  const isChild = !!(mediaGroupId && (!text || text.trim() === ""));
 
   try {
-    // 1. Download file from Telegram and upload to Cloudinary if photo/video exists
-    let fileId: string | null = null;
-    if (photoArray.length > 0) {
-      // Pick the largest photo resolution (last in array)
-      fileId = photoArray[photoArray.length - 1].file_id;
-    } else if (videoObj) {
-      fileId = videoObj.file_id;
-    }
-
-    if (fileId) {
-      const getFileUrl = `https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`;
-      const fileRes = await fetch(getFileUrl);
-      if (fileRes.ok) {
-        const fileJson = await fileRes.json();
-        const filePath = fileJson.result.file_path;
-        if (filePath) {
-          const downloadUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
-          
-          let uploadContent: string | Buffer = downloadUrl;
-          
-          // Only compress with sharp on the server if it's an image, not a video
-          if (!videoObj) {
-            try {
-              const fileDataRes = await fetch(downloadUrl);
-              if (fileDataRes.ok) {
-                const arrayBuffer = await fileDataRes.arrayBuffer();
-                const buffer = Buffer.from(arrayBuffer);
-                
-                // Downscale to max 2000px and compress to WebP at 82% quality
-                const compressedBuffer = await sharp(buffer)
-                  .resize({ width: 2000, height: 2000, fit: "inside", withoutEnlargement: true })
-                  .webp({ quality: 82 })
-                  .toBuffer();
-                  
-                const base64Data = compressedBuffer.toString("base64");
-                uploadContent = `data:image/webp;base64,${base64Data}`;
-              }
-            } catch (err) {
-              console.error("Telegram image compression failed, falling back to raw download:", err);
-            }
-          }
-
-          const uploadRes = await cloudinary.uploader.upload(uploadContent, {
-            folder: "nhp-telegram",
-            resource_type: videoObj ? "video" : "image",
-          });
-          newCloudinaryUrl = uploadRes.secure_url;
-        }
-      }
-    }
-
-    // 2. Combine multi-photo posts matching on mediaGroupId
-    if (mediaGroupId) {
-      let existingProperty: { id: number; images?: string[] | null } | null = null;
-      
-      const isChild = !text || text.trim() === "";
-
-      if (isChild) {
-        // This is a child request in an album. Wait for the master request to insert the property.
-        const maxRetries = 15; // 15 retries * 300ms = 4.5 seconds
-        for (let i = 0; i < maxRetries; i++) {
-          if (isDbConfigured) {
-            const dbResult = await db
-              .select()
-              .from(propertiesTable)
-              .where(eq(propertiesTable.telegramMediaGroupId, mediaGroupId))
-              .limit(1);
-            if (dbResult.length > 0) {
-              existingProperty = dbResult[0];
-              break;
-            }
-          } else {
-            const localProperties = await getAllProperties();
-            existingProperty = localProperties.find(p => p.telegramMediaGroupId === mediaGroupId) || null;
-            if (existingProperty) break;
-          }
-          // Sleep for 300ms
-          await new Promise((resolve) => setTimeout(resolve, 300));
-        }
-      } else {
-        // This is the master request. Query for an existing record.
+    // 1. If it's a child request in an album, wait and poll for the master record.
+    // Defer media upload until the master record is found to avoid the race condition.
+    if (isChild && mediaGroupId) {
+      let existingProperty: any = null;
+      const maxRetries = 40; // 40 retries * 500ms = 20 seconds
+      for (let i = 0; i < maxRetries; i++) {
         if (isDbConfigured) {
           const dbResult = await db
             .select()
@@ -603,46 +595,91 @@ export async function POST(req: NextRequest) {
             .limit(1);
           if (dbResult.length > 0) {
             existingProperty = dbResult[0];
+            break;
           }
         } else {
           const localProperties = await getAllProperties();
           existingProperty = localProperties.find(p => p.telegramMediaGroupId === mediaGroupId) || null;
+          if (existingProperty) break;
         }
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       if (existingProperty) {
-        // We found an existing property listed under this media group. Append the new image URL.
-        const updatedImages = [...(existingProperty.images || [])];
+        // Process media only now!
+        const newCloudinaryUrl = await processTelegramMedia(botToken, photoArray, videoObj);
         if (newCloudinaryUrl) {
+          const updatedImages = [...(existingProperty.images || [])];
           updatedImages.push(newCloudinaryUrl);
-        }
 
-        if (isDbConfigured) {
-          await db
-            .update(propertiesTable)
-            .set({ images: updatedImages })
-            .where(eq(propertiesTable.id, existingProperty.id));
-        } else {
-          await updateProperty(existingProperty.id, { images: updatedImages });
-        }
+          if (isDbConfigured) {
+            await db
+              .update(propertiesTable)
+              .set({ images: updatedImages })
+              .where(eq(propertiesTable.id, existingProperty.id));
+          } else {
+            await updateProperty(existingProperty.id, { images: updatedImages });
+          }
 
-        if (chatId) {
-          const successText = `<b>✅ Media Appended Successfully!</b>\n\nAppended new media to existing listing ID: <code>${existingProperty.id}</code>.`;
-          await sendTelegramResponse(botToken, chatId, successText, messageId);
+          if (chatId) {
+            const successText = `<b>✅ Media Appended Successfully!</b>\n\nAppended new media to existing listing ID: <code>${existingProperty.id}</code>.`;
+            await sendTelegramResponse(botToken, chatId, successText, messageId);
+          }
         }
-
         return NextResponse.json({ ok: true, message: `Appended media to property ID ${existingProperty.id}` });
+      } else {
+        // No master listing found after polling. We must warn the user, but deduplicate warnings.
+        let alreadyWarned = false;
+        try {
+          const warnFile = "telegram-warnings.json";
+          const warnings = await readJson<string[]>(warnFile, []);
+          if (warnings.includes(mediaGroupId)) {
+            alreadyWarned = true;
+          } else {
+            warnings.push(mediaGroupId);
+            if (warnings.length > 100) warnings.shift();
+            await writeJson(warnFile, warnings);
+          }
+        } catch (e) {
+          console.error("Error managing telegram warnings list:", e);
+        }
+
+        if (chatId && !alreadyWarned) {
+          const errorText = `<b>⚠️ Property Details Required</b>\n\nYou uploaded a photo but did not provide any description.\n\nPlease send the photo again with the property details (Name, Price, Bedrooms, Area, Description) written directly in the photo's caption so I can automatically list it.`;
+          await sendTelegramResponse(botToken, chatId, errorText, messageId);
+        }
+        return NextResponse.json({ error: "No master listing found for media group. Aborted." }, { status: 400 });
       }
     }
 
-    // 3. Standalone post or first message in a media group album
+    // 2. Standalone post or first message in a media group album
     if (!text || text.trim() === "") {
-      if (chatId) {
+      let alreadyWarned = false;
+      if (mediaGroupId) {
+        try {
+          const warnFile = "telegram-warnings.json";
+          const warnings = await readJson<string[]>(warnFile, []);
+          if (warnings.includes(mediaGroupId)) {
+            alreadyWarned = true;
+          } else {
+            warnings.push(mediaGroupId);
+            if (warnings.length > 100) warnings.shift();
+            await writeJson(warnFile, warnings);
+          }
+        } catch (e) {
+          console.error("Error managing telegram warnings list:", e);
+        }
+      }
+
+      if (chatId && !alreadyWarned) {
         const errorText = `<b>⚠️ Property Details Required</b>\n\nYou uploaded a photo but did not provide any description.\n\nPlease send the photo again with the property details (Name, Price, Bedrooms, Area, Description) written directly in the photo's caption so I can automatically list it.`;
         await sendTelegramResponse(botToken, chatId, errorText, messageId);
       }
       return NextResponse.json({ error: "Image uploaded without details. Aborted listing creation." }, { status: 400 });
     }
+
+    // Download/process media for the master request / standalone request
+    const newCloudinaryUrl = await processTelegramMedia(botToken, photoArray, videoObj);
 
     const parsed = parseTelegramMessage(text, messageId);
     
