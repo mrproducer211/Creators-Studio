@@ -14,6 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://nhpbangkok.com"),
   title: "New Home Property — Live. Belong. Bangkok.",
   description:
     "Bangkok's premium property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",

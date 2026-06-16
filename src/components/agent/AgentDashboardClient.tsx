@@ -22,6 +22,7 @@ import {
   MessageSquare
 } from "lucide-react";
 import Link from "next/link";
+import { compressAndConvertToWebp } from "@/lib/image-optimizer";
 
 interface AgentDashboardClientProps {
   agent: {
@@ -214,18 +215,21 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 3 * 1024 * 1024) {
-      setError("Cover image exceeds the 3MB size limit.");
-      return;
-    }
-
     setUploadingCover(true);
     setError("");
     setSuccessMsg("");
 
     try {
+      const optimizedFile = await compressAndConvertToWebp(file);
+
+      if (optimizedFile.size > 3 * 1024 * 1024) {
+        setError("Cover image exceeds the 3MB size limit.");
+        setUploadingCover(false);
+        return;
+      }
+
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", optimizedFile);
 
       const res = await fetch("/api/agent/upload", {
         method: "POST",
@@ -262,13 +266,16 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        if (file.size > 3 * 1024 * 1024) {
+        
+        const optimizedFile = await compressAndConvertToWebp(file);
+
+        if (optimizedFile.size > 3 * 1024 * 1024) {
           setError(`File "${file.name}" exceeds 3MB limit and was skipped.`);
           continue;
         }
 
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", optimizedFile);
 
         const res = await fetch("/api/agent/upload", {
           method: "POST",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { BlogPost, BlogSection } from "@/data/blogPosts";
 import Link from "next/link";
+import { compressAndConvertToWebp } from "@/lib/image-optimizer";
 
 type BlogFormState = BlogPost & {
   fontFamily?: string;
@@ -44,10 +45,13 @@ export default function BlogForm({ initial, isNew }: { initial?: BlogPost; isNew
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
 
     try {
+      const optimizedFile = await compressAndConvertToWebp(file);
+
+      const formData = new FormData();
+      formData.append("file", optimizedFile);
+
       const res = await fetch("/api/admin/upload", {
         method: "POST",
         body: formData,

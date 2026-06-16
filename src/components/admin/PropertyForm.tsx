@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyCard, ListingType, PropertyType } from "@/types/property";
 import Link from "next/link";
+import { compressAndConvertToWebp } from "@/lib/image-optimizer";
 
 type FormState = Omit<PropertyCard, "id" | "createdAt">;
 
@@ -77,10 +78,13 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
     if (!file) return;
 
     setUploadingField(field);
-    const formData = new FormData();
-    formData.append("file", file);
 
     try {
+      const optimizedFile = await compressAndConvertToWebp(file);
+
+      const formData = new FormData();
+      formData.append("file", optimizedFile);
+
       const res = await fetch("/api/admin/upload", {
         method: "POST",
         body: formData,

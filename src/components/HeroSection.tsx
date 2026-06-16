@@ -273,7 +273,7 @@ function DesktopHero({
       <div style={{ position: "relative", overflow: "hidden", minHeight: "100vh" }}>
         {/* Background photo — priority LCP image */}
         <Image
-          src="/images/homepage_hero.webp"
+          src="/images/homepage_hero_v2.webp"
           alt="Premium Bangkok Condo"
           fill
           priority

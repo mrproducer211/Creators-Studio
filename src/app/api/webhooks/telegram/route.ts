@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { createProperty, getAllProperties, updateProperty } from "@/lib/store/properties";
 import { PropertyCard } from "@/types/property";
 import { getCanonicalArea } from "@/lib/area";
+import sharp from "sharp";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -530,7 +531,32 @@ export async function POST(req: NextRequest) {
         const filePath = fileJson.result.file_path;
         if (filePath) {
           const downloadUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
-          const uploadRes = await cloudinary.uploader.upload(downloadUrl, {
+          
+          let uploadContent: string | Buffer = downloadUrl;
+          
+          // Only compress with sharp on the server if it's an image, not a video
+          if (!videoObj) {
+            try {
+              const fileDataRes = await fetch(downloadUrl);
+              if (fileDataRes.ok) {
+                const arrayBuffer = await fileDataRes.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
+                
+                // Downscale to max 2000px and compress to WebP at 82% quality
+                const compressedBuffer = await sharp(buffer)
+                  .resize({ width: 2000, height: 2000, fit: "inside", withoutEnlargement: true })
+                  .webp({ quality: 82 })
+                  .toBuffer();
+                  
+                const base64Data = compressedBuffer.toString("base64");
+                uploadContent = `data:image/webp;base64,${base64Data}`;
+              }
+            } catch (err) {
+              console.error("Telegram image compression failed, falling back to raw download:", err);
+            }
+          }
+
+          const uploadRes = await cloudinary.uploader.upload(uploadContent, {
             folder: "nhp-telegram",
             resource_type: videoObj ? "video" : "image",
           });

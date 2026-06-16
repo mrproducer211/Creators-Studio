@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "Privacy Policy — NHP Bangkok",
-  description: "Learn about how New Home Property (NHP) Bangkok collects, utilizes, and secures your personal and enquiry information.",
+  description: "Learn how New Home Property (NHP) Bangkok collects, utilizes, and secures your traveler and neighbourhood matching information.",
 };
 
 export default function PrivacyPage() {
@@ -11,34 +11,34 @@ export default function PrivacyPage() {
     {
       title: "1. Information We Collect",
       body: [
-        "We collect personal information that you voluntarily provide to us when you register a user account, bookmark properties, or submit enquiries. This includes your name, email address, phone number, and preferred messaging handles (such as WhatsApp or Line).",
-        "Additionally, we track anonymous usage metrics (such as page views, clicks, and saved property shortlists) to optimize search recommendations and understand platform traffic."
+        "We collect personal information that you voluntarily provide to us when you sign up, bookmark properties, or make enquiries. This includes your name, email address, phone number, and preferred chat handles (such as Line or WhatsApp).",
+        "We also track anonymous usage metrics—such as your selected neighbourhood preferences, transit search filters, and property likes—to refine our matching algorithms and improve your navigation experience in Bangkok."
       ]
     },
     {
       title: "2. How We Use Your Information",
       body: [
-        "Your details are utilized strictly to coordinate property viewings, process enquiries, and send platform alerts that you request.",
-        "We never sell, rent, or lease your personal contact details to third-party marketing companies. Enquiries are shared only with the NHP Bangkok real estate team representing the specific condominium or house listing you ask about."
+        "We utilize your information strictly to coordinate neighbourhood matching, calculate dynamic commute hubs, process property inquiries, and send you relevant listing updates.",
+        "We do not sell, rent, or trade your contact information. Enquiries are shared directly and only with the NHP Bangkok relocation agents or verified landlords responsible for the specific condominiums or homes you select."
       ]
     },
     {
       title: "3. Cookies and Local Storage",
       body: [
-        "We use cookies to maintain your signed-in session (via NextAuth) and security tokens.",
-        "We also utilize browser Local Storage to preserve your recently viewed listings and property likes so your preferences remain intact across page reloads, even when browsing anonymously."
+        "We use cookies to secure your logged-in session (via NextAuth) and prevent unauthorized request spoofing.",
+        "We also use your browser's Local Storage to remember your recently viewed listings, custom commute destinations, and liked properties, ensuring your travel preferences remain intact even if you browse anonymously."
       ]
     },
     {
       title: "4. Data Security",
       body: [
-        "We enforce industry-standard security protocols to protect your personal details. Database and JSON record stores are encrypted, and all client-to-server data transfers are secured using SSL (Secure Sockets Layer) channels."
+        "We apply standard SSL encryption and industry-standard hosting configurations to protect all user details, database tables, and communication records from unauthorized access or leakage."
       ]
     },
     {
       title: "5. Your Rights",
       body: [
-        "You have the right to request access to the personal data we store, ask for corrections, or request complete deletion of your registered lead account at any time. Simply get in touch with our data controller using the contact email listed below."
+        "You retain full control over your data. You may request access to, edit, or permanently delete your account, saved hubs, or lead details at any time by contacting our data team at the email below."
       ]
     }
   ];
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
         <div className="max-w-3xl mx-auto px-4 py-12">
           <div className="rounded-2xl p-6 md:p-8 border mb-8" style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}>
             <p className="text-[13px] leading-[1.7] text-gray-500 font-light mb-6">
-              New Home Property (NHP) Bangkok is committed to safeguarding your online privacy. This policy outlines how we handle, process, and secure user information across our platform and applications.
+              New Home Property (NHP) Bangkok is committed to safeguarding your privacy as you search for the neighbourhood that matches your lifestyle. This policy outlines how we handle, process, and secure user information across our platform and applications.
             </p>
 
             {sections.map((s) => (
@@ -90,6 +90,9 @@ export default function PrivacyPage() {
             </div>
           </div>
         </div>
+
+        {/* Footer spacer */}
+        <div className="h-6" />
 
       </main>
       <Footer />

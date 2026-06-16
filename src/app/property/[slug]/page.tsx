@@ -18,9 +18,39 @@ export async function generateMetadata({ params }: Props) {
   const all = await getDbProperties({ includeUnlisted: true });
   const p = all.find((x) => x.slug === slug);
   if (!p) return { title: "Property Not Found — NHP" };
+
+  const title = `${p.name} — NHP Bangkok`;
+  const description = p.description.slice(0, 160);
+  const canonicalUrl = `https://nhpbangkok.com/property/${p.slug}`;
+  const imageUrl = p.coverImage || "https://nhpbangkok.com/images/homepage_hero_v2.webp";
+
   return {
-    title: `${p.name} — NHP Bangkok`,
-    description: p.description.slice(0, 160),
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "NHP Bangkok",
+      images: [
+        {
+          url: imageUrl,
+          width: 800,
+          height: 600,
+          alt: p.name,
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 
@@ -69,8 +99,35 @@ export default async function PropertyPage({ params }: Props) {
     )
     .slice(0, 4);
 
+  // Structured Data (JSON-LD) for RealEstateListing
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    "name": property.name,
+    "description": property.description,
+    "url": `https://nhpbangkok.com/property/${property.slug}`,
+    "image": property.coverImage || "https://nhpbangkok.com/images/homepage_hero_v2.webp",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": property.district || property.area,
+      "addressRegion": "Bangkok",
+      "addressCountry": "TH",
+    },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "THB",
+      "price": property.priceTHB,
+      "url": `https://nhpbangkok.com/property/${property.slug}`,
+      "category": property.listingType === "sale" ? "sale" : "rent",
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <main style={{ paddingTop: "56px", background: "#F7F3EC", minHeight: "100vh" }}>
         <PropertyDetail
