@@ -1342,10 +1342,98 @@ interface CommuteItem {
   transitMode: "transit" | "driving" | "walking";
 }
 
-export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<PropertyDetailProps, "sameArea">) {
+export default function PropertyDetail({
+  property,
+  sameBuilding,
+  nearby,
+  googleMapsApiKey,
+}: Omit<PropertyDetailProps, "sameArea"> & { googleMapsApiKey?: string }) {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [rawHubs, setRawHubs] = useState<StoredCommuteHub[]>([]);
+
+  // Custom commute calculator states
+  const [customLocationName, setCustomLocationName] = useState("");
+  const [customMode, setCustomMode] = useState<"transit" | "driving" | "walking">("transit");
+  const [customResult, setCustomResult] = useState<{
+    name: string;
+    minutes: number;
+    distance: number;
+    latitude: number;
+    longitude: number;
+    transitMode: "transit" | "driving" | "walking";
+  } | null>(null);
+  const [calcLoading, setCalcLoading] = useState(false);
+  const [calcError, setCalcError] = useState("");
+
+  const handleCalculateCustomCommute = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCalcError("");
+    setCustomResult(null);
+
+    const query = customLocationName.trim();
+    if (!query) {
+      setCalcError("Please enter a location or address.");
+      return;
+    }
+
+    setCalcLoading(true);
+    try {
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setCalcError(data.error || "Could not find that location. Please try a different query.");
+        return;
+      }
+
+      // Calculate Haversine distance
+      const pLat = Number(property.latitude);
+      const pLng = Number(property.longitude);
+      const hLat = Number(data.lat);
+      const hLng = Number(data.lng);
+
+      if (isNaN(pLat) || isNaN(pLng) || isNaN(hLat) || isNaN(hLng)) {
+        setCalcError("Invalid property or destination coordinates.");
+        return;
+      }
+
+      const R = 6371; // Earth radius in km
+      const dLat = ((hLat - pLat) * Math.PI) / 180;
+      const dLon = ((hLng - pLng) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((pLat * Math.PI) / 180) *
+          Math.cos((hLat * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const dist = R * c;
+
+      let mins = 15;
+      if (customMode === "walking") {
+        mins = Math.round(dist * 12);
+      } else if (customMode === "driving") {
+        mins = Math.round(dist * 3 + 5);
+      } else {
+        mins = Math.round(dist * 2.5 + 8);
+      }
+
+      setCustomResult({
+        name: data.name,
+        latitude: hLat,
+        longitude: hLng,
+        transitMode: customMode,
+        distance: dist,
+        minutes: Math.max(1, mins),
+      });
+    } catch (err) {
+      console.error(err);
+      setCalcError("An error occurred during calculation. Please try again.");
+    } finally {
+      setCalcLoading(false);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -1599,12 +1687,21 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                           propertyLat={Number(property.latitude)}
                           propertyLng={Number(property.longitude)}
                           propertyName={cleanMapLabel(property.name)}
-                          commuteHubs={rawHubs.map(h => ({
-                            name: h.name,
-                            latitude: h.latitude,
-                            longitude: h.longitude,
-                            transitMode: h.transitMode
-                          }))}
+                          googleMapsApiKey={googleMapsApiKey}
+                          commuteHubs={[
+                            ...rawHubs.map(h => ({
+                              name: h.name,
+                              latitude: h.latitude,
+                              longitude: h.longitude,
+                              transitMode: h.transitMode
+                            })),
+                            ...(customResult ? [{
+                              name: `Custom: ${customResult.name}`,
+                              latitude: customResult.latitude,
+                              longitude: customResult.longitude,
+                              transitMode: customResult.transitMode
+                            }] : [])
+                          ]}
                         />
                       </div>
                     ) : (
@@ -1662,6 +1759,79 @@ export default function PropertyDetail({ property, sameBuilding, nearby }: Omit<
                         </div>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Custom Commute Calculator UI */}
+                  <div className="mt-4 pt-4 border-t border-[#EDE8DF] mb-4">
+                    <h4 className="text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-2.5 font-outfit">
+                      Custom Commute Calculator
+                    </h4>
+                    <form onSubmit={handleCalculateCustomCommute} className="space-y-3">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Type address or destination..."
+                          value={customLocationName}
+                          onChange={(e) => setCustomLocationName(e.target.value)}
+                          className="flex-1 px-3 py-2 text-[12px] rounded-xl border border-[#EDE8DF] outline-none bg-white font-light"
+                          style={{ fontFamily: "inherit" }}
+                        />
+                        <button
+                          type="submit"
+                          disabled={calcLoading}
+                          className="px-4 py-2 text-[12px] font-bold text-white rounded-xl bg-[#1C3A2F] hover:bg-[#152c23] transition-colors cursor-pointer disabled:opacity-50"
+                          style={{ fontFamily: "inherit" }}
+                        >
+                          {calcLoading ? "Calculating..." : "Calculate"}
+                        </button>
+                      </div>
+
+                      {/* Transport mode selector pills */}
+                      <div className="flex gap-1.5">
+                        {(["transit", "driving", "walking"] as const).map((mode) => (
+                          <button
+                            key={mode}
+                            type="button"
+                            onClick={() => setCustomMode(mode)}
+                            className={`px-3 py-1.5 text-[10px] font-bold rounded-lg border transition-all cursor-pointer ${
+                              customMode === mode
+                                ? "bg-[#1C3A2F] text-white border-[#1C3A2F]"
+                                : "bg-white text-gray-500 border-[#EDE8DF] hover:bg-gray-50"
+                            }`}
+                            style={{ fontFamily: "inherit" }}
+                          >
+                            {mode === "transit" ? "🚆 Transit" : mode === "driving" ? "🚗 Driving" : "🚶 Walking"}
+                          </button>
+                        ))}
+                      </div>
+
+                      {calcError && (
+                        <p className="text-[11px] text-red-500 font-semibold">{calcError}</p>
+                      )}
+
+                      {customResult && (
+                        <div className="p-3 rounded-xl border bg-[#FAF8F3] border-[#EDE8DF] relative">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCustomResult(null);
+                              setCustomLocationName("");
+                            }}
+                            className="absolute top-2 right-2 w-4 h-4 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 border-none text-[10px] text-gray-600 cursor-pointer"
+                            title="Clear result"
+                          >
+                            ✕
+                          </button>
+                          <p className="text-[11px] font-bold text-[#1C3A2F] mb-1">
+                            Estimated Commute:
+                          </p>
+                          <p className="text-[11px] text-gray-600 leading-normal font-light">
+                            {customResult.transitMode === "walking" ? "🚶 Walking" : customResult.transitMode === "driving" ? "🚗 Driving" : "🚆 Public Transit"}{" "}
+                            takes <strong className="text-[#C9A84C] font-semibold">{customResult.minutes} mins</strong> ({customResult.distance.toFixed(1)} km) from <strong className="font-semibold">{customResult.name}</strong>.
+                          </p>
+                        </div>
+                      )}
+                    </form>
                   </div>
                   
                   {/* Google Maps Link */}

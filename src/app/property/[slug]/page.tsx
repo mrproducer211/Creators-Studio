@@ -77,6 +77,7 @@ export default async function PropertyPage({ params }: Props) {
           property={property}
           sameBuilding={sameBuilding}
           nearby={nearby}
+          googleMapsApiKey={process.env.GOOGLE_PLACES_API_KEY}
         />
       </main>
       <Footer />
