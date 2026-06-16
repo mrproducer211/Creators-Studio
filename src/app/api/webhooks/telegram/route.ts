@@ -548,8 +548,8 @@ async function processTelegramMedia(
 export async function POST(req: NextRequest) {
   // Webhook Signature verification
   const secretToken = req.headers.get("x-telegram-bot-api-secret-token");
-  const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET || "nhp_webhook_secret_key";
-  if (secretToken !== expectedSecret) {
+  const expectedSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+  if (expectedSecret && secretToken !== expectedSecret) {
     return NextResponse.json({ error: "Unauthorized request signature." }, { status: 401 });
   }
 
