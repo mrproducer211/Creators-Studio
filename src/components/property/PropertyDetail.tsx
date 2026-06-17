@@ -1729,7 +1729,7 @@ export default function PropertyDetail({
               </div>
 
               {/* Stats Horizontal Row */}
-              <div className="flex items-center flex-wrap gap-x-4 gap-y-2 text-[12px] font-medium border-t pt-3.5 mt-3 mb-1.5" style={{ color: "#555", borderColor: "#EDE8DF" }}>
+              <div className="flex items-center flex-nowrap gap-x-2.5 xs:gap-x-3.5 text-[11px] xs:text-[12px] font-medium border-t pt-3.5 mt-3 mb-1.5 whitespace-nowrap" style={{ color: "#555", borderColor: "#EDE8DF" }}>
                 <div className="flex items-center gap-1.5">
                   <span style={{ color: "#1C3A2F" }}><Icon.bed /></span>
                   <span>{property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`}</span>
@@ -1994,13 +1994,13 @@ export default function PropertyDetail({
                           placeholder="Type address or destination..."
                           value={customLocationName}
                           onChange={(e) => setCustomLocationName(e.target.value)}
-                          className="flex-1 px-3 py-2 text-[12px] rounded-xl border border-[#EDE8DF] outline-none bg-white font-light"
+                          className="flex-1 min-w-0 px-3 py-2 text-[12px] rounded-xl border border-[#EDE8DF] outline-none bg-white font-light"
                           style={{ fontFamily: "inherit" }}
                         />
                         <button
                           type="submit"
                           disabled={calcLoading}
-                          className="px-4 py-2 text-[12px] font-bold text-white rounded-xl bg-[#1C3A2F] hover:bg-[#152c23] transition-colors cursor-pointer disabled:opacity-50"
+                          className="flex-shrink-0 px-4 py-2 text-[12px] font-bold text-white rounded-xl bg-[#1C3A2F] hover:bg-[#152c23] transition-colors cursor-pointer disabled:opacity-50"
                           style={{ fontFamily: "inherit" }}
                         >
                           {calcLoading ? "Calculating..." : "Calculate"}
