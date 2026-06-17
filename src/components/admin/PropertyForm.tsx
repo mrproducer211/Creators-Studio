@@ -39,7 +39,7 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
     ? {
         slug: initial.slug, name: initial.name, description: initial.description,
         listingType: initial.listingType, propertyType: initial.propertyType,
-        priceTHB: initial.priceTHB, priceUSD: initial.priceUSD, priceLabel: initial.priceLabel ?? "",
+        priceTHB: Number(initial.priceTHB), priceUSD: initial.priceUSD ? Number(initial.priceUSD) : undefined, priceLabel: initial.priceLabel ?? "",
         bedrooms: initial.bedrooms, bathrooms: initial.bathrooms, sqm: initial.sqm,
         area: initial.area, district: initial.district ?? "",
         coverImage: initial.coverImage ?? "", images: initial.images ?? [], videoUrl: initial.videoUrl ?? "",
@@ -285,10 +285,10 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-              <Field label="Price (THB)" error={errors.priceTHB}>
-                <input type="number" min={0} className={inputCls} style={inputStyle} value={state.priceTHB} onChange={(e) => setField("priceTHB", Number(e.target.value))} required />
+              <Field label={state.listingType === "sale" ? "Sale Price (THB)" : "Rental Price (THB)"} error={errors.priceTHB}>
+                <input type="number" min={0} className={inputCls} style={inputStyle} value={state.priceTHB || ""} onChange={(e) => setField("priceTHB", e.target.value ? Number(e.target.value) : 0)} required />
               </Field>
-              <Field label="Price (USD, Optional)">
+              <Field label={state.listingType === "sale" ? "Sale Price (USD, Optional)" : "Rental Price (USD, Optional)"}>
                 <input type="number" min={0} className={inputCls} style={inputStyle} value={state.priceUSD ?? ""} onChange={(e) => setField("priceUSD", e.target.value ? Number(e.target.value) : undefined)} />
               </Field>
               <Field label="Price Label">
