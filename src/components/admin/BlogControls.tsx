@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Cpu, RefreshCw } from "lucide-react";
 
 export default function BlogControls() {
   const router = useRouter();
@@ -97,7 +98,8 @@ export default function BlogControls() {
           className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold border border-[#E5E0D8] text-[#1C3A2F]"
           style={{ background: "#FFFFFF", ...buttonStyle }}
         >
-          {loading && actionType === "ai" ? "🤖 Generating..." : "🤖 AI Generate Post"}
+          <Cpu className={`w-3.5 h-3.5 ${loading && actionType === "ai" ? "animate-pulse" : ""}`} />
+          {loading && actionType === "ai" ? "Generating..." : "AI Generate Post"}
         </button>
 
         {/* RSS Sync Button */}
@@ -107,7 +109,8 @@ export default function BlogControls() {
           className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold border border-[#E5E0D8] text-[#1C3A2F]"
           style={{ background: "#FFFFFF", ...buttonStyle }}
         >
-          {loading && actionType === "rss" ? "🔄 Syncing..." : "🔄 Sync RSS Feeds"}
+          <RefreshCw className={`w-3.5 h-3.5 ${loading && actionType === "rss" ? "animate-spin" : ""}`} />
+          {loading && actionType === "rss" ? "Syncing..." : "Sync RSS Feeds"}
         </button>
       </div>
 

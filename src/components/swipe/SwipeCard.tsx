@@ -4,6 +4,8 @@ import { useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { Heart, MapPin, Bed, ShowerHead, Maximize2 } from "lucide-react";
+import { stripEmojis } from "@/lib/emoji";
 
 const GRADIENTS = [
   "linear-gradient(160deg, #254D3E 0%, #1C3A2F 100%)",
@@ -147,7 +149,7 @@ export default function SwipeCard({ property, index, total, onSwipe }: Props) {
       {/* LIKE badge */}
       {index === 0 && (
         <div
-          className="absolute top-10 left-6 px-4 py-2 rounded-xl border-4 text-2xl font-black uppercase tracking-widest"
+          className="absolute top-10 left-6 px-4 py-2 rounded-xl border-4 text-2xl font-black uppercase tracking-widest flex items-center gap-2"
           style={{
             opacity: likeOpacity,
             borderColor: "#4ADE80",
@@ -156,7 +158,7 @@ export default function SwipeCard({ property, index, total, onSwipe }: Props) {
             transition: dragging ? "none" : "opacity 0.2s",
           }}
         >
-          SAVE ♥
+          SAVE <Heart className="w-6 h-6 fill-current" />
         </div>
       )}
 
@@ -203,21 +205,28 @@ export default function SwipeCard({ property, index, total, onSwipe }: Props) {
           {property.listingType === "sale" ? "" : (property.priceLabel ?? "")}
         </div>
         <div className="text-[16px] font-semibold mb-1 leading-tight" style={{ color: "rgba(255,255,255,0.95)" }}>
-          {property.name}
+          {stripEmojis(property.name)}
         </div>
-        <div className="text-[12px] mb-3" style={{ color: "rgba(255,255,255,0.65)" }}>
-          📍 {property.area}{property.district ? `, ${property.district}` : ""}
+        <div className="text-[12px] mb-3 flex items-center gap-1" style={{ color: "rgba(255,255,255,0.65)" }}>
+          <MapPin className="w-3.5 h-3.5 shrink-0" />
+          <span>
+            {stripEmojis(property.area)}
+            {property.district ? `, ${stripEmojis(property.district)}` : ""}
+          </span>
         </div>
         <div className="flex items-center gap-4 mb-3">
-          <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.75)" }}>
-            🛏 {property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`}
+          <span className="text-[13px] flex items-center gap-1" style={{ color: "rgba(255,255,255,0.75)" }}>
+            <Bed className="w-4 h-4 shrink-0" />
+            <span>{property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`}</span>
           </span>
-          <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.75)" }}>
-            🚿 {property.bathrooms} Bath
+          <span className="text-[13px] flex items-center gap-1" style={{ color: "rgba(255,255,255,0.75)" }}>
+            <ShowerHead className="w-4 h-4 shrink-0" />
+            <span>{property.bathrooms} Bath</span>
           </span>
           {property.sqm && (
-            <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.75)" }}>
-              📐 {property.sqm} m²
+            <span className="text-[13px] flex items-center gap-1" style={{ color: "rgba(255,255,255,0.75)" }}>
+              <Maximize2 className="w-4 h-4 shrink-0" />
+              <span>{property.sqm} m²</span>
             </span>
           )}
         </div>

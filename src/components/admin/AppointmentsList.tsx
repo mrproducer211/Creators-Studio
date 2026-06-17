@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Home } from "lucide-react";
+import { stripEmojis } from "@/lib/emoji";
 
 export interface AppointmentRecord {
   id: string | number;
@@ -120,7 +122,7 @@ export default function AppointmentsList({ initialAppointments }: { initialAppoi
                   <td className="p-4 text-[13px] font-medium text-[#1C3A2F]">
                     {a.propertyName ? (
                       <a href={`/property/${a.propertySlug}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                        🏠 {a.propertyName}
+                        <span className="inline-flex items-center gap-1.5"><Home className="w-3.5 h-3.5" /> {stripEmojis(a.propertyName)}</span>
                       </a>
                     ) : (
                       <span className="text-[#999] italic">General Enquiry</span>

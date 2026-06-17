@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
 
 export default function TelegramWebhookSetup() {
   const [url, setUrl] = useState("");
@@ -65,7 +66,7 @@ export default function TelegramWebhookSetup() {
             required
           />
           <p className="text-[11px] text-[#999] mt-1.5">
-            ⚠️ Must be an public HTTPS URL. For local testing, run <code className="bg-[#FAF8F3] px-1 border rounded font-mono">ngrok http 3000</code> and use your ngrok URL.
+            <span className="inline-flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5 text-amber-500" /> Must be a public HTTPS URL. For local testing, run <code className="bg-[#FAF8F3] px-1 border rounded font-mono">ngrok http 3000</code> and use your ngrok URL.</span>
           </p>
         </div>
 

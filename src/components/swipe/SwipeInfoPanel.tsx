@@ -4,6 +4,8 @@ import { useState } from "react";
 import { PropertyCard } from "@/types/property";
 import { useEnquiry } from "@/hooks/useEnquiry";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { Heart, MapPin, Bed, ShowerHead, Maximize2, Mail, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { stripEmojis } from "@/lib/emoji";
 
 function formatPrice(p: PropertyCard, formatPriceFn: (n: number) => string) {
   if (p.listingType === "sale") return formatPriceFn(Number(p.priceTHB));
@@ -65,42 +67,46 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
               <div className="text-[24px] font-bold mt-3 mb-1" style={{ color: "#1C3A2F", letterSpacing: "-0.5px" }}>
                 {formatPrice(property, formatPriceFn)}
               </div>
-              <div className="text-[17px] font-semibold mb-1 leading-tight" style={{ color: "#1A1A1A" }}>{property.name}</div>
+               <div className="text-[17px] font-semibold mb-1 leading-tight" style={{ color: "#1A1A1A" }}>{stripEmojis(property.name)}</div>
               <div className="text-[13px] mb-4 flex items-center gap-1" style={{ color: "#999" }}>
-                📍 {property.area}{property.district ? `, ${property.district}` : ""}
+                <MapPin size={12} className="shrink-0" />
+                <span>
+                  {stripEmojis(property.area)}
+                  {property.district ? `, ${stripEmojis(property.district)}` : ""}
+                </span>
               </div>
 
               <div className="flex gap-5 py-3 mb-4 rounded-2xl px-4" style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}>
                 {[
-                  { icon: "🛏", val: property.bedrooms === 0 ? "Studio" : property.bedrooms, label: "Beds" },
-                  { icon: "🚿", val: property.bathrooms, label: "Baths" },
-                  ...(property.sqm ? [{ icon: "📐", val: property.sqm, label: "m²" }] : []),
-                  { icon: "💚", val: property.likes, label: "Likes" },
+                  { icon: <Bed className="w-5 h-5 mx-auto text-[#1C3A2F]" />, val: property.bedrooms === 0 ? "Studio" : property.bedrooms, label: "Beds" },
+                  { icon: <ShowerHead className="w-5 h-5 mx-auto text-[#1C3A2F]" />, val: property.bathrooms, label: "Baths" },
+                  ...(property.sqm ? [{ icon: <Maximize2 className="w-5 h-5 mx-auto text-[#1C3A2F]" />, val: property.sqm, label: "m²" }] : []),
+                  { icon: <Heart className="w-5 h-5 mx-auto text-[#1C3A2F] fill-current" />, val: property.likes, label: "Likes" },
                 ].map((s) => (
                   <div key={s.label} className="flex-1 text-center">
-                    <div className="text-[20px]">{s.icon}</div>
+                    <div className="h-6 flex items-center justify-center">{s.icon}</div>
                     <div className="text-[13px] font-semibold mt-0.5" style={{ color: "#1C3A2F" }}>{s.val}</div>
                     <div className="text-[10px]" style={{ color: "#999" }}>{s.label}</div>
                   </div>
                 ))}
               </div>
 
-              <p className="text-[14px] leading-[1.7] font-light mb-5" style={{ color: "#555" }}>{property.description}</p>
+              <p className="text-[14px] leading-[1.7] font-light mb-5" style={{ color: "#555" }}>{stripEmojis(property.description)}</p>
 
               <div className="flex gap-3 mb-3">
                 <button onClick={onSkip} className="flex-1 py-3.5 rounded-2xl text-sm font-semibold cursor-pointer border-2" style={{ borderColor: "#E5E0D8", background: "transparent", color: "#555", fontFamily: "inherit" }}>
                   ✕ Skip
                 </button>
-                <button onClick={onSave} className="flex-1 py-3.5 rounded-2xl text-sm font-semibold cursor-pointer border-none" style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}>
-                  ♥ Save
+                <button onClick={onSave} className="flex-1 py-3.5 rounded-2xl text-sm font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5" style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}>
+                  <Heart className="w-4 h-4 fill-current" /> Save
                 </button>
               </div>
               <button
                 onClick={() => setShowForm(true)}
-                className="w-full py-3 rounded-2xl text-sm font-semibold cursor-pointer border-none"
+                className="w-full py-3 rounded-2xl text-sm font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5"
                 style={{ background: "#C9A84C", color: "#1C3A2F", fontFamily: "inherit" }}
               >
-                📩 I&apos;m Interested — Contact Me
+                <Mail className="w-4 h-4" /> I&apos;m Interested — Contact Me
               </button>
             </>
           )}
@@ -112,7 +118,7 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
                 ← Back
               </button>
               <p className="text-[18px] font-bold mb-1" style={{ color: "#1C3A2F" }}>Contact about this property</p>
-              <p className="text-[12px] font-light mb-4" style={{ color: "#999" }}>{property.name}</p>
+              <p className="text-[12px] font-light mb-4" style={{ color: "#999" }}>{stripEmojis(property.name)}</p>
               <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
                 <input
                   className="w-full rounded-xl px-4 py-3 text-[14px] outline-none"
@@ -142,7 +148,7 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
                     required
                   />
                 </div>
-                {errorMsg && <p className="text-[12px] px-1" style={{ color: "#E05252" }}>⚠ {errorMsg}</p>}
+                {errorMsg && <p className="text-[12px] px-1 flex items-center gap-1" style={{ color: "#E05252" }}><AlertTriangle className="w-3.5 h-3.5 shrink-0" /> {errorMsg}</p>}
                 <button type="submit" disabled={status === "loading"}
                   className="w-full py-4 rounded-2xl text-[15px] font-semibold cursor-pointer border-none disabled:opacity-60"
                   style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}>
@@ -155,7 +161,7 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
           {/* ── Done ── */}
           {status === "done" && (
             <div className="text-center py-10">
-              <div className="text-5xl mb-4">✅</div>
+              <CheckCircle2 className="w-12 h-12 text-[#2E7D4F] mx-auto mb-4" />
               <p className="text-[20px] font-bold mb-2" style={{ color: "#1C3A2F" }}>Enquiry sent!</p>
               <p className="text-[14px] font-light mb-6" style={{ color: "#555" }}>
                 We&apos;ll contact you via {method} within 24 hours.

@@ -8,8 +8,8 @@ const T = {
   en: {
     nav: {
       explore:   "Explore",
-      swipe:     "♥ Swipe",
-      reels:     "▶ Reels",
+      swipe:     "Swipe",
+      reels:     "Reels",
       buy:       "Buy",
       rent:      "Rent",
       shortStay: "Short Stay",
@@ -160,7 +160,7 @@ const T = {
     interest: {
       title: "Interested in a property?",
       sub: "Leave your details and we'll contact you within 24 hours via WhatsApp or Line.",
-      sent: "✅ Enquiry sent!",
+      sent: "Enquiry sent!",
       reachOut: "We'll reach out via {method} within 24 hours.",
       placeholderName: "Your name",
       placeholderNumber: "Your number",
@@ -185,8 +185,8 @@ const T = {
       showResults: "Show {total} {label}",
       property: "property",
       properties: "properties",
-      petFriendly: "🐾 Pet Friendly",
-      nearBts: "🚇 Near BTS / MRT",
+      petFriendly: "Pet Friendly",
+      nearBts: "Near BTS / MRT",
       tabAll: "All",
       tabSale: "For Sale",
       tabRent: "Long Rent",
@@ -257,8 +257,8 @@ const T = {
   th: {
     nav: {
       explore:   "สำรวจ",
-      swipe:     "♥ สไวป์",
-      reels:     "▶ รีลส์",
+      swipe:     "สไวป์",
+      reels:     "รีลส์",
       buy:       "ซื้อ",
       rent:      "เช่า",
       shortStay: "พักระยะสั้น",
@@ -409,7 +409,7 @@ const T = {
     interest: {
       title: "สนใจอสังหาริมทรัพย์นี้?",
       sub: "ฝากรายละเอียดของคุณ แล้วเราจะติดต่อกลับภายใน 24 ชั่วโมง ผ่าน WhatsApp หรือ Line",
-      sent: "✅ ส่งข้อมูลสอบถามแล้ว!",
+      sent: "ส่งข้อมูลสอบถามแล้ว!",
       reachOut: "เราจะติดต่อกลับผ่าน {method} ภายใน 24 ชั่วโมง",
       placeholderName: "ชื่อของคุณ",
       placeholderNumber: "เบอร์โทรศัพท์ของคุณ",
@@ -434,8 +434,8 @@ const T = {
       showResults: "แสดง {label} ทั้งหมด {total} รายการ",
       property: "รายการ",
       properties: "รายการ",
-      petFriendly: "🐾 เลี้ยงสัตว์ได้",
-      nearBts: "🚇 ใกล้ BTS / MRT",
+      petFriendly: "เลี้ยงสัตว์ได้",
+      nearBts: "ใกล้ BTS / MRT",
       tabAll: "ทั้งหมด",
       tabSale: "ขาย",
       tabRent: "เช่าระยะยาว",

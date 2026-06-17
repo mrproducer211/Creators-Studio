@@ -163,7 +163,7 @@ export default function SmartMapComponent({
 
         circle.bindTooltip(
           `<div style="font-family: inherit; font-size:10px; font-weight:700; color:#1C3A2F;">
-            📍 ${n.name} boundary
+            ${n.name} boundary
           </div>`,
           { sticky: true, opacity: 0.9, className: "custom-map-tooltip" }
         );
@@ -190,7 +190,7 @@ export default function SmartMapComponent({
               align-items: center;
               justify-content: center;
             ">
-              <span style="font-size: 11px;">🚇</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4M8 15h8M12 2v13"/></svg>
             </div>
           `,
           iconSize: [26, 26],

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Compass, ThumbsUp, ThumbsDown, Users } from "lucide-react";
+import { PropertyCard } from "@/types/property";
+import { getCanonicalArea } from "@/lib/area";
 
 // Dimensions — big card + 2×2 grid heights must match
 const BIG_W   = 260;  // px — anchor card width
@@ -28,9 +30,36 @@ interface VibeCheckCard {
   whoLovesIt: string;
 }
 
-export default function CategorySection() {
+interface CategorySectionProps {
+  properties?: PropertyCard[];
+}
+
+export default function CategorySection({ properties = [] }: CategorySectionProps) {
   const { t } = useLanguage();
   const [vibeCheckCard, setVibeCheckCard] = useState<VibeCheckCard | null>(null);
+
+  const getAreaCount = (slug: string) => {
+    const slugMap: Record<string, string> = {
+      "sukhumvit": "Sukhumvit",
+      "sathorn": "Sathorn",
+      "thong-lo": "Thong Lo",
+      "asok": "Asok",
+      "ekkamai": "Ekkamai",
+      "silom": "Silom",
+      "on-nut": "On Nut",
+      "ari": "Ari",
+      "rama-9": "Rama 9",
+      "bang-na": "Bang Na",
+      "huai-khwang": "Huai Khwang",
+      "phaya-thai": "Phaya Thai",
+    };
+    const targetArea = slugMap[slug];
+    if (!targetArea) return 0;
+    // Return only real live listings from the database — no padding
+    return properties.filter(
+      (p) => getCanonicalArea(p.area) === targetArea && p.status !== "draft" && p.status !== "unlisted"
+    ).length;
+  };
 
   const SECTIONS = [
     {
@@ -42,10 +71,10 @@ export default function CategorySection() {
         href:  "/explore?bts=true",
       },
       cards: [
-        { slug: "sukhumvit", name: t.category.areas.sukhumvit, count: MOCK_PROPERTIES.filter(p => p.area === "Sukhumvit").length + 18, image: "/images/neighborhoods/sukhumvit.webp", href: "/neighborhood/sukhumvit" },
-        { slug: "sathorn",   name: t.category.areas.sathorn,   count: MOCK_PROPERTIES.filter(p => p.area === "Sathorn").length + 14,   image: "/images/neighborhoods/sathorn.webp", href: "/neighborhood/sathorn" },
-        { slug: "thong-lo",  name: t.category.areas.thongLo,    count: MOCK_PROPERTIES.filter(p => p.area === "Thong Lo").length + 12,  image: "/images/neighborhoods/thong_lo.webp", href: "/neighborhood/thong-lo" },
-        { slug: "asok",      name: t.category.areas.asok,       count: MOCK_PROPERTIES.filter(p => p.area === "Asok").length + 9,       image: "/images/neighborhoods/asok.webp", href: "/neighborhood/asok" },
+        { slug: "sukhumvit", name: t.category.areas.sukhumvit, count: getAreaCount("sukhumvit"), image: "/images/neighborhoods/sukhumvit.webp", href: "/neighborhood/sukhumvit" },
+        { slug: "sathorn",   name: t.category.areas.sathorn,   count: getAreaCount("sathorn"),   image: "/images/neighborhoods/sathorn.webp", href: "/neighborhood/sathorn" },
+        { slug: "thong-lo",  name: t.category.areas.thongLo,    count: getAreaCount("thong-lo"),  image: "/images/neighborhoods/thong_lo.webp", href: "/neighborhood/thong-lo" },
+        { slug: "asok",      name: t.category.areas.asok,       count: getAreaCount("asok"),      image: "/images/neighborhoods/asok.webp", href: "/neighborhood/asok" },
       ],
     },
     {
@@ -57,10 +86,10 @@ export default function CategorySection() {
         href:  "/explore?pets=true",
       },
       cards: [
-        { slug: "ekkamai",  name: t.category.areas.ekkamai, count: MOCK_PROPERTIES.filter(p => p.area === "Ekkamai").length + 11, image: "/images/neighborhoods/ekkamai.webp", href: "/neighborhood/ekkamai" },
-        { slug: "silom",    name: t.category.areas.silom,   count: 16, image: "/images/neighborhoods/silom.webp", href: "/neighborhood/silom" },
-        { slug: "on-nut",   name: t.category.areas.onNut,   count: MOCK_PROPERTIES.filter(p => p.area === "On Nut").length + 9,   image: "/images/neighborhoods/on_nut.webp", href: "/neighborhood/on-nut" },
-        { slug: "ari",      name: t.category.areas.ari,     count: 13, image: "/images/neighborhoods/ari.webp", href: "/neighborhood/ari" },
+        { slug: "ekkamai",  name: t.category.areas.ekkamai, count: getAreaCount("ekkamai"), image: "/images/neighborhoods/ekkamai.webp", href: "/neighborhood/ekkamai" },
+        { slug: "silom",    name: t.category.areas.silom,   count: getAreaCount("silom"),   image: "/images/neighborhoods/silom.webp", href: "/neighborhood/silom" },
+        { slug: "on-nut",   name: t.category.areas.onNut,   count: getAreaCount("on-nut"),   image: "/images/neighborhoods/on_nut.webp", href: "/neighborhood/on-nut" },
+        { slug: "ari",      name: t.category.areas.ari,     count: getAreaCount("ari"),     image: "/images/neighborhoods/ari.webp", href: "/neighborhood/ari" },
       ],
     },
     {
@@ -72,10 +101,10 @@ export default function CategorySection() {
         href:  "/explore?newHubs=true",
       },
       cards: [
-        { slug: "rama-9",      name: t.category.areas.rama9,      count: MOCK_PROPERTIES.filter(p => p.area === "Rama 9").length + 12,      image: "/images/neighborhoods/rama_9.webp", href: "/neighborhood/rama-9" },
-        { slug: "bang-na",     name: t.category.areas.bangNa,     count: MOCK_PROPERTIES.filter(p => p.area === "Bang Na").length + 15,     image: "/images/neighborhoods/bang_na.webp", href: "/neighborhood/bang-na" },
-        { slug: "huai-khwang",  name: t.category.areas.huaiKhwang,  count: MOCK_PROPERTIES.filter(p => p.area === "Huai Khwang").length + 10,  image: "/images/neighborhoods/huai_khwang.webp", href: "/neighborhood/huai-khwang" },
-        { slug: "phaya-thai",  name: t.category.areas.phayaThai,  count: MOCK_PROPERTIES.filter(p => p.area === "Phaya Thai").length + 8,   image: "/images/neighborhoods/phaya_thai.webp", href: "/neighborhood/phaya-thai" },
+        { slug: "rama-9",      name: t.category.areas.rama9,      count: getAreaCount("rama-9"),      image: "/images/neighborhoods/rama_9.webp", href: "/neighborhood/rama-9" },
+        { slug: "bang-na",     name: t.category.areas.bangNa,     count: getAreaCount("bang-na"),     image: "/images/neighborhoods/bang_na.webp", href: "/neighborhood/bang-na" },
+        { slug: "huai-khwang",  name: t.category.areas.huaiKhwang,  count: getAreaCount("huai-khwang"),  image: "/images/neighborhoods/huai_khwang.webp", href: "/neighborhood/huai-khwang" },
+        { slug: "phaya-thai",  name: t.category.areas.phayaThai,  count: getAreaCount("phaya-thai"),  image: "/images/neighborhoods/phaya_thai.webp", href: "/neighborhood/phaya-thai" },
       ],
     },
   ];
@@ -287,7 +316,9 @@ export default function CategorySection() {
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
               <div>
-                <span className="text-[9px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] block mb-0.5">🌿 Vibe Check</span>
+                <span className="text-[9px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] flex items-center gap-1 mb-0.5">
+                  <Compass className="w-3.5 h-3.5" /> Vibe Check
+                </span>
                 <h3 className="text-[20px] font-bold leading-tight" style={{ color: "#1C3A2F" }}>{vibeCheckCard.name}</h3>
               </div>
               <button
@@ -321,18 +352,24 @@ export default function CategorySection() {
               {/* Pros & Cons */}
               <div className="grid grid-cols-1 gap-2.5">
                 <div className="p-3 rounded-xl bg-white" style={{ border: "1px solid #E5E0D8" }}>
-                  <span className="text-[9px] font-bold uppercase tracking-[1px] text-emerald-600 block mb-0.5">👍 Pros</span>
+                  <span className="text-[9px] font-bold uppercase tracking-[1px] text-emerald-600 flex items-center gap-1 mb-0.5">
+                    <ThumbsUp className="w-3.5 h-3.5" /> Pros
+                  </span>
                   <p className="font-light text-[#555]">{vibeCheckCard.pros}</p>
                 </div>
                 <div className="p-3 rounded-xl bg-white" style={{ border: "1px solid #E5E0D8" }}>
-                  <span className="text-[9px] font-bold uppercase tracking-[1px] text-rose-500 block mb-0.5">👎 Cons</span>
+                  <span className="text-[9px] font-bold uppercase tracking-[1px] text-rose-500 flex items-center gap-1 mb-0.5">
+                    <ThumbsDown className="w-3.5 h-3.5" /> Cons
+                  </span>
                   <p className="font-light text-[#555]">{vibeCheckCard.cons}</p>
                 </div>
               </div>
 
               {/* Who loves it */}
               <div className="p-3 rounded-xl bg-white" style={{ border: "1px solid #E5E0D8" }}>
-                <span className="text-[9px] font-bold uppercase tracking-[1px] text-[#C9A84C] block mb-0.5">👥 Who Lives Here</span>
+                <span className="text-[9px] font-bold uppercase tracking-[1px] text-[#C9A84C] flex items-center gap-1 mb-0.5">
+                  <Users className="w-3.5 h-3.5" /> Who Lives Here
+                </span>
                 <p className="font-light text-[#555]">{vibeCheckCard.whoLovesIt}</p>
               </div>
 

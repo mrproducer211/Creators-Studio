@@ -2,6 +2,8 @@
 
 import { PropertyCard } from "@/types/property";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { Heart, MapPin } from "lucide-react";
+import { stripEmojis } from "@/lib/emoji";
 
 interface Props {
   saved: PropertyCard[];
@@ -41,9 +43,9 @@ export default function SavedPanel({ saved, onClose, onRemove }: Props) {
 
           {saved.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-4xl mb-3">🤍</div>
+              <div className="flex justify-center text-gray-400 mb-3"><Heart size={36} /></div>
               <p className="text-[14px] font-medium mb-1" style={{ color: "#1C3A2F" }}>No saved properties yet</p>
-              <p className="text-[12px] font-light" style={{ color: "#999" }}>Swipe right or tap ♥ to save</p>
+              <p className="text-[12px] font-light" style={{ color: "#999" }}>Swipe right or tap the heart button to save</p>
             </div>
           ) : (
             <div className="overflow-y-auto flex flex-col gap-3" style={{ maxHeight: "55vh" }}>
@@ -66,12 +68,12 @@ export default function SavedPanel({ saved, onClose, onRemove }: Props) {
                     NHP
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.name}</div>
+                    <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{stripEmojis(p.name)}</div>
                     <div className="text-[12px]" style={{ color: "#1C3A2F" }}>
                       {formatPriceFn(Number(p.priceTHB))}
                       {p.listingType === "sale" ? "" : (p.priceLabel ?? "")}
                     </div>
-                    <div className="text-[11px]" style={{ color: "#999" }}>📍 {p.area}</div>
+                    <div className="text-[11px] flex items-center gap-0.5" style={{ color: "#999" }}><MapPin size={11} /> {stripEmojis(p.area)}</div>
                   </div>
                   <button
                     onClick={() => onRemove(p.id)}

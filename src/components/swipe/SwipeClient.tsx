@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { PropertyCard, ListingType } from "@/types/property";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X, Heart, MapPin, Undo2, PartyPopper, Bed, ShowerHead, Maximize2 } from "lucide-react";
 import Link from "next/link";
+import { stripEmojis } from "@/lib/emoji";
 import SwipeCard from "./SwipeCard";
 import SavedPanel from "./SavedPanel";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -234,7 +235,8 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
             </Link>
             {searchLocation && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold shadow-lg" style={{ background: "rgba(255,255,255,0.1)", color: "#C9A84C", border: "1px solid rgba(255,255,255,0.15)" }}>
-                <span>📍 {searchLocation}</span>
+                <MapPin size={10} className="shrink-0" />
+                <span>{searchLocation}</span>
                 <button onClick={() => setSearchLocation("")} className="ml-1 cursor-pointer border-none bg-transparent text-[#C9A84C] hover:text-white p-0" style={{ fontFamily: "inherit" }}>✕</button>
               </div>
             )}
@@ -256,19 +258,23 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
             <button
               onClick={rewind}
               disabled={skipped.length === 0}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-base cursor-pointer border-none transition-all"
+              className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer border-none transition-all"
               style={{
                 background: skipped.length > 0 ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.04)",
                 color: skipped.length > 0 ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)",
                 fontFamily: "inherit",
               }}
-            >↩</button>
+              aria-label="Rewind"
+            >
+              <Undo2 size={16} />
+            </button>
             <button
               onClick={() => setShowSaved(true)}
               className="flex items-center gap-1.5 px-3 py-2 rounded-full cursor-pointer border-none transition-all"
               style={{ background: saved.length > 0 ? "#C9A84C" : "rgba(255,255,255,0.08)", color: saved.length > 0 ? "#1C3A2F" : "rgba(255,255,255,0.6)", fontFamily: "inherit" }}
             >
-              <span>💚</span><span className="text-[13px] font-semibold">{saved.length}</span>
+              <Heart className={`w-4 h-4 ${saved.length > 0 ? "fill-current" : ""}`} />
+              <span className="text-[13px] font-semibold">{saved.length}</span>
             </button>
           </div>
         </div>
@@ -277,15 +283,15 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
         <div className="w-full max-w-[420px] mx-auto flex-1 relative min-h-0">
           {stack.length === 0 ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8">
-              <div className="text-5xl mb-4">🎉</div>
+              <PartyPopper className="w-12 h-12 mb-4 text-[#C9A84C] mx-auto" />
               <p className="text-[18px] font-bold mb-2" style={{ color: "#FFFFFF" }}>You&apos;ve seen them all!</p>
               <p className="text-[13px] font-light mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>
                 {saved.length > 0 ? `You saved ${saved.length} ${saved.length === 1 ? "property" : "properties"}` : "Try a different filter"}
               </p>
               <div className="flex flex-col gap-2.5 w-full max-w-[280px]">
                 {saved.length > 0 && (
-                  <button onClick={() => setShowSaved(true)} className="py-3 rounded-2xl text-sm font-semibold cursor-pointer border-none" style={{ background: "#C9A84C", color: "#1C3A2F", fontFamily: "inherit" }}>
-                    View {saved.length} Saved 💚
+                  <button onClick={() => setShowSaved(true)} className="py-3 rounded-2xl text-sm font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5" style={{ background: "#C9A84C", color: "#1C3A2F", fontFamily: "inherit" }}>
+                    View {saved.length} Saved <Heart className="w-4 h-4 fill-current" />
                   </button>
                 )}
                 <button
@@ -340,7 +346,9 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                 </a>
               )}
 
-              <button onClick={() => doSwipe("right")} className="w-16 h-16 rounded-full flex items-center justify-center text-3xl cursor-pointer border-2 transition-all active:scale-90" style={{ borderColor: "#C9A84C", background: "rgba(201,168,76,0.12)", color: "#C9A84C", fontFamily: "inherit" }}>♥</button>
+              <button onClick={() => doSwipe("right")} className="w-16 h-16 rounded-full flex items-center justify-center cursor-pointer border-2 transition-all active:scale-90" style={{ borderColor: "#C9A84C", background: "rgba(201,168,76,0.12)", color: "#C9A84C", fontFamily: "inherit" }} aria-label="Save">
+                <Heart className="w-7 h-7 fill-current" />
+              </button>
             </div>
             <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.18)" }}>Swipe or use buttons · ← Skip · → Save</p>
           </div>
@@ -363,14 +371,17 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
             {formatPriceFn(Number(current.priceTHB))}
             {current.listingType === "sale" ? "" : (current.priceLabel ?? "")}
           </div>
-          <div className="text-[14px] font-semibold mb-1 leading-tight" style={{ color: "#FFFFFF" }}>{current.name}</div>
-          <div className="text-[12px] mb-3" style={{ color: "rgba(255,255,255,0.45)" }}>📍 {current.area}</div>
-          <div className="flex gap-3 mb-4 text-[12px]" style={{ color: "rgba(255,255,255,0.55)" }}>
-            <span>🛏 {current.bedrooms === 0 ? "Studio" : `${current.bedrooms}BR`}</span>
-            <span>🚿 {current.bathrooms}Ba</span>
-            {current.sqm && <span>📐 {current.sqm}m²</span>}
+          <div className="text-[14px] font-semibold mb-1 leading-tight" style={{ color: "#FFFFFF" }}>{stripEmojis(current.name)}</div>
+          <div className="text-[12px] mb-3 flex items-center gap-1" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <MapPin size={12} className="shrink-0" />
+            <span>{stripEmojis(current.area)}</span>
           </div>
-          <p className="text-[12px] leading-[1.6] font-light mb-5 line-clamp-4" style={{ color: "rgba(255,255,255,0.4)" }}>{current.description}</p>
+          <div className="flex flex-col gap-1.5 mb-4 text-[12px]" style={{ color: "rgba(255,255,255,0.55)" }}>
+            <span className="flex items-center gap-1"><Bed size={14} className="shrink-0" /> {current.bedrooms === 0 ? "Studio" : `${current.bedrooms}BR`}</span>
+            <span className="flex items-center gap-1"><ShowerHead size={14} className="shrink-0" /> {current.bathrooms}Ba</span>
+            {current.sqm && <span className="flex items-center gap-1"><Maximize2 size={14} className="shrink-0" /> {current.sqm}m²</span>}
+          </div>
+          <p className="text-[12px] leading-[1.6] font-light mb-5 line-clamp-4" style={{ color: "rgba(255,255,255,0.4)" }}>{stripEmojis(current.description)}</p>
           <a href={`/property/${current.slug}`} className="text-center py-2.5 rounded-xl text-[12px] font-semibold no-underline" style={{ background: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid rgba(201,168,76,0.3)" }}>
             View Full Details →
           </a>
@@ -381,9 +392,9 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
       {matchCard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none" style={{ background: "rgba(15,31,24,0.75)" }}>
           <div className="text-center">
-            <div className="text-6xl mb-3 animate-bounce">💚</div>
+            <Heart className="w-16 h-16 text-[#4ADE80] fill-current animate-bounce mb-3 mx-auto" />
             <p className="text-[22px] font-bold" style={{ color: "#E2C97E" }}>Saved!</p>
-            <p className="text-[14px] font-light mt-1" style={{ color: "rgba(255,255,255,0.6)" }}>{matchCard.name}</p>
+            <p className="text-[14px] font-light mt-1" style={{ color: "rgba(255,255,255,0.6)" }}>{stripEmojis(matchCard.name)}</p>
           </div>
         </div>
       )}

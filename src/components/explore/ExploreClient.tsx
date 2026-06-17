@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { PropertyCard, ExploreFilters, ListingType } from "@/types/property";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Home } from "lucide-react";
 import ExploreFiltersBar from "./ExploreFilters";
 import ExplorePropertyCard from "./ExplorePropertyCard";
 
@@ -153,7 +154,7 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
       <div className="px-4 md:px-6 py-6">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <span className="text-5xl mb-4">🏠</span>
+            <Home className="w-12 h-12 text-gray-300 mx-auto mb-4" />
             <p className="text-[16px] font-semibold mb-2" style={{ color: "#1C3A2F" }}>{t.explore.noResult}</p>
             <p className="text-[13px] font-light mb-5" style={{ color: "#999" }}>{t.explore.noSub}</p>
             <button

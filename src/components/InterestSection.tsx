@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useEnquiry } from "@/hooks/useEnquiry";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { MailOpen, AlertCircle } from "lucide-react";
 
 export default function InterestSection() {
   const { t } = useLanguage();
@@ -38,7 +39,7 @@ export default function InterestSection() {
         className="rounded-2xl p-6 text-center max-w-[480px] mx-auto"
         style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}
       >
-        <span className="text-[40px] block mb-3.5">📩</span>
+        <MailOpen className="w-10 h-10 text-[#C9A84C] mx-auto mb-3.5" />
         <div className="text-[18px] font-bold mb-2" style={{ color: "#1C3A2F", letterSpacing: "-0.3px" }}>
           {t.interest.title}
         </div>
@@ -93,7 +94,10 @@ export default function InterestSection() {
               />
             </div>
             {errorMsg && (
-              <p className="text-[12px] text-left px-1" style={{ color: "#E05252" }}>⚠ {errorMsg}</p>
+              <p className="text-[12px] text-left px-1 flex items-center gap-1" style={{ color: "#E05252" }}>
+                <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                {errorMsg}
+              </p>
             )}
             <button
               suppressHydrationWarning

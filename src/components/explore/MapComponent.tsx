@@ -28,6 +28,30 @@ const isValidLatLng = (coords: unknown): coords is [number, number] => {
   );
 };
 
+function getLandmarkSvg(type: string, size = 11): string {
+  const stroke = "#FFFFFF";
+  const strokeWidth = 2.5;
+  if (type === "transit") {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4M8 15h8M12 2v13"/></svg>`;
+  }
+  if (type === "cafe") {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v2M10 2v2M14 2v2"/></svg>`;
+  }
+  if (type === "mall") {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>`;
+  }
+  if (type === "coworking") {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="11" x="2" y="4" rx="2" ry="2"/><path d="M6 14h12M2 18h20M12 4v10"/></svg>`;
+  }
+  if (type === "park") {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5M17 12H7M12 2l-8 8h16Z"/></svg>`;
+  }
+  if (type === "viewpoint") {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><path d="M6 6h2v2H6zm6 0h2v2h-2zm6 0h2v2h-2zM6 12h2v2H6zm6 0h2v2h-2zm6 0h2v2h-2zM6 18h2v2H6zm6 0h2v2h-2zm6 0h2v2h-2z"/></svg>`;
+  }
+  return "";
+}
+
 export default function MapComponent({
   neighborhoods,
   selectedSlug,
@@ -390,7 +414,7 @@ export default function MapComponent({
                 align-items: center;
                 justify-content: center;
               ">
-                <span style="font-size: 10px; line-height: 1;">${lm.icon}</span>
+                <span style="font-size: 10px; line-height: 1; display: flex; align-items: center; justify-content: center;">${getLandmarkSvg(lm.type)}</span>
               </div>
             `,
             iconSize: [20, 20],
@@ -402,7 +426,7 @@ export default function MapComponent({
 
           lmMarker.bindTooltip(
             `<div style="font-family: inherit; font-size:9.5px; font-weight:700; color:#333; padding:0px 2px;">
-              ${lm.icon} ${lm.name}
+              ${lm.name}
              </div>`,
             { direction: "top", permanent: true, opacity: 0.9, offset: [0, -6], className: "landmark-tooltip" }
           );
@@ -435,7 +459,7 @@ export default function MapComponent({
 
           polyline.bindTooltip(
             `<div style="font-family: inherit; font-size:10px; font-weight:800; color:#2563EB; padding:1px 3px;">
-              ⚡ Commute: ${mins} mins to ${workplace}
+              Commute: ${mins} mins to ${workplace}
              </div>`,
             { sticky: true, opacity: 0.95, className: "commute-line-tooltip" }
           );
@@ -461,7 +485,7 @@ export default function MapComponent({
             justify-content: center;
             animation: pulse-workplace 2s infinite ease-in-out;
           ">
-            <span style="color:#FFFFFF; font-size:14px; font-weight:bold;">💼</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
           </div>
         `,
         iconSize: [32, 32],
@@ -473,7 +497,7 @@ export default function MapComponent({
 
       wMarker.bindTooltip(
         `<div style="font-family: inherit; font-size:11px; font-weight:800; color:#FFFFFF; padding:1px 3px;">
-          🏢 Workplace: ${workplace}
+          Workplace: ${workplace}
          </div>`,
         { direction: "top", permanent: true, opacity: 0.95, offset: [0, -12], className: "workplace-tooltip" }
       );
@@ -513,7 +537,7 @@ export default function MapComponent({
                 align-items: center;
                 justify-content: center;
               ">
-                <span style="font-size: 9px; line-height: 1;">${lm.icon}</span>
+                <span style="font-size: 9px; line-height: 1; display: flex; align-items: center; justify-content: center;">${getLandmarkSvg(lm.type, 9)}</span>
               </div>
             `,
             iconSize: [18, 18],
@@ -525,7 +549,7 @@ export default function MapComponent({
 
           lmMarker.bindTooltip(
             `<div style="font-family: inherit; font-size:9px; font-weight:700; color:#333; padding:0px 2px;">
-              ${lm.icon} ${lm.name}
+              ${lm.name}
              </div>`,
             { direction: "top", permanent: true, opacity: 0.85, offset: [0, -5], className: "landmark-tooltip" }
           );

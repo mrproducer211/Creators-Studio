@@ -46,13 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("Authorize called with credentials:", {
-          email: credentials?.email,
-          hasPassword: !!credentials?.password,
-          passwordLength: credentials?.password ? String(credentials.password).length : 0,
-        });
         if (!credentials?.email || !credentials?.password) {
-          console.log("Missing email or password");
           return null;
         }
 
@@ -75,16 +69,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           const { findLeadByEmail } = await import("@/lib/store/leads");
           const leadUser = await findLeadByEmail(emailLower);
-          if (!leadUser) {
-            console.log("No user found with email:", emailLower);
-            return null;
-          }
+          if (!leadUser) return null;
 
           const valid = await compare(String(credentials.password), leadUser.passwordHash);
-          if (!valid) {
-            console.log("Password invalid for user:", emailLower);
-            return null;
-          }
+          if (!valid) return null;
 
           return { id: leadUser.id, email: leadUser.email, name: leadUser.name, role: leadUser.role };
         } catch (err) {

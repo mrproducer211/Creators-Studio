@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PropertyCard } from "@/types/property";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { Sparkles } from "lucide-react";
 
-const FEATURED_FALLBACK = MOCK_PROPERTIES.find((p) => p.featured) ?? MOCK_PROPERTIES[0];
+const FEATURED_FALLBACK = undefined;
 
 /* ─────────────────────────────────────────────
    DESKTOP HERO  —  faithful port of nhp-v3.html
@@ -20,7 +19,7 @@ function DesktopHero({
   setActiveTab: (i: number) => void;
   query: string;
   setQuery: (v: string) => void;
-  featured: PropertyCard;
+  featured?: PropertyCard;
   handleSearch: () => void;
 }) {
   const { t }                    = useLanguage();
@@ -356,110 +355,117 @@ function DesktopHero({
         </div>
 
         {/* Floating property card — bottom (matches .hero-img-card) */}
-        <a
-          href={`/property/${featured.slug}`}
-          style={{
-            position: "absolute",
-            bottom: 48,
-            left: 32,
-            right: 32,
-            background: "rgba(255,255,255,0.92)",
-            backdropFilter: "blur(16px)",
-            borderRadius: 16,
-            padding: "18px 20px",
-            zIndex: 2,
-            border: "1px solid rgba(255,255,255,0.6)",
-            boxShadow: "0 16px 48px rgba(0,0,0,0.2)",
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
-            textDecoration: "none",
-          }}
-        >
-          {/* Thumbnail */}
-          <div
+        {featured && (
+          <a
+            href={`/property/${featured.slug}`}
             style={{
-              width: 60,
-              height: 60,
-              borderRadius: 10,
-              flexShrink: 0,
-              overflow: "hidden",
+              position: "absolute",
+              bottom: 48,
+              left: 32,
+              right: 32,
+              background: "rgba(255,255,255,0.92)",
+              backdropFilter: "blur(16px)",
+              borderRadius: 16,
+              padding: "18px 20px",
+              zIndex: 2,
+              border: "1px solid rgba(255,255,255,0.6)",
+              boxShadow: "0 16px 48px rgba(0,0,0,0.2)",
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              textDecoration: "none",
             }}
           >
-            {featured.coverImage ? (
-              <img
-                src={featured.coverImage}
-                alt=""
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  background: "linear-gradient(135deg,#254D3E,#1C3A2F)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: "rgba(201,168,76,0.6)",
-                  letterSpacing: 1,
-                }}
-              >
-                NHP
-              </div>
-            )}
-          </div>
-
-          {/* Info */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#1C3A2F", letterSpacing: "-0.3px", marginBottom: 2 }}>
-              {formatPrice(Number(featured.priceTHB))}
-              {featured.priceLabel && (
-                <span style={{ fontSize: 12, fontWeight: 400, color: "#999", marginLeft: 3 }}>
-                  {featured.priceLabel}
-                </span>
-              )}
-            </div>
+            {/* Thumbnail */}
             <div
               style={{
-                fontSize: 12,
-                fontWeight: 500,
-                color: "#1A1A1A",
-                marginBottom: 2,
-                whiteSpace: "nowrap",
+                width: 60,
+                height: 60,
+                borderRadius: 10,
+                flexShrink: 0,
                 overflow: "hidden",
-                textOverflow: "ellipsis",
               }}
             >
-              {featured.name}
+              {featured.coverImage ? (
+                <img
+                  src={featured.coverImage}
+                  alt=""
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    background: "linear-gradient(135deg,#254D3E,#1C3A2F)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <span style={{ fontSize: 10, fontWeight: 900, color: "rgba(255,255,255,0.15)" }}>NHP</span>
+                </div>
+              )}
             </div>
-            <div style={{ fontSize: 11, color: "#999" }}>
-              📍 {featured.area}{featured.district ? `, ${featured.district}` : ""}
-              {featured.bedrooms === 0 ? ` · ${t.property.studio}` : ` · ${featured.bedrooms} ${t.property.beds}`}
-              {featured.sqm && ` · ${featured.sqm} m²`}
-            </div>
-          </div>
 
-          {/* Badge */}
-          <div
-            style={{
-              background: "#1C3A2F",
-              color: "#E2C97E",
-              fontSize: 10,
-              fontWeight: 600,
-              padding: "5px 10px",
-              borderRadius: 100,
-              letterSpacing: "0.5px",
-              textTransform: "uppercase",
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-            }}
-          >
-            {featured.listingType === "sale" ? t.property.forSale : featured.listingType === "rent" ? t.property.longRent : t.property.shortStay}
-          </div>
-        </a>
+            {/* Middle Content */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div
+                style={{
+                  color: "#1C3A2F",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  marginBottom: 3,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {formatPrice(Number(featured.priceTHB))}
+                {featured.priceLabel && (
+                  <span style={{ fontSize: 10, fontWeight: 400, color: "#888", marginLeft: 3 }}>
+                    {featured.priceLabel}
+                  </span>
+                )}
+              </div>
+              <div
+                style={{
+                  color: "#444",
+                  fontSize: 11,
+                  fontWeight: 500,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {featured.name}
+              </div>
+              <div style={{ color: "#888", fontSize: 9.5, fontWeight: 300, marginTop: 1.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {featured.area}{featured.district ? `, ${featured.district}` : ""}
+                {featured.bedrooms === 0 ? ` · ${t.property.studio}` : ` · ${featured.bedrooms} ${t.property.beds}`}
+                {featured.sqm && ` · ${featured.sqm} m²`}
+              </div>
+            </div>
+
+            {/* Badge */}
+            <div
+              style={{
+                background: "#1C3A2F",
+                color: "#E2C97E",
+                fontSize: 10,
+                fontWeight: 600,
+                padding: "5px 10px",
+                borderRadius: 100,
+                letterSpacing: "0.5px",
+                textTransform: "uppercase",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              {featured.listingType === "sale" ? t.property.forSale : featured.listingType === "rent" ? t.property.longRent : t.property.shortStay}
+            </div>
+          </a>
+        )}
       </div>
     </section>
   );

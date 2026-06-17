@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -17,6 +19,16 @@ interface CommuteMapProps {
   propertyName: string;
   commuteHubs: CommuteHub[];
   googleMapsApiKey?: string;
+}
+
+function getTransitSvg(mode: string): string {
+  if (mode === "walking") {
+    return `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 5.88 9.85 6 7.07l.02-1.28a1.69 1.69 0 0 1 3.37.06v.21c0 .48-.24.93-.65 1.22l-1.02.72c-.8.56-1.12 1.57-1.12 2.53L6.5 13"/><path d="M12 18v-2.38c0-2.12 1.88-3.77 2-6.55l.02-1.28a1.69 1.69 0 0 1 3.37.06v.21c0 .48-.24.93-.65 1.22l-1.02.72c-.8.56-1.12 1.57-1.12 2.53L14.5 15"/></svg>`;
+  }
+  if (mode === "driving") {
+    return `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>`;
+  }
+  return `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4M8 15h8M12 2v13"/></svg>`;
 }
 
 export default function CommuteMap({
@@ -89,14 +101,14 @@ export default function CommuteMap({
 
         bounds.extend([hubLat, hubLng]);
 
-        const emoji = hub.transitMode === "walking" ? "🚶" : hub.transitMode === "driving" ? "🚗" : "🚆";
+        const transitSvg = getTransitSvg(hub.transitMode);
 
         const hubIcon = L.divIcon({
           className: "custom-hub-pin",
           html: `
             <div style="display: flex; flex-direction: column; align-items: center; transform: translate(-10px, -20px);">
               <div style="width: 18px; height: 18px; background: #C9A84C; border: 2.5px solid #FFFFFF; border-radius: 50%; box-shadow: 0 3px 8px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; font-size: 9px;">
-                ${emoji}
+                ${transitSvg}
               </div>
               <span style="font-family: sans-serif; font-size: 8.5px; font-weight: 600; background: rgba(255,255,255,0.95); color: #1C3A2F; border: 1px solid #EDE8DF; padding: 1.5px 5px; border-radius: 4px; margin-top: 3px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${hub.name}</span>
             </div>
@@ -127,9 +139,8 @@ export default function CommuteMap({
       };
     } else {
       // ── GOOGLE MAPS API INTEGRATION ──
-      let mapInstance: any = null;
-      let overlays: any[] = [];
-      let polylines: any[] = [];
+      const overlays: any[] = [];
+      const polylines: any[] = [];
 
       const initializeGoogleMap = () => {
         const googleObj = (window as any).google;
@@ -157,7 +168,6 @@ export default function CommuteMap({
         };
 
         const map = new googleObj.maps.Map(containerRef.current, mapOptions);
-        mapInstance = map;
 
         // Custom Overlay Constructor for HTML Pins
         class CustomHTMLOverlay extends googleObj.maps.OverlayView {
@@ -232,11 +242,11 @@ export default function CommuteMap({
           const hubLatLng = new googleObj.maps.LatLng(hubLat, hubLng);
           bounds.extend(hubLatLng);
 
-          const emoji = hub.transitMode === "walking" ? "🚶" : hub.transitMode === "driving" ? "🚗" : "🚆";
+          const transitSvg = getTransitSvg(hub.transitMode);
           const hubHtml = `
             <div style="display: flex; flex-direction: column; align-items: center;">
               <div style="width: 18px; height: 18px; background: #C9A84C; border: 2.5px solid #FFFFFF; border-radius: 50%; box-shadow: 0 3px 8px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; font-size: 9px;">
-                ${emoji}
+                ${transitSvg}
               </div>
               <span style="font-family: sans-serif; font-size: 8.5px; font-weight: 600; background: rgba(255,255,255,0.95); color: #1C3A2F; border: 1px solid #EDE8DF; padding: 1.5px 5px; border-radius: 4px; margin-top: 3px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${hub.name}</span>
             </div>
@@ -274,7 +284,6 @@ export default function CommuteMap({
       return () => {
         overlays.forEach((o) => o.setMap(null));
         polylines.forEach((p) => p.setMap(null));
-        mapInstance = null;
       };
     }
   }, [propertyLat, propertyLng, propertyName, commuteHubs, useGoogle, googleMapsApiKey]);

@@ -8,7 +8,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSaved } from "@/contexts/SavedContext";
 import Link from "next/link";
-import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check } from "lucide-react";
+import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home } from "lucide-react";
+import { stripEmojis } from "@/lib/emoji";
 
 // Dynamically load Map component to prevent window SSR errors
 const NeighborhoodMap = dynamic(() => import("./NeighborhoodMap"), { ssr: false });
@@ -257,70 +258,11 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
     ];
   }, [neighborhood.scores]);
 
-  // Featured Properties Filtered + Backfilled to 5 elements exactly
+  // Featured Properties — real database listings for this neighbourhood only
   const displayProperties = useMemo(() => {
-    const filtered = initialProperties.filter(
+    return initialProperties.filter(
       (p) => p.area.toLowerCase() === neighborhood.name.toLowerCase()
     );
-    const list = [...filtered];
-
-    if (list.length < 5) {
-      const needed = 5 - list.length;
-      const names = [
-        `Noble Around ${neighborhood.name}`,
-        `The Line ${neighborhood.name} Park`,
-        `Noble ${neighborhood.name} Reform`,
-        `Cozy Studio — ${neighborhood.name}`,
-        `Noble Around ${neighborhood.name} II`
-      ];
-      const types = ["condo", "condo", "condo", "apartment", "condo"];
-      const listingTypes = ["rent", "rent", "rent", "short_stay", "rent"];
-      const prices = [28000, 35000, 45000, 1800, 60000];
-      const labels = ["/month", "/month", "/month", "/night", "/month"];
-      const beds = [1, 2, 2, 0, 2];
-      const baths = [1, 2, 2, 1, 2];
-      const sqms = [35, 55, 70, 28, 75];
-      const transits = [5, 3, 7, 6, 5];
-
-      const images = [
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&auto=format&q=80",
-        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&q=80",
-        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&auto=format&q=80",
-        "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&auto=format&q=80",
-        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&q=80"
-      ];
-
-      for (let i = 0; i < needed; i++) {
-        const idx = i % 5;
-        list.push({
-          id: 1000 + i,
-          slug: `mock-${neighborhood.slug}-${i}`,
-          name: names[idx],
-          description: `Premium property located in the prime area of ${neighborhood.name}.`,
-          listingType: listingTypes[idx] as "sale" | "rent" | "short_stay",
-          propertyType: types[idx] as PropertyCard["propertyType"],
-          priceTHB: prices[idx],
-          priceLabel: labels[idx],
-          bedrooms: beds[idx],
-          bathrooms: baths[idx],
-          sqm: sqms[idx],
-          area: neighborhood.name,
-          district: neighborhood.name,
-          coverImage: images[idx],
-          images: [images[idx]],
-          likes: 12 + i * 4,
-          saves: 4 + i * 3,
-          featured: false,
-          hasVideo: false,
-          petFriendly: neighborhood.scores.petFriendly > 6,
-          nearBts: true,
-          createdAt: "2026-06-01",
-          updatedAt: "2026-06-01",
-          transit: [`BTS ${neighborhood.name} ${transits[idx]} min walk`]
-        } as PropertyCard);
-      }
-    }
-    return list;
   }, [initialProperties, neighborhood]);
 
   // Local guides specific to this neighborhood
@@ -386,7 +328,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
               className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border border-white/20 transition-colors"
               style={{ background: "rgba(255,255,255,0.08)", color: "#FFFFFF" }}
             >
-              <span>Share ↗</span>
+              <span className="flex items-center gap-1.5">Share <ArrowUpRight className="w-3.5 h-3.5" /></span>
             </button>
           </div>
         </div>
@@ -680,105 +622,117 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
       )}
 
       {/* ── FEATURED PROPERTIES ROW ── */}
-      <section className="w-full px-4 md:px-8 mt-12 text-left">
-        <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-5">
-          {/* Header row */}
-          <div className="flex items-end justify-between border-b border-[#EDE8DF] pb-3">
-            <div>
-              <span className="text-[10px] font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
-                Featured Properties in {neighborhood.name}
-              </span>
-              <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
-                Condos & Rentals
-              </h2>
+      {displayProperties.length > 0 ? (
+        <section className="w-full px-4 md:px-8 mt-12 text-left">
+          <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-5">
+            {/* Header row */}
+            <div className="flex items-end justify-between border-b border-[#EDE8DF] pb-3">
+              <div>
+                <span className="text-[10px] font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
+                  Featured Properties in {neighborhood.name}
+                </span>
+                <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
+                  Condos & Rentals
+                </h2>
+              </div>
+              <a
+                href={`/explore?area=${neighborhood.name}`}
+                className="text-[12px] font-semibold no-underline pb-px transition-colors duration-150 flex items-center gap-1 hover:text-[#C9A84C]"
+                style={{ color: "#1C3A2F" }}
+              >
+                View all properties →
+              </a>
             </div>
-            <a
-              href={`/explore?area=${neighborhood.name}`}
-              className="text-[12px] font-semibold no-underline pb-px transition-colors duration-150 flex items-center gap-1 hover:text-[#C9A84C]"
-              style={{ color: "#1C3A2F" }}
-            >
-              View all properties →
-            </a>
-          </div>
 
-          {/* Properties Grid / Scroll Container */}
-          <div className="properties-container no-scrollbar">
-            {displayProperties.map((prop) => {
-              const isSaved = isPropertySaved(prop.id);
-              return (
-                <div
-                  key={prop.id}
-                  className="property-card-item w-full min-w-0 h-[140px] md:w-[320px] md:min-w-[320px] md:h-[240px] rounded-2xl overflow-hidden relative border shadow-sm group hover:shadow-md transition-shadow"
-                  style={{ borderColor: "#EDE8DF", background: "#1C3A2F" }}
-                >
-                  <img
-                    src={prop.coverImage}
-                    alt={prop.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  {/* shading */}
+            {/* Properties Grid / Scroll Container */}
+            <div className="properties-container no-scrollbar">
+              {displayProperties.map((prop) => {
+                const isSaved = isPropertySaved(prop.id);
+                return (
                   <div
-                    className="absolute inset-0"
-                    style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.85) 100%)" }}
-                  />
-
-                  {/* Top Listing type Badges */}
-                  <div className="absolute top-2.5 left-2.5 md:top-3 md:left-3 flex items-center gap-1.5">
-                    <span
-                      className="px-2 py-0.5 rounded text-[8px] font-bold tracking-[0.5px] uppercase text-white"
-                      style={{
-                        background: prop.listingType === "sale" ? "#1C3A2F" : prop.listingType === "rent" ? "#C9A84C" : "#555",
-                        color: prop.listingType === "rent" ? "#1C3A2F" : "#FFFFFF"
-                      }}
-                    >
-                      {prop.listingType === "sale" ? t.property.forSale : prop.listingType === "rent" ? t.property.longRent : t.property.shortStay}
-                    </span>
-                  </div>
-
-                  {/* Save Heart icon button */}
-                  <button
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); togglePropertySave(prop.id); }}
-                    className="absolute top-2.5 right-2.5 md:top-3 md:right-3 w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center border-none shadow-md cursor-pointer transition-colors"
-                    style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)" }}
+                    key={prop.id}
+                    className="property-card-item w-full min-w-0 h-[140px] md:w-[320px] md:min-w-[320px] md:h-[240px] rounded-2xl overflow-hidden relative border shadow-sm group hover:shadow-md transition-shadow"
+                    style={{ borderColor: "#EDE8DF", background: "#1C3A2F" }}
                   >
-                    <Heart
-                      size={15}
-                      className={isSaved ? "fill-[#E11D48] text-[#E11D48]" : "text-white"}
+                    <img
+                      src={prop.coverImage}
+                      alt={prop.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                  </button>
+                    {/* shading */}
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.85) 100%)" }}
+                    />
 
-                  {/* Bottom Text Info */}
-                  <a
-                    href={`/property/${prop.slug}`}
-                    className="absolute inset-0 z-10 flex flex-col justify-end p-2.5 md:p-4 text-white no-underline"
-                  >
-                    <div className="text-xs md:text-base font-bold leading-none mb-0.5 md:mb-1">
-                      {formatPrice(Number(prop.priceTHB))}
-                      <span className="text-[8.5px] md:text-[10px] font-light opacity-80">{prop.priceLabel}</span>
+                    {/* Top Listing type Badges */}
+                    <div className="absolute top-2.5 left-2.5 md:top-3 md:left-3 flex items-center gap-1.5">
+                      <span
+                        className="px-2 py-0.5 rounded text-[8px] font-bold tracking-[0.5px] uppercase text-white"
+                        style={{
+                          background: prop.listingType === "sale" ? "#1C3A2F" : prop.listingType === "rent" ? "#C9A84C" : "#555",
+                          color: prop.listingType === "rent" ? "#1C3A2F" : "#FFFFFF"
+                        }}
+                      >
+                        {prop.listingType === "sale" ? t.property.forSale : prop.listingType === "rent" ? t.property.longRent : t.property.shortStay}
+                      </span>
                     </div>
-                    <div className="text-[10px] md:text-xs font-semibold truncate leading-tight opacity-90 mb-0.5 md:mb-1">
-                      {prop.name}
-                    </div>
-                    <div className="text-[8.5px] md:text-[10px] opacity-70 font-light flex items-center gap-1 md:gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis w-full">
-                      <span>🛏 {prop.bedrooms === 0 ? t.property.studio : `${prop.bedrooms} Bed`}</span>
-                      <span>·</span>
-                      <span>🛁 {prop.bathrooms} Bath</span>
-                      <span>·</span>
-                      <span>📐 {prop.sqm} m²</span>
-                      {prop.transit && prop.transit[0] && (
-                        <>
-                          <span>·</span>
-                          <span>🚇 {prop.transit[0].replace("BTS", "").replace("min walk", "").trim()} min</span>
-                        </>
-                      )}
-                    </div>
-                  </a>
-                </div>
-              );
-            })}
+
+                    {/* Save Heart icon button */}
+                    <button
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); togglePropertySave(prop.id); }}
+                      className="absolute top-2.5 right-2.5 md:top-3 md:right-3 w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center border-none shadow-md cursor-pointer transition-colors"
+                      style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)" }}
+                    >
+                      <Heart
+                        size={15}
+                        className={isSaved ? "fill-[#E11D48] text-[#E11D48]" : "text-white"}
+                      />
+                    </button>
+
+                    {/* Bottom Text Info */}
+                    <a
+                      href={`/property/${prop.slug}`}
+                      className="absolute inset-0 z-10 flex flex-col justify-end p-2.5 md:p-4 text-white no-underline"
+                    >
+                      <div className="text-xs md:text-base font-bold leading-none mb-0.5 md:mb-1">
+                        {formatPrice(Number(prop.priceTHB))}
+                        <span className="text-[8.5px] md:text-[10px] font-light opacity-80">{prop.priceLabel}</span>
+                      </div>
+                      <div className="text-[10px] md:text-xs font-semibold truncate leading-tight opacity-90 mb-0.5 md:mb-1">
+                        {stripEmojis(prop.name)}
+                      </div>
+                      <div className="text-[8.5px] md:text-[10px] opacity-70 font-light flex items-center gap-1 md:gap-1.5 whitespace-nowrap overflow-hidden text-ellipsis w-full">
+                        <span className="inline-flex items-center gap-1"><Bed className="w-3 h-3" /> {prop.bedrooms === 0 ? t.property.studio : `${prop.bedrooms} Bed`}</span>
+                        <span>·</span>
+                        <span className="inline-flex items-center gap-1"><ShowerHead className="w-3 h-3" /> {prop.bathrooms} Bath</span>
+                        <span>·</span>
+                        <span className="inline-flex items-center gap-1"><Maximize2 className="w-3 h-3" /> {prop.sqm} m²</span>
+                        {prop.transit && prop.transit[0] && (
+                          <>
+                            <span>·</span>
+                            <span className="inline-flex items-center gap-1"><TrainFront className="w-3 h-3" /> {prop.transit[0].replace("BTS", "").replace("min walk", "").trim()} min</span>
+                          </>
+                        )}
+                      </div>
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="w-full px-4 md:px-8 mt-12 text-left">
+          <div className="w-full max-w-[1440px] mx-auto p-8 rounded-2xl border border-dashed border-[#EDE8DF] bg-[#FAFAF9] flex flex-col items-center justify-center text-center">
+            <div className="text-[#C9A84C] mb-3">
+              <Home size={32} strokeWidth={1.5} />
+            </div>
+            <h3 className="text-base font-bold text-[#1C3A2F] mb-1">No listings currently available</h3>
+            <p className="text-xs text-gray-500 max-w-sm">We're constantly updating our database. Check back soon or adjust your filters to see more properties in this area.</p>
+          </div>
+        </section>
+      )}
 
       {/* ── LOCAL GUIDE TO AREA ROW ── */}
       <section className="w-full px-4 md:px-8 mt-12 text-left">

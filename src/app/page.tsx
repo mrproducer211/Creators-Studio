@@ -26,7 +26,7 @@ export default async function Home() {
     })
     .slice(0, 5);
 
-  const featuredProperty = allProperties.find((p) => p.featured) || allProperties[0];
+  const featuredProperty = latestFive[0] || allProperties.find((p) => p.featured) || allProperties[0];
 
   return (
     <>
@@ -35,8 +35,8 @@ export default async function Home() {
         <HeroSection featured={featuredProperty} />
         <TrustStrip />
         <BrowseModes />
-        <CategorySection />
-        <LatestProperties properties={latestFive} />
+        <CategorySection properties={allProperties} />
+        <LatestProperties properties={latestFive} allProperties={allProperties} />
         <BlogSection posts={allPosts.slice(0, 4)} />
         <TalkToUs />
       </main>

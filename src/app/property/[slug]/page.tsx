@@ -84,6 +84,12 @@ export default async function PropertyPage({ params }: Props) {
   // Recommendations should be active properties only
   const activeListings = all.filter((p) => p.status !== "unlisted");
 
+  const currentBaseSlug = property.slug.replace(/-(?:sale|rent|short_stay)$/, "");
+  const siblings = activeListings.filter((p) => {
+    const pBase = p.slug.replace(/-(?:sale|rent|short_stay)$/, "");
+    return pBase === currentBaseSlug;
+  });
+
   // 1. Same building properties (excluding current)
   const sameBuilding = activeListings
     .filter((p) => p.id !== property.id && buildingHint(p.name) === bHint)
@@ -132,6 +138,7 @@ export default async function PropertyPage({ params }: Props) {
       <main style={{ paddingTop: "56px", background: "#F7F3EC", minHeight: "100vh" }}>
         <PropertyDetail
           property={property}
+          siblings={siblings}
           sameBuilding={sameBuilding}
           nearby={nearby}
           googleMapsApiKey={process.env.GOOGLE_PLACES_API_KEY}

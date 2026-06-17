@@ -24,7 +24,9 @@ import {
   Eye,
   Sliders,
   AlertCircle,
-  Settings
+  Settings,
+  TrainFront,
+  Footprints
 } from "lucide-react";
 
 interface DashboardClientProps {
@@ -595,12 +597,12 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
             className="w-full px-4 py-3 rounded-xl border border-[#E5E0D8] outline-none text-[14px] font-semibold bg-white text-[#1C3A2F]"
             style={{ fontFamily: "inherit" }}
           >
-            <option value="feed">🧭 Profile & Match Feed</option>
-            <option value="saved">💚 Saved Properties</option>
-            <option value="searches">🔖 Saved Searches</option>
-            <option value="commute">🚗 Commute Planner</option>
-            <option value="collab">👥 Collaborative Lists</option>
-            <option value="settings">⚙️ Settings</option>
+            <option value="feed">Profile & Match Feed</option>
+            <option value="saved">Saved Properties</option>
+            <option value="searches">Saved Searches</option>
+            <option value="commute">Commute Planner</option>
+            <option value="collab">Collaborative Lists</option>
+            <option value="settings">Settings</option>
           </select>
         </div>
 
@@ -737,13 +739,13 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                           Vibe: {finderPreferences.vibe}
                         </span>
                         {finderPreferences.transit && (
-                          <span className="text-[10px] font-semibold bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-600">
-                            🚆 Public Transit Preferred
+                          <span className="text-[10px] font-semibold bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-600 flex items-center gap-1">
+                            <TrainFront className="w-3 h-3 text-[#C9A84C]" /> Public Transit Preferred
                           </span>
                         )}
                         {finderPreferences.pet && (
-                          <span className="text-[10px] font-semibold bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-600">
-                            🐾 Pet Friendly
+                          <span className="text-[10px] font-semibold bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-600 flex items-center gap-1">
+                            <Footprints className="w-3 h-3 text-[#C9A84C]" /> Pet Friendly
                           </span>
                         )}
                       </div>
@@ -971,9 +973,9 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                       className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px] bg-white"
                       style={{ fontFamily: "inherit" }}
                     >
-                      <option value="transit">🚆 Public Transit (BTS/MRT)</option>
-                      <option value="driving">🚗 Driving / Taxi</option>
-                      <option value="walking">🚶 Walking</option>
+                      <option value="transit">Public Transit (BTS/MRT)</option>
+                      <option value="driving">Driving / Taxi</option>
+                      <option value="walking">Walking</option>
                     </select>
                   </div>
 
@@ -1037,12 +1039,11 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                               <MapPin size={14} className="text-[#C9A84C]" />
                               {h.name}
                             </h4>
-                            <span className="text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-50 text-gray-500 border border-gray-100">
-                              {h.transitMode === "transit"
-                                ? "🚆 Transit"
-                                : h.transitMode === "driving"
-                                ? "🚗 Driving"
-                                : "🚶 Walking"}
+                            <span className="text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-50 text-gray-500 border border-gray-100 inline-flex items-center gap-1">
+                              {h.transitMode === "transit" && <TrainFront size={11} />}
+                              {h.transitMode === "driving" && <Car size={11} />}
+                              {h.transitMode === "walking" && <Footprints size={11} />}
+                              {h.transitMode === "transit" ? "Transit" : h.transitMode === "driving" ? "Driving" : "Walking"}
                             </span>
                           </div>
                           {h.address && <p className="text-[11.5px] text-gray-400 mt-1">{h.address}</p>}

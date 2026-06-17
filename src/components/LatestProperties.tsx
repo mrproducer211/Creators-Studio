@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { useSaved } from "@/contexts/SavedContext";
+import { stripEmojis } from "@/lib/emoji";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PropertyCard } from "@/types/property";
 import { useCurrency } from "@/contexts/CurrencyContext";
-
-const GRID_PROPS = [
-  ...MOCK_PROPERTIES.filter((p) => p.featured),
-  ...MOCK_PROPERTIES.filter((p) => !p.featured),
-].slice(0, 5);
+import {
+  Heart,
+  MapPin,
+  Bed,
+  Maximize2
+} from "lucide-react";
 
 function badgeStyle(t: string) {
   if (t === "sale") return { background: "#1C3A2F", color: "#E2C97E" };
@@ -21,9 +22,11 @@ function badgeStyle(t: string) {
 function MagCard({
   property,
   large = false,
+  allProperties = [],
 }: {
-  property: (typeof MOCK_PROPERTIES)[0];
+  property: PropertyCard;
   large?: boolean;
+  allProperties?: PropertyCard[];
 }) {
   const { isSaved, toggle } = useSaved();
   const { t } = useLanguage();
@@ -37,6 +40,15 @@ function MagCard({
     return t.property.shortStay;
   };
 
+  const baseSlug = property.slug.replace(/-(?:sale|rent|short_stay)$/, "");
+  const siblings = allProperties.filter((p) => {
+    const pBase = p.slug.replace(/-(?:sale|rent|short_stay)$/, "");
+    return pBase === baseSlug;
+  });
+  const typesToShow = siblings.length > 0
+    ? Array.from(new Set(siblings.map((s) => s.listingType)))
+    : [property.listingType];
+
   return (
     <a
       href={`/property/${property.slug}`}
@@ -45,7 +57,7 @@ function MagCard({
       {property.coverImage && !imgErr ? (
         <img
           src={property.coverImage}
-          alt={property.name}
+          alt={stripEmojis(property.name)}
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           onError={() => setImgErr(true)}
         />
@@ -61,12 +73,15 @@ function MagCard({
 
       {/* Badges */}
       <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5 pointer-events-none z-10">
-        <span
-          className="px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-[0.5px]"
-          style={badgeStyle(property.listingType)}
-        >
-          {getBadgeLabel(property.listingType)}
-        </span>
+        {typesToShow.map((type) => (
+          <span
+            key={type}
+            className="px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-[0.5px]"
+            style={badgeStyle(type)}
+          >
+            {getBadgeLabel(type)}
+          </span>
+        ))}
 
         {property.featured && (
           <span
@@ -85,7 +100,7 @@ function MagCard({
         className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer border-none"
         style={{ background: "rgba(255,255,255,0.14)", backdropFilter: "blur(8px)" }}
       >
-        {saved ? "💚" : "🤍"}
+        <Heart className={`w-4 h-4 ${saved ? "fill-emerald-500 text-emerald-500" : "text-white"}`} />
       </button>
 
       {/* Bottom info — overflow-hidden prevents text escaping the card */}
@@ -103,16 +118,16 @@ function MagCard({
           className={`font-semibold leading-tight truncate ${large ? "text-[13px] md:text-[14px] mb-1.5" : "text-[11px] md:text-[12px] mb-0"}`}
           style={{ color: "rgba(255,255,255,0.9)" }}
         >
-          {property.name}
+          {stripEmojis(property.name)}
         </div>
         {/* Specs — hidden on small mobile cards to prevent crowding */}
         <div className={`items-center gap-2 flex-wrap ${large ? "flex" : "hidden md:flex"}`}>
-          <span className="text-[10px] truncate" style={{ color: "rgba(255,255,255,0.6)" }}>📍 {property.area}</span>
-          <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.5)" }}>
-            🛏 {property.bedrooms === 0 ? t.property.studio : `${property.bedrooms} ${t.property.beds}`}
+          <span className="text-[10px] truncate flex items-center gap-0.5" style={{ color: "rgba(255,255,255,0.6)" }}><MapPin className="w-3 h-3" /> {stripEmojis(property.area)}</span>
+          <span className="text-[10px] flex items-center gap-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <Bed className="w-3.5 h-3.5" /> {property.bedrooms === 0 ? t.property.studio : `${property.bedrooms} ${t.property.beds}`}
           </span>
           {property.sqm && (
-            <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.5)" }}>📐 {property.sqm}m²</span>
+            <span className="text-[10px] flex items-center gap-0.5" style={{ color: "rgba(255,255,255,0.5)" }}><Maximize2 className="w-3.5 h-3.5" /> {property.sqm}m²</span>
           )}
         </div>
       </div>
@@ -120,14 +135,27 @@ function MagCard({
   );
 }
 
-export default function LatestProperties({ properties }: { properties?: PropertyCard[] }) {
+export default function LatestProperties({
+  properties,
+  allProperties = [],
+}: {
+  properties?: PropertyCard[];
+  allProperties?: PropertyCard[];
+}) {
   const { t } = useLanguage();
 
-  let displayProperties = properties && properties.length > 0 ? properties : [];
-  if (displayProperties.length < 5) {
-    const existingIds = new Set(displayProperties.map((p) => p.id));
-    const fallbacks = GRID_PROPS.filter((p) => !existingIds.has(p.id));
-    displayProperties = [...displayProperties, ...fallbacks].slice(0, 5);
+  const displayProperties = properties ?? [];
+  if (displayProperties.length === 0) {
+    return (
+      <section className="py-12 px-4 md:px-6 text-center animate-fade-in" style={{ background: "#F7F3EC" }}>
+        <div className="max-w-md mx-auto py-8">
+          <h2 className="text-[20px] font-bold leading-[1.3] mb-1.5" style={{ color: "#1C3A2F" }}>
+            {t.latest.title}
+          </h2>
+          <p className="text-[14px] text-gray-500 font-light">No properties listed yet.</p>
+        </div>
+      </section>
+    );
   }
 
   const [hero, ...rest] = displayProperties;
@@ -160,12 +188,12 @@ export default function LatestProperties({ properties }: { properties?: Property
         {/* Top row: hero (2/3) + two stacked (1/3) */}
         <div className="grid gap-3 mb-3" style={{ gridTemplateColumns: "2fr 1fr" }}>
           <div style={{ height: 400 }}>
-            <MagCard property={hero} large />
+            <MagCard property={hero} large allProperties={allProperties} />
           </div>
           <div className="flex flex-col gap-3">
             {side.map((p) => (
               <div key={p.id} style={{ height: 193 }}>
-                <MagCard property={p} />
+                <MagCard property={p} allProperties={allProperties} />
               </div>
             ))}
           </div>
@@ -174,7 +202,7 @@ export default function LatestProperties({ properties }: { properties?: Property
         <div className="grid grid-cols-2 gap-3">
           {bottom.map((p) => (
             <div key={p.id} style={{ height: 210 }}>
-              <MagCard property={p} />
+              <MagCard property={p} allProperties={allProperties} />
             </div>
           ))}
         </div>
@@ -184,14 +212,14 @@ export default function LatestProperties({ properties }: { properties?: Property
       <div className="md:hidden flex flex-col gap-2.5">
         {/* Row 1: hero card — full width, tall */}
         <div style={{ height: 240 }}>
-          <MagCard property={hero} large />
+          <MagCard property={hero} large allProperties={allProperties} />
         </div>
 
         {/* Row 2: two side cards — landscape */}
         <div className="grid grid-cols-2 gap-2.5">
           {side.map((p) => (
             <div key={p.id} style={{ height: 155 }}>
-              <MagCard property={p} />
+              <MagCard property={p} allProperties={allProperties} />
             </div>
           ))}
         </div>
@@ -200,7 +228,7 @@ export default function LatestProperties({ properties }: { properties?: Property
         <div className="grid grid-cols-2 gap-2.5">
           {bottom.map((p) => (
             <div key={p.id} style={{ height: 155 }}>
-              <MagCard property={p} />
+              <MagCard property={p} allProperties={allProperties} />
             </div>
           ))}
         </div>

@@ -7,6 +7,18 @@ import { PropertyCard } from "@/types/property";
 import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { stripEmojis } from "@/lib/emoji";
+import {
+  Play,
+  Heart,
+  MapPin,
+  Footprints,
+  Car,
+  TrainFront,
+  Bed,
+  ShowerHead,
+  Maximize2
+} from "lucide-react";
 
 const FALLBACK_GRADIENTS = [
   "linear-gradient(135deg,#254D3E,#1C3A2F)",
@@ -106,7 +118,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
     <div
       role="link"
       tabIndex={0}
-      aria-label={`View ${property.name}`}
+      aria-label={`View ${stripEmojis(property.name)}`}
       onClick={() => router.push(href)}
       onKeyDown={(e) => e.key === "Enter" && router.push(href)}
       className="rounded-2xl overflow-hidden flex flex-col group cursor-pointer"
@@ -125,7 +137,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
         {property.coverImage && !imgErr ? (
           <img
             src={property.coverImage}
-            alt={property.name}
+            alt={stripEmojis(property.name)}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={() => setImgErr(true)}
           />
@@ -146,7 +158,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
         )}
         {property.hasVideo && (
           <span className="absolute bottom-3 right-3 flex items-center gap-1 px-2.5 py-[3px] rounded-full text-[10px] font-medium" style={{ background: "rgba(0,0,0,0.55)", color: "#FFFFFF", backdropFilter: "blur(4px)" }}>
-            ▶ Tour
+            <Play className="w-3 h-3 fill-current" /> Tour
           </span>
         )}
 
@@ -159,7 +171,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
           style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(4px)" }}
           aria-label={saved ? "Unsave" : "Save"}
         >
-          {saved ? "💚" : "🤍"}
+          <Heart className={`w-4 h-4 ${saved ? "fill-emerald-500 text-emerald-500" : "text-gray-500"}`} />
         </button>
       </div>
 
@@ -170,10 +182,10 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
           {sub && <span className="text-[11px] font-normal ml-1.5" style={{ color: "#999" }}>{sub}</span>}
         </div>
         <div className="text-[13px] font-semibold mb-1 leading-tight line-clamp-1" style={{ color: "#1A1A1A" }}>
-          {property.name}
+          {stripEmojis(property.name)}
         </div>
         <div className="text-[11px] mb-2.5 flex items-center gap-1" style={{ color: "#999" }}>
-          📍 {property.district ? `${property.district}, ` : ""}{property.area}
+          <MapPin className="w-3.5 h-3.5" /> {property.district ? `${stripEmojis(property.district)}, ` : ""}{stripEmojis(property.area)}
         </div>
 
         {/* Commute Times */}
@@ -186,7 +198,13 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
                 style={{ background: "#F4EFE6", color: "#1C3A2F", border: "1px solid #E5DCCB" }}
                 title={`${c.distance.toFixed(1)} km away`}
               >
-                {c.transitMode === "walking" ? "🚶" : c.transitMode === "driving" ? "🚗" : "🚆"}{" "}
+                {c.transitMode === "walking" ? (
+                  <Footprints className="w-3.5 h-3.5" />
+                ) : c.transitMode === "driving" ? (
+                  <Car className="w-3.5 h-3.5" />
+                ) : (
+                  <TrainFront className="w-3.5 h-3.5" />
+                )}
                 {c.minutes}m to {c.name}
               </span>
             ))}
@@ -194,22 +212,22 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
         )}
 
         {/* Specs */}
-        <div className="flex gap-3 py-2 mb-3" style={{ borderTop: "1px solid #EDE8DF", borderBottom: "1px solid #EDE8DF" }}>
+        <div className="flex gap-3.5 py-2 mb-3" style={{ borderTop: "1px solid #EDE8DF", borderBottom: "1px solid #EDE8DF" }}>
           <span className="text-[11px] flex items-center gap-1" style={{ color: "#555" }}>
-            🛏 {property.bedrooms === 0 ? t.property.studio : `${property.bedrooms} ${t.property.beds}`}
+            <Bed className="w-3.5 h-3.5" /> {property.bedrooms === 0 ? t.property.studio : `${property.bedrooms} ${t.property.beds}`}
           </span>
           <span className="text-[11px] flex items-center gap-1" style={{ color: "#555" }}>
-            🚿 {property.bathrooms} {t.property.bath}
+            <ShowerHead className="w-3.5 h-3.5" /> {property.bathrooms} {t.property.bath}
           </span>
           {property.sqm && (
             <span className="text-[11px] flex items-center gap-1" style={{ color: "#555" }}>
-              📐 {property.sqm}m²
+              <Maximize2 className="w-3.5 h-3.5" /> {property.sqm}m²
             </span>
           )}
         </div>
 
         <p className="text-[12px] leading-[1.55] font-light line-clamp-2 mb-3" style={{ color: "#777" }}>
-          {property.description}
+          {stripEmojis(property.description)}
         </p>
 
         {/* Actions */}
@@ -234,7 +252,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
             style={{ color: liked ? "#10B981" : "#bbb", fontFamily: "inherit" }}
             aria-label="Like"
           >
-            💚 {property.likes + (liked ? 1 : 0)}
+            <Heart className={`w-3.5 h-3.5 ${liked ? "fill-emerald-500 text-emerald-500" : "text-gray-400"}`} /> {property.likes + (liked ? 1 : 0)}
           </button>
           <button
             onClick={(e) => {

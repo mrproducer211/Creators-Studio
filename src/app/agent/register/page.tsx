@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { UserCheck, ShieldAlert, Sparkles, Building2, Eye, EyeOff } from "lucide-react";
+import { UserCheck, ShieldAlert, Sparkles, Building2, Eye, EyeOff, AlertCircle } from "lucide-react";
 
 export default function AgentRegister() {
   const [name, setName] = useState("");
@@ -136,7 +136,7 @@ export default function AgentRegister() {
                   className="p-4 rounded-xl text-[13px] mb-5 border font-medium flex items-center gap-2"
                   style={{ background: "rgba(239,68,68,0.08)", borderColor: "rgba(239,68,68,0.2)", color: "#DC2626" }}
                 >
-                  <span>⚠️</span> {error}
+                  <AlertCircle size={16} className="flex-shrink-0" /> {error}
                 </div>
               )}
 

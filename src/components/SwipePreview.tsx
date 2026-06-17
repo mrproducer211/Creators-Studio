@@ -3,6 +3,14 @@
 import { useState } from "react";
 import { useSaved } from "@/contexts/SavedContext";
 import { useSession } from "next-auth/react";
+import {
+  Heart,
+  MapPin,
+  Bed,
+  ShowerHead,
+  Maximize2,
+  Info
+} from "lucide-react";
 
 const STACK = [
   {
@@ -115,7 +123,7 @@ export default function SwipePreview() {
                   className="absolute top-3 right-3 w-[30px] h-[30px] rounded-full flex items-center justify-center text-sm border-none cursor-pointer z-10"
                   style={{ background: "rgba(255,255,255,0.9)" }}
                 >
-                  {saved ? "💚" : "🤍"}
+                  <Heart className={`w-4 h-4 ${saved ? "fill-emerald-500 text-emerald-500" : "text-gray-500"}`} />
                 </button>
               )}
             </div>
@@ -131,17 +139,17 @@ export default function SwipePreview() {
               <div className="text-[13px] font-medium mb-[3px]" style={{ color: "#1A1A1A" }}>
                 {card.name}
               </div>
-              <div className="text-[11px] mb-2.5" style={{ color: "#999" }}>
-                📍 {card.loc}
+              <div className="text-[11px] mb-2.5 flex items-center gap-1" style={{ color: "#999" }}>
+                <MapPin className="w-3.5 h-3.5" /> {card.loc}
               </div>
               {"beds" in card && (
                 <div
-                  className="flex gap-3 pt-2.5 text-[11px]"
+                  className="flex gap-3.5 pt-2.5 text-[11px]"
                   style={{ borderTop: "1px solid #EDE8DF", color: "#555" }}
                 >
-                  <span>🛏 {card.beds}</span>
-                  <span>🚿 {card.baths}</span>
-                  <span>📐 {card.sqm}</span>
+                  <span className="flex items-center gap-1"><Bed className="w-3.5 h-3.5" /> {card.beds}</span>
+                  <span className="flex items-center gap-1"><ShowerHead className="w-3.5 h-3.5" /> {card.baths}</span>
+                  <span className="flex items-center gap-1"><Maximize2 className="w-3.5 h-3.5" /> {card.sqm}</span>
                 </div>
               )}
             </div>
@@ -163,24 +171,24 @@ export default function SwipePreview() {
         </button>
         <button
           onClick={handleHeartClick}
-          className="w-16 h-16 rounded-full flex items-center justify-center text-[26px] cursor-pointer transition-all duration-150"
+          className="w-16 h-16 rounded-full flex items-center justify-center cursor-pointer transition-all duration-150"
           style={{
             border: "2px solid #C9A84C",
             background: saved || heartPulsed ? "#C9A84C" : "rgba(255,255,255,0.08)",
             color: saved || heartPulsed ? "#1C3A2F" : "#C9A84C",
           }}
         >
-          ♥
+          <Heart className="w-7 h-7 fill-current" />
         </button>
         <button
-          className="w-[52px] h-[52px] rounded-full flex items-center justify-center text-xl cursor-pointer transition-all duration-150"
+          className="w-[52px] h-[52px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-150"
           style={{
             border: "2px solid rgba(255,255,255,0.25)",
             background: "rgba(255,255,255,0.08)",
             color: "rgba(255,255,255,0.6)",
           }}
         >
-          ℹ
+          <Info className="w-5 h-5" />
         </button>
       </div>
 

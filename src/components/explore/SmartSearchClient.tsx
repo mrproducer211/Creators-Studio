@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { PropertyCard } from "@/types/property";
 import { NEIGHBORHOODS, Neighborhood } from "@/data/neighborhoods";
 import SmartPropertyCard from "./SmartPropertyCard";
-import { Search, Map, AlertCircle } from "lucide-react";
+import { Search, Map, AlertCircle, Save } from "lucide-react";
 
 const MapComponent = dynamic(() => import("./SmartMapComponent"), { ssr: false });
 
@@ -668,7 +668,7 @@ export default function SmartSearchClient({ properties }: Props) {
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold border border-[#E5E0D8] bg-transparent text-[#1C3A2F] cursor-pointer hover:bg-gray-50 disabled:opacity-50 transition-all uppercase tracking-wider"
                     style={{ fontFamily: "inherit" }}
                   >
-                    💾 Save Search
+                    <Save className="w-3.5 h-3.5" /> Save Search
                   </button>
                 )}
               </div>
@@ -704,7 +704,7 @@ export default function SmartSearchClient({ properties }: Props) {
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold border border-[#E5E0D8] bg-transparent text-[#1C3A2F] cursor-pointer hover:bg-gray-50 disabled:opacity-50 transition-all uppercase tracking-wider"
                     style={{ fontFamily: "inherit" }}
                   >
-                    💾 Save Search
+                    <Save className="w-3.5 h-3.5" /> Save Search
                   </button>
                 )}
               </div>
@@ -858,7 +858,7 @@ export default function SmartSearchClient({ properties }: Props) {
         <div className="fixed inset-0 z-[9999] bg-white flex flex-col animate-slideUp lg:hidden">
           <div className="flex justify-between items-center px-4 py-4 border-b border-[#E5E0D8] bg-[#1C3A2F] text-white">
             <div className="flex items-center gap-2">
-              <span className="text-lg">🗺️</span>
+              <Map size={16} className="text-[#E2C97E]" />
               <span className="font-bold text-sm uppercase tracking-wider text-[#E2C97E]">Map Explorer</span>
             </div>
             <button

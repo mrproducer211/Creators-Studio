@@ -1,6 +1,7 @@
 "use client";
 
 import { useSaved } from "@/contexts/SavedContext";
+import { Heart } from "lucide-react";
 import { PropertyCard } from "@/types/property";
 import ExplorePropertyCard from "@/components/explore/ExplorePropertyCard";
 
@@ -26,19 +27,21 @@ export default function SavedPageClient({ allProperties }: { allProperties: Prop
       <div className="px-4 md:px-6 py-8">
         {saved.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <span className="text-6xl mb-5">🤍</span>
+            <div className="flex justify-center mb-5 text-[#ccc]">
+              <Heart size={48} />
+            </div>
             <h2 className="text-[20px] font-bold mb-2" style={{ color: "#1C3A2F" }}>
               No saved properties yet
             </h2>
             <p className="text-[14px] font-light mb-8 max-w-xs" style={{ color: "#999" }}>
-              Tap the ♥ on any property to save it here. Browse or swipe to find your next home.
+              Tap the heart icon on any property to save it here. Browse or swipe to find your next home.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <a href="/explore" className="px-5 py-3 rounded-xl text-[13px] font-semibold no-underline" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>
                 Browse Properties
               </a>
-              <a href="/swipe" className="px-5 py-3 rounded-xl text-[13px] font-semibold no-underline" style={{ background: "#F7F3EC", color: "#1C3A2F", border: "1px solid #E5E0D8" }}>
-                ♥ Swipe Mode
+              <a href="/swipe" className="px-5 py-3 rounded-xl text-[13px] font-semibold no-underline inline-flex items-center gap-1.5" style={{ background: "#F7F3EC", color: "#1C3A2F", border: "1px solid #E5E0D8" }}>
+                <Heart size={14} className="fill-current" /> Swipe Mode
               </a>
             </div>
           </div>

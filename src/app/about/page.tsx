@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Compass, TrainFront, Palmtree, Handshake } from "lucide-react";
 
 export const metadata = {
   title: "About NHP Bangkok — Discover Your Neighbourhood Vibe",
@@ -8,10 +9,10 @@ export const metadata = {
 
 export default function AboutPage() {
   const values = [
-    { icon: "🧭", title: "Neighbourhood Matching", desc: "We map properties based on local lifestyle vibes. Find locations suited to quiet coffee shops, active street markets, or premium nightlife nodes." },
-    { icon: "🚇", title: "Transit-Oriented Precision", desc: "No more guessing your commute. We calculate direct walking and transit times to BTS and MRT stations for every single listing." },
-    { icon: "🌴", title: "Traveler-Centric Experience", desc: "Designed for digital nomads, expats, and visitors who want to experience the authentic soul of Bangkok, not just rent a room." },
-    { icon: "🤝", title: "Instant Messaging Setup", desc: "Connect instantly with local support, agents, and properties via WhatsApp and Line for a stress-free transition." },
+    { icon: <Compass className="w-6 h-6" style={{ color: "#C9A84C" }} />, title: "Neighbourhood Matching", desc: "We map properties based on local lifestyle vibes. Find locations suited to quiet coffee shops, active street markets, or premium nightlife nodes." },
+    { icon: <TrainFront className="w-6 h-6" style={{ color: "#C9A84C" }} />, title: "Transit-Oriented Precision", desc: "No more guessing your commute. We calculate direct walking and transit times to BTS and MRT stations for every single listing." },
+    { icon: <Palmtree className="w-6 h-6" style={{ color: "#C9A84C" }} />, title: "Traveler-Centric Experience", desc: "Designed for digital nomads, expats, and visitors who want to experience the authentic soul of Bangkok, not just rent a room." },
+    { icon: <Handshake className="w-6 h-6" style={{ color: "#C9A84C" }} />, title: "Instant Messaging Setup", desc: "Connect instantly with local support, agents, and properties via WhatsApp and Line for a stress-free transition." },
   ];
 
   return (
@@ -58,7 +59,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
             {values.map((v) => (
               <div key={v.title} className="rounded-2xl p-5 border" style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}>
-                <span className="text-2xl block mb-2">{v.icon}</span>
+                <div className="mb-2.5">{v.icon}</div>
                 <h3 className="text-[14px] font-bold mb-1" style={{ color: "#1C3A2F" }}>{v.title}</h3>
                 <p className="text-[12px] font-light leading-[1.6] text-gray-500">{v.desc}</p>
               </div>

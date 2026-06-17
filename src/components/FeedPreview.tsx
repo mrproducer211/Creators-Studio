@@ -3,9 +3,21 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useSaved } from "@/contexts/SavedContext";
+import { stripEmojis } from "@/lib/emoji";
 import { PropertyCard as PropertyType } from "@/types/property";
 
 import { useCurrency } from "@/contexts/CurrencyContext";
+import {
+  Heart,
+  Play,
+  MapPin,
+  Bed,
+  ShowerHead,
+  Maximize2,
+  MessageSquare,
+  Bookmark,
+  Home
+} from "lucide-react";
 
 const FILTERS = ["All", "For Sale", "Long Rent", "Short Stay", "Condo", "House", "Sukhumvit", "Silom", "Sathorn"];
 
@@ -53,7 +65,7 @@ function PropertyCard({ property }: { property: PropertyType }) {
         {property.coverImage ? (
           <img
             src={property.coverImage}
-            alt={property.name}
+            alt={stripEmojis(property.name)}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -86,14 +98,14 @@ function PropertyCard({ property }: { property: PropertyType }) {
           className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-[15px] cursor-pointer border-none transition-colors z-10"
           style={{ background: "rgba(255,255,255,0.9)" }}
         >
-          {saved ? "💚" : "🤍"}
+          <Heart className={`w-4 h-4 ${saved ? "fill-emerald-500 text-emerald-500" : "text-gray-500"}`} />
         </button>
         {property.hasVideo && (
           <div
             className="absolute bottom-3 right-3 flex items-center gap-1 rounded-2xl px-2.5 py-1 text-[11px] font-medium"
             style={{ background: "rgba(255,255,255,0.9)", color: "#1C3A2F" }}
           >
-            ▶ Tour
+            <Play className="w-2.5 h-2.5 fill-current" /> Tour
           </div>
         )}
       </div>
@@ -114,10 +126,10 @@ function PropertyCard({ property }: { property: PropertyType }) {
           className="text-[15px] font-semibold mb-1 block no-underline hover:underline"
           style={{ color: "#1A1A1A" }}
         >
-          {property.name}
+          {stripEmojis(property.name)}
         </a>
         <div className="text-xs mb-2.5 flex items-center gap-1" style={{ color: "#999" }}>
-          📍 {property.district ? `${property.district}, ` : ""}{property.area}
+          <MapPin className="w-3.5 h-3.5" /> {property.district ? `${stripEmojis(property.district)}, ` : ""}{stripEmojis(property.area)}
         </div>
 
         <div
@@ -128,14 +140,14 @@ function PropertyCard({ property }: { property: PropertyType }) {
           }}
         >
           <span className="text-xs flex items-center gap-1" style={{ color: "#555" }}>
-            🛏 {bedsLabel}
+            <Bed className="w-3.5 h-3.5" /> {bedsLabel}
           </span>
           <span className="text-xs flex items-center gap-1" style={{ color: "#555" }}>
-            🚿 {bathsLabel}
+            <ShowerHead className="w-3.5 h-3.5" /> {bathsLabel}
           </span>
           {sqmLabel && (
             <span className="text-xs flex items-center gap-1" style={{ color: "#555" }}>
-              📐 {sqmLabel}
+              <Maximize2 className="w-3.5 h-3.5" /> {sqmLabel}
             </span>
           )}
         </div>
@@ -149,7 +161,7 @@ function PropertyCard({ property }: { property: PropertyType }) {
             WebkitBoxOrient: "vertical" as const,
           }}
         >
-          {property.description}
+          {stripEmojis(property.description)}
         </p>
 
         <div className="flex items-center gap-3.5">
@@ -171,13 +183,13 @@ function PropertyCard({ property }: { property: PropertyType }) {
             className="flex items-center gap-1.5 text-xs font-medium cursor-pointer bg-none border-none transition-colors duration-150 p-0"
             style={{ color: liked ? "#10B981" : "#999", fontFamily: "inherit" }}
           >
-            💚 {property.likes + (liked ? 1 : 0)}
+            <Heart className={`w-3.5 h-3.5 ${liked ? "fill-emerald-500 text-emerald-500" : "text-gray-400"}`} /> {property.likes + (liked ? 1 : 0)}
           </button>
           <button
             className="flex items-center gap-1.5 text-xs font-medium cursor-pointer bg-none border-none p-0"
             style={{ color: "#999", fontFamily: "inherit" }}
           >
-            💬 8
+            <MessageSquare className="w-3.5 h-3.5" /> 8
           </button>
           <button
             onClick={() => {
@@ -190,7 +202,7 @@ function PropertyCard({ property }: { property: PropertyType }) {
             className="flex items-center gap-1.5 text-xs font-medium cursor-pointer bg-none border-none p-0"
             style={{ color: saved ? "#C9A84C" : "#999", fontFamily: "inherit" }}
           >
-            🔖 {saved ? "Saved" : "Save"}
+            <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-[#C9A84C] text-[#C9A84C]" : "text-gray-400"}`} /> {saved ? "Saved" : "Save"}
           </button>
           <a
             href={`/property/${property.slug}?enquiry=true`}
@@ -272,7 +284,7 @@ export default function FeedPreview({ properties }: { properties?: PropertyType[
       {/* Cards */}
       {filteredProperties.length === 0 ? (
         <div className="py-12 text-center rounded-2xl border-2 border-dashed border-[#E5E0D8] bg-white mb-6">
-          <span className="text-3xl">🏠</span>
+          <Home className="w-10 h-10 text-gray-300 mx-auto mb-2" />
           <p className="text-sm font-medium mt-2" style={{ color: "#1C3A2F" }}>No properties found</p>
           <p className="text-xs font-light text-[#999] mt-0.5">Try choosing another filter category</p>
         </div>

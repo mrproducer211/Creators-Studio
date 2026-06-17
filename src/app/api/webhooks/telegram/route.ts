@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { db, isDbConfigured } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
-import { createProperty, getAllProperties, updateProperty, deleteProperty } from "@/lib/store/properties";
-import { PropertyCard } from "@/types/property";
 import { getCanonicalArea } from "@/lib/area";
 import sharp from "sharp";
 
@@ -221,18 +221,138 @@ function parseTelegramMessage(text: string, messageId: number) {
   else if (/#townhouse|townhouse/i.test(text)) propertyType = "townhouse";
   else if (/#apartment|apartment/i.test(text)) propertyType = "apartment";
 
-  // Price (THB)
-  const priceMatch = text.match(/(?:#price|price)[:\s=]+([\d,]+)/i);
-  if (priceMatch) {
-    priceTHB = Number(priceMatch[1].replace(/,/g, ""));
-  } else {
-    // Try to find a general number like "฿18,500,000" or "18,500,000 THB"
-    const generalPriceMatch = text.match(/(?:฿|THB)\s*([\d,]+)|([\d,]+)\s*(?:THB|฿|baht)/i);
-    if (generalPriceMatch) {
-      const pStr = generalPriceMatch[1] || generalPriceMatch[2];
-      priceTHB = Number(pStr.replace(/,/g, ""));
+  // Listing Types & Price Parsing
+  const listingTypes: ("sale" | "rent" | "short_stay")[] = [];
+  if (/#sale|sale/i.test(text)) listingTypes.push("sale");
+  if (/#rent|rent/i.test(text)) listingTypes.push("rent");
+  if (/#shortstay|#short_stay|short stay|short_stay/i.test(text)) listingTypes.push("short_stay");
+
+  if (listingTypes.length === 0) {
+    listingTypes.push("sale"); // default fallback
+  }
+  listingType = listingTypes[0];
+
+  const isDualListing = listingTypes.length > 1;
+  let rentPrice = 0;
+  let salePrice = 0;
+  let shortStayPrice = 0;
+
+  const cleanAndParsePrice = (str: string): number => {
+    let clean = str.toLowerCase().replace(/,/g, "").trim();
+    let multiplier = 1;
+    if (clean.endsWith("million") || clean.endsWith("m")) {
+      multiplier = 1000000;
+      clean = clean.replace(/million|m/g, "").trim();
+    } else if (clean.endsWith("k")) {
+      multiplier = 1000;
+      clean = clean.replace(/k/g, "").trim();
+    } else if (clean.endsWith("ล้าน")) {
+      multiplier = 1000000;
+      clean = clean.replace(/ล้าน/g, "").trim();
+    }
+    const val = Number(clean);
+    return isNaN(val) ? 0 : Math.round(val * multiplier);
+  };
+
+  // 1. Rent price search
+  if (listingTypes.includes("rent")) {
+    const rentRegexes = [
+      /(?:#rent|rent|rental|renting|lease)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)\s*(?:\/month|\/mo|\s*baht\/month|\s*thb\/month|pm\b)/i
+    ];
+    for (const regex of rentRegexes) {
+      const match = text.match(regex);
+      if (match) {
+        rentPrice = cleanAndParsePrice(match[1]);
+        break;
+      }
     }
   }
+
+  // 2. Sale price search
+  if (listingTypes.includes("sale")) {
+    const saleRegexes = [
+      /(?:#sale|sale|selling|buy|purchas|selling\s*price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /(?:#price|price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i
+    ];
+    for (const regex of saleRegexes) {
+      const match = text.match(regex);
+      if (match) {
+        const parsedVal = cleanAndParsePrice(match[1]);
+        if (parsedVal !== rentPrice || rentPrice === 0) {
+          salePrice = parsedVal;
+          break;
+        }
+      }
+    }
+  }
+
+  // 3. Short stay price search
+  if (listingTypes.includes("short_stay")) {
+    const shortStayRegexes = [
+      /(?:#shortstay|#short_stay|shortstay|short\s*stay)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)\s*(?:\/night|\/day|\/n|\/d|\s*baht\/night|\s*thb\/night)/i
+    ];
+    for (const regex of shortStayRegexes) {
+      const match = text.match(regex);
+      if (match) {
+        shortStayPrice = cleanAndParsePrice(match[1]);
+        break;
+      }
+    }
+  }
+
+  // Fallback / size-based assignment if any matched type has price 0
+  const missingPrices = listingTypes.filter(t => {
+    if (t === "sale") return salePrice === 0;
+    if (t === "rent") return rentPrice === 0;
+    if (t === "short_stay") return shortStayPrice === 0;
+    return false;
+  });
+
+  if (missingPrices.length > 0) {
+    const allNumberMatches = text.match(/(?:฿|THB)?\s*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/gi) || [];
+    const candidates: number[] = [];
+    for (const m of allNumberMatches) {
+      const p = cleanAndParsePrice(m);
+      if (p >= 1000 && !candidates.includes(p)) {
+        candidates.push(p);
+      }
+    }
+    candidates.sort((a, b) => a - b);
+
+    const assigned = new Set<number>();
+    if (salePrice > 0) assigned.add(salePrice);
+    if (rentPrice > 0) assigned.add(rentPrice);
+    if (shortStayPrice > 0) assigned.add(shortStayPrice);
+
+    const availableCandidates = candidates.filter(c => !assigned.has(c));
+
+    const remainingTypes = [...listingTypes].filter(t => {
+      if (t === "sale") return salePrice === 0;
+      if (t === "rent") return rentPrice === 0;
+      if (t === "short_stay") return shortStayPrice === 0;
+      return false;
+    });
+
+    remainingTypes.sort((a, b) => {
+      const order = { short_stay: 1, rent: 2, sale: 3 };
+      return order[a] - order[b];
+    });
+
+    for (let i = 0; i < remainingTypes.length; i++) {
+      const type = remainingTypes[i];
+      const val = availableCandidates[i] || availableCandidates[availableCandidates.length - 1] || 0;
+      if (type === "sale") salePrice = val;
+      else if (type === "rent") rentPrice = val;
+      else if (type === "short_stay") shortStayPrice = val;
+    }
+  }
+
+  // Set default priceTHB
+  if (listingTypes.includes("sale")) priceTHB = salePrice;
+  else if (listingTypes.includes("rent")) priceTHB = rentPrice;
+  else if (listingTypes.includes("short_stay")) priceTHB = shortStayPrice;
 
   // Bedrooms
   const bedsMatch = text.match(/(?:#beds|beds|bedrooms)[:\s=]+(\d+)/i) || text.match(/(\d+)\s*(?:bed|br|bedroom)/i);
@@ -445,6 +565,11 @@ function parseTelegramMessage(text: string, messageId: number) {
     propertyType,
     priceTHB,
     priceUSD,
+    isDualListing,
+    listingTypes,
+    rentPrice,
+    salePrice,
+    shortStayPrice,
     bedrooms,
     bathrooms,
     sqm,
@@ -693,62 +818,195 @@ async function publishDraftListing(
 
   let updatedProperty: any = null;
   if (isDbConfigured) {
-    const [updated] = await db
-      .update(propertiesTable)
-      .set({
-        slug: propertyData.slug,
-        name: propertyData.name,
-        description: propertyData.description,
-        listingType: propertyData.listingType,
-        propertyType: propertyData.propertyType,
-        status: propertyData.status,
-        priceTHB: String(propertyData.priceTHB),
-        priceUSD: propertyData.priceUSD ? String(propertyData.priceUSD) : null,
-        priceLabel: null,
-        bedrooms: propertyData.bedrooms,
-        bathrooms: propertyData.bathrooms,
-        sqm: propertyData.sqm || null,
-        area: propertyData.area,
-        district: propertyData.district || null,
-        coverImage: propertyData.coverImage || null,
-        images: propertyData.images || [],
-        videoUrl: propertyData.videoUrl || null,
-        featured: propertyData.featured,
-        hasVideo: propertyData.hasVideo,
-        petFriendly: propertyData.petFriendly,
-        nearBts: propertyData.nearBts,
-        telegramMediaGroupId: propertyData.telegramMediaGroupId || null,
-        amenities: propertyData.amenities || [],
-        features: propertyData.features || [],
-        buildingBuilt: propertyData.buildingBuilt || null,
-        lastRenovated: propertyData.lastRenovated || null,
-        furnishing: propertyData.furnishing || null,
-        availableFrom: propertyData.availableFrom || null,
-        lastVerifiedAt: null,
-        btsStation: propertyData.btsStation || null,
-        btsWalkMin: propertyData.btsWalkMin || null,
-        mrtStation: propertyData.mrtStation || null,
-        mrtWalkMin: propertyData.mrtWalkMin || null,
-        foreignQuota: propertyData.foreignQuota || null,
-        visaFriendly: propertyData.visaFriendly || null,
-        leaseTerms: propertyData.leaseTerms || null,
-        depositTerms: propertyData.depositTerms || null,
-        maintenance: propertyData.maintenance || null,
-        floor: propertyData.floor || null,
-        totalFloors: propertyData.totalFloors || null,
-      })
-      .where(eq(propertiesTable.id, draft.id))
-      .returning();
-    updatedProperty = updated;
+    const types = propertyData.listingTypes || [propertyData.listingType];
+    
+    const getPriceForType = (type: string) => {
+      if (type === "sale") return propertyData.salePrice || propertyData.priceTHB;
+      if (type === "rent") return propertyData.rentPrice || propertyData.priceTHB;
+      if (type === "short_stay") return propertyData.shortStayPrice || propertyData.priceTHB;
+      return propertyData.priceTHB;
+    };
+
+    if (types.length > 1) {
+      // 1. Update the existing draft to be the first type
+      const firstType = types[0];
+      const firstPrice = getPriceForType(firstType);
+      const [updatedFirst] = await db
+        .update(propertiesTable)
+        .set({
+          slug: `${propertyData.slug}-${firstType}`,
+          name: propertyData.name,
+          description: propertyData.description,
+          listingType: firstType,
+          propertyType: propertyData.propertyType,
+          status: propertyData.status,
+          priceTHB: String(firstPrice),
+          priceUSD: firstPrice ? String(Math.round(Number(firstPrice) / 36)) : null,
+          priceLabel: (firstType === "short_stay" || firstType === "rent") ? "/month" : null,
+          bedrooms: propertyData.bedrooms,
+          bathrooms: propertyData.bathrooms,
+          sqm: propertyData.sqm || null,
+          area: propertyData.area,
+          district: propertyData.district || null,
+          coverImage: propertyData.coverImage || null,
+          images: propertyData.images || [],
+          videoUrl: propertyData.videoUrl || null,
+          featured: propertyData.featured,
+          hasVideo: propertyData.hasVideo,
+          petFriendly: propertyData.petFriendly,
+          nearBts: propertyData.nearBts,
+          telegramMediaGroupId: propertyData.telegramMediaGroupId || null,
+          amenities: propertyData.amenities || [],
+          features: propertyData.features || [],
+          buildingBuilt: propertyData.buildingBuilt || null,
+          lastRenovated: propertyData.lastRenovated || null,
+          furnishing: propertyData.furnishing || null,
+          availableFrom: propertyData.availableFrom || null,
+          lastVerifiedAt: null,
+          btsStation: propertyData.btsStation || null,
+          btsWalkMin: propertyData.btsWalkMin || null,
+          mrtStation: propertyData.mrtStation || null,
+          mrtWalkMin: propertyData.mrtWalkMin || null,
+          foreignQuota: propertyData.foreignQuota || null,
+          visaFriendly: propertyData.visaFriendly || null,
+          leaseTerms: propertyData.leaseTerms || null,
+          depositTerms: propertyData.depositTerms || null,
+          maintenance: propertyData.maintenance || null,
+          floor: propertyData.floor || null,
+          totalFloors: propertyData.totalFloors || null,
+        })
+        .where(eq(propertiesTable.id, draft.id))
+        .returning();
+      
+      updatedProperty = updatedFirst;
+
+      // 2. Insert all other types as new active listings
+      for (let i = 1; i < types.length; i++) {
+        const otherType = types[i];
+        const otherPrice = getPriceForType(otherType);
+        await db
+          .insert(propertiesTable)
+          .values({
+            slug: `${propertyData.slug}-${otherType}`,
+            name: propertyData.name,
+            description: propertyData.description,
+            listingType: otherType,
+            propertyType: propertyData.propertyType,
+            status: propertyData.status,
+            priceTHB: String(otherPrice),
+            priceUSD: otherPrice ? String(Math.round(Number(otherPrice) / 36)) : null,
+            priceLabel: (otherType === "short_stay" || otherType === "rent") ? "/month" : null,
+            bedrooms: propertyData.bedrooms,
+            bathrooms: propertyData.bathrooms,
+            sqm: propertyData.sqm || null,
+            area: propertyData.area,
+            district: propertyData.district || null,
+            coverImage: propertyData.coverImage || null,
+            images: propertyData.images || [],
+            videoUrl: propertyData.videoUrl || null,
+            featured: propertyData.featured,
+            hasVideo: propertyData.hasVideo,
+            petFriendly: propertyData.petFriendly,
+            nearBts: propertyData.nearBts,
+            telegramMediaGroupId: propertyData.telegramMediaGroupId || null,
+            amenities: propertyData.amenities || [],
+            features: propertyData.features || [],
+            buildingBuilt: propertyData.buildingBuilt || null,
+            lastRenovated: propertyData.lastRenovated || null,
+            furnishing: propertyData.furnishing || null,
+            availableFrom: propertyData.availableFrom || null,
+            lastVerifiedAt: null,
+            btsStation: propertyData.btsStation || null,
+            btsWalkMin: propertyData.btsWalkMin || null,
+            mrtStation: propertyData.mrtStation || null,
+            mrtWalkMin: propertyData.mrtWalkMin || null,
+            foreignQuota: propertyData.foreignQuota || null,
+            visaFriendly: propertyData.visaFriendly || null,
+            leaseTerms: propertyData.leaseTerms || null,
+            depositTerms: propertyData.depositTerms || null,
+            maintenance: propertyData.maintenance || null,
+            floor: propertyData.floor || null,
+            totalFloors: propertyData.totalFloors || null,
+            likes: 0,
+            saves: 0,
+            clicks: 0,
+          });
+      }
+    } else {
+      // Single listing creation/update
+      const [updated] = await db
+        .update(propertiesTable)
+        .set({
+          slug: propertyData.slug,
+          name: propertyData.name,
+          description: propertyData.description,
+          listingType: propertyData.listingType,
+          propertyType: propertyData.propertyType,
+          status: propertyData.status,
+          priceTHB: String(propertyData.priceTHB),
+          priceUSD: propertyData.priceUSD ? String(propertyData.priceUSD) : null,
+          priceLabel: (propertyData.listingType === "short_stay" || propertyData.listingType === "rent") ? "/month" : null,
+          bedrooms: propertyData.bedrooms,
+          bathrooms: propertyData.bathrooms,
+          sqm: propertyData.sqm || null,
+          area: propertyData.area,
+          district: propertyData.district || null,
+          coverImage: propertyData.coverImage || null,
+          images: propertyData.images || [],
+          videoUrl: propertyData.videoUrl || null,
+          featured: propertyData.featured,
+          hasVideo: propertyData.hasVideo,
+          petFriendly: propertyData.petFriendly,
+          nearBts: propertyData.nearBts,
+          telegramMediaGroupId: propertyData.telegramMediaGroupId || null,
+          amenities: propertyData.amenities || [],
+          features: propertyData.features || [],
+          buildingBuilt: propertyData.buildingBuilt || null,
+          lastRenovated: propertyData.lastRenovated || null,
+          furnishing: propertyData.furnishing || null,
+          availableFrom: propertyData.availableFrom || null,
+          lastVerifiedAt: null,
+          btsStation: propertyData.btsStation || null,
+          btsWalkMin: propertyData.btsWalkMin || null,
+          mrtStation: propertyData.mrtStation || null,
+          mrtWalkMin: propertyData.mrtWalkMin || null,
+          foreignQuota: propertyData.foreignQuota || null,
+          visaFriendly: propertyData.visaFriendly || null,
+          leaseTerms: propertyData.leaseTerms || null,
+          depositTerms: propertyData.depositTerms || null,
+          maintenance: propertyData.maintenance || null,
+          floor: propertyData.floor || null,
+          totalFloors: propertyData.totalFloors || null,
+        })
+        .where(eq(propertiesTable.id, draft.id))
+        .returning();
+      
+      updatedProperty = updated;
+    }
   }
 
   if (chatId) {
-    const propertyUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/property/${propertyData.slug}`;
-    const propName = propertyData.name;
-    const propPrice = Number(propertyData.priceTHB).toLocaleString();
-    const propArea = propertyData.area;
-    const successText = `<b>✅ Listing Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propName}\n💰 <b>Price:</b> ฿${propPrice}\n📍 <b>Area:</b> ${propArea}\n\n🔗 <a href="${propertyUrl}">View Listing</a>`;
-    await sendTelegramResponse(botToken, chatId, successText, messageId);
+    const types = propertyData.listingTypes || [propertyData.listingType];
+    if (types.length > 1) {
+      let successText = `<b>✅ Multiple Listings Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propertyData.name}\n📍 <b>Area:</b> ${propertyData.area}\n\n`;
+      for (const t of types) {
+        const typeUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/property/${propertyData.slug}-${t}`;
+        const price = t === "sale" ? propertyData.salePrice : (t === "rent" ? propertyData.rentPrice : propertyData.shortStayPrice);
+        const priceStr = Number(price).toLocaleString();
+        const label = t === "sale" ? "For Sale" : (t === "rent" ? "For Rent" : "Short Stay");
+        const priceSuffix = (t === "short_stay" || t === "rent") ? "/month" : "";
+        successText += `<b>🏷️ ${label}:</b> ฿${priceStr}${priceSuffix}\n🔗 <a href="${typeUrl}">View ${label} Listing</a>\n\n`;
+      }
+      await sendTelegramResponse(botToken, chatId, successText.trim(), messageId);
+    } else {
+      const propertyUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/property/${propertyData.slug}`;
+      const propName = propertyData.name;
+      const propPrice = Number(propertyData.priceTHB).toLocaleString();
+      const propArea = propertyData.area;
+      const priceSuffix = (propertyData.listingType === "short_stay" || propertyData.listingType === "rent") ? "/month" : "";
+      const successText = `<b>✅ Listing Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propName}\n💰 <b>Price:</b> ฿${propPrice}${priceSuffix}\n📍 <b>Area:</b> ${propArea}\n\n🔗 <a href="${propertyUrl}">View Listing</a>`;
+      await sendTelegramResponse(botToken, chatId, successText, messageId);
+    }
   }
 
   return NextResponse.json({
@@ -817,7 +1075,7 @@ export async function POST(req: NextRequest) {
     // 2. Handle Text Caption (either alongside media, or as a standalone text message)
     if (text && text.trim() !== "") {
       // Find the draft
-      let draft = await getDraftProperty(chatId, mediaGroupId);
+      const draft = await getDraftProperty(chatId, mediaGroupId);
       
       // If no draft exists, and this is a text message, we can't publish yet because there are no images.
       if (!draft) {

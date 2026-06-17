@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyCard, ListingType, PropertyType } from "@/types/property";
 import Link from "next/link";
+import { MapPin, AlertTriangle } from "lucide-react";
 import { compressAndConvertToWebp } from "@/lib/image-optimizer";
 
 type FormState = Omit<PropertyCard, "id" | "createdAt">;
@@ -382,7 +383,7 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
               className="py-2.5 px-4 rounded-xl text-[12px] font-semibold cursor-pointer border border-[#E5E0D8] text-[#1C3A2F] hover:bg-[#FAF8F3] transition-all self-start"
               style={{ background: "transparent" }}
             >
-              📍 Mock Bangkok Coordinates Picker
+              <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> Mock Bangkok Coordinates Picker</span>
             </button>
           </div>
         </div>
@@ -511,8 +512,8 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
 
         {/* Form Actions */}
         {errors._form && (
-          <p className="text-[12px] px-3 py-2 rounded-lg" style={{ background: "rgba(224,82,82,0.1)", color: "#E05252" }}>
-            ⚠ {errors._form}
+          <p className="text-[12px] px-3 py-2 rounded-lg flex items-center gap-1.5" style={{ background: "rgba(224,82,82,0.1)", color: "#E05252" }}>
+            <AlertTriangle className="w-3.5 h-3.5" /> {errors._form}
           </p>
         )}
 
@@ -541,7 +542,7 @@ function Field({ label, children, error, hint }: { label: string; children: Reac
       <label className="block text-[11px] font-semibold uppercase tracking-[1px] mb-1.5" style={{ color: "#999" }}>{label}</label>
       {children}
       {hint  && !error && <p className="text-[11px] mt-1" style={{ color: "#999" }}>{hint}</p>}
-      {error && <p className="text-[11px] mt-1" style={{ color: "#E05252" }}>⚠ {error}</p>}
+      {error && <p className="text-[11px] mt-1 flex items-center gap-1" style={{ color: "#E05252" }}><AlertTriangle className="w-3 h-3" /> {error}</p>}
     </div>
   );
 }

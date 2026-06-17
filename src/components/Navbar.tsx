@@ -6,7 +6,7 @@ import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { LayoutDashboard, Heart, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Heart, Settings, LogOut, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
@@ -60,7 +60,10 @@ export default function Navbar() {
           <Link href="/"                      className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.home}</Link>
           <Link href="/explore"               className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.explore}</Link>
           <Link href="/swipe"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.swipe}</Link>
-          <Link href="/explore/match"         className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F", fontWeight: "bold" }}>✨ Auto Finder</Link>
+          <Link href="/explore/match"         className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium flex items-center gap-1" style={{ color: "#1C3A2F", fontWeight: "bold" }}>
+            <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" />
+            <span>Auto Finder</span>
+          </Link>
           <Link href="/explore?type=sale"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.buy}</Link>
           <Link href="/explore?type=rent"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.rent}</Link>
 
@@ -390,7 +393,10 @@ export default function Navbar() {
                   className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
                   style={{ color: "#1C3A2F", borderColor: "#EDE8DF", fontWeight: "bold" }}
                 >
-                  <span>✨ Auto Finder</span>
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-[#C9A84C]" />
+                    <span>Auto Finder</span>
+                  </span>
                   <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>AI</span>
                 </Link>
 

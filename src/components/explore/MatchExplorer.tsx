@@ -30,7 +30,14 @@ import {
   PawPrint,
   Globe,
   Train,
-  Calendar
+  Calendar,
+  VolumeX,
+  TrainFront,
+  ShoppingBag,
+  Trees,
+  Utensils,
+  Flame,
+  Sparkles
 } from "lucide-react";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
@@ -161,6 +168,89 @@ const renderAvoidanceIcon = (label: string) => {
       return <Activity size={iconSize} strokeWidth={strokeWidth} className="transition-transform duration-300" />;
   }
 };
+
+function getPreferenceDetails(pref: string) {
+  const label = pref.replace(/^[^A-Za-z0-9\s()&/-]+/, "").trim();
+  let icon = null;
+  const lower = label.toLowerCase();
+  
+  if (lower.includes("cafe")) {
+    icon = <Coffee className="w-3.5 h-3.5" />;
+  } else if (lower.includes("quiet")) {
+    icon = <VolumeX className="w-3.5 h-3.5" />;
+  } else if (lower.includes("transport") || lower.includes("transit")) {
+    icon = <TrainFront className="w-3.5 h-3.5" />;
+  } else if (lower.includes("city center") || lower.includes("cbd")) {
+    icon = <Building className="w-3.5 h-3.5" />;
+  } else if (lower.includes("nightlife")) {
+    icon = <Wine className="w-3.5 h-3.5" />;
+  } else if (lower.includes("shopping") || lower.includes("mall")) {
+    icon = <ShoppingBag className="w-3.5 h-3.5" />;
+  } else if (lower.includes("coworking")) {
+    icon = <Laptop className="w-3.5 h-3.5" />;
+  } else if (lower.includes("family")) {
+    icon = <Users className="w-3.5 h-3.5" />;
+  } else if (lower.includes("pet")) {
+    icon = <Footprints className="w-3.5 h-3.5" />;
+  } else if (lower.includes("fitness") || lower.includes("active")) {
+    icon = <Flame className="w-3.5 h-3.5" />;
+  } else if (lower.includes("community")) {
+    icon = <Globe className="w-3.5 h-3.5" />;
+  } else if (lower.includes("park") || lower.includes("green")) {
+    icon = <Trees className="w-3.5 h-3.5" />;
+  } else if (lower.includes("thai culture") || lower.includes("food") || lower.includes("local")) {
+    icon = <Utensils className="w-3.5 h-3.5" />;
+  } else if (lower.includes("luxury")) {
+    icon = <Crown className="w-3.5 h-3.5 text-[#C9A84C]" />;
+  } else if (lower.includes("walk")) {
+    icon = <Footprints className="w-3.5 h-3.5" />;
+  } else if (lower.includes("relax")) {
+    icon = <Compass className="w-3.5 h-3.5" />;
+  } else {
+    icon = <Compass className="w-3.5 h-3.5" />;
+  }
+  return { label, icon };
+}
+
+function renderProfileBadge(badge: string) {
+  const text = badge.replace(/^[^A-Za-z0-9\s()&/-]+/, "").trim();
+  let icon = null;
+  const lower = text.toLowerCase();
+  const iconSize = 16;
+  const strokeWidth = 2;
+  
+  if (lower.includes("cafe")) {
+    icon = <Coffee size={iconSize} strokeWidth={strokeWidth} />;
+  } else if (lower.includes("flexible")) {
+    icon = <Laptop size={iconSize} strokeWidth={strokeWidth} />;
+  } else if (lower.includes("quiet")) {
+    icon = <VolumeX size={iconSize} strokeWidth={strokeWidth} />;
+  } else if (lower.includes("pet")) {
+    icon = <Footprints size={iconSize} strokeWidth={strokeWidth} />;
+  } else if (lower.includes("premium")) {
+    icon = <Crown size={iconSize} strokeWidth={strokeWidth} className="text-[#C9A84C]" />;
+  } else if (lower.includes("walkability")) {
+    icon = <Footprints size={iconSize} strokeWidth={strokeWidth} />;
+  } else if (lower.includes("family")) {
+    icon = <Users size={iconSize} strokeWidth={strokeWidth} />;
+  } else if (lower.includes("academic")) {
+    icon = <GraduationCap size={iconSize} strokeWidth={strokeWidth} />;
+  } else if (lower.includes("career")) {
+    icon = <Briefcase size={iconSize} strokeWidth={strokeWidth} />;
+  } else if (lower.includes("bangkok")) {
+    icon = <Compass size={iconSize} strokeWidth={strokeWidth} />;
+  } else if (lower.includes("lifestyle")) {
+    icon = <Sparkles size={iconSize} strokeWidth={strokeWidth} />;
+  } else {
+    icon = <Compass size={iconSize} strokeWidth={strokeWidth} />;
+  }
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[#C9A84C] shrink-0 flex items-center">{icon}</span>
+      <span>{text}</span>
+    </div>
+  );
+}
 
 export default function MatchExplorer({ properties }: Props) {
   const { formatPrice } = useCurrency();
@@ -654,7 +744,7 @@ export default function MatchExplorer({ properties }: Props) {
         }
       }
     } catch (err) {
-      console.error(err);
+      console.error("MatchExplorer: failed to fetch AI property matches:", err);
     }
   };
 
@@ -804,18 +894,20 @@ export default function MatchExplorer({ properties }: Props) {
                   <div className="flex flex-wrap gap-1.5 max-h-[350px] overflow-y-auto pr-1">
                     {PREFERENCES.map((pref) => {
                       const isSelected = selectedPrefs.includes(pref);
+                      const { label, icon } = getPreferenceDetails(pref);
                       return (
                         <button
                           key={pref}
                           onClick={() => handlePreferenceToggle(pref)}
-                          className="px-3.5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer border-none"
+                          className="px-3.5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer border flex items-center gap-1.5"
                           style={{
                             background: isSelected ? "#1C3A2F" : "#FFFFFF",
                             color: isSelected ? "#FFFFFF" : "#1C3A2F",
                             border: isSelected ? "1.5px solid #1C3A2F" : "1.5px solid #E5E0D8",
                           }}
                         >
-                          {pref}
+                          {icon}
+                          <span>{label}</span>
                         </button>
                       );
                     })}
@@ -1000,8 +1092,8 @@ export default function MatchExplorer({ properties }: Props) {
                 
                 <div className="flex flex-col gap-3.5 mb-6">
                   {lifestyleProfileBadges.map((badge, index) => (
-                    <div key={index} className="flex items-center gap-3 bg-white/5 px-4 py-2.5 rounded-xl border border-white/5">
-                      <span className="text-[13px] font-semibold tracking-wide">{badge}</span>
+                    <div key={index} className="flex items-center bg-white/5 px-4 py-2.5 rounded-xl border border-white/5">
+                      <span className="text-[13px] font-semibold tracking-wide w-full">{renderProfileBadge(badge)}</span>
                     </div>
                   ))}
                 </div>

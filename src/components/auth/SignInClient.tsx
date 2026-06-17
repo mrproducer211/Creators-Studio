@@ -4,7 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Bookmark, Bell, BarChart3, Heart, Home } from "lucide-react";
+import { Bookmark, Bell, BarChart3, Heart, Home, AlertTriangle } from "lucide-react";
 
 export default function SignInClient({ googleEnabled }: { googleEnabled: boolean }) {
   const router       = useRouter();
@@ -236,7 +236,7 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
               required
             />
             {error && (
-              <p className="text-[13px] px-1" style={{ color: "#E05252" }}>⚠ {error}</p>
+              <p className="text-[13px] px-1 flex items-center gap-1.5" style={{ color: "#E05252" }}><AlertTriangle size={14} className="flex-shrink-0" /> {error}</p>
             )}
             <button
               type="submit"

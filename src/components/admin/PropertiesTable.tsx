@@ -3,6 +3,8 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
+import { Clock, Eye, MousePointerClick, Heart, Star } from "lucide-react";
+import { stripEmojis } from "@/lib/emoji";
 
 function badgeStyle(t: string) {
   if (t === "sale") return { background: "#1C3A2F", color: "#E2C97E" };
@@ -227,7 +229,7 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
                       )}
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.name}</div>
+                          <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{stripEmojis(p.name)}</div>
                           {p.pendingVerification && (
                             <span className="text-[8px] font-bold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200 uppercase tracking-[0.3px]">Pending Approve</span>
                           )}
@@ -238,8 +240,8 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
                         <div className="text-[11px] truncate flex items-center gap-2" style={{ color: "#999" }}>
                           <span>{p.slug}</span>
                           {p.expiryDate && (
-                            <span className="font-semibold" style={{ color: isExpired ? "#E05252" : "#8B6914" }}>
-                              ⏱️ Expires: {new Date(p.expiryDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                            <span className="font-semibold inline-flex items-center gap-1" style={{ color: isExpired ? "#E05252" : "#8B6914" }}>
+                              <Clock className="w-3 h-3" /> Expires: {new Date(p.expiryDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                             </span>
                           )}
                         </div>
@@ -265,10 +267,10 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
                   </td>
                   <td className="px-3 py-3 text-center">
                     <div className="inline-flex items-center gap-2.5 text-[11px] font-semibold text-[#666]">
-                      <span title="Views">👁️ {p.viewCount ?? 0}</span>
-                      <span title="Clicks">🖱️ {p.clicks ?? 0}</span>
-                      <span title="Likes">❤️ {p.likes}</span>
-                      <span title="Saves">⭐ {p.saves}</span>
+                      <span title="Views" className="flex items-center gap-0.5"><Eye className="w-3.5 h-3.5" /> {p.viewCount ?? 0}</span>
+                      <span title="Clicks" className="flex items-center gap-0.5"><MousePointerClick className="w-3.5 h-3.5" /> {p.clicks ?? 0}</span>
+                      <span title="Likes" className="flex items-center gap-0.5"><Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" /> {p.likes}</span>
+                      <span title="Saves" className="flex items-center gap-0.5"><Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" /> {p.saves}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right">

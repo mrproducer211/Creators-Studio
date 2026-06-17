@@ -1,4 +1,5 @@
 import AdminPage from "@/components/admin/Page";
+import { Download } from "lucide-react";
 import { db } from "@/lib/db";
 import { sql } from "drizzle-orm";
 import SettingsForm from "@/components/admin/SettingsForm";
@@ -121,9 +122,9 @@ export default async function SettingsPage() {
             <a
               href="/api/admin/properties/bulk"
               download
-              className="py-2.5 px-4 rounded-xl text-[12px] font-semibold cursor-pointer border border-[#E5E0D8] text-[#1C3A2F] hover:bg-[#FAF8F3] transition-all no-underline"
+              className="py-2 px-4 rounded-xl text-[12px] font-semibold cursor-pointer border border-[#E5E0D8] text-[#1C3A2F] hover:bg-[#FAF8F3] transition-all no-underline inline-flex items-center gap-1.5"
             >
-              📥 Export Listings JSON
+              <Download className="w-3.5 h-3.5" /> Export Listings JSON
             </a>
           </div>
         </div>

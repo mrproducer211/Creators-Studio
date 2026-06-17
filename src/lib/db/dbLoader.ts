@@ -6,7 +6,6 @@ import {
   pageViews as pageViewsTable,
   auditLogs as auditLogsTable,
 } from "./schema";
-import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { desc, eq, sql, and, lt } from "drizzle-orm";
 import { getAllLocalAppointments } from "@/lib/store/appointments";
 import { getAllEnquiries } from "@/lib/store/enquiries";
@@ -114,15 +113,9 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
     // Map Drizzle output model to PropertyCard shape
     if (list && list.length > 0) {
       const mapped = list.map((p) => {
-        let priceTHB = Number(p.priceTHB);
-        let priceUSD = p.priceUSD ? Number(p.priceUSD) : undefined;
-        let priceLabel = p.priceLabel || undefined;
-
-        if (priceLabel && priceLabel.toLowerCase().includes("night")) {
-          priceTHB = priceTHB * 30;
-          if (priceUSD) priceUSD = priceUSD * 30;
-          priceLabel = "/month";
-        }
+        const priceTHB = Number(p.priceTHB);
+        const priceUSD = p.priceUSD ? Number(p.priceUSD) : undefined;
+        const priceLabel = p.priceLabel || undefined;
 
         return {
           id: p.id,
@@ -182,52 +175,12 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
         };
       });
       const dbList = includeUnlisted ? mapped : mapped.filter((p) => p.status !== "unlisted" && p.status !== "draft");
-      const dbSlugs = new Set(dbList.map((p) => p.slug));
-      const mockList = MOCK_PROPERTIES.filter((p) => !dbSlugs.has(p.slug));
-      
-      const dbIds = new Set(dbList.map((p) => p.id));
-      let nextId = Math.max(...Array.from(dbIds), 0) + 1;
-      const safeMockList = mockList.map((p) => {
-        if (dbIds.has(p.id)) {
-          const newId = nextId++;
-          return { ...p, id: newId };
-        }
-        return p;
-      });
-
-      return [...dbList, ...safeMockList];
+      return dbList;
     }
   } catch (err) {
-    console.warn("DB properties fetch failed, using fallback mock data:", err);
+    console.error("DB properties fetch failed:", err);
   }
-  return MOCK_PROPERTIES.map((p) => {
-    let priceTHB = p.priceTHB;
-    let priceUSD = p.priceUSD;
-    let priceLabel = p.priceLabel ?? undefined;
-
-    if (priceLabel && priceLabel.toLowerCase().includes("night")) {
-      priceTHB = priceTHB * 30;
-      if (priceUSD) priceUSD = priceUSD * 30;
-      priceLabel = "/month";
-    }
-
-    return {
-      ...p,
-      area: getCanonicalArea(p.area),
-      priceTHB,
-      priceUSD,
-      priceLabel,
-      clicks: p.clicks ?? 0,
-      amenities: p.amenities ?? [],
-      features: p.features ?? [],
-      schools: p.schools ?? [],
-      transit: p.transit ?? [],
-      neighborhood: p.neighborhood ?? "",
-      verificationBadge: p.verificationBadge ?? false,
-      expiryDate: p.expiryDate ?? undefined,
-      updatedAt: p.updatedAt || p.createdAt,
-    };
-  });
+  return [];
 }
 
 /**

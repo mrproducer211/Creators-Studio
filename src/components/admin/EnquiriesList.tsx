@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Calendar } from "lucide-react";
+import { stripEmojis } from "@/lib/emoji";
 import type { StoredEnquiry } from "@/lib/store/enquiries";
 import type { LeadUser } from "@/lib/store/leads";
 
@@ -125,7 +127,7 @@ export default function EnquiriesList({ enquiries, leads }: { enquiries: Extende
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 pb-3" style={{ borderBottom: "1px solid #F0EAE0" }}>
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.5px] mb-0.5" style={{ color: "#999" }}>Property</p>
-                  <p className="text-[12px] font-medium truncate" style={{ color: "#1A1A1A" }}>{e.propertyName}</p>
+                  <p className="text-[12px] font-medium truncate" style={{ color: "#1A1A1A" }}>{stripEmojis(e.propertyName)}</p>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.5px] mb-0.5" style={{ color: "#999" }}>Price</p>
@@ -145,11 +147,11 @@ export default function EnquiriesList({ enquiries, leads }: { enquiries: Extende
                 <div className="mb-3 pb-3" style={{ borderBottom: "1px solid #F0EAE0" }}>
                   {e.tourDate && (
                     <p className="text-[12px] mb-1" style={{ color: "#555" }}>
-                      📅 <strong>Tour requested:</strong> {new Date(e.tourDate).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })} at {e.tourTime}
+                      <span className="inline-flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> <strong>Tour requested:</strong> {new Date(e.tourDate).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })} at {e.tourTime}</span>
                     </p>
                   )}
                   {e.message && (
-                    <p className="text-[12px] italic" style={{ color: "#555" }}>“{e.message}”</p>
+                    <p className="text-[12px] italic" style={{ color: "#555" }}>“{stripEmojis(e.message)}”</p>
                   )}
                 </div>
               )}

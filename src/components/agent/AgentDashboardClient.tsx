@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -19,7 +20,8 @@ import {
   ChevronRight,
   ChevronLeft,
   Calendar,
-  MessageSquare
+  MessageSquare,
+  TrainFront
 } from "lucide-react";
 import Link from "next/link";
 import { compressAndConvertToWebp } from "@/lib/image-optimizer";
@@ -203,7 +205,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
   const handleListingTypeChange = (type: "sale" | "rent" | "short_stay") => {
     setListingType(type);
     if (type === "short_stay") {
-      setLeaseTerms("1 month");
+      setLeaseTerms("3 months");
     } else if (type === "rent") {
       setLeaseTerms("12 months");
     } else {
@@ -1327,8 +1329,8 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                             <div className="text-[12px] text-gray-600">
                               <span className="font-bold text-gray-800">Contact:</span> {appt.email} · {appt.phone}
                             </div>
-                            <div className="text-[12px] text-[#1C3A2F] font-bold">
-                              🚆 Tour: {appt.date} @ {appt.timeSlot}
+                            <div className="text-[12px] text-[#1C3A2F] font-bold flex items-center gap-1.5">
+                              <TrainFront className="w-3.5 h-3.5" /> Tour: {appt.date} @ {appt.timeSlot}
                             </div>
                             {appt.message && (
                               <div className="text-[12px] text-gray-500 bg-[#FAF8F3] p-2 rounded-lg mt-1 border border-[#EDE8DF] italic">
@@ -1400,13 +1402,13 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                 </div>
 
                 {error && (
-                  <div className="p-3.5 rounded-xl text-[12px] lg:text-[13px] mb-5 border font-medium bg-red-50 border-red-200 text-red-700">
-                    ⚠️ {error}
+                  <div className="p-3.5 rounded-xl text-[12px] lg:text-[13px] mb-5 border font-medium bg-red-50 border-red-200 text-red-700 flex items-center gap-1.5">
+                    <AlertCircle size={16} className="flex-shrink-0" /> {error}
                   </div>
                 )}
                 {successMsg && (
-                  <div className="p-3.5 rounded-xl text-[12px] lg:text-[13px] mb-5 border font-medium bg-emerald-50 border-emerald-200 text-emerald-700">
-                    ✅ {successMsg}
+                  <div className="p-3.5 rounded-xl text-[12px] lg:text-[13px] mb-5 border font-medium bg-emerald-50 border-emerald-200 text-emerald-700 flex items-center gap-1.5">
+                    <CheckCircle2 size={16} className="flex-shrink-0" /> {successMsg}
                   </div>
                 )}
 
@@ -1599,9 +1601,8 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                             className="w-full px-4 py-3 rounded-xl text-[14px]"
                             style={inputStyle}
                           >
-                            <option value="1 month rent">1 Month Rent</option>
-                            <option value="2 months rent">2 Months Rent</option>
-                            <option value="3 months to 6 months rent">3 Months to 6 Months</option>
+                            <option value="3 months">3 Months Stay</option>
+                            <option value="6 months">6 Months Stay</option>
                           </select>
                         </div>
                         <div className="text-[11px] text-gray-400 font-light max-w-sm">
@@ -1974,13 +1975,13 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                   <h3 className="text-[16px] font-bold text-[#1C3A2F] mb-6">Update Profile Credentials</h3>
                   
                   {settingsError && (
-                    <div className="p-4 rounded-xl text-[13px] mb-5 border font-medium bg-red-50 border-red-200 text-red-700">
-                      ⚠️ {settingsError}
+                    <div className="p-4 rounded-xl text-[13px] mb-5 border font-medium bg-red-50 border-red-200 text-red-700 flex items-center gap-1.5">
+                      <AlertCircle size={16} className="flex-shrink-0" /> {settingsError}
                     </div>
                   )}
                   {settingsSuccess && (
-                    <div className="p-4 rounded-xl text-[13px] mb-5 border font-medium bg-emerald-50 border-emerald-200 text-emerald-700">
-                      ✅ {settingsSuccess}
+                    <div className="p-4 rounded-xl text-[13px] mb-5 border font-medium bg-emerald-50 border-emerald-200 text-emerald-700 flex items-center gap-1.5">
+                      <CheckCircle2 size={16} className="flex-shrink-0" /> {settingsSuccess}
                     </div>
                   )}
 

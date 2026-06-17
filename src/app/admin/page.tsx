@@ -1,4 +1,5 @@
 import AdminPage, { StatCard, PrimaryLink } from "@/components/admin/Page";
+import { TrendingUp, Calendar } from "lucide-react";
 import { getDbProperties, getDbEnquiries, getDbAppointments, get24HourTraffic, getDbAuditLogs } from "@/lib/db/dbLoader";
 import { getAllPosts } from "@/lib/store/blog";
 import { requireAdmin } from "@/lib/auth-helpers";
@@ -133,7 +134,9 @@ export default async function AdminDashboard() {
               <h3 className="text-[14px] font-bold" style={{ color: "#1A1A1A" }}>Visited Customers (Last 24h)</h3>
               <p className="text-[11px] text-[#888]">{views24h} total visits logged</p>
             </div>
-            <span className="text-[18px] font-bold text-[#2E7D4F]">📈 +{views24h}</span>
+            <span className="text-[14px] font-bold text-[#2E7D4F] flex items-center gap-1">
+              <TrendingUp className="w-4 h-4" /> +{views24h}
+            </span>
           </div>
           <div className="w-full overflow-hidden mt-4">
             <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-[150px]">
@@ -170,7 +173,9 @@ export default async function AdminDashboard() {
               <h3 className="text-[14px] font-bold" style={{ color: "#1A1A1A" }}>Viewing Bookings Trend</h3>
               <p className="text-[11px] text-[#888]">Scheduled property tours last 7 days</p>
             </div>
-            <span className="text-[18px] font-bold text-[#C9A84C]">📅 Active</span>
+            <span className="text-[13px] font-bold text-[#C9A84C] flex items-center gap-1">
+              <Calendar className="w-4 h-4" /> Active
+            </span>
           </div>
           <div className="w-full overflow-hidden mt-4">
             <svg viewBox={`0 0 ${barChartWidth} ${barChartHeight}`} className="w-full h-[150px]">

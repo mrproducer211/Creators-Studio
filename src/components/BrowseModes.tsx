@@ -1,27 +1,28 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Sparkles, LayoutGrid, ArrowRightLeft } from "lucide-react";
 
 export default function BrowseModes() {
   const { t } = useLanguage();
 
   const modes = [
     {
-      icon: "✨",
+      icon: <Sparkles className="w-8 h-8 text-[#E2C97E]" />,
       name: t.browse.swipeName,
       desc: t.browse.swipeDesc,
       featured: true,
       href: "/explore/match",
     },
     {
-      icon: "▦",
+      icon: <LayoutGrid className="w-6 h-6 text-[#1C3A2F]" />,
       name: t.browse.gridName,
       desc: t.browse.gridDesc,
       featured: false,
       href: "/explore",
     },
     {
-      icon: "⇄",
+      icon: <ArrowRightLeft className="w-6 h-6 text-[#1C3A2F]" />,
       name: t.browse.reelName,
       desc: t.browse.reelDesc,
       featured: false,
@@ -55,7 +56,7 @@ export default function BrowseModes() {
               className="col-span-2 flex items-center gap-4 rounded-2xl p-5 cursor-pointer transition-all duration-150 no-underline"
               style={{ background: "#1C3A2F", border: "1.5px solid #1C3A2F" }}
             >
-              <span className="text-4xl flex-shrink-0">{m.icon}</span>
+              <span className="flex-shrink-0">{m.icon}</span>
               <div>
                 <div className="text-base font-semibold mb-1.5" style={{ color: "#E2C97E" }}>
                   {m.name}
@@ -82,7 +83,7 @@ export default function BrowseModes() {
                 (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none";
               }}
             >
-              <span className="text-[28px] block mb-2.5">{m.icon}</span>
+              <span className="block mb-2.5">{m.icon}</span>
               <div className="text-[15px] font-semibold mb-1" style={{ color: "#1C3A2F" }}>
                 {m.name}
               </div>
