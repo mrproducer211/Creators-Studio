@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 import { getDbProperties } from "@/lib/db/dbLoader";
-import POSTS from "@/data/blogPosts";
+import { getAllPosts } from "@/lib/store/blog";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://nhpbangkok.com";
@@ -51,7 +51,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // 4. Dynamic Blog Guides
-  const blogUrls = POSTS.map((post) => ({
+  let blogPosts: any[] = [];
+  try {
+    blogPosts = await getAllPosts();
+  } catch (err) {
+    console.error("Sitemap failed to fetch blog posts:", err);
+  }
+
+  const blogUrls = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.publishedAt),
     changeFrequency: "monthly" as const,
