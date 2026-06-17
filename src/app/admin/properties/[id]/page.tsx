@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import AdminPage from "@/components/admin/Page";
 import PropertyForm from "@/components/admin/PropertyForm";
-import { getPropertyById } from "@/lib/store/properties";
+import { getDbProperties } from "@/lib/db/dbLoader";
 
 interface Props { params: Promise<{ id: string }> }
 
@@ -10,7 +10,8 @@ export default async function EditPropertyPage({ params }: Props) {
   const numId  = Number(id);
   if (!Number.isFinite(numId)) notFound();
 
-  const property = await getPropertyById(numId);
+  const all = await getDbProperties({ includeUnlisted: true });
+  const property = all.find((p) => p.id === numId);
   if (!property) notFound();
 
   return (
