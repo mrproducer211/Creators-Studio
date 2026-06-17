@@ -257,7 +257,8 @@ function parseTelegramMessage(text: string, messageId: number) {
   // 1. Rent price search
   if (listingTypes.includes("rent")) {
     const rentRegexes = [
-      /(?:#rent|rent|rental|renting|lease)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /(?:#rent|rent|rental|renting)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /(?:#price|price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
       /([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)\s*(?:\/month|\/mo|\s*baht\/month|\s*thb\/month|pm\b)/i
     ];
     for (const regex of rentRegexes) {
@@ -291,6 +292,7 @@ function parseTelegramMessage(text: string, messageId: number) {
   if (listingTypes.includes("short_stay")) {
     const shortStayRegexes = [
       /(?:#shortstay|#short_stay|shortstay|short\s*stay)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /(?:#price|price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
       /([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)\s*(?:\/night|\/day|\/n|\/d|\s*baht\/night|\s*thb\/night)/i
     ];
     for (const regex of shortStayRegexes) {

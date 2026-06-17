@@ -546,7 +546,10 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [scrollLock, setScrollLock] = useState(false);
 
   const rawImages = useMemo(() => images.filter(Boolean), [images]);
   // Pad to always show 4 thumbnails — cycle through available images when fewer exist
@@ -569,24 +572,49 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
   }), [rawImages.length]);
 
   const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
+    const touch = e.touches[0];
+    setTouchStart(touch.clientX);
+    setTouchStartY(touch.clientY);
+    setDragOffset(0);
+    setIsDragging(true);
+    setScrollLock(false);
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
+    if (touchStart === null || touchStartY === null || !isDragging) return;
+    const touch = e.touches[0];
+    const diffX = touch.clientX - touchStart;
+    const diffY = touch.clientY - touchStartY;
+
+    if (!scrollLock) {
+      if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 10) {
+        setIsDragging(false);
+        return;
+      }
+      if (Math.abs(diffX) > 10) {
+        setScrollLock(true);
+      }
+    }
+
+    if (scrollLock) {
+      if (e.cancelable) e.preventDefault();
+      setDragOffset(diffX);
+    }
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-    if (isLeftSwipe) {
-      next();
-    } else if (isRightSwipe) {
-      prev();
+    if (!isDragging) return;
+    setIsDragging(false);
+    setScrollLock(false);
+
+    if (Math.abs(dragOffset) > 50) {
+      if (dragOffset < 0) {
+        next();
+      } else {
+        prev();
+      }
     }
+    setDragOffset(0);
   };
 
   useEffect(() => {
@@ -650,18 +678,30 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        {rawImages[active % (rawImages.length || 1)] && !imgErrors[active % (rawImages.length || 1)] ? (
-          <img
-            src={rawImages[active % (rawImages.length || 1)]}
-            alt={name}
-            className="w-full h-full object-cover"
-            onError={() => setImgErrors((e) => ({ ...e, [active % (rawImages.length || 1)]: true }))}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-8xl font-black" style={{ color: "rgba(255,255,255,0.06)", letterSpacing: "-8px" }}>NHP</span>
-          </div>
-        )}
+        <div
+          className="flex h-full w-full"
+          style={{
+            transform: `translateX(${isDragging ? `calc(-${active * 100}% + ${dragOffset}px)` : `-${active * 100}%`})`,
+            transition: isDragging ? "none" : "transform 0.3s ease-out",
+          }}
+        >
+          {(rawImages.length > 0 ? rawImages : [""]).map((src, idx) => (
+            <div key={idx} className="w-full h-full flex-shrink-0 relative">
+              {src && !imgErrors[idx] ? (
+                <img
+                  src={src}
+                  alt={name}
+                  className="w-full h-full object-cover"
+                  onError={() => setImgErrors((e) => ({ ...e, [idx]: true }))}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-[#1C3A2F]">
+                  <span className="text-8xl font-black" style={{ color: "rgba(255,255,255,0.06)", letterSpacing: "-8px" }}>NHP</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
 
         {/* "New Listing" badge */}
         {isFeatured && (
@@ -1676,8 +1716,123 @@ export default function PropertyDetail({
             {/* Gallery */}
             <Gallery images={allImages} name={property.name} isFeatured={property.featured} propertyId={property.id} />
 
+            {/* Mobile Price, Stats, and Switcher Block - Mobile Only (under images section) */}
+            <div className="md:hidden mt-4 rounded-2xl p-5" style={{ background: "#FFFFFF", border: "1px solid #EDE8DF", boxShadow: "none" }}>
+              {/* Gold price (currency-aware) */}
+              <div className="text-[24px] font-bold mt-1 mb-2.5" style={{ color: "#C9A84C", letterSpacing: "-0.8px", lineHeight: 1 }}>
+                {formatPriceFn(Number(property.priceTHB))}
+                {property.listingType !== "sale" && (
+                  <span className="text-[13px] font-normal ml-1" style={{ color: "#555" }}>
+                    {property.priceLabel ?? " /month"}
+                  </span>
+                )}
+              </div>
+
+              {/* Stats Horizontal Row */}
+              <div className="flex items-center flex-wrap gap-x-4 gap-y-2 text-[12px] font-medium border-t pt-3.5 mt-3 mb-1.5" style={{ color: "#555", borderColor: "#EDE8DF" }}>
+                <div className="flex items-center gap-1.5">
+                  <span style={{ color: "#1C3A2F" }}><Icon.bed /></span>
+                  <span>{property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span style={{ color: "#1C3A2F" }}><Icon.bath /></span>
+                  <span>{property.bathrooms} Bath</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span style={{ color: "#1C3A2F" }}><Icon.garage /></span>
+                  <span>{parkingValue} Parking</span>
+                </div>
+                {property.sqm && (
+                  <div className="flex items-center gap-1.5">
+                    <span style={{ color: "#1C3A2F" }}><Icon.sqft /></span>
+                    <span>{property.sqm} m²</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Rental Duration Switcher */}
+              {hasPriceSwitcher && rentSibling && shortStaySibling && (
+                <div className="mt-3 mb-2 p-3.5 rounded-xl border flex flex-col gap-2.5" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                  <div className="text-[10px] font-bold uppercase tracking-[1.5px]" style={{ color: "#8B7E66" }}>
+                    Rental Contract Options
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {/* Long Term (1 Year) */}
+                    {property.listingType === "rent" ? (
+                      <div
+                        className="flex flex-col items-center justify-center p-2.5 rounded-lg border text-center transition-all cursor-default"
+                        style={{
+                          background: "#E8F4F0",
+                          borderColor: "#2D7D62",
+                          color: "#1C3A2F",
+                          boxShadow: "0 2px 8px rgba(45,125,98,0.08)"
+                        }}
+                      >
+                        <span className="text-[11px] font-bold">Long Term</span>
+                        <span className="text-[8px] opacity-75 font-medium">1 Year Contract</span>
+                        <span className="text-[12px] font-extrabold mt-1" style={{ color: "#1C3A2F" }}>
+                          {formatPriceFn(Number(rentSibling.priceTHB))}/mo
+                        </span>
+                      </div>
+                    ) : (
+                      <a
+                        href={`/property/${rentSibling.slug}`}
+                        className="flex flex-col items-center justify-center p-2.5 rounded-lg border text-center transition-all hover:scale-[1.02] no-underline hover:border-gray-400"
+                        style={{
+                          background: "#FFFFFF",
+                          borderColor: "#EDE8DF",
+                          color: "#666",
+                        }}
+                      >
+                        <span className="text-[11px] font-bold">Long Term</span>
+                        <span className="text-[8px] text-gray-400">1 Year Contract</span>
+                        <span className="text-[12px] font-semibold mt-1" style={{ color: "#C9A84C" }}>
+                          {formatPriceFn(Number(rentSibling.priceTHB))}/mo
+                        </span>
+                      </a>
+                    )}
+
+                    {/* Short Term (3-6 Months) */}
+                    {property.listingType === "short_stay" ? (
+                      <div
+                        className="flex flex-col items-center justify-center p-2.5 rounded-lg border text-center transition-all cursor-default"
+                        style={{
+                          background: "#E8F4F0",
+                          borderColor: "#2D7D62",
+                          color: "#1C3A2F",
+                          boxShadow: "0 2px 8px rgba(45,125,98,0.08)"
+                        }}
+                      >
+                        <span className="text-[11px] font-bold">Short Term</span>
+                        <span className="text-[8px] opacity-75 font-medium">3-6 Months</span>
+                        <span className="text-[12px] font-extrabold mt-1" style={{ color: "#1C3A2F" }}>
+                          {formatPriceFn(Number(shortStaySibling.priceTHB))}/mo
+                        </span>
+                      </div>
+                    ) : (
+                      <a
+                        href={`/property/${shortStaySibling.slug}`}
+                        className="flex flex-col items-center justify-center p-2.5 rounded-lg border text-center transition-all hover:scale-[1.02] no-underline hover:border-gray-400"
+                        style={{
+                          background: "#FFFFFF",
+                          borderColor: "#EDE8DF",
+                          color: "#666",
+                        }}
+                      >
+                        <span className="text-[11px] font-bold">Short Term</span>
+                        <span className="text-[8px] text-gray-400">3-6 Months</span>
+                        <span className="text-[12px] font-semibold mt-1" style={{ color: "#C9A84C" }}>
+                          {formatPriceFn(Number(shortStaySibling.priceTHB))}/mo
+                        </span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* ── 2-Column Content Block (About on left, Amenities & Location stacked on right) ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-4 mt-6 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-4 mt-3.5 lg:mt-6 items-stretch">
               
               {/* Column 1: ABOUT THIS PROPERTY */}
               <div className="rounded-2xl p-6 transition-all duration-300 flex flex-col lg:h-0 lg:min-h-full overflow-hidden" style={{ background: "#ffffff", border: "none", boxShadow: "none" }}>
@@ -1928,6 +2083,83 @@ export default function PropertyDetail({
                   >
                     View on Google Maps →
                   </a>
+                </div>
+
+                {/* At a Glance Box - Mobile Only (rendered under Location card) */}
+                <div className="lg:hidden rounded-2xl p-5" style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}>
+                  <div className="grid grid-cols-3 gap-2">
+                    {/* Property Type */}
+                    <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                      <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
+                        <span style={{ color: "#1C3A2F" }}><Icon.home /></span>
+                        <span>Type</span>
+                      </div>
+                      <div className="text-[12px] font-bold mt-1 capitalize" style={{ color: "#1A1A1A" }}>
+                        {property.propertyType}
+                      </div>
+                    </div>
+
+                    {/* Floor */}
+                    <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                      <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
+                        <span style={{ color: "#1C3A2F" }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m16 14-4-4-4 4"/></svg>
+                        </span>
+                        <span>Floor</span>
+                      </div>
+                      <div className="text-[12px] font-bold mt-1" style={{ color: "#1A1A1A" }}>
+                        {property.floor ? String(property.floor) : getDynamicFloor(property.description, property.id, property.propertyType).split(" / ")[0]}
+                      </div>
+                    </div>
+
+                    {/* Total Floors */}
+                    <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                      <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
+                        <span style={{ color: "#1C3A2F" }}><Icon.stories /></span>
+                        <span>Total Floors</span>
+                      </div>
+                      <div className="text-[12px] font-bold mt-1" style={{ color: "#1A1A1A" }}>
+                        {property.totalFloors ? String(property.totalFloors) : getDynamicFloor(property.description, property.id, property.propertyType).split(" / ")[1] || "—"}
+                      </div>
+                    </div>
+
+                    {/* Pet Friendly */}
+                    <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                      <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
+                        <span style={{ color: "#1C3A2F" }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4-2c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5S8.83 8 8 8zm8 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5S16.83 8 16 8zm-4 8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        </span>
+                        <span>Pets</span>
+                      </div>
+                      <div className="text-[12px] font-bold mt-1" style={{ color: "#1A1A1A" }}>
+                        {property.petFriendly || houseRulesDefaults(property).pets ? "Yes" : "No"}
+                      </div>
+                    </div>
+
+                    {/* Availability */}
+                    <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                      <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
+                        <span style={{ color: "#1C3A2F" }}><Icon.calendar /></span>
+                        <span>Available</span>
+                      </div>
+                      <div className="text-[12px] font-bold mt-1 leading-tight truncate" style={{ color: "#1A1A1A" }}>
+                        {availableFromLabel(property) === "Immediate" || availableFromLabel(property) === "Negotiable" ? "Available Now" : availableFromLabel(property)}
+                      </div>
+                    </div>
+
+                    {/* Min Stay */}
+                    <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
+                      <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
+                        <span style={{ color: "#1C3A2F" }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </span>
+                        <span>Min. Stay</span>
+                      </div>
+                      <div className="text-[12px] font-bold mt-1 truncate" style={{ color: "#1A1A1A" }}>
+                        {property.listingType === "sale" ? "Freehold" : property.listingType === "short_stay" ? (property.leaseTerms || "3 Months") : (property.leaseTerms || "12 Months")}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
               </div>
