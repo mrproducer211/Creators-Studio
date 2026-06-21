@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://nhpbangkok.com"),
+  metadataBase: new URL("https://newhomesproperty.com"),
   title: "New Home Property — Live. Belong. Bangkok.",
   description:
     "Bangkok's premium property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
@@ -25,8 +25,8 @@ const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
   name: "NHP Bangkok",
-  url: "https://nhpbangkok.com",
-  logo: "https://nhpbangkok.com/images/nhp-logo.webp",
+  url: "https://newhomesproperty.com",
+  logo: "https://newhomesproperty.com/images/nhp-logo.webp",
   description:
     "Bangkok's premium property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
   areaServed: {
@@ -41,8 +41,8 @@ const orgJsonLd = {
     availableLanguage: ["English", "Thai"],
   },
   sameAs: [
-    "https://www.facebook.com/nhpbangkok",
-    "https://www.instagram.com/nhpbangkok",
+    "https://www.facebook.com/newhomesproperty.com",
+    "https://www.instagram.com/newhomesproperty.com",
   ],
 };
 
@@ -50,12 +50,12 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "NHP Bangkok",
-  url: "https://nhpbangkok.com",
+  url: "https://newhomesproperty.com",
   potentialAction: {
     "@type": "SearchAction",
     target: {
       "@type": "EntryPoint",
-      urlTemplate: "https://nhpbangkok.com/explore?q={search_term_string}",
+      urlTemplate: "https://newhomesproperty.com/explore?q={search_term_string}",
     },
     "query-input": "required name=search_term_string",
   },

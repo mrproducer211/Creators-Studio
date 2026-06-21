@@ -47,7 +47,7 @@ export default async function BlogPostPage({ params }: Props) {
   const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(headerFont)}:wght@400;600;700&family=${encodeURIComponent(bodyFont)}:wght@300;400;500;600&display=swap`;
 
   // Build the absolute image URL for schema
-  const siteBase = "https://nhpbangkok.com";
+  const siteBase = "https://newhomesproperty.com";
   const imageUrl = post.image.startsWith("http") ? post.image : `${siteBase}${post.image}`;
 
   const blogJsonLd = {

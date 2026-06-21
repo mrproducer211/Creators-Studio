@@ -3,14 +3,14 @@ export const T_PRIVACY = {
     badge: "Legal",
     title: "Privacy Policy",
     lastUpdated: "Last updated: June 2026",
-    intro: "At NHP Bangkok, we take your privacy seriously. This policy explains what personal information we collect when you use nhpbangkok.com, how we use it, and the choices and rights available to you. We have written this document in plain language — not legal jargon — because we believe transparency builds trust.",
+    intro: "At NHP Bangkok, we take your privacy seriously. This policy explains what personal information we collect when you use newhomesproperty.com, how we use it, and the choices and rights available to you. We have written this document in plain language — not legal jargon — because we believe transparency builds trust.",
     sections: [
       {
         number: "1",
         title: "Who We Are",
         body: [
-          "New Home Property (NHP) Bangkok operates the website nhpbangkok.com, a property search and neighbourhood discovery platform designed for expats, digital nomads, and international visitors in Bangkok, Thailand.",
-          "When this policy refers to \"NHP\", \"we\", \"us\", or \"our\", it refers to the operators of nhpbangkok.com. Any enquiries regarding this policy can be directed to Info@newhomesproperty.com."
+          "New Home Property (NHP) Bangkok operates the website newhomesproperty.com, a property search and neighbourhood discovery platform designed for expats, digital nomads, and international visitors in Bangkok, Thailand.",
+          "When this policy refers to \"NHP\", \"we\", \"us\", or \"our\", it refers to the operators of newhomesproperty.com. Any enquiries regarding this policy can be directed to Info@newhomesproperty.com."
         ]
       },
       {
@@ -69,7 +69,7 @@ export const T_PRIVACY = {
         number: "7",
         title: "Third-Party Links",
         body: [
-          "Our platform may contain links to external websites, including property developer sites, local government resources, and mapping services. This Privacy Policy applies only to nhpbangkok.com.",
+          "Our platform may contain links to external websites, including property developer sites, local government resources, and mapping services. This Privacy Policy applies only to newhomesproperty.com.",
           "We are not responsible for the privacy practices of any third-party websites linked from our platform. We encourage you to review the privacy policies of any external sites you visit."
         ]
       },
@@ -87,14 +87,14 @@ export const T_PRIVACY = {
     badge: "ข้อมูลด้านกฎหมาย",
     title: "นโยบายความเป็นส่วนตัว",
     lastUpdated: "แก้ไขล่าสุดเมื่อ: มิถุนายน 2569",
-    intro: "ที่ NHP Bangkok เราให้ความสำคัญกับความเป็นส่วนตัวของคุณ นโยบายนี้อธิบายถึงข้อมูลส่วนบุคคลที่เราเก็บรวบรวมเมื่อคุณใช้งาน nhpbangkok.com วิธีการที่เรานำไปใช้ ตลอดจนทางเลือกและสิทธิ์ที่คุณพึงมี เราได้เขียนเอกสารนี้ด้วยภาษาที่เข้าใจง่าย เพื่อความโปร่งใสและสร้างความไว้วางใจให้กับผู้ใช้งานทุกท่าน",
+    intro: "ที่ NHP Bangkok เราให้ความสำคัญกับความเป็นส่วนตัวของคุณ นโยบายนี้อธิบายถึงข้อมูลส่วนบุคคลที่เราเก็บรวบรวมเมื่อคุณใช้งาน newhomesproperty.com วิธีการที่เรานำไปใช้ ตลอดจนทางเลือกและสิทธิ์ที่คุณพึงมี เราได้เขียนเอกสารนี้ด้วยภาษาที่เข้าใจง่าย เพื่อความโปร่งใสและสร้างความไว้วางใจให้กับผู้ใช้งานทุกท่าน",
     sections: [
       {
         number: "1",
         title: "พวกเราคือใคร",
         body: [
-          "New Home Property (NHP) Bangkok ดำเนินการเว็บไซต์ nhpbangkok.com แพลตฟอร์มค้นหาอสังหาริมทรัพย์และสำรวจย่านพักอาศัยที่ออกแบบมาสำหรับชาวต่างชาติ ดิจิทัลโนแมด และผู้มาเยือนกรุงเทพฯ ประเทศไทย",
-          "เมื่อนโยบายนี้กล่าวถึง \"NHP\", \"เรา\", \"พวกเรา\" หรือ \"ของเรา\" จะหมายถึงผู้ให้บริการ nhpbangkok.com สอบถามเพิ่มเติมเกี่ยวกับนโยบายนี้ได้ที่ Info@newhomesproperty.com"
+          "New Home Property (NHP) Bangkok ดำเนินการเว็บไซต์ newhomesproperty.com แพลตฟอร์มค้นหาอสังหาริมทรัพย์และสำรวจย่านพักอาศัยที่ออกแบบมาสำหรับชาวต่างชาติ ดิจิทัลโนแมด และผู้มาเยือนกรุงเทพฯ ประเทศไทย",
+          "เมื่อนโยบายนี้กล่าวถึง \"NHP\", \"เรา\", \"พวกเรา\" หรือ \"ของเรา\" จะหมายถึงผู้ให้บริการ newhomesproperty.com สอบถามเพิ่มเติมเกี่ยวกับนโยบายนี้ได้ที่ Info@newhomesproperty.com"
         ]
       },
       {
@@ -153,7 +153,7 @@ export const T_PRIVACY = {
         number: "7",
         title: "ลิงก์ไปยังบุคคลภายนอก",
         body: [
-          "แพลตฟอร์มของเราอาจมีลิงก์เชื่อมต่อไปยังเว็บไซต์ภายนอก รวมถึงเว็บไซต์ผู้พัฒนาโครงการอสังหาฯ แหล่งข้อมูลราชการในท้องถิ่น และบริการแผนที่ นโยบายความเป็นส่วนตัวนี้ใช้เฉพาะกับ nhpbangkok.com เท่านั้น",
+          "แพลตฟอร์มของเราอาจมีลิงก์เชื่อมต่อไปยังเว็บไซต์ภายนอก รวมถึงเว็บไซต์ผู้พัฒนาโครงการอสังหาฯ แหล่งข้อมูลราชการในท้องถิ่น และบริการแผนที่ นโยบายความเป็นส่วนตัวนี้ใช้เฉพาะกับ newhomesproperty.com เท่านั้น",
           "เราไม่มีส่วนรับผิดชอบต่อแนวปฏิบัติความเป็นส่วนตัวของเว็บไซต์บุคคลภายนอกเหล่านั้น เราขอแนะนำให้คุณอ่านนโยบายความเป็นส่วนตัวของทุกเว็บไซต์ภายนอกที่คุณเข้าชม"
         ]
       },
@@ -171,14 +171,14 @@ export const T_PRIVACY = {
     badge: "法律信息",
     title: "隐私政策",
     lastUpdated: "最后更新时间：2026年6月",
-    intro: "在 NHP Bangkok，我们非常重视您的隐私。本政策解释了您在使用 nhpbangkok.com 时，我们如何收集、使用您的个人信息，以及您所拥有的选择和权利。我们使用通俗易懂的语言编写了这份文档，而不是晦涩的法律术语，因为我们深信透明度是建立信任的基石。",
+    intro: "在 NHP Bangkok，我们非常重视您的隐私。本政策解释了您在使用 newhomesproperty.com 时，我们如何收集、使用您的个人信息，以及您所拥有的选择和权利。我们使用通俗易懂的语言编写了这份文档，而不是晦涩的法律术语，因为我们深信透明度是建立信任的基石。",
     sections: [
       {
         number: "1",
         title: "我们是谁",
         body: [
-          "New Home Property (NHP) Bangkok 运营网站 nhpbangkok.com，这是一个专为生活在泰国曼谷的外籍人士、数字游民及国际游客设计的房源搜索与社区探索平台。",
-          "本政策中所称的“NHP”、“我们”或“我们的”均指 nhpbangkok.com 的运营团队。有关本隐私政策的任何疑问或咨询，可直接发送至电子邮箱：Info@newhomesproperty.com。"
+          "New Home Property (NHP) Bangkok 运营网站 newhomesproperty.com，这是一个专为生活在泰国曼谷的外籍人士、数字游民及国际游客设计的房源搜索与社区探索平台。",
+          "本政策中所称的“NHP”、“我们”或“我们的”均指 newhomesproperty.com 的运营团队。有关本隐私政策的任何疑问或咨询，可直接发送至电子邮箱：Info@newhomesproperty.com。"
         ]
       },
       {
@@ -237,7 +237,7 @@ export const T_PRIVACY = {
         number: "7",
         title: "第三方网站链接",
         body: [
-          "我们的平台可能包含指向外部网站的链接，包括房产开发商官网、当地政府部门资源及地图导航服务。本隐私政策仅适用于 nhpbangkok.com。",
+          "我们的平台可能包含指向外部网站的链接，包括房产开发商官网、当地政府部门资源及地图导航服务。本隐私政策仅适用于 newhomesproperty.com。",
           "我们不对从我们平台链接出去的任何第三方网站的隐私条例或运营活动承担责任。我们强烈建议您认真阅读您访问的每一个外部网站的隐私政策。"
         ]
       },

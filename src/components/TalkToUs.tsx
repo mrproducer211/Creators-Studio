@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function TalkToUs() {
   const { t } = useLanguage();
   const [contacts, setContacts] = useState({
-    email: "admin@nhpbangkok.com",
+    email: "admin@newhomesproperty.com",
     whatsapp: "+66812345678",
     line: "nhp-line-id",
     telegram: "nhp-telegram",
@@ -18,7 +18,7 @@ export default function TalkToUs() {
       .then((data) => {
         if (data) {
           setContacts({
-            email: data.adminEmail || "admin@nhpbangkok.com",
+            email: data.adminEmail || "admin@newhomesproperty.com",
             whatsapp: data.adminWhatsApp || "+66812345678",
             line: data.adminLine || "nhp-line-id",
             telegram: data.adminTelegram || "nhp-telegram",

@@ -3,7 +3,7 @@ import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAllPosts } from "@/lib/store/blog";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://nhpbangkok.com";
+  const baseUrl = "https://newhomesproperty.com";
 
   // 1. Static Pages
   const routes = ["", "/about", "/privacy", "/explore"].map((route) => ({

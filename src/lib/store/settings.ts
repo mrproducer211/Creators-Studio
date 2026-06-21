@@ -12,7 +12,7 @@ export interface SystemSettings {
 
 const FILE = "settings.json";
 const DEFAULT_SETTINGS: SystemSettings = {
-  adminEmail: "admin@nhpbangkok.com",
+  adminEmail: "admin@newhomesproperty.com",
   adminPhone: "+66812345678",
   rentalExpiryEnabled: false,
   rentalExpiryDays: 30,

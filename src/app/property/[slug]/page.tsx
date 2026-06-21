@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: Props) {
   
   const title = `${roomType} ${propType} for ${action} in ${p.area} | ${priceStr}${label} — NHP`;
   const description = p.description.slice(0, 160);
-  const canonicalUrl = `https://nhpbangkok.com/property/${p.slug}`;
-  const imageUrl = p.coverImage || "https://nhpbangkok.com/images/homepage_hero_v2.webp";
+  const canonicalUrl = `https://newhomesproperty.com/property/${p.slug}`;
+  const imageUrl = p.coverImage || "https://newhomesproperty.com/images/homepage_hero_v2.webp";
 
   return {
     title,
@@ -118,8 +118,8 @@ export default async function PropertyPage({ params }: Props) {
     "@type": "RealEstateListing",
     "name": property.name,
     "description": property.description,
-    "url": `https://nhpbangkok.com/property/${property.slug}`,
-    "image": property.coverImage || "https://nhpbangkok.com/images/homepage_hero_v2.webp",
+    "url": `https://newhomesproperty.com/property/${property.slug}`,
+    "image": property.coverImage || "https://newhomesproperty.com/images/homepage_hero_v2.webp",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": property.district || property.area,
@@ -130,7 +130,7 @@ export default async function PropertyPage({ params }: Props) {
       "@type": "Offer",
       "priceCurrency": "THB",
       "price": property.priceTHB,
-      "url": `https://nhpbangkok.com/property/${property.slug}`,
+      "url": `https://newhomesproperty.com/property/${property.slug}`,
       "category": property.listingType === "sale" ? "sale" : "rent",
     },
   };

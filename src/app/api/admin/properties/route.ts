@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
       );
 
       // Notify Google immediately (fire-and-forget — never blocks the API response)
-      submitToGoogleIndexing(`https://nhpbangkok.com/property/${val.slug}`).catch((err) =>
+      submitToGoogleIndexing(`https://newhomesproperty.com/property/${val.slug}`).catch((err) =>
         console.warn("Google Indexing ping failed:", err)
       );
 
@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
   );
 
   // Notify Google immediately (fire-and-forget — never blocks the API response)
-  submitToGoogleIndexing(`https://nhpbangkok.com/property/${val.slug}`).catch((err) =>
+  submitToGoogleIndexing(`https://newhomesproperty.com/property/${val.slug}`).catch((err) =>
     console.warn("Google Indexing ping failed:", err)
   );
 
