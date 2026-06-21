@@ -207,15 +207,15 @@ function parseTelegramMessage(text: string, messageId: number) {
   const nameMatch = text.match(/(?:#name|Name)[:\s=]+([^\n]+)/i);
   if (nameMatch) name = nameMatch[1].trim();
 
-  // Listing Types detection
+  // Listing Types detection (strict checks on hashtags or exact keys to avoid matching description text)
   const listingTypes: ("sale" | "rent" | "short_stay")[] = [];
-  if (/#sale|sale/i.test(text) || /(?:Sale_Price|Sale\s*Price)\s*:/i.test(text)) {
+  if (/#sale\b/i.test(text) || /(?:Sale_Price|Sale\s*Price)\s*:/i.test(text)) {
     listingTypes.push("sale");
   }
-  if (/#rent|rent/i.test(text) || /(?:Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year)\s*:/i.test(text)) {
+  if (/#rent\b/i.test(text) || /(?:Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year)\s*:/i.test(text)) {
     listingTypes.push("rent");
   }
-  if (/#shortstay|#short_stay|short stay|short_stay/i.test(text) || /(?:Rent_ShortStay|Rent\s*Short\s*Stay)\s*:/i.test(text)) {
+  if (/#(?:shortstay|short_stay)\b/i.test(text) || /(?:Rent_ShortStay|Rent\s*Short\s*Stay)\s*:/i.test(text)) {
     listingTypes.push("short_stay");
   }
 
@@ -261,8 +261,8 @@ function parseTelegramMessage(text: string, messageId: number) {
     rentPrice = cleanAndParsePrice(rent1YearMatch[1]);
   } else if (listingTypes.includes("rent")) {
     const rentRegexes = [
-      /(?:#rent|rent|rental|renting)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
-      /(?:#price|price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /(?:#rent|\brent|\brental|\brenting)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /(?<!sale\s*|rent\s*|short\s*|stay\s*)(?:#price|\bprice)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
       /([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)\s*(?:\/month|\/mo|\s*baht\/month|\s*thb\/month|pm\b)/i
     ];
     for (const regex of rentRegexes) {
@@ -280,8 +280,8 @@ function parseTelegramMessage(text: string, messageId: number) {
     salePrice = cleanAndParsePrice(saleMatch[1]);
   } else if (listingTypes.includes("sale")) {
     const saleRegexes = [
-      /(?:#sale|sale|selling|buy|purchas|selling\s*price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
-      /(?:#price|price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i
+      /(?:#sale|\bsale|\bselling|\bbuy|\bpurchas|\bselling\s*price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /(?<!sale\s*|rent\s*|short\s*|stay\s*)(?:#price|\bprice)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i
     ];
     for (const regex of saleRegexes) {
       const match = text.match(regex);
@@ -325,8 +325,8 @@ function parseTelegramMessage(text: string, messageId: number) {
 
   if (shortStayPrice === 0 && listingTypes.includes("short_stay")) {
     const shortStayRegexes = [
-      /(?:#shortstay|#short_stay|shortstay|short\s*stay)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
-      /(?:#price|price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /(?:#shortstay|#short_stay|\bshortstay|\bshort\s*stay)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
+      /(?<!sale\s*|rent\s*|short\s*|stay\s*)(?:#price|\bprice)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
       /([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)\s*(?:\/night|\/day|\/n|\/d|\s*baht\/night|\s*thb\/night)/i
     ];
     for (const regex of shortStayRegexes) {
