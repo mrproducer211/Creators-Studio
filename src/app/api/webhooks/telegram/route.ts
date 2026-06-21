@@ -158,7 +158,7 @@ function cleanTelegramDescription(text: string): string {
   cleaned = cleaned.replace(simpleHashtagRegex, "");
 
   // 4. Match standard key-value fields e.g. Name: Ideo Mobi
-  const kvFieldRegex = /(?:Name|Price|Sale_Price|Sale\s*Price|Current_Rental_Yield|Current\s*Rental\s*Yield|Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:\s*[^\n]*/gi;
+  const kvFieldRegex = /(?:Name|Price|Sale_Price|Sale\s*Price|Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:\s*[^\n]*/gi;
   cleaned = cleaned.replace(kvFieldRegex, "");
 
   // Clean up extra whitespace and newlines
@@ -239,7 +239,6 @@ function parseTelegramMessage(text: string, messageId: number) {
   let rentPrice = 0;
   let salePrice = 0;
   let shortStayPrice = 0;
-  let currentRentalYield: number | null = null;
   let rentShortStayTiers: Record<string, number> | null = null;
 
   const cleanAndParsePrice = (str: string): number => {
@@ -278,7 +277,7 @@ function parseTelegramMessage(text: string, messageId: number) {
     }
   }
 
-  // 2. Sale price search & Rental yield
+  // 2. Sale price search
   const saleMatch = text.match(/(?:Sale_Price|Sale\s*Price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i);
   if (saleMatch) {
     salePrice = cleanAndParsePrice(saleMatch[1]);
@@ -297,11 +296,6 @@ function parseTelegramMessage(text: string, messageId: number) {
         }
       }
     }
-  }
-
-  const yieldMatch = text.match(/(?:Current_Rental_Yield|Current\s*Rental\s*Yield)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i);
-  if (yieldMatch) {
-    currentRentalYield = cleanAndParsePrice(yieldMatch[1]);
   }
 
   // 3. Short stay price search & Tiered pricing
@@ -610,7 +604,6 @@ function parseTelegramMessage(text: string, messageId: number) {
     rentPrice,
     salePrice,
     shortStayPrice,
-    currentRentalYield,
     rentShortStayTiers,
     bedrooms,
     bathrooms,
@@ -867,9 +860,7 @@ async function publishDraftListing(
 
   const getDescriptionForType = (type: string) => {
     let desc = propertyData.description || "";
-    if (type === "sale" && propertyData.currentRentalYield) {
-      desc = `💰 Current Rental Yield: ฿${propertyData.currentRentalYield.toLocaleString()}/month\n\n${desc}`;
-    } else if (type === "short_stay" && propertyData.rentShortStayTiers) {
+    if (type === "short_stay" && propertyData.rentShortStayTiers) {
       const formattedTiers = Object.entries(propertyData.rentShortStayTiers)
         .map(([k, v]) => `• ${k}: ฿${v.toLocaleString()}/month`)
         .join("\n");
@@ -879,9 +870,6 @@ async function publishDraftListing(
   };
 
   const getLeaseTermsForType = (type: string) => {
-    if (type === "sale" && propertyData.currentRentalYield) {
-      return `฿${propertyData.currentRentalYield.toLocaleString()}/mo`;
-    }
     if (type === "short_stay" && propertyData.rentShortStayTiers) {
       return Object.entries(propertyData.rentShortStayTiers)
         .map(([k, v]) => `${k}: ฿${v.toLocaleString()}/mo`)
@@ -1063,9 +1051,6 @@ async function publishDraftListing(
         const label = t === "sale" ? "For Sale" : (t === "rent" ? "For Rent" : "Short Stay");
         const priceSuffix = (t === "short_stay" || t === "rent") ? "/month" : "";
         successText += `<b>🏷️ ${label}:</b> ฿${priceStr}${priceSuffix}\n`;
-        if (t === "sale" && propertyData.currentRentalYield) {
-          successText += `🔑 <b>Rental Yield:</b> ฿${Number(propertyData.currentRentalYield).toLocaleString()}/month\n`;
-        }
         successText += `🔗 <a href="${typeUrl}">View ${label} Listing</a>\n\n`;
       }
       await sendTelegramResponse(botToken, chatId, successText.trim(), messageId);
@@ -1077,9 +1062,6 @@ async function publishDraftListing(
       const priceSuffix = (propertyData.listingType === "short_stay" || propertyData.listingType === "rent") ? "/month" : "";
       
       let successText = `<b>✅ Listing Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propName}\n💰 <b>Price:</b> ฿${propPrice}${priceSuffix}\n📍 <b>Area:</b> ${propArea}\n`;
-      if (propertyData.listingType === "sale" && propertyData.currentRentalYield) {
-        successText += `🔑 <b>Rental Yield:</b> ฿${Number(propertyData.currentRentalYield).toLocaleString()}/month\n`;
-      }
       successText += `\n🔗 <a href="${propertyUrl}">View Listing</a>`;
       await sendTelegramResponse(botToken, chatId, successText, messageId);
     }
