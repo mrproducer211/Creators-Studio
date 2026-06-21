@@ -143,18 +143,22 @@ async function findYearBuiltFromWeb(propertyName: string): Promise<number | null
  * Clean up the raw Telegram post description by stripping out parsing key-values and tags.
  */
 function cleanTelegramDescription(text: string): string {
-  // Match key-value hashtags e.g. #floor: 15
-  const kvHashtagRegex = /#(?:floor|total_floors|floors|bts_walk|mrt_walk|built|renovated|bts|mrt|available|furnishing|furnish|lease|deposit|maintenance)\s*:\s*.*?(?=\s*(?:#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|sauna|bathtub|nearbts|nearmrt|petfriendly|visafriendly|foreignquota|floor|total_floors|floors|bts_walk|mrt_walk|built|renovated|bts|mrt|available|furnishing|furnish|lease|deposit|maintenance)\b|(?:Name|Price|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:|$))/gi;
-  
-  // Match simple hashtags e.g. #rent #condo
-  const simpleHashtagRegex = /#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|sauna|bathtub|nearbts|nearmrt|petfriendly|visafriendly|foreignquota)\b/gi;
-
-  // Match standard key-value fields e.g. Name: Ideo Mobi
-  const kvFieldRegex = /(?:Name|Price|Sale_Price|Sale\s*Price|Current_Rental_Yield|Current\s*Rental\s*Yield|Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year|Rent_ShortStay|Rent\s*Short\s*Stay|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:\s*.*?(?=\s*(?:#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|sauna|bathtub|nearbts|nearmrt|petfriendly|visafriendly|foreignquota|floor|total_floors|floors|bts_walk|mrt_walk|built|renovated|bts|mrt|available|furnishing|furnish|lease|deposit|maintenance)\b|(?:Name|Price|Sale_Price|Sale\s*Price|Current_Rental_Yield|Current\s*Rental\s*Yield|Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year|Rent_ShortStay|Rent\s*Short\s*Stay|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:|$))/gi;
-
   let cleaned = text;
+
+  // 1. Strip the tiered Rent_ShortStay block (which spans multiple lines)
+  const shortStayBlockRegex = /(?:Rent_ShortStay|Rent\s*Short\s*Stay)\s*:\s*(?:\r?\n\s*-\s*[^\n]*)*\r?\n?/gi;
+  cleaned = cleaned.replace(shortStayBlockRegex, "");
+
+  // 2. Match key-value hashtags e.g. #floor: 15
+  const kvHashtagRegex = /#(?:floor|total_floors|floors|bts_walk|mrt_walk|built|renovated|bts|mrt|available|furnishing|furnish|lease|deposit|maintenance)\s*:\s*[^\n]*/gi;
   cleaned = cleaned.replace(kvHashtagRegex, "");
+
+  // 3. Match simple hashtags including all amenities and features
+  const simpleHashtagRegex = /#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|fitness|security|cctv|parking|wifi|internet|sauna|garden|playground|coworking|lounge|rooftop|concierge|balcony|bathtub|furnish|furnishing|kitchen|view|highfloor|brandnew|renovate|sofa|tv|television|air|ac|aircon|washing|washer|fridge|refrigerator|microwave|nearbts|nearmrt|petfriendly|visafriendly|foreignquota)\b/gi;
   cleaned = cleaned.replace(simpleHashtagRegex, "");
+
+  // 4. Match standard key-value fields e.g. Name: Ideo Mobi
+  const kvFieldRegex = /(?:Name|Price|Sale_Price|Sale\s*Price|Current_Rental_Yield|Current\s*Rental\s*Yield|Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:\s*[^\n]*/gi;
   cleaned = cleaned.replace(kvFieldRegex, "");
 
   // Clean up extra whitespace and newlines
@@ -864,12 +868,12 @@ async function publishDraftListing(
   const getDescriptionForType = (type: string) => {
     let desc = propertyData.description || "";
     if (type === "sale" && propertyData.currentRentalYield) {
-      desc = `💰 <b>Current Rental Yield:</b> ฿${propertyData.currentRentalYield.toLocaleString()}/month\n\n${desc}`;
+      desc = `💰 Current Rental Yield: ฿${propertyData.currentRentalYield.toLocaleString()}/month\n\n${desc}`;
     } else if (type === "short_stay" && propertyData.rentShortStayTiers) {
       const formattedTiers = Object.entries(propertyData.rentShortStayTiers)
         .map(([k, v]) => `• ${k}: ฿${v.toLocaleString()}/month`)
         .join("\n");
-      desc = `🌙 <b>Short Stay Tiered Pricing:</b>\n${formattedTiers}\n\n${desc}`;
+      desc = `🌙 Short Stay Tiered Pricing:\n${formattedTiers}\n\n${desc}`;
     }
     return desc;
   };
