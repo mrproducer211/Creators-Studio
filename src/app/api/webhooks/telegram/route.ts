@@ -150,7 +150,7 @@ function cleanTelegramDescription(text: string): string {
   const simpleHashtagRegex = /#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|sauna|bathtub|nearbts|nearmrt|petfriendly|visafriendly|foreignquota)\b/gi;
 
   // Match standard key-value fields e.g. Name: Ideo Mobi
-  const kvFieldRegex = /(?:Name|Price|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:\s*.*?(?=\s*(?:#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|sauna|bathtub|nearbts|nearmrt|petfriendly|visafriendly|foreignquota|floor|total_floors|floors|bts_walk|mrt_walk|built|renovated|bts|mrt|available|furnishing|furnish|lease|deposit|maintenance)\b|(?:Name|Price|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:|$))/gi;
+  const kvFieldRegex = /(?:Name|Price|Sale_Price|Sale\s*Price|Current_Rental_Yield|Current\s*Rental\s*Yield|Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year|Rent_ShortStay|Rent\s*Short\s*Stay|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:\s*.*?(?=\s*(?:#(?:rent|condo|sale|shortstay|short_stay|apartment|house|villa|townhouse|pool|gym|sauna|bathtub|nearbts|nearmrt|petfriendly|visafriendly|foreignquota|floor|total_floors|floors|bts_walk|mrt_walk|built|renovated|bts|mrt|available|furnishing|furnish|lease|deposit|maintenance)\b|(?:Name|Price|Sale_Price|Sale\s*Price|Current_Rental_Yield|Current\s*Rental\s*Yield|Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year|Rent_ShortStay|Rent\s*Short\s*Stay|Beds|Bedrooms|Baths|Bathrooms|Sqm|Area|District)\s*:|$))/gi;
 
   let cleaned = text;
   cleaned = cleaned.replace(kvHashtagRegex, "");
@@ -207,10 +207,22 @@ function parseTelegramMessage(text: string, messageId: number) {
   const nameMatch = text.match(/(?:#name|Name)[:\s=]+([^\n]+)/i);
   if (nameMatch) name = nameMatch[1].trim();
 
-  // Listing Type
-  if (/#sale|sale/i.test(text)) listingType = "sale";
-  else if (/#rent|rent/i.test(text)) listingType = "rent";
-  else if (/#shortstay|#short_stay|short stay|short_stay/i.test(text)) listingType = "short_stay";
+  // Listing Types detection
+  const listingTypes: ("sale" | "rent" | "short_stay")[] = [];
+  if (/#sale|sale/i.test(text) || /(?:Sale_Price|Sale\s*Price)\s*:/i.test(text)) {
+    listingTypes.push("sale");
+  }
+  if (/#rent|rent/i.test(text) || /(?:Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year)\s*:/i.test(text)) {
+    listingTypes.push("rent");
+  }
+  if (/#shortstay|#short_stay|short stay|short_stay/i.test(text) || /(?:Rent_ShortStay|Rent\s*Short\s*Stay)\s*:/i.test(text)) {
+    listingTypes.push("short_stay");
+  }
+
+  if (listingTypes.length === 0) {
+    listingTypes.push("sale"); // default fallback
+  }
+  listingType = listingTypes[0];
 
   // Property Type
   if (/#condo|condo/i.test(text)) propertyType = "condo";
@@ -219,21 +231,12 @@ function parseTelegramMessage(text: string, messageId: number) {
   else if (/#townhouse|townhouse/i.test(text)) propertyType = "townhouse";
   else if (/#apartment|apartment/i.test(text)) propertyType = "apartment";
 
-  // Listing Types & Price Parsing
-  const listingTypes: ("sale" | "rent" | "short_stay")[] = [];
-  if (/#sale|sale/i.test(text)) listingTypes.push("sale");
-  if (/#rent|rent/i.test(text)) listingTypes.push("rent");
-  if (/#shortstay|#short_stay|short stay|short_stay/i.test(text)) listingTypes.push("short_stay");
-
-  if (listingTypes.length === 0) {
-    listingTypes.push("sale"); // default fallback
-  }
-  listingType = listingTypes[0];
-
   const isDualListing = listingTypes.length > 1;
   let rentPrice = 0;
   let salePrice = 0;
   let shortStayPrice = 0;
+  let currentRentalYield: number | null = null;
+  let rentShortStayTiers: Record<string, number> | null = null;
 
   const cleanAndParsePrice = (str: string): number => {
     let clean = str.toLowerCase().replace(/,/g, "").trim();
@@ -253,7 +256,10 @@ function parseTelegramMessage(text: string, messageId: number) {
   };
 
   // 1. Rent price search
-  if (listingTypes.includes("rent")) {
+  const rent1YearMatch = text.match(/(?:Rent_Price_1Year|Rent\s*Price\s*1\s*Year|Rent_Price_1Year)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i);
+  if (rent1YearMatch) {
+    rentPrice = cleanAndParsePrice(rent1YearMatch[1]);
+  } else if (listingTypes.includes("rent")) {
     const rentRegexes = [
       /(?:#rent|rent|rental|renting)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
       /(?:#price|price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
@@ -268,8 +274,11 @@ function parseTelegramMessage(text: string, messageId: number) {
     }
   }
 
-  // 2. Sale price search
-  if (listingTypes.includes("sale")) {
+  // 2. Sale price search & Rental yield
+  const saleMatch = text.match(/(?:Sale_Price|Sale\s*Price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i);
+  if (saleMatch) {
+    salePrice = cleanAndParsePrice(saleMatch[1]);
+  } else if (listingTypes.includes("sale")) {
     const saleRegexes = [
       /(?:#sale|sale|selling|buy|purchas|selling\s*price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
       /(?:#price|price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i
@@ -286,8 +295,35 @@ function parseTelegramMessage(text: string, messageId: number) {
     }
   }
 
-  // 3. Short stay price search
-  if (listingTypes.includes("short_stay")) {
+  const yieldMatch = text.match(/(?:Current_Rental_Yield|Current\s*Rental\s*Yield)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i);
+  if (yieldMatch) {
+    currentRentalYield = cleanAndParsePrice(yieldMatch[1]);
+  }
+
+  // 3. Short stay price search & Tiered pricing
+  const shortStayBlockMatch = text.match(/(?:Rent_ShortStay|Rent\s*Short\s*Stay)[:\s]*([\s\S]*?)(?=\n\s*(?:[A-Z][a-zA-Z0-9_]*:|\#|$))/i);
+  if (shortStayBlockMatch) {
+    const block = shortStayBlockMatch[1].trim();
+    const tiers: Record<string, number> = {};
+    const lines = block.split(/[\n,]/);
+    for (const line of lines) {
+      const match = line.match(/(?:-\s*)?([^:]+?)\s*:\s*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i);
+      if (match) {
+        const duration = match[1].replace(/^[•\-\*\s]+/, "").trim();
+        const price = cleanAndParsePrice(match[2]);
+        if (price > 0) {
+          tiers[duration] = price;
+        }
+      }
+    }
+    if (Object.keys(tiers).length > 0) {
+      rentShortStayTiers = tiers;
+      const values = Object.values(tiers);
+      shortStayPrice = values[0] || 0;
+    }
+  }
+
+  if (shortStayPrice === 0 && listingTypes.includes("short_stay")) {
     const shortStayRegexes = [
       /(?:#shortstay|#short_stay|shortstay|short\s*stay)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
       /(?:#price|price)[:\s=฿]*([\d,]+(?:\.\d+)?\s*(?:million|m|k|ล้าน)?)/i,
@@ -359,8 +395,8 @@ function parseTelegramMessage(text: string, messageId: number) {
   if (bedsMatch) bedrooms = Number(bedsMatch[1]);
 
   // Bathrooms
-  const bathsMatch = text.match(/(?:#baths|baths|bathrooms)[:\s=]+(\d+)/i) || text.match(/(\d+)\s*(?:bath|ba|bathroom)/i);
-  if (bathsMatch) bathrooms = Number(bathsMatch[1]);
+  const bathroomsMatch = text.match(/(?:#baths|baths|bathrooms)[:\s=]+(\d+)/i) || text.match(/(\d+)\s*(?:bath|ba|bathroom)/i);
+  if (bathroomsMatch) bathrooms = Number(bathroomsMatch[1]);
 
   // SQM
   const sqmMatch = text.match(/(?:#sqm|sqm)[:\s=]+(\d+)/i) || text.match(/(\d+)\s*(?:sqm|sq\.m\.|sq\s*meter|m2)/i);
@@ -570,6 +606,8 @@ function parseTelegramMessage(text: string, messageId: number) {
     rentPrice,
     salePrice,
     shortStayPrice,
+    currentRentalYield,
+    rentShortStayTiers,
     bedrooms,
     bathrooms,
     sqm,
@@ -816,16 +854,41 @@ async function publishDraftListing(
     status: "active" as const, // Change status to active
   };
 
+  const getPriceForType = (type: string) => {
+    if (type === "sale") return propertyData.salePrice || propertyData.priceTHB;
+    if (type === "rent") return propertyData.rentPrice || propertyData.priceTHB;
+    if (type === "short_stay") return propertyData.shortStayPrice || propertyData.priceTHB;
+    return propertyData.priceTHB;
+  };
+
+  const getDescriptionForType = (type: string) => {
+    let desc = propertyData.description || "";
+    if (type === "sale" && propertyData.currentRentalYield) {
+      desc = `💰 <b>Current Rental Yield:</b> ฿${propertyData.currentRentalYield.toLocaleString()}/month\n\n${desc}`;
+    } else if (type === "short_stay" && propertyData.rentShortStayTiers) {
+      const formattedTiers = Object.entries(propertyData.rentShortStayTiers)
+        .map(([k, v]) => `• ${k}: ฿${v.toLocaleString()}/month`)
+        .join("\n");
+      desc = `🌙 <b>Short Stay Tiered Pricing:</b>\n${formattedTiers}\n\n${desc}`;
+    }
+    return desc;
+  };
+
+  const getLeaseTermsForType = (type: string) => {
+    if (type === "sale" && propertyData.currentRentalYield) {
+      return `Rental Income: ฿${propertyData.currentRentalYield.toLocaleString()}/mo`;
+    }
+    if (type === "short_stay" && propertyData.rentShortStayTiers) {
+      return Object.entries(propertyData.rentShortStayTiers)
+        .map(([k, v]) => `${k}: ฿${v.toLocaleString()}/mo`)
+        .join(", ");
+    }
+    return propertyData.leaseTerms || null;
+  };
+
   let updatedProperty: any = null;
   if (isDbConfigured) {
     const types = propertyData.listingTypes || [propertyData.listingType];
-    
-    const getPriceForType = (type: string) => {
-      if (type === "sale") return propertyData.salePrice || propertyData.priceTHB;
-      if (type === "rent") return propertyData.rentPrice || propertyData.priceTHB;
-      if (type === "short_stay") return propertyData.shortStayPrice || propertyData.priceTHB;
-      return propertyData.priceTHB;
-    };
 
     if (types.length > 1) {
       // 1. Update the existing draft to be the first type
@@ -836,7 +899,7 @@ async function publishDraftListing(
         .set({
           slug: `${propertyData.slug}-${firstType}`,
           name: propertyData.name,
-          description: propertyData.description,
+          description: getDescriptionForType(firstType),
           listingType: firstType,
           propertyType: propertyData.propertyType,
           status: propertyData.status,
@@ -869,7 +932,7 @@ async function publishDraftListing(
           mrtWalkMin: propertyData.mrtWalkMin || null,
           foreignQuota: propertyData.foreignQuota || null,
           visaFriendly: propertyData.visaFriendly || null,
-          leaseTerms: propertyData.leaseTerms || null,
+          leaseTerms: getLeaseTermsForType(firstType),
           depositTerms: propertyData.depositTerms || null,
           maintenance: propertyData.maintenance || null,
           floor: propertyData.floor || null,
@@ -889,7 +952,7 @@ async function publishDraftListing(
           .values({
             slug: `${propertyData.slug}-${otherType}`,
             name: propertyData.name,
-            description: propertyData.description,
+            description: getDescriptionForType(otherType),
             listingType: otherType,
             propertyType: propertyData.propertyType,
             status: propertyData.status,
@@ -922,7 +985,7 @@ async function publishDraftListing(
             mrtWalkMin: propertyData.mrtWalkMin || null,
             foreignQuota: propertyData.foreignQuota || null,
             visaFriendly: propertyData.visaFriendly || null,
-            leaseTerms: propertyData.leaseTerms || null,
+            leaseTerms: getLeaseTermsForType(otherType),
             depositTerms: propertyData.depositTerms || null,
             maintenance: propertyData.maintenance || null,
             floor: propertyData.floor || null,
@@ -939,7 +1002,7 @@ async function publishDraftListing(
         .set({
           slug: propertyData.slug,
           name: propertyData.name,
-          description: propertyData.description,
+          description: getDescriptionForType(propertyData.listingType),
           listingType: propertyData.listingType,
           propertyType: propertyData.propertyType,
           status: propertyData.status,
@@ -972,7 +1035,7 @@ async function publishDraftListing(
           mrtWalkMin: propertyData.mrtWalkMin || null,
           foreignQuota: propertyData.foreignQuota || null,
           visaFriendly: propertyData.visaFriendly || null,
-          leaseTerms: propertyData.leaseTerms || null,
+          leaseTerms: getLeaseTermsForType(propertyData.listingType),
           depositTerms: propertyData.depositTerms || null,
           maintenance: propertyData.maintenance || null,
           floor: propertyData.floor || null,
