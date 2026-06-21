@@ -2393,11 +2393,11 @@ export default function PropertyDetail({
                         <span style={{ color: "#1C3A2F" }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </span>
-                        <span>{t.specs.minStay}</span>
+                        <span>{property.listingType === "sale" && property.leaseTerms ? (lang === "th" ? "รายได้ค่าเช่า" : lang === "zh" ? "租金收益" : "Rental Yield") : t.specs.minStay}</span>
                       </div>
                       <div className="text-[12px] font-bold mt-1 truncate" style={{ color: "#1A1A1A" }}>
                         {property.listingType === "sale"
-                          ? t.specs.freehold
+                          ? (property.leaseTerms || t.specs.freehold)
                           : property.listingType === "short_stay"
                             ? (property.leaseTerms === "3 Months" || !property.leaseTerms ? t.specs.months3 : property.leaseTerms)
                             : (property.leaseTerms === "12 Months" || !property.leaseTerms ? t.specs.months12 : property.leaseTerms)
@@ -2838,11 +2838,11 @@ export default function PropertyDetail({
                       <span style={{ color: "#1C3A2F" }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                       </span>
-                      <span>{t.specs.minStay}</span>
+                      <span>{property.listingType === "sale" && property.leaseTerms ? (lang === "th" ? "รายได้ค่าเช่า" : lang === "zh" ? "租金收益" : "Rental Yield") : t.specs.minStay}</span>
                     </div>
                     <div className="text-[12px] font-bold mt-1 truncate" style={{ color: "#1A1A1A" }}>
                       {property.listingType === "sale"
-                        ? t.specs.freehold
+                        ? (property.leaseTerms || t.specs.freehold)
                         : property.listingType === "short_stay"
                           ? (property.leaseTerms === "3 Months" || !property.leaseTerms ? t.specs.months3 : property.leaseTerms)
                           : (property.leaseTerms === "12 Months" || !property.leaseTerms ? t.specs.months12 : property.leaseTerms)
