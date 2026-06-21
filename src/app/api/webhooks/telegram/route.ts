@@ -880,7 +880,7 @@ async function publishDraftListing(
 
   const getLeaseTermsForType = (type: string) => {
     if (type === "sale" && propertyData.currentRentalYield) {
-      return `Rental Income: ฿${propertyData.currentRentalYield.toLocaleString()}/mo`;
+      return `฿${propertyData.currentRentalYield.toLocaleString()}/mo`;
     }
     if (type === "short_stay" && propertyData.rentShortStayTiers) {
       return Object.entries(propertyData.rentShortStayTiers)
@@ -1062,7 +1062,11 @@ async function publishDraftListing(
         const priceStr = Number(price).toLocaleString();
         const label = t === "sale" ? "For Sale" : (t === "rent" ? "For Rent" : "Short Stay");
         const priceSuffix = (t === "short_stay" || t === "rent") ? "/month" : "";
-        successText += `<b>🏷️ ${label}:</b> ฿${priceStr}${priceSuffix}\n🔗 <a href="${typeUrl}">View ${label} Listing</a>\n\n`;
+        successText += `<b>🏷️ ${label}:</b> ฿${priceStr}${priceSuffix}\n`;
+        if (t === "sale" && propertyData.currentRentalYield) {
+          successText += `🔑 <b>Rental Yield:</b> ฿${Number(propertyData.currentRentalYield).toLocaleString()}/month\n`;
+        }
+        successText += `🔗 <a href="${typeUrl}">View ${label} Listing</a>\n\n`;
       }
       await sendTelegramResponse(botToken, chatId, successText.trim(), messageId);
     } else {
@@ -1071,7 +1075,12 @@ async function publishDraftListing(
       const propPrice = Number(propertyData.priceTHB).toLocaleString();
       const propArea = propertyData.area;
       const priceSuffix = (propertyData.listingType === "short_stay" || propertyData.listingType === "rent") ? "/month" : "";
-      const successText = `<b>✅ Listing Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propName}\n💰 <b>Price:</b> ฿${propPrice}${priceSuffix}\n📍 <b>Area:</b> ${propArea}\n\n🔗 <a href="${propertyUrl}">View Listing</a>`;
+      
+      let successText = `<b>✅ Listing Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propName}\n💰 <b>Price:</b> ฿${propPrice}${priceSuffix}\n📍 <b>Area:</b> ${propArea}\n`;
+      if (propertyData.listingType === "sale" && propertyData.currentRentalYield) {
+        successText += `🔑 <b>Rental Yield:</b> ฿${Number(propertyData.currentRentalYield).toLocaleString()}/month\n`;
+      }
+      successText += `\n🔗 <a href="${propertyUrl}">View Listing</a>`;
       await sendTelegramResponse(botToken, chatId, successText, messageId);
     }
   }
