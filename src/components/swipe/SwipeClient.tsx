@@ -8,18 +8,23 @@ import { stripEmojis } from "@/lib/emoji";
 import SwipeCard from "./SwipeCard";
 import SavedPanel from "./SavedPanel";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { T_SWIPE } from "@/data/swipeTranslations";
 
 type Filter = ListingType | "all";
 
-const FILTER_TABS: { label: string; value: Filter }[] = [
-  { label: "All",        value: "all" },
-  { label: "For Sale",   value: "sale" },
-  { label: "Long Rent",  value: "rent" },
-  { label: "Short Stay", value: "short_stay" },
+const FILTER_TABS: { labelKey: "tabAll" | "tabSale" | "tabRent" | "tabShort"; value: Filter }[] = [
+  { labelKey: "tabAll",   value: "all" },
+  { labelKey: "tabSale",  value: "sale" },
+  { labelKey: "tabRent",  value: "rent" },
+  { labelKey: "tabShort", value: "short_stay" },
 ];
 
 export default function SwipeClient({ properties }: { properties: PropertyCard[] }) {
   const { formatPrice: formatPriceFn } = useCurrency();
+  const { lang, t } = useLanguage();
+  const ts = T_SWIPE[lang] || T_SWIPE.en;
+  
   const [filter, setFilter]       = useState<Filter>("all");
   const [petFriendly, setPetFriendly] = useState(false);
   const [nearBts, setNearBts] = useState(false);
@@ -102,17 +107,17 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
           <Link href="/" className="flex items-center gap-2 no-underline mb-8">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
             <div>
-              <div className="text-[13px] font-semibold" style={{ color: "#FFFFFF" }}>Swipe Mode</div>
+              <div className="text-[13px] font-semibold" style={{ color: "#FFFFFF" }}>{ts.swipe}</div>
               <div className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>Bangkok Properties</div>
             </div>
           </Link>
 
           {/* Search location */}
-          <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>Search Location</p>
+          <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>{ts.searchLocation}</p>
           <div className="relative mb-6">
             <input
               type="text"
-              placeholder="Search area or district..."
+              placeholder={ts.searchLocation}
               value={searchLocation}
               onChange={(e) => setSearchLocation(e.target.value)}
               className="w-full pl-9 pr-8 py-2.5 rounded-xl text-[12px] outline-none border-none text-white"
@@ -134,25 +139,25 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
             )}
           </div>
 
-          <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>Filter</p>
+          <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>{ts.filters}</p>
           <div className="flex flex-col gap-1.5 mb-8">
-            {FILTER_TABS.map((t) => (
+            {FILTER_TABS.map((tab) => (
               <button
-                key={t.value}
-                onClick={() => setFilter(t.value)}
+                key={tab.value}
+                onClick={() => setFilter(tab.value)}
                 className="text-left px-4 py-2.5 rounded-xl text-[13px] font-medium cursor-pointer border-none transition-all"
                 style={
-                  filter === t.value
+                  filter === tab.value
                     ? { background: "#C9A84C", color: "#1C3A2F", fontFamily: "inherit" }
                     : { background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.55)", fontFamily: "inherit" }
                 }
               >
-                {t.label}
+                {t.filters[tab.labelKey]}
               </button>
             ))}
           </div>
 
-          <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>Must have</p>
+          <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>{ts.mustHave}</p>
           <div className="flex flex-col gap-1.5 mb-8">
             <button
               onClick={() => setPetFriendly((v) => !v)}
@@ -163,7 +168,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                   : { background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.55)", fontFamily: "inherit" }
               }
             >
-              Pet Friendly
+              {ts.petFriendly}
             </button>
             <button
               onClick={() => setNearBts((v) => !v)}
@@ -174,11 +179,11 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                   : { background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.55)", fontFamily: "inherit" }
               }
             >
-              Near BTS / MRT
+              {ts.nearBts}
             </button>
           </div>
 
-          <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>Price range (THB)</p>
+          <p className="text-[10px] uppercase tracking-[1.5px] font-semibold mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>{ts.priceRange}</p>
           <div className="flex gap-2 mb-8">
             <input
               type="number"
@@ -201,15 +206,15 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
           <div className="px-4 py-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.05)" }}>
             <div className="text-[11px] uppercase tracking-[1px] mb-3" style={{ color: "rgba(255,255,255,0.35)" }}>Session</div>
             <div className="flex justify-between text-[13px] mb-1.5">
-              <span style={{ color: "rgba(255,255,255,0.5)" }}>Remaining</span>
+              <span style={{ color: "rgba(255,255,255,0.5)" }}>{ts.remaining}</span>
               <span className="font-semibold" style={{ color: "#FFFFFF" }}>{stack.length}</span>
             </div>
             <div className="flex justify-between text-[13px] mb-1.5">
-              <span style={{ color: "rgba(255,255,255,0.5)" }}>Saved</span>
+              <span style={{ color: "rgba(255,255,255,0.5)" }}>{ts.saved}</span>
               <span className="font-semibold" style={{ color: "#C9A84C" }}>{saved.length}</span>
             </div>
             <div className="flex justify-between text-[13px]">
-              <span style={{ color: "rgba(255,255,255,0.5)" }}>Skipped</span>
+              <span style={{ color: "rgba(255,255,255,0.5)" }}>{ts.skipped}</span>
               <span className="font-semibold" style={{ color: "rgba(255,255,255,0.6)" }}>{skipped.length}</span>
             </div>
           </div>
@@ -217,8 +222,8 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
 
         {/* Keyboard hint */}
         <div className="text-[11px] leading-[1.8]" style={{ color: "rgba(255,255,255,0.2)" }}>
-          <p>← Skip · → Save</p>
-          <p>↑ Undo last skip</p>
+          <p>← {ts.skipped} · → {ts.saved}</p>
+          <p>↑ {ts.undoLastSkip}</p>
         </div>
       </div>
 
@@ -231,7 +236,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
           <div className="md:hidden flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2 no-underline">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
-              <span className="text-[13px] font-semibold" style={{ color: "rgba(255,255,255,0.7)" }}>Swipe</span>
+              <span className="text-[13px] font-semibold" style={{ color: "rgba(255,255,255,0.7)" }}>{ts.swipe}</span>
             </Link>
             {searchLocation && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold shadow-lg" style={{ background: "rgba(255,255,255,0.1)", color: "#C9A84C", border: "1px solid rgba(255,255,255,0.15)" }}>
@@ -284,14 +289,14 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
           {stack.length === 0 ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8">
               <PartyPopper className="w-12 h-12 mb-4 text-[#C9A84C] mx-auto" />
-              <p className="text-[18px] font-bold mb-2" style={{ color: "#FFFFFF" }}>You&apos;ve seen them all!</p>
+              <p className="text-[18px] font-bold mb-2" style={{ color: "#FFFFFF" }}>{ts.seenAllTitle}</p>
               <p className="text-[13px] font-light mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>
-                {saved.length > 0 ? `You saved ${saved.length} ${saved.length === 1 ? "property" : "properties"}` : "Try a different filter"}
+                {saved.length > 0 ? ts.savedSummary.replace("{count}", String(saved.length)) : ts.seenAllDesc}
               </p>
               <div className="flex flex-col gap-2.5 w-full max-w-[280px]">
                 {saved.length > 0 && (
                   <button onClick={() => setShowSaved(true)} className="py-3 rounded-2xl text-sm font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5" style={{ background: "#C9A84C", color: "#1C3A2F", fontFamily: "inherit" }}>
-                    View {saved.length} Saved <Heart className="w-4 h-4 fill-current" />
+                    {ts.viewSaved.replace("{count}", String(saved.length))} <Heart className="w-4 h-4 fill-current" />
                   </button>
                 )}
                 <button
@@ -308,7 +313,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                   className="py-3 rounded-2xl text-sm font-semibold cursor-pointer border-2"
                   style={{ background: "transparent", color: "#FFFFFF", borderColor: "rgba(255,255,255,0.3)", fontFamily: "inherit" }}
                 >
-                  Browse All Again
+                  {ts.browseAllAgain}
                 </button>
               </div>
             </div>
@@ -350,7 +355,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                 <Heart className="w-7 h-7 fill-current" />
               </button>
             </div>
-            <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.18)" }}>Swipe or use buttons · ← Skip · → Save</p>
+            <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.18)" }}>{ts.keyboardControls}</p>
           </div>
         )}
       </div>
@@ -383,7 +388,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
           </div>
           <p className="text-[12px] leading-[1.6] font-light mb-5 line-clamp-4" style={{ color: "rgba(255,255,255,0.4)" }}>{stripEmojis(current.description)}</p>
           <a href={`/property/${current.slug}`} className="text-center py-2.5 rounded-xl text-[12px] font-semibold no-underline" style={{ background: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid rgba(201,168,76,0.3)" }}>
-            View Full Details →
+            {ts.viewDetails} →
           </a>
         </div>
       )}
@@ -393,7 +398,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none" style={{ background: "rgba(15,31,24,0.75)" }}>
           <div className="text-center">
             <Heart className="w-16 h-16 text-[#4ADE80] fill-current animate-bounce mb-3 mx-auto" />
-            <p className="text-[22px] font-bold" style={{ color: "#E2C97E" }}>Saved!</p>
+            <p className="text-[22px] font-bold" style={{ color: "#E2C97E" }}>{ts.savedToast}</p>
             <p className="text-[14px] font-light mt-1" style={{ color: "rgba(255,255,255,0.6)" }}>{stripEmojis(matchCard.name)}</p>
           </div>
         </div>
@@ -412,7 +417,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
-              <span className="text-base font-bold">Filters</span>
+              <span className="text-base font-bold">{ts.filters}</span>
               <button
                 onClick={() => setShowFilterSheet(false)}
                 className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer border-none"
@@ -427,7 +432,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
             <div className="flex flex-col gap-5 overflow-y-auto max-h-[60vh] pr-1">
               {/* Search Location */}
               <div>
-                <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5 text-[#999]">Search Location</p>
+                <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5 text-[#999]">{ts.searchLocation}</p>
                 <div className="relative">
                   <input
                     type="text"
@@ -456,20 +461,20 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
 
               {/* Type */}
               <div>
-                <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5 text-[#999]">Browse by type</p>
+                <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5 text-[#999]">{ts.browseByType}</p>
                 <div className="grid grid-cols-2 gap-2">
-                  {FILTER_TABS.map((t) => (
+                  {FILTER_TABS.map((tab) => (
                     <button
-                      key={t.value}
-                      onClick={() => setFilter(t.value)}
+                      key={tab.value}
+                      onClick={() => setFilter(tab.value)}
                       className="px-4 py-2.5 rounded-xl text-[12px] font-semibold cursor-pointer border-none transition-all"
                       style={
-                        filter === t.value
+                        filter === tab.value
                           ? { background: "#C9A84C", color: "#1C3A2F", fontFamily: "inherit" }
                           : { background: "#EDE8DF", color: "#1C3A2F", fontFamily: "inherit" }
                       }
                     >
-                      {t.label}
+                      {t.filters[tab.labelKey]}
                     </button>
                   ))}
                 </div>
@@ -477,7 +482,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
 
               {/* Must Have */}
               <div>
-                <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5 text-[#999]">Must have</p>
+                <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5 text-[#999]">{ts.mustHave}</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setPetFriendly((v) => !v)}
@@ -488,7 +493,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                         : { background: "#EDE8DF", color: "#1C3A2F", fontFamily: "inherit" }
                     }
                   >
-                    Pet Friendly
+                    {ts.petFriendly}
                   </button>
                   <button
                     onClick={() => setNearBts((v) => !v)}
@@ -499,14 +504,14 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                         : { background: "#EDE8DF", color: "#1C3A2F", fontFamily: "inherit" }
                     }
                   >
-                    BTS / MRT
+                    {ts.nearBts}
                   </button>
                 </div>
               </div>
 
               {/* Price Range */}
               <div>
-                <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5 text-[#999]">Price range (THB)</p>
+                <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5 text-[#999]">{ts.priceRange}</p>
                 <div className="flex gap-3">
                   <input
                     type="number"
@@ -542,14 +547,14 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
                 className="flex-1 py-3.5 rounded-xl text-sm font-semibold cursor-pointer border-none"
                 style={{ background: "#EDE8DF", color: "#1C3A2F", fontFamily: "inherit" }}
               >
-                Reset
+                {t.filters.clearAll}
               </button>
               <button
                 onClick={() => setShowFilterSheet(false)}
                 className="flex-1 py-3.5 rounded-xl text-sm font-semibold cursor-pointer border-none"
                 style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}
               >
-                Apply ({stack.length} listings)
+                {ts.showResults.replace("{count}", String(stack.length))}
               </button>
             </div>
           </div>

@@ -13,6 +13,8 @@ import dynamic from "next/dynamic";
 import { StoredCommuteHub } from "@/lib/store/commuteHubs";
 import { stripEmojis } from "@/lib/emoji";
 import { useSession } from "next-auth/react";
+import { useLanguage, Lang } from "@/contexts/LanguageContext";
+import { T_PROPERTY } from "@/data/propertyTranslations";
 import {
   Star,
   CheckCircle2,
@@ -31,27 +33,109 @@ const CommuteMap = dynamic(() => import("./CommuteMap"), { ssr: false });
 /* ─────────────────────────────────────────────
    Helpers
 ───────────────────────────────────────────── */
-function listingBadge(t: string) {
-  if (t === "sale") return "For Sale";
-  if (t === "rent") return "Long Rent";
-  return "Short Stay";
+function listingBadge(t: string, lang: Lang = "en") {
+  const trans = T_PROPERTY[lang]?.badges || T_PROPERTY.en.badges;
+  if (t === "sale") return trans.sale;
+  if (t === "rent") return trans.rent;
+  return trans.shortStay;
 }
-function formatPrice(p: PropertyCard, formatPriceFn: (n: number) => string) {
+function translateArea(area: string, lang: Lang = "en"): string {
+  const areaLower = area.toLowerCase().trim();
+  if (lang === "th") {
+    if (areaLower === "sukhumvit") return "สุขุมวิท";
+    if (areaLower === "sathorn") return "สาทร";
+    if (areaLower === "thong lo" || areaLower === "thonglor") return "ทองหล่อ";
+    if (areaLower === "asok") return "อโศก";
+    if (areaLower === "ekkamai") return "เอกมัย";
+    if (areaLower === "silom") return "สีลม";
+    if (areaLower === "on nut" || areaLower === "onnut") return "อ่อนนุช";
+    if (areaLower === "ari") return "อารีย์";
+    if (areaLower === "rama 9" || areaLower === "rama9") return "พระราม 9";
+    if (areaLower === "bang na" || areaLower === "bangna") return "บางนา";
+    if (areaLower === "huai khwang" || areaLower === "huaikhwang") return "ห้วยขวาง";
+    if (areaLower === "phaya thai" || areaLower === "phayathai") return "พญาไท";
+    return area;
+  }
+  if (lang === "zh") {
+    if (areaLower === "sukhumvit") return "素坤逸";
+    if (areaLower === "sathorn") return "沙吞";
+    if (areaLower === "thong lo" || areaLower === "thonglor") return "通罗";
+    if (areaLower === "asok") return "阿索克";
+    if (areaLower === "ekkamai") return "伊卡迈";
+    if (areaLower === "silom") return "席隆";
+    if (areaLower === "on nut" || areaLower === "onnut") return "安努";
+    if (areaLower === "ari") return "阿黎";
+    if (areaLower === "rama 9" || areaLower === "rama9") return "拉玛九";
+    if (areaLower === "bang na" || areaLower === "bangna") return "邦纳";
+    if (areaLower === "huai khwang" || areaLower === "huaikhwang") return "辉煌";
+    if (areaLower === "phaya thai" || areaLower === "phayathai") return "披耶泰";
+    return area;
+  }
+  return area;
+}
+function translatePropertyType(type: string, lang: Lang = "en"): string {
+  const tLower = type.toLowerCase().trim();
+  if (lang === "th") {
+    if (tLower === "condo") return "คอนโด";
+    if (tLower === "house") return "บ้านเดี่ยว";
+    if (tLower === "villa") return "วิลล่า";
+    if (tLower === "townhouse") return "ทาวน์เฮ้าส์";
+    if (tLower === "apartment") return "อพาร์ทเมนท์";
+    return type;
+  }
+  if (lang === "zh") {
+    if (tLower === "condo") return "公寓";
+    if (tLower === "house") return "别墅/住宅";
+    if (tLower === "villa") return "别墅";
+    if (tLower === "townhouse") return "联排别墅";
+    if (tLower === "apartment") return "公寓/套房";
+    return type;
+  }
+  return type;
+}
+function formatPrice(p: PropertyCard, formatPriceFn: (n: number) => string, lang: Lang = "en") {
+  const label = p.listingType === "sale" ? "" : (lang === "en" ? "/month" : lang === "th" ? "/เดือน" : "/月");
   if (p.listingType === "sale") return formatPriceFn(Number(p.priceTHB));
-  return `${formatPriceFn(Number(p.priceTHB))}${p.priceLabel ?? "/month"}`;
+  return `${formatPriceFn(Number(p.priceTHB))}${p.priceLabel || label}`;
+}
+
+function translateDistance(distance: string, lang: Lang): string {
+  const matchWalk = distance.match(/^(\d+)\s*min\s+walk$/i);
+  if (matchWalk) {
+    const mins = matchWalk[1];
+    if (lang === "th") return `เดิน ${mins} นาที`;
+    if (lang === "zh") return `步行 ${mins} 分钟`;
+    return `${mins} min walk`;
+  }
+  const matchDrive = distance.match(/^(\d+)\s*min\s+drive$/i);
+  if (matchDrive) {
+    const mins = matchDrive[1];
+    if (lang === "th") return `ขับรถ ${mins} นาที`;
+    if (lang === "zh") return `驾车 ${mins} 分钟`;
+    return `${mins} min drive`;
+  }
+  return distance;
 }
 
 /* Relative date string e.g. "Posted 3 days ago" */
-function relativeDate(iso: string): string {
+function relativeDate(iso: string, lang: Lang = "en"): string {
+  const t = T_PROPERTY[lang]?.relative || T_PROPERTY.en.relative;
   const then = new Date(iso).getTime();
   const now  = Date.now();
   const days = Math.max(0, Math.floor((now - then) / 86_400_000));
-  if (days === 0)  return "Posted today";
-  if (days === 1)  return "Posted yesterday";
-  if (days <  7)   return `Posted ${days} days ago`;
-  if (days < 30)   return `Posted ${Math.floor(days / 7)} week${Math.floor(days / 7) === 1 ? "" : "s"} ago`;
-  if (days < 365)  return `Posted ${Math.floor(days / 30)} month${Math.floor(days / 30) === 1 ? "" : "s"} ago`;
-  return `Posted on ${new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`;
+  if (days === 0)  return t.today;
+  if (days === 1)  return t.yesterday;
+  if (days <  7)   return t.daysAgo.replace("{count}", String(days));
+  if (days < 30) {
+    const weeks = Math.floor(days / 7);
+    return t.weeksAgo.replace("{count}", String(weeks)).replace("{plural}", weeks === 1 ? "" : "s");
+  }
+  if (days < 365) {
+    const months = Math.floor(days / 30);
+    return t.monthsAgo.replace("{count}", String(months)).replace("{plural}", months === 1 ? "" : "s");
+  }
+  const formattedDate = new Date(iso).toLocaleDateString(lang === "en" ? "en-GB" : lang === "th" ? "th-TH" : "zh-CN", { day: "numeric", month: "short", year: "numeric" });
+  return t.onDate.replace("{date}", formattedDate);
 }
 
 
@@ -277,31 +361,35 @@ function getDynamicParking(description: string, id: number, propertyType: string
 }
 
 
-function availableFromLabel(p: PropertyCard): string {
+function availableFromLabel(p: PropertyCard, lang: Lang = "en"): string {
   if (p.availableFrom) {
     const d = new Date(p.availableFrom);
     if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+      return d.toLocaleDateString(lang === "en" ? "en-GB" : lang === "th" ? "th-TH" : "zh-CN", { day: "numeric", month: "short", year: "numeric" });
     }
     return p.availableFrom;
   }
-  // For short stay / available units: "Immediate"; sale: "Negotiable"
-  if (p.listingType === "sale") return "Negotiable";
-  return "Immediate";
+  const transSpecs = T_PROPERTY[lang]?.specs || T_PROPERTY.en.specs;
+  if (p.listingType === "sale") return transSpecs.negotiable;
+  return transSpecs.availableNow;
 }
 
 
-function lastVerifiedLabel(p: PropertyCard): string {
+function lastVerifiedLabel(p: PropertyCard, lang: Lang = "en"): string {
+  const t = T_PROPERTY[lang]?.verified || T_PROPERTY.en.verified;
   if (p.lastVerifiedAt) {
     const days = Math.floor((Date.now() - new Date(p.lastVerifiedAt).getTime()) / 86_400_000);
-    if (days === 0) return "Verified today";
-    if (days === 1) return "Verified yesterday";
-    if (days < 7)   return `Verified ${days} days ago`;
-    if (days < 30)  return `Verified ${Math.floor(days / 7)} week${Math.floor(days / 7) === 1 ? "" : "s"} ago`;
-    return `Verified ${Math.floor(days / 30)} month${Math.floor(days / 30) === 1 ? "" : "s"} ago`;
+    if (days === 0) return t.today;
+    if (days === 1) return t.yesterday;
+    if (days < 7)   return t.daysAgo.replace("{count}", String(days));
+    if (days < 30) {
+      const weeks = Math.floor(days / 7);
+      return t.weeksAgo.replace("{count}", String(weeks)).replace("{plural}", weeks === 1 ? "" : "s");
+    }
+    const months = Math.floor(days / 30);
+    return t.monthsAgo.replace("{count}", String(months)).replace("{plural}", months === 1 ? "" : "s");
   }
-  // Default: 3–10 days after createdAt
-  return "Verified by NHP team";
+  return t.byTeam;
 }
 
 
@@ -438,6 +526,8 @@ interface PlacePhotoCardProps {
 }
 
 function PlacePhotoCard({ place, property, getDirectionsUrlFn }: PlacePhotoCardProps) {
+  const { lang } = useLanguage();
+  const t = T_PROPERTY[lang] || T_PROPERTY.en;
   const fallback = getPlaceImage(property.area, place.category, place.name, place.image);
   const [imgSrc, setImgSrc] = useState<string>(fallback);
   const [loading, setLoading] = useState(true);
@@ -525,9 +615,12 @@ function PlacePhotoCard({ place, property, getDirectionsUrlFn }: PlacePhotoCardP
       <div className="absolute bottom-0 left-0 right-0 p-3 text-left z-20">
         <div className="text-[12px] font-bold text-white leading-tight mb-0.5">{place.name}</div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-white/80">{place.distance}</span>
+          <span className="text-[10px] text-white/80">{translateDistance(place.distance, lang)}</span>
           <span className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold" style={{ background: "rgba(201,168,76,0.85)", color: "#1C3A2F" }}>
-            {place.category}
+            {(() => {
+              const placeCatKey = place.category === "BTS/MRT" ? "bts/mrt" : place.category.toLowerCase();
+              return t.nearbyCategories[placeCatKey as keyof typeof t.nearbyCategories] || place.category;
+            })()}
           </span>
         </div>
       </div>
@@ -535,10 +628,64 @@ function PlacePhotoCard({ place, property, getDirectionsUrlFn }: PlacePhotoCardP
   );
 }
 
+function getAreaSlug(area: string): string {
+  return area.toLowerCase().replace(/\s+/g, "-");
+}
+
+function getDescriptiveAltText({
+  bedrooms,
+  propertyType,
+  listingType,
+  area,
+  index
+}: {
+  bedrooms: number;
+  propertyType: string;
+  listingType: string;
+  area: string;
+  index: number;
+}) {
+  const roomType = bedrooms === 0 ? "Studio" : `${bedrooms} bedroom`;
+  const type = propertyType || "condo";
+  const action = listingType === "sale" ? "sale" : "rent";
+  const location = `${area} Bangkok`;
+  
+  const contexts = [
+    "living room view",
+    "kitchen and dining area",
+    "master bedroom interior",
+    "bathroom and modern finishes",
+    "swimming pool and building amenities",
+    "balcony perspective"
+  ];
+  
+  const suffix = contexts[index % contexts.length];
+  return `${roomType} ${type} for ${action} in ${location} - ${suffix}`;
+}
+
 /* ─────────────────────────────────────────────
    Gallery — main image + thumbnails
    ───────────────────────────────────────────── */
-function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; name: string; isFeatured: boolean; propertyId: number }) {
+function Gallery({
+  images,
+  isFeatured,
+  propertyId,
+  area,
+  bedrooms,
+  listingType,
+  propertyType
+}: {
+  images: string[];
+  name: string;
+  isFeatured: boolean;
+  propertyId: number;
+  area: string;
+  bedrooms: number;
+  listingType: string;
+  propertyType: string;
+}) {
+  const { lang } = useLanguage();
+  const t = T_PROPERTY[lang] || T_PROPERTY.en;
   const [active, setActive]       = useState(0);
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
   const { isSaved, toggle }       = useSaved();
@@ -652,7 +799,7 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
                 {!imgErrors[i] && (
                   <img
                     src={src}
-                    alt=""
+                    alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: i })}
                     className="absolute inset-0 w-full h-full object-cover"
                     onError={() => setImgErrors((e) => ({ ...e, [i]: true }))}
                   />
@@ -661,7 +808,7 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
                 {isLastWithExtra && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "rgba(28,58,47,0.75)" }}>
                     <span className="text-[18px] font-bold leading-none mb-1" style={{ color: "#E2C97E" }}>+{extraCount}</span>
-                    <span className="text-[10px] font-medium uppercase tracking-[0.5px]" style={{ color: "rgba(255,255,255,0.85)" }}>Photos</span>
+                    <span className="text-[10px] font-medium uppercase tracking-[0.5px]" style={{ color: "rgba(255,255,255,0.85)" }}>{t.photos}</span>
                   </div>
                 )}
               </button>
@@ -690,7 +837,7 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
               {src && !imgErrors[idx] ? (
                 <img
                   src={src}
-                  alt={name}
+                  alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: idx })}
                   className="w-full h-full object-cover"
                   onError={() => setImgErrors((e) => ({ ...e, [idx]: true }))}
                 />
@@ -709,7 +856,7 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
             className="absolute top-4 left-4 px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.5px]"
             style={{ background: "rgba(28,58,47,0.92)", color: "#E2C97E", borderRadius: 6 }}
           >
-            New Listing
+            {t.newListing}
           </div>
         )}
 
@@ -745,7 +892,7 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
               <circle cx="12" cy="13" r="4"/>
             </svg>
-            View Photos
+            {t.viewPhotos}
           </button>
         )}
 
@@ -791,12 +938,12 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
                 }}
               >
                 {!imgErrors[i] && (
-                  <img src={src} alt="" className="absolute inset-0 w-full h-full object-cover" onError={() => setImgErrors((e) => ({ ...e, [i]: true }))} />
+                  <img src={src} alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: i })} className="absolute inset-0 w-full h-full object-cover" onError={() => setImgErrors((e) => ({ ...e, [i]: true }))} />
                 )}
                 {isLastWithExtra && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "rgba(28,58,47,0.75)" }}>
                     <span className="text-[14px] font-bold leading-none" style={{ color: "#E2C97E" }}>+{extraCount}</span>
-                    <span className="text-[9px] font-medium mt-0.5" style={{ color: "rgba(255,255,255,0.85)" }}>Photos</span>
+                    <span className="text-[9px] font-medium mt-0.5" style={{ color: "rgba(255,255,255,0.85)" }}>{t.photos}</span>
                   </div>
                 )}
               </button>
@@ -832,7 +979,7 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
             {rawImages[active % (rawImages.length || 1)] && (
               <img 
                 src={rawImages[active % (rawImages.length || 1)]} 
-                alt={name} 
+                alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: active })} 
                 className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
               />
             )}
@@ -860,7 +1007,7 @@ function Gallery({ images, name, isFeatured, propertyId }: { images: string[]; n
 
           {/* Image counter */}
           <div className="text-white text-[14px] font-semibold mt-6 tracking-wide px-4 py-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.1)" }}>
-            {(active % (rawImages.length || 1)) + 1} of {rawImages.length}
+            {(active % (rawImages.length || 1)) + 1} / {rawImages.length}
           </div>
         </div>
       )}
@@ -879,6 +1026,8 @@ function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: 
   const [method, setMethod]   = useState("WhatsApp");
   const [msg, setMsg]         = useState("");
   const { status, errorMsg, submit: sendEnquiry } = useEnquiry();
+  const { lang } = useLanguage();
+  const t = T_PROPERTY[lang] || T_PROPERTY.en;
 
   useEffect(() => {
     if (session?.user) {
@@ -900,7 +1049,7 @@ function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: 
       propertySlug: property.slug,
       propertyName: property.name,
       listingType:  property.listingType,
-      price:        formatPrice(property, formatPriceFn),
+      price:        formatPrice(property, formatPriceFn, lang),
       area:         property.area,
       name, contact, method,
       message:      msg || undefined,
@@ -922,32 +1071,38 @@ function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: 
           {status === "done" ? (
             <div className="text-center py-6">
               <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto mb-3" />
-              <p className="text-[18px] font-bold mb-2" style={{ color: "#1C3A2F" }}>Enquiry sent!</p>
+              <p className="text-[18px] font-bold mb-2" style={{ color: "#1C3A2F" }}>
+                {lang === "en" ? "Enquiry sent!" : lang === "th" ? "ส่งคำขอข้อมูลแล้ว!" : "已发送咨询！"}
+              </p>
               <p className="text-[13px] font-light mb-5" style={{ color: "#555" }}>
-                We&apos;ll contact you via {method} within 24 hours.
+                {lang === "en" 
+                  ? `We'll contact you via ${method} within 24 hours.` 
+                  : lang === "th" 
+                  ? `เราจะติดต่อกลับผ่าน ${method} ภายใน 24 ชั่วโมง` 
+                  : `我们将在 24 小时内通过 ${method} 与您联系。`}
               </p>
               <button onClick={onClose} className="px-6 py-2.5 rounded-xl text-[13px] font-semibold cursor-pointer border-none" style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}>
-                Close
+                {t.close || "Close"}
               </button>
             </div>
           ) : (
             <>
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-[16px] font-bold" style={{ color: "#1C3A2F" }}>Send Enquiry</h3>
+                  <h3 className="text-[16px] font-bold" style={{ color: "#1C3A2F" }}>{t.sendEnquiry || "Send Enquiry"}</h3>
                   <p className="text-[12px] mt-0.5" style={{ color: "#999" }}>{property.name}</p>
                 </div>
                 <button onClick={onClose} className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer border-none text-base" style={{ background: "#EDE8DF", color: "#555", fontFamily: "inherit" }}>✕</button>
               </div>
               <form className="flex flex-col gap-3" onSubmit={submit}>
-                <input suppressHydrationWarning className="w-full rounded-xl px-4 py-3 text-[14px] outline-none" style={inputStyle} placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} required />
+                <input suppressHydrationWarning className="w-full rounded-xl px-4 py-3 text-[14px] outline-none" style={inputStyle} placeholder={lang === "en" ? "Your name" : lang === "th" ? "ชื่อของคุณ" : "您的姓名"} value={name} onChange={(e) => setName(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} required />
                 <div className="flex gap-2">
                   <select suppressHydrationWarning value={method} onChange={(e) => setMethod(e.target.value)} className="rounded-xl px-3 py-3 text-[14px] outline-none cursor-pointer" style={inputStyle}>
                     <option>WhatsApp</option><option>Line</option><option>Telegram</option>
                   </select>
-                  <input suppressHydrationWarning className="flex-1 rounded-xl px-4 py-3 text-[14px] outline-none" style={inputStyle} placeholder="Phone / username" value={contact} onChange={(e) => setContact(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} required />
+                  <input suppressHydrationWarning className="flex-1 rounded-xl px-4 py-3 text-[14px] outline-none" style={inputStyle} placeholder={lang === "en" ? "Phone / username" : lang === "th" ? "เบอร์โทรศัพท์ / ชื่อผู้ใช้" : "电话 / 用户名"} value={contact} onChange={(e) => setContact(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} required />
                 </div>
-                <textarea suppressHydrationWarning className="w-full rounded-xl px-4 py-3 text-[14px] outline-none resize-none" style={inputStyle} placeholder={`I'm interested in ${property.name}…`} rows={3} value={msg} onChange={(e) => setMsg(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} />
+                <textarea suppressHydrationWarning className="w-full rounded-xl px-4 py-3 text-[14px] outline-none resize-none" style={inputStyle} placeholder={lang === "en" ? `I'm interested in ${property.name}...` : lang === "th" ? `ฉันสนใจใน ${property.name}...` : `我对 ${property.name} 感兴趣...`} rows={3} value={msg} onChange={(e) => setMsg(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} />
                 {errorMsg && (
                   <p className="text-[12px] px-1 flex items-center gap-1" style={{ color: "#E05252" }}>
                     <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
@@ -955,7 +1110,7 @@ function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: 
                   </p>
                 )}
                 <button suppressHydrationWarning type="submit" disabled={status === "loading"} className="w-full py-3.5 rounded-xl text-[14px] font-semibold cursor-pointer border-none disabled:opacity-60" style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}>
-                  {status === "loading" ? "Sending…" : "Send Enquiry →"}
+                  {status === "loading" ? (t.sending || "Sending…") : `${t.sendEnquiry || "Send Enquiry"} →`}
                 </button>
               </form>
             </>
@@ -972,11 +1127,20 @@ function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: 
 function SimilarCard({ property }: { property: PropertyCard }) {
   const [imgErr, setImgErr] = useState(false);
   const { formatPrice: formatPriceFn } = useCurrency();
+  const { lang } = useLanguage();
+  const t = T_PROPERTY[lang] || T_PROPERTY.en;
+  
+  const priceLabelTranslated = property.listingType === "sale"
+    ? ""
+    : (property.priceLabel === " /month" || property.priceLabel === "/month"
+      ? (lang === "en" ? " /month" : lang === "th" ? " /เดือน" : " /月")
+      : (property.priceLabel || ""));
+
   return (
     <a href={`/property/${property.slug}`} className="no-underline rounded-2xl overflow-hidden block group" style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}>
       <div className="relative h-36 overflow-hidden" style={{ background: "#1C3A2F" }}>
         {property.coverImage && !imgErr ? (
-          <img src={property.coverImage} alt={property.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onError={() => setImgErr(true)} />
+          <img src={property.coverImage} alt={getDescriptiveAltText({ bedrooms: property.bedrooms, propertyType: property.propertyType, listingType: property.listingType, area: property.area, index: 0 })} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onError={() => setImgErr(true)} />
         ) : (
           <div className="w-full h-full flex items-center justify-center"><span className="text-3xl font-black" style={{ color: "rgba(255,255,255,0.08)" }}>NHP</span></div>
         )}
@@ -984,13 +1148,24 @@ function SimilarCard({ property }: { property: PropertyCard }) {
       <div className="p-3">
         <div className="text-[14px] font-bold mb-0.5" style={{ color: "#1C3A2F" }}>
           {formatPriceFn(Number(property.priceTHB))}
-          {property.listingType === "sale" ? "" : (property.priceLabel ?? "")}
+          {priceLabelTranslated}
         </div>
         <div className="text-[12px] font-medium line-clamp-1 mb-1" style={{ color: "#1A1A1A" }}>{property.name}</div>
         <div className="text-[11px] flex items-center gap-3.5" style={{ color: "#999" }}>
-          <span className="flex items-center gap-1"><Bed className="w-3.5 h-3.5" /> {property.bedrooms === 0 ? "Studio" : property.bedrooms}</span>
-          <span className="flex items-center gap-1"><ShowerHead className="w-3.5 h-3.5" /> {property.bathrooms}</span>
-          {property.sqm && <span className="flex items-center gap-1"><Maximize2 className="w-3.5 h-3.5" /> {property.sqm}m²</span>}
+          <span className="flex items-center gap-1">
+            <Bed className="w-3.5 h-3.5" />{" "}
+            {property.bedrooms === 0
+              ? t.studio
+              : `${property.bedrooms} ${property.bedrooms === 1 ? t.bed : t.beds}`}
+          </span>
+          <span className="flex items-center gap-1">
+            <ShowerHead className="w-3.5 h-3.5" /> {property.bathrooms} {t.bath}
+          </span>
+          {property.sqm && (
+            <span className="flex items-center gap-1">
+              <Maximize2 className="w-3.5 h-3.5" /> {property.sqm}m²
+            </span>
+          )}
         </div>
       </div>
     </a>
@@ -1001,6 +1176,8 @@ function SimilarCard({ property }: { property: PropertyCard }) {
    Tour calendar — date + time picker modal
 ───────────────────────────────────────────── */
 function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: () => void }) {
+  const { lang } = useLanguage();
+  const t = T_PROPERTY[lang] || T_PROPERTY.en;
   const { data: session }   = useSession();
   const [selDate, setDate]  = useState<string | null>(null);
   const [selTime, setTime]  = useState<string | null>(null);
@@ -1027,7 +1204,7 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
   const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const year         = today.getFullYear();
   const month        = today.getMonth();
-  const monthLabel   = today.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  const monthLabel   = today.toLocaleDateString(lang === "en" ? "en-GB" : lang === "th" ? "th-TH" : "zh-CN", { month: "long", year: "numeric" });
   const daysInMonth  = new Date(year, month + 1, 0).getDate();
   const firstWeekday = new Date(year, month, 1).getDay(); // 0=Sun..6=Sat
 
@@ -1039,7 +1216,7 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
   };
 
   const times = ["09:00", "10:30", "12:00", "13:30", "15:00", "16:30", "18:00"];
-  const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
+  const weekdays = lang === "en" ? ["S", "M", "T", "W", "T", "F", "S"] : lang === "th" ? ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"] : ["日", "一", "二", "三", "四", "五", "六"];
 
   const { formatPrice: formatPriceFn } = useCurrency();
 
@@ -1049,12 +1226,16 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
       propertySlug: property.slug,
       propertyName: property.name,
       listingType:  property.listingType,
-      price:        formatPrice(property, formatPriceFn),
+      price:        formatPrice(property, formatPriceFn, lang),
       area:         property.area,
       name,
       contact,
       method,
-      message:      `Tour requested for ${selDate} at ${selTime}`,
+      message:      lang === "en" 
+        ? `Tour requested for ${selDate} at ${selTime}` 
+        : lang === "th" 
+        ? `ขอนัดเข้าชมวันที่ ${selDate} เวลา ${selTime}` 
+        : `申请看房时间为 ${selDate} ${selTime}`,
       source:       "tour",
       tourDate:     selDate,
       tourTime:     selTime,
@@ -1078,22 +1259,26 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
           {step === "done" ? (
             <div className="text-center py-6">
               <Calendar className="w-12 h-12 text-[#C9A84C] mx-auto mb-3" />
-              <p className="text-[18px] font-bold mb-2" style={{ color: "#1C3A2F" }}>Tour requested!</p>
+              <p className="text-[18px] font-bold mb-2" style={{ color: "#1C3A2F" }}>{t.tourRequested}</p>
               <p className="text-[13px] font-light mb-1" style={{ color: "#555" }}>
                 {selDate} at {selTime}
               </p>
               <p className="text-[12px] font-light mb-5" style={{ color: "#999" }}>
-                We&apos;ll confirm via {method} within 1 hour.
+                {lang === "en" 
+                  ? `We'll confirm via ${method} within 1 hour.` 
+                  : lang === "th" 
+                  ? `เราจะยืนยันผ่าน ${method} ภายใน 1 ชั่วโมง` 
+                  : `我们将在 1 小时内通过 ${method} 进行确认。`}
               </p>
               <button onClick={onClose} className="px-6 py-2.5 rounded-xl text-[13px] font-semibold cursor-pointer border-none" style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}>
-                Close
+                {t.close}
               </button>
             </div>
           ) : (
             <>
               <div className="flex items-start justify-between mb-5">
                 <div>
-                  <h3 className="text-[16px] font-bold" style={{ color: "#1C3A2F" }}>Schedule a Tour</h3>
+                  <h3 className="text-[16px] font-bold" style={{ color: "#1C3A2F" }}>{t.scheduleTour}</h3>
                   <p className="text-[12px] mt-0.5" style={{ color: "#999" }}>{property.name}</p>
                 </div>
                 <button onClick={onClose} className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer border-none text-base" style={{ background: "#EDE8DF", color: "#555", fontFamily: "inherit" }}>✕</button>
@@ -1101,7 +1286,7 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
 
               {/* ── Calendar ── */}
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[11px] uppercase tracking-[1px] font-semibold" style={{ color: "#999" }}>Pick a date</p>
+                <p className="text-[11px] uppercase tracking-[1px] font-semibold" style={{ color: "#999" }}>{t.pickDate}</p>
                 <p className="text-[14px] font-bold" style={{ color: "#1C3A2F" }}>{monthLabel}</p>
               </div>
 
@@ -1143,11 +1328,11 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
                 </div>
               </div>
               <p className="text-[10px] mb-5" style={{ color: "#bbb" }}>
-                Select a date within the next 7 days.
+                {t.selectDate7Days}
               </p>
 
               {/* ── Time ── */}
-              <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5" style={{ color: "#999" }}>Pick a time</p>
+              <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5" style={{ color: "#999" }}>{t.pickTime}</p>
               <div className="grid grid-cols-4 gap-2 mb-5">
                 {times.map((t) => {
                   const isSel = selTime === t;
@@ -1164,8 +1349,8 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
               </div>
 
               {/* ── Contact ── */}
-              <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5" style={{ color: "#999" }}>Your contact</p>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name"
+              <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5" style={{ color: "#999" }}>{t.yourContact}</p>
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder={lang === "en" ? "Your name" : lang === "th" ? "ชื่อของคุณ" : "您的姓名"}
                 className="w-full rounded-xl px-4 py-3 text-[14px] outline-none mb-2"
                 style={{ border: "1.5px solid #E5E0D8", background: "#F7F3EC", color: "#1A1A1A", fontFamily: "inherit" }}
               />
@@ -1200,7 +1385,7 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
                   type="tel"
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
-                  placeholder={method === "WhatsApp" ? "+66 81 234 5678" : "@your-line-id"}
+                  placeholder={method === "WhatsApp" ? t.whatsappPlaceholder : t.linePlaceholder}
                   className="flex-1 rounded-xl px-4 py-3 text-[14px] outline-none min-w-0"
                   style={{ border: "1.5px solid #E5E0D8", background: "#F7F3EC", color: "#1A1A1A", fontFamily: "inherit" }}
                 />
@@ -1216,7 +1401,7 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
                 className="w-full py-3.5 rounded-xl text-[14px] font-semibold cursor-pointer border-none disabled:opacity-50"
                 style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}
               >
-                {status === "loading" ? "Sending…" : "Request Tour"}
+                {status === "loading" ? (t.sending || "Sending…") : (t.requestTour || "Request Tour")}
               </button>
             </>
           )}
@@ -1231,6 +1416,8 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
 ───────────────────────────────────────────── */
 function RecentlyViewedStrip({ currentId }: { currentId: number }) {
   const { ids } = useRecentlyViewed();
+  const { lang } = useLanguage();
+  const t = T_PROPERTY[lang] || T_PROPERTY.en;
   const items = ids.filter((id) => id !== currentId).slice(0, 4)
     .map((id) => MOCK_PROPERTIES.find((p) => p.id === id))
     .filter((p): p is PropertyCard => p != null);
@@ -1239,7 +1426,7 @@ function RecentlyViewedStrip({ currentId }: { currentId: number }) {
 
   return (
     <div className="px-5 md:px-10 py-4 md:py-5" style={{ background: "#FFFFFF", borderTop: "1px solid #EDE8DF" }}>
-      <h3 className="text-[14px] font-bold mb-4" style={{ color: "#1A1A1A" }}>Recently viewed</h3>
+      <h3 className="text-[14px] font-bold mb-4" style={{ color: "#1A1A1A" }}>{t.recentlyViewed || "Recently viewed"}</h3>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {items.map((p) => <SimilarCard key={p.id} property={p} />)}
       </div>
@@ -1407,6 +1594,9 @@ export default function PropertyDetail({
   nearby,
   googleMapsApiKey,
 }: Omit<PropertyDetailProps, "sameArea"> & { googleMapsApiKey?: string }) {
+  const { lang } = useLanguage();
+  const t = T_PROPERTY[lang] || T_PROPERTY.en;
+
   const property = {
     ...rawProperty,
     name: stripEmojis(rawProperty.name),
@@ -1439,7 +1629,7 @@ export default function PropertyDetail({
 
     const query = customLocationName.trim();
     if (!query) {
-      setCalcError("Please enter a location or address.");
+      setCalcError(t.errorEmptyCalc);
       return;
     }
 
@@ -1472,7 +1662,7 @@ export default function PropertyDetail({
       }
 
       if (!pLat || !pLng || isNaN(pLat) || isNaN(pLng)) {
-        setCalcError("Could not resolve the property's location coordinates.");
+        setCalcError(t.errorGeocode);
         return;
       }
 
@@ -1480,7 +1670,7 @@ export default function PropertyDetail({
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setCalcError(data.error || "Could not find that location. Please try a different query.");
+        setCalcError(data.error || t.errorPlaceNotFound);
         return;
       }
 
@@ -1584,7 +1774,7 @@ export default function PropertyDetail({
   }, [nearbyPlaces, activeCategory]);
   const [tourOpen, setTourOpen] = useState(false);
   const allImages = property.images?.length ? property.images : [property.coverImage ?? ""];
-  const posted    = relativeDate(property.createdAt);
+  const posted    = relativeDate(property.createdAt, lang);
   const { track } = useRecentlyViewed();
   const { formatPrice: formatPriceFn } = useCurrency();
   const rentSibling = siblings.find((s) => s.listingType === "rent");
@@ -1630,16 +1820,16 @@ export default function PropertyDetail({
       {/* ── Breadcrumb + Back to Search ── */}
       <div className="px-5 md:px-10 py-4 flex items-center justify-between" style={{ background: "#F7F3EC", borderBottom: "1px solid #EDE8DF" }}>
         <div className="flex items-center gap-2 text-[12px] overflow-x-auto no-scrollbar">
-          <Link href="/" className="no-underline transition-opacity hover:opacity-70" style={{ color: "#999" }}>Home</Link>
+          <Link href="/" className="no-underline transition-opacity hover:opacity-70" style={{ color: "#999" }}>{lang === "en" ? "Home" : lang === "th" ? "หน้าแรก" : "首页"}</Link>
           <span style={{ color: "#ccc" }}>/</span>
-          <Link href="/explore" className="no-underline transition-opacity hover:opacity-70" style={{ color: "#999" }}>{listingBadge(property.listingType)}</Link>
+          <Link href="/explore" className="no-underline transition-opacity hover:opacity-70" style={{ color: "#999" }}>{listingBadge(property.listingType, lang)}</Link>
           <span style={{ color: "#ccc" }}>/</span>
-          <Link href={`/explore?area=${property.area}`} className="no-underline transition-opacity hover:opacity-70 whitespace-nowrap" style={{ color: "#999" }}>{property.area}</Link>
+          <Link href={`/explore?area=${property.area}`} className="no-underline transition-opacity hover:opacity-70 whitespace-nowrap" style={{ color: "#999" }}>{translateArea(property.area, lang)}</Link>
           <span style={{ color: "#ccc" }}>/</span>
           <span className="font-semibold whitespace-nowrap" style={{ color: "#1C3A2F" }}>{property.name}</span>
         </div>
         <Link href="/explore" className="hidden md:flex items-center gap-1.5 text-[12px] font-medium no-underline transition-opacity hover:opacity-70 whitespace-nowrap" style={{ color: "#1C3A2F" }}>
-          <Icon.chevL /> Back to Search
+          <Icon.chevL /> {lang === "en" ? "Back to Search" : lang === "th" ? "กลับไปที่การค้นหา" : "返回搜索"}
         </Link>
       </div>
 
@@ -1656,11 +1846,11 @@ export default function PropertyDetail({
               <div className="flex items-center gap-2 mb-3 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap pb-1">
                 <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#FAF8F3", color: "#1C3A2F", border: "1px solid #EDE8DF" }}>
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  {views.toLocaleString()} views
+                  {views.toLocaleString()} {t.views}
                 </span>
                 <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(74,222,128,0.12)", color: "#2E7D4F", border: "1px solid rgba(74,222,128,0.3)" }}>
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                  {lastVerifiedLabel(property)}
+                  {lastVerifiedLabel(property, lang)}
                 </span>
                 {posted && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#FAF8F3", color: "#999", border: "1px solid #EDE8DF" }}>
@@ -1685,7 +1875,7 @@ export default function PropertyDetail({
               >
                 <span style={{ color: "#1C3A2F" }}><Icon.pin /></span>
                 <span style={{ borderBottom: "1px solid #ccc" }}>
-                  {property.district ? `${property.district}, ` : ""}{property.area}, Bangkok
+                  {property.district ? `${property.district}, ` : ""}{translateArea(property.area, lang)}, {lang === "en" ? "Bangkok" : lang === "th" ? "กรุงเทพฯ" : "曼谷"}
                 </span>
               </a>
 
@@ -1706,7 +1896,7 @@ export default function PropertyDetail({
                       ) : (
                         <TrainFront className="w-3.5 h-3.5" />
                       )}
-                      <span>{c.minutes}m to {c.name}</span>
+                      <span>{c.minutes}{lang === "en" ? "m" : lang === "th" ? " นาที" : "分钟"} {lang === "en" ? "to" : lang === "th" ? "ไปยัง" : "至"} {c.name}</span>
                     </span>
                   ))}
                 </div>
@@ -1714,7 +1904,16 @@ export default function PropertyDetail({
             </div>
 
             {/* Gallery */}
-            <Gallery images={allImages} name={property.name} isFeatured={property.featured} propertyId={property.id} />
+            <Gallery
+              images={allImages}
+              name={property.name}
+              isFeatured={property.featured}
+              propertyId={property.id}
+              area={property.area}
+              bedrooms={property.bedrooms}
+              listingType={property.listingType}
+              propertyType={property.propertyType}
+            />
 
             {/* Mobile Price, Stats, and Switcher Block - Mobile Only (under images section) */}
             <div className="md:hidden mt-4 rounded-2xl p-5" style={{ background: "#FFFFFF", border: "1px solid #EDE8DF", boxShadow: "none" }}>
@@ -1723,7 +1922,7 @@ export default function PropertyDetail({
                 {formatPriceFn(Number(property.priceTHB))}
                 {property.listingType !== "sale" && (
                   <span className="text-[13px] font-normal ml-1" style={{ color: "#555" }}>
-                    {property.priceLabel ?? " /month"}
+                    {property.priceLabel ?? t.month}
                   </span>
                 )}
               </div>
@@ -1732,15 +1931,15 @@ export default function PropertyDetail({
               <div className="flex items-center flex-nowrap gap-x-2.5 xs:gap-x-3.5 text-[11px] xs:text-[12px] font-medium border-t pt-3.5 mt-3 mb-1.5 whitespace-nowrap" style={{ color: "#555", borderColor: "#EDE8DF" }}>
                 <div className="flex items-center gap-1.5">
                   <span style={{ color: "#1C3A2F" }}><Icon.bed /></span>
-                  <span>{property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`}</span>
+                  <span>{property.bedrooms === 0 ? t.studio : `${property.bedrooms} ${property.bedrooms === 1 ? t.bed : t.beds}`}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span style={{ color: "#1C3A2F" }}><Icon.bath /></span>
-                  <span>{property.bathrooms} Bath</span>
+                  <span>{property.bathrooms} {t.bath}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span style={{ color: "#1C3A2F" }}><Icon.garage /></span>
-                  <span>{parkingValue} Parking</span>
+                  <span>{parkingValue} {t.parking}</span>
                 </div>
                 {property.sqm && (
                   <div className="flex items-center gap-1.5">
@@ -1754,7 +1953,7 @@ export default function PropertyDetail({
               {hasPriceSwitcher && rentSibling && shortStaySibling && (
                 <div className="mt-3 mb-2 p-3.5 rounded-xl border flex flex-col gap-2.5" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
                   <div className="text-[10px] font-bold uppercase tracking-[1.5px]" style={{ color: "#8B7E66" }}>
-                    Rental Contract Options
+                    {t.rentContractOptions}
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     {/* Long Term (1 Year) */}
@@ -1768,10 +1967,10 @@ export default function PropertyDetail({
                           boxShadow: "0 2px 8px rgba(45,125,98,0.08)"
                         }}
                       >
-                        <span className="text-[11px] font-bold">Long Term</span>
-                        <span className="text-[8px] opacity-75 font-medium">1 Year Contract</span>
+                        <span className="text-[11px] font-bold">{t.longTerm}</span>
+                        <span className="text-[8px] opacity-75 font-medium">{t.yearContract1}</span>
                         <span className="text-[12px] font-extrabold mt-1" style={{ color: "#1C3A2F" }}>
-                          {formatPriceFn(Number(rentSibling.priceTHB))}/mo
+                          {formatPriceFn(Number(rentSibling.priceTHB))}{t.mo}
                         </span>
                       </div>
                     ) : (
@@ -1784,10 +1983,10 @@ export default function PropertyDetail({
                           color: "#666",
                         }}
                       >
-                        <span className="text-[11px] font-bold">Long Term</span>
-                        <span className="text-[8px] text-gray-400">1 Year Contract</span>
+                        <span className="text-[11px] font-bold">{t.longTerm}</span>
+                        <span className="text-[8px] text-gray-400">{t.yearContract1}</span>
                         <span className="text-[12px] font-semibold mt-1" style={{ color: "#C9A84C" }}>
-                          {formatPriceFn(Number(rentSibling.priceTHB))}/mo
+                          {formatPriceFn(Number(rentSibling.priceTHB))}{t.mo}
                         </span>
                       </a>
                     )}
@@ -1803,10 +2002,10 @@ export default function PropertyDetail({
                           boxShadow: "0 2px 8px rgba(45,125,98,0.08)"
                         }}
                       >
-                        <span className="text-[11px] font-bold">Short Term</span>
-                        <span className="text-[8px] opacity-75 font-medium">3-6 Months</span>
+                        <span className="text-[11px] font-bold">{t.shortTerm}</span>
+                        <span className="text-[8px] opacity-75 font-medium">{t.months3to6}</span>
                         <span className="text-[12px] font-extrabold mt-1" style={{ color: "#1C3A2F" }}>
-                          {formatPriceFn(Number(shortStaySibling.priceTHB))}/mo
+                          {formatPriceFn(Number(shortStaySibling.priceTHB))}{t.mo}
                         </span>
                       </div>
                     ) : (
@@ -1819,10 +2018,10 @@ export default function PropertyDetail({
                           color: "#666",
                         }}
                       >
-                        <span className="text-[11px] font-bold">Short Term</span>
-                        <span className="text-[8px] text-gray-400">3-6 Months</span>
+                        <span className="text-[11px] font-bold">{t.shortTerm}</span>
+                        <span className="text-[8px] text-gray-400">{t.months3to6}</span>
                         <span className="text-[12px] font-semibold mt-1" style={{ color: "#C9A84C" }}>
-                          {formatPriceFn(Number(shortStaySibling.priceTHB))}/mo
+                          {formatPriceFn(Number(shortStaySibling.priceTHB))}{t.mo}
                         </span>
                       </a>
                     )}
@@ -1837,7 +2036,7 @@ export default function PropertyDetail({
               {/* Column 1: ABOUT THIS PROPERTY */}
               <div className="rounded-2xl p-6 transition-all duration-300 flex flex-col lg:h-0 lg:min-h-full overflow-hidden" style={{ background: "#ffffff", border: "none", boxShadow: "none" }}>
                 <h3 className="text-[12px] font-bold uppercase tracking-[1.5px] mb-5 font-outfit" style={{ color: "#C9A84C" }}>
-                  About this property
+                  {t.aboutProperty}
                 </h3>
                 <div className="flex-1 min-h-0 overflow-y-auto pr-2 text-[13px] leading-[1.65] font-light text-gray-600 mb-6 custom-scrollbar">
                   {property.description}
@@ -1845,17 +2044,17 @@ export default function PropertyDetail({
                 
                 <div className="mt-auto pt-4 border-t border-gray-100">
                   <h4 className="text-[13px] font-bold mb-3 font-outfit" style={{ color: "#1C3A2F" }}>
-                    Highlights
+                    {t.highlights}
                   </h4>
                   <ul className="list-none p-0 m-0 space-y-2.5">
                     {(property.features && property.features.length > 0
                       ? property.features
                       : [
-                          "Fully furnished",
-                          "Air conditioning",
-                          "Television",
-                          "Sofa",
-                          "Modern kitchen"
+                          lang === "en" ? "Fully furnished" : lang === "th" ? "ตกแต่งครบครัน" : "精装修",
+                          lang === "en" ? "Air conditioning" : lang === "th" ? "เครื่องปรับอากาศ" : "空调",
+                          lang === "en" ? "Television" : lang === "th" ? "โทรทัศน์" : "电视",
+                          lang === "en" ? "Sofa" : lang === "th" ? "โซฟา" : "沙发",
+                          lang === "en" ? "Modern kitchen" : lang === "th" ? "ห้องครัวทันสมัย" : "现代厨房"
                         ]
                     ).map((hl, i) => (
                       <li key={i} className="flex items-start text-[13px] text-gray-500 font-light">
@@ -1865,6 +2064,26 @@ export default function PropertyDetail({
                     ))}
                   </ul>
                 </div>
+
+                {/* Neighborhood Guide CTA Block */}
+                <div className="mt-5 pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[9px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">{lang === "en" ? "Local Guide" : lang === "th" ? "คู่มือท้องถิ่น" : "本地指南"}</span>
+                    <h4 className="text-[13.5px] font-bold text-[#1C3A2F] leading-tight">
+                      {t.livingIn} {translateArea(property.area, lang)}
+                    </h4>
+                    <p className="text-[11.5px] text-gray-500 font-light leading-normal">
+                      {t.guideSubtitle}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/neighborhood/${getAreaSlug(property.area)}`}
+                    className="flex-shrink-0 px-4 py-2 rounded-lg text-xs font-semibold no-underline text-center text-white hover:opacity-90 transition-opacity whitespace-nowrap"
+                    style={{ background: "#1C3A2F" }}
+                  >
+                    {t.readGuide} &rarr;
+                  </Link>
+                </div>
               </div>
 
               {/* Column 2: AMENITIES & LOCATION Stacked */}
@@ -1873,17 +2092,17 @@ export default function PropertyDetail({
                 {/* AMENITIES card */}
                 <div className="rounded-2xl p-6 transition-all duration-300" style={{ background: "#ffffff", border: "none", boxShadow: "none" }}>
                   <h3 className="text-[12px] font-bold uppercase tracking-[1.5px] mb-5 font-outfit" style={{ color: "#C9A84C" }}>
-                    Amenities
+                    {t.amenities}
                   </h3>
                   
                   <div className="grid grid-cols-2 gap-y-5 gap-x-3">
                     {(property.amenities && property.amenities.length > 0
                       ? property.amenities
                       : [
-                          "Swimming Pool",
-                          "Fitness Center",
-                          "24h Security",
-                          "Parking"
+                          lang === "en" ? "Swimming Pool" : lang === "th" ? "สระว่ายน้ำ" : "游泳池",
+                          lang === "en" ? "Fitness Center" : lang === "th" ? "ห้องฟิตเนส" : "健身中心",
+                          lang === "en" ? "24h Security" : lang === "th" ? "ระบบรักษาความปลอดภัย 24 ชม." : "24小时保安",
+                          lang === "en" ? "Parking" : lang === "th" ? "ที่จอดรถ" : "停车场"
                         ]
                     ).map((amenity, idx) => (
                       <div key={idx} className="flex items-center gap-2.5 text-[13px] text-gray-600 font-light">
@@ -1898,7 +2117,7 @@ export default function PropertyDetail({
                 <div className="rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between" style={{ background: "#ffffff", border: "none", boxShadow: "none" }}>
                   <div>
                     <h3 className="text-[12px] font-bold uppercase tracking-[1.5px] mb-5 font-outfit" style={{ color: "#C9A84C" }}>
-                      Location
+                      {t.location}
                     </h3>
                     
                     {/* Light Cartographic Map Container */}
@@ -1976,7 +2195,7 @@ export default function PropertyDetail({
                             {f.type === "school" && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>}
                           </span>
                           <span className="font-medium truncate" style={{ color: "#1A1A1A" }}>{f.name}</span>
-                          <span className="ml-auto text-[11px] flex-shrink-0" style={{ color: "#999" }}>{f.distance}</span>
+                          <span className="ml-auto text-[11px] flex-shrink-0" style={{ color: "#999" }}>{translateDistance(f.distance, lang)}</span>
                         </div>
                       ))}
                     </div>
@@ -1985,13 +2204,13 @@ export default function PropertyDetail({
                   {/* Custom Commute Calculator UI */}
                   <div className="mt-4 pt-4 border-t border-[#EDE8DF] mb-4">
                     <h4 className="text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-2.5 font-outfit">
-                      Custom Commute Calculator
+                      {t.commuteTitle}
                     </h4>
                     <form onSubmit={handleCalculateCustomCommute} className="space-y-3">
                       <div className="flex gap-2">
                         <input
                           type="text"
-                          placeholder="Type address or destination..."
+                          placeholder={t.commutePlaceholder}
                           value={customLocationName}
                           onChange={(e) => setCustomLocationName(e.target.value)}
                           className="flex-1 min-w-0 px-3 py-2 text-[12px] rounded-xl border border-[#EDE8DF] outline-none bg-white font-light"
@@ -2003,7 +2222,7 @@ export default function PropertyDetail({
                           className="flex-shrink-0 px-4 py-2 text-[12px] font-bold text-white rounded-xl bg-[#1C3A2F] hover:bg-[#152c23] transition-colors cursor-pointer disabled:opacity-50"
                           style={{ fontFamily: "inherit" }}
                         >
-                          {calcLoading ? "Calculating..." : "Calculate"}
+                          {calcLoading ? t.calculating : t.calculate}
                         </button>
                       </div>
 
@@ -2029,7 +2248,7 @@ export default function PropertyDetail({
                               ) : (
                                 <Footprints className="w-3.5 h-3.5" />
                               )}
-                              {mode === "transit" ? "Transit" : mode === "driving" ? "Driving" : "Walking"}
+                              {mode === "transit" ? t.transit : mode === "driving" ? t.driving : t.walking}
                             </span>
                           </button>
                         ))}
@@ -2053,20 +2272,38 @@ export default function PropertyDetail({
                             ✕
                           </button>
                           <p className="text-[11px] font-bold text-[#1C3A2F] mb-1">
-                            Estimated Commute:
+                            {t.estimatedCommute}
                           </p>
                           <p className="text-[11px] text-gray-600 leading-normal font-light">
-                            <span className="inline-flex items-center gap-1.5 align-middle">
-                              {customResult.transitMode === "walking" ? (
-                                <Footprints className="w-3.5 h-3.5" />
-                              ) : customResult.transitMode === "driving" ? (
-                                <Car className="w-3.5 h-3.5" />
-                              ) : (
-                                <TrainFront className="w-3.5 h-3.5" />
-                              )}
-                              <span>{customResult.transitMode === "walking" ? "Walking" : customResult.transitMode === "driving" ? "Driving" : "Public Transit"}</span>
-                            </span>{" "}
-                            takes <strong className="text-[#C9A84C] font-semibold">{customResult.minutes} mins</strong> ({customResult.distance.toFixed(1)} km) from the property to <strong className="font-semibold">{customResult.name}</strong>.
+                            {lang === "zh" ? (
+                              <>
+                                <span className="inline-flex items-center gap-1.5 align-middle">
+                                  {customResult.transitMode === "walking" ? (
+                                    <Footprints className="w-3.5 h-3.5" />
+                                  ) : customResult.transitMode === "driving" ? (
+                                    <Car className="w-3.5 h-3.5" />
+                                  ) : (
+                                    <TrainFront className="w-3.5 h-3.5" />
+                                  )}
+                                  <span>{customResult.transitMode === "walking" ? t.walking : customResult.transitMode === "driving" ? t.driving : t.publicTransit}</span>
+                                </span>{" "}
+                                {t.fromPropertyTo} <strong className="font-semibold">{customResult.name}</strong> {t.takes} <strong className="text-[#C9A84C] font-semibold">{customResult.minutes} {t.mins}</strong> ({customResult.distance.toFixed(1)} km)。
+                              </>
+                            ) : (
+                              <>
+                                <span className="inline-flex items-center gap-1.5 align-middle">
+                                  {customResult.transitMode === "walking" ? (
+                                    <Footprints className="w-3.5 h-3.5" />
+                                  ) : customResult.transitMode === "driving" ? (
+                                    <Car className="w-3.5 h-3.5" />
+                                  ) : (
+                                    <TrainFront className="w-3.5 h-3.5" />
+                                  )}
+                                  <span>{customResult.transitMode === "walking" ? t.walking : customResult.transitMode === "driving" ? t.driving : t.publicTransit}</span>
+                                </span>{" "}
+                                {t.takes} <strong className="text-[#C9A84C] font-semibold">{customResult.minutes} {t.mins}</strong> ({customResult.distance.toFixed(1)} km) {t.fromPropertyTo} <strong className="font-semibold">{customResult.name}</strong>.
+                              </>
+                            )}
                           </p>
                         </div>
                       )}
@@ -2081,7 +2318,7 @@ export default function PropertyDetail({
                     className="inline-flex items-center gap-1.5 text-[12px] font-semibold no-underline transition-opacity hover:opacity-70 pt-2"
                     style={{ color: "#C9A84C" }}
                   >
-                    View on Google Maps →
+                    {t.viewOnGoogleMaps} →
                   </a>
                 </div>
 
@@ -2092,10 +2329,10 @@ export default function PropertyDetail({
                     <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
                       <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
                         <span style={{ color: "#1C3A2F" }}><Icon.home /></span>
-                        <span>Type</span>
+                        <span>{t.specs.type}</span>
                       </div>
                       <div className="text-[12px] font-bold mt-1 capitalize" style={{ color: "#1A1A1A" }}>
-                        {property.propertyType}
+                        {translatePropertyType(property.propertyType, lang)}
                       </div>
                     </div>
 
@@ -2105,10 +2342,13 @@ export default function PropertyDetail({
                         <span style={{ color: "#1C3A2F" }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m16 14-4-4-4 4"/></svg>
                         </span>
-                        <span>Floor</span>
+                        <span>{t.specs.floor}</span>
                       </div>
                       <div className="text-[12px] font-bold mt-1" style={{ color: "#1A1A1A" }}>
-                        {property.floor ? String(property.floor) : getDynamicFloor(property.description, property.id, property.propertyType).split(" / ")[0]}
+                        {(() => {
+                          const fl = property.floor ? String(property.floor) : getDynamicFloor(property.description, property.id, property.propertyType).split(" / ")[0];
+                          return fl === "Ground" ? (lang === "en" ? "Ground" : lang === "th" ? "ชั้นกราวด์" : "地面层") : fl;
+                        })()}
                       </div>
                     </div>
 
@@ -2116,7 +2356,7 @@ export default function PropertyDetail({
                     <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
                       <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
                         <span style={{ color: "#1C3A2F" }}><Icon.stories /></span>
-                        <span>Total Floors</span>
+                        <span>{t.specs.totalFloors}</span>
                       </div>
                       <div className="text-[12px] font-bold mt-1" style={{ color: "#1A1A1A" }}>
                         {property.totalFloors ? String(property.totalFloors) : getDynamicFloor(property.description, property.id, property.propertyType).split(" / ")[1] || "—"}
@@ -2129,10 +2369,10 @@ export default function PropertyDetail({
                         <span style={{ color: "#1C3A2F" }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4-2c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5S8.83 8 8 8zm8 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5S16.83 8 16 8zm-4 8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                         </span>
-                        <span>Pets</span>
+                        <span>{t.specs.pets}</span>
                       </div>
                       <div className="text-[12px] font-bold mt-1" style={{ color: "#1A1A1A" }}>
-                        {property.petFriendly || houseRulesDefaults(property).pets ? "Yes" : "No"}
+                        {property.petFriendly || houseRulesDefaults(property).pets ? t.specs.yes : t.specs.no}
                       </div>
                     </div>
 
@@ -2140,10 +2380,10 @@ export default function PropertyDetail({
                     <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
                       <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
                         <span style={{ color: "#1C3A2F" }}><Icon.calendar /></span>
-                        <span>Available</span>
+                        <span>{t.specs.available}</span>
                       </div>
                       <div className="text-[12px] font-bold mt-1 leading-tight truncate" style={{ color: "#1A1A1A" }}>
-                        {availableFromLabel(property) === "Immediate" || availableFromLabel(property) === "Negotiable" ? "Available Now" : availableFromLabel(property)}
+                        {availableFromLabel(property, lang)}
                       </div>
                     </div>
 
@@ -2153,10 +2393,15 @@ export default function PropertyDetail({
                         <span style={{ color: "#1C3A2F" }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </span>
-                        <span>Min. Stay</span>
+                        <span>{t.specs.minStay}</span>
                       </div>
                       <div className="text-[12px] font-bold mt-1 truncate" style={{ color: "#1A1A1A" }}>
-                        {property.listingType === "sale" ? "Freehold" : property.listingType === "short_stay" ? (property.leaseTerms || "3 Months") : (property.leaseTerms || "12 Months")}
+                        {property.listingType === "sale"
+                          ? t.specs.freehold
+                          : property.listingType === "short_stay"
+                            ? (property.leaseTerms === "3 Months" || !property.leaseTerms ? t.specs.months3 : property.leaseTerms)
+                            : (property.leaseTerms === "12 Months" || !property.leaseTerms ? t.specs.months12 : property.leaseTerms)
+                        }
                       </div>
                     </div>
                   </div>
@@ -2171,7 +2416,7 @@ export default function PropertyDetail({
               {/* Header */}
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-[12px] font-bold uppercase tracking-[1.5px] font-outfit" style={{ color: "#C9A84C" }}>
-                  Nearby Places
+                  {t.nearbyPlaces}
                 </h3>
                 <a
                   href={`https://www.google.com/maps/search/places+near+${encodeURIComponent(property.area + " Bangkok")}`}
@@ -2180,27 +2425,31 @@ export default function PropertyDetail({
                   className="text-[12px] font-semibold no-underline transition-opacity hover:opacity-70"
                   style={{ color: "#C9A84C" }}
                 >
-                  View all places →
+                  {t.viewAllPlaces} →
                 </a>
               </div>
 
               {/* Category pills */}
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-4">
-                {["All", "BTS/MRT", "Cafes", "Restaurants", "Shopping", "Fitness", "Parks", "Co-working", "Markets"].map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className="px-4 py-2 rounded-full text-[12px] font-semibold cursor-pointer border transition-all whitespace-nowrap flex-shrink-0"
-                    style={{
-                      background: activeCategory === cat ? "#1C3A2F" : "#FFFFFF",
-                      color: activeCategory === cat ? "#FFFFFF" : "#555",
-                      borderColor: activeCategory === cat ? "#1C3A2F" : "#E5E0D8",
-                      fontFamily: "inherit",
-                    }}
-                  >
-                    {cat}
-                  </button>
-                ))}
+                {["All", "BTS/MRT", "Cafes", "Restaurants", "Shopping", "Fitness", "Parks", "Co-working", "Markets"].map((cat) => {
+                  const catKey = cat === "BTS/MRT" ? "bts/mrt" : cat.toLowerCase();
+                  const catLabel = t.nearbyCategories[catKey as keyof typeof t.nearbyCategories] || cat;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className="px-4 py-2 rounded-full text-[12px] font-semibold cursor-pointer border transition-all whitespace-nowrap flex-shrink-0"
+                      style={{
+                        background: activeCategory === cat ? "#1C3A2F" : "#FFFFFF",
+                        color: activeCategory === cat ? "#FFFFFF" : "#555",
+                        borderColor: activeCategory === cat ? "#1C3A2F" : "#E5E0D8",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      {catLabel}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Places grid — each card fetches a real Google Places photo */}
@@ -2218,7 +2467,7 @@ export default function PropertyDetail({
               {/* Empty state */}
               {filteredPlaces.length === 0 && (
                 <div className="text-center py-8">
-                  <p className="text-[13px]" style={{ color: "#999" }}>No places found in this category.</p>
+                  <p className="text-[13px]" style={{ color: "#999" }}>{t.noPlacesFound}</p>
                 </div>
               )}
             </div>
@@ -2231,9 +2480,9 @@ export default function PropertyDetail({
                 {sameBuilding.length > 0 && (
                   <div className="mb-8">
                     <h2 className="text-[17px] font-bold mb-1" style={{ color: "#1A1A1A" }}>
-                      More from this building
+                      {t.moreFromBuilding}
                     </h2>
-                    <p className="text-[12px] mb-4" style={{ color: "#999" }}>Other units in the same condominium</p>
+                    <p className="text-[12px] mb-4" style={{ color: "#999" }}>{t.otherCondoUnits}</p>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       {sameBuilding.map((p) => <SimilarCard key={p.id} property={p} />)}
                     </div>
@@ -2243,9 +2492,13 @@ export default function PropertyDetail({
                 {nearby.length > 0 && (
                   <div>
                     <h2 className="text-[17px] font-bold mb-1" style={{ color: "#1A1A1A" }}>
-                      Nearby properties
+                      {t.nearbyProperties}
                     </h2>
-                    <p className="text-[12px] mb-4" style={{ color: "#999" }}>Just a few minutes from {property.area}</p>
+                    <p className="text-[12px] mb-4" style={{ color: "#999" }}>
+                      {t.justMinsFrom.includes("{area}") 
+                        ? t.justMinsFrom.replace("{area}", translateArea(property.area, lang)) 
+                        : `${t.justMinsFrom} ${translateArea(property.area, lang)}`}
+                    </p>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       {nearby.map((p) => <SimilarCard key={p.id} property={p} />)}
                     </div>
@@ -2266,11 +2519,11 @@ export default function PropertyDetail({
                 <div className="flex items-center gap-2 flex-wrap mb-4">
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#FAF8F3", color: "#1C3A2F", border: "1px solid #EDE8DF" }}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    {views.toLocaleString()} views
+                    {views.toLocaleString()} {t.views}
                   </span>
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(74,222,128,0.12)", color: "#2E7D4F", border: "1px solid rgba(74,222,128,0.3)" }}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                    {lastVerifiedLabel(property)}
+                    {lastVerifiedLabel(property, lang)}
                   </span>
                   {posted && (
                     <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#FAF8F3", color: "#999", border: "1px solid #EDE8DF" }}>
@@ -2295,7 +2548,7 @@ export default function PropertyDetail({
                 >
                   <span style={{ color: "#1C3A2F" }}><Icon.pin /></span>
                   <span style={{ borderBottom: "1px solid #ccc" }}>
-                    {property.district ? `${property.district}, ` : ""}{property.area}, Bangkok
+                    {property.district ? `${property.district}, ` : ""}{translateArea(property.area, lang)}, {lang === "en" ? "Bangkok" : lang === "th" ? "กรุงเทพฯ" : "曼谷"}
                   </span>
                 </a>
 
@@ -2316,7 +2569,7 @@ export default function PropertyDetail({
                         ) : (
                           <TrainFront className="w-3.5 h-3.5" />
                         )}
-                        <span>{c.minutes}m to {c.name}</span>
+                        <span>{c.minutes}{lang === "en" ? "m" : lang === "th" ? " นาที" : "分钟"} {lang === "en" ? "to" : lang === "th" ? "ไปยัง" : "至"} {c.name}</span>
                       </span>
                     ))}
                   </div>
@@ -2327,7 +2580,7 @@ export default function PropertyDetail({
                   {formatPriceFn(Number(property.priceTHB))}
                   {property.listingType !== "sale" && (
                     <span className="text-[14px] font-normal ml-1" style={{ color: "#555" }}>
-                      {property.priceLabel ?? " /month"}
+                      {property.priceLabel ?? t.month}
                     </span>
                   )}
                 </div>
@@ -2336,7 +2589,7 @@ export default function PropertyDetail({
                 {hasPriceSwitcher && rentSibling && shortStaySibling && (
                   <div className="mb-6 p-4 rounded-xl border flex flex-col gap-3" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
                     <div className="text-[11px] font-bold uppercase tracking-[1.5px]" style={{ color: "#8B7E66" }}>
-                      Rental Contract Options
+                      {t.rentContractOptions}
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       {/* Long Term (1 Year) */}
@@ -2350,10 +2603,10 @@ export default function PropertyDetail({
                             boxShadow: "0 2px 8px rgba(45,125,98,0.08)"
                           }}
                         >
-                          <span className="text-[12px] font-bold">Long Term</span>
-                          <span className="text-[9px] opacity-75 font-medium">1 Year Contract</span>
+                          <span className="text-[12px] font-bold">{t.longTerm}</span>
+                          <span className="text-[9px] opacity-75 font-medium">{t.yearContract1}</span>
                           <span className="text-[14px] font-extrabold mt-1.5" style={{ color: "#1C3A2F" }}>
-                            {formatPriceFn(Number(rentSibling.priceTHB))}/mo
+                            {formatPriceFn(Number(rentSibling.priceTHB))}{t.mo}
                           </span>
                         </div>
                       ) : (
@@ -2366,10 +2619,10 @@ export default function PropertyDetail({
                             color: "#666",
                           }}
                         >
-                          <span className="text-[12px] font-bold">Long Term</span>
-                          <span className="text-[9px] text-gray-400">1 Year Contract</span>
+                          <span className="text-[12px] font-bold">{t.longTerm}</span>
+                          <span className="text-[9px] text-gray-400">{t.yearContract1}</span>
                           <span className="text-[14px] font-semibold mt-1.5" style={{ color: "#C9A84C" }}>
-                            {formatPriceFn(Number(rentSibling.priceTHB))}/mo
+                            {formatPriceFn(Number(rentSibling.priceTHB))}{t.mo}
                           </span>
                         </a>
                       )}
@@ -2385,10 +2638,10 @@ export default function PropertyDetail({
                             boxShadow: "0 2px 8px rgba(45,125,98,0.08)"
                           }}
                         >
-                          <span className="text-[12px] font-bold">Short Term</span>
-                          <span className="text-[9px] opacity-75 font-medium">3-6 Months</span>
+                          <span className="text-[12px] font-bold">{t.shortTerm}</span>
+                          <span className="text-[9px] opacity-75 font-medium">{t.months3to6}</span>
                           <span className="text-[14px] font-extrabold mt-1.5" style={{ color: "#1C3A2F" }}>
-                            {formatPriceFn(Number(shortStaySibling.priceTHB))}/mo
+                            {formatPriceFn(Number(shortStaySibling.priceTHB))}{t.mo}
                           </span>
                         </div>
                       ) : (
@@ -2401,10 +2654,10 @@ export default function PropertyDetail({
                             color: "#666",
                           }}
                         >
-                          <span className="text-[12px] font-bold">Short Term</span>
-                          <span className="text-[9px] text-gray-400">3-6 Months</span>
+                          <span className="text-[12px] font-bold">{t.shortTerm}</span>
+                          <span className="text-[9px] text-gray-400">{t.months3to6}</span>
                           <span className="text-[14px] font-semibold mt-1.5" style={{ color: "#C9A84C" }}>
-                            {formatPriceFn(Number(shortStaySibling.priceTHB))}/mo
+                            {formatPriceFn(Number(shortStaySibling.priceTHB))}{t.mo}
                           </span>
                         </a>
                       )}
@@ -2416,15 +2669,15 @@ export default function PropertyDetail({
                 <div className="flex items-center flex-wrap gap-x-4 gap-y-2 text-[12px] font-medium border-t pt-4 mt-2 mb-6" style={{ color: "#555", borderColor: "#E5E0D8" }}>
                   <div className="flex items-center gap-1.5">
                     <span style={{ color: "#1C3A2F" }}><Icon.bed /></span>
-                    <span>{property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`}</span>
+                    <span>{property.bedrooms === 0 ? t.studio : `${property.bedrooms} ${property.bedrooms === 1 ? t.bed : t.beds}`}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span style={{ color: "#1C3A2F" }}><Icon.bath /></span>
-                    <span>{property.bathrooms} Bath</span>
+                    <span>{property.bathrooms} {t.bath}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span style={{ color: "#1C3A2F" }}><Icon.garage /></span>
-                    <span>{parkingValue} Parking</span>
+                    <span>{parkingValue} {t.parking}</span>
                   </div>
                   {property.sqm && (
                     <div className="flex items-center gap-1.5">
@@ -2455,8 +2708,8 @@ export default function PropertyDetail({
                       <Icon.calendar />
                     </div>
                     <div className="flex-1">
-                      <div className="text-[13px] font-semibold" style={{ color: "#1A1A1A" }}>Schedule a Tour</div>
-                      <div className="text-[11px] mt-0.5" style={{ color: "#999" }}>Pick a date that works for you</div>
+                      <div className="text-[13px] font-semibold" style={{ color: "#1A1A1A" }}>{t.scheduleTour}</div>
+                      <div className="text-[11px] mt-0.5" style={{ color: "#999" }}>{t.tourSub}</div>
                     </div>
                     <span style={{ color: "#999" }}><Icon.chevRSm /></span>
                   </button>
@@ -2474,7 +2727,7 @@ export default function PropertyDetail({
                     className="w-full mt-3 py-3.5 rounded-xl text-[14px] font-semibold cursor-pointer border-none transition-opacity hover:opacity-90 text-white"
                     style={{ background: "#1C3A2F", fontFamily: "inherit" }}
                   >
-                    Send Enquiry
+                    {t.sendEnquiry}
                   </button>
                 </div>
 
@@ -2482,48 +2735,15 @@ export default function PropertyDetail({
 
               {/* WHY YOU'LL LOVE [AREA] Card */}
               {(() => {
-                const loveAreaBulletPoints = (() => {
-                  if (property.area === "Ari") {
-                    return [
-                      "Creative and indie vibe",
-                      "Amazing cafes and brunch spots",
-                      "Walkable and bike-friendly",
-                      "Easy access to BTS Ari",
-                      "Great for remote work lifestyle"
-                    ];
-                  }
-                  if (property.area === "Thong Lo") {
-                    return [
-                      "Trendy and upscale nightlife",
-                      "High-end dining and cafes",
-                      "Expansive shopping malls",
-                      "Easy access to BTS Thong Lo",
-                      "Vibrant expat community"
-                    ];
-                  }
-                  if (property.area === "Sathorn") {
-                    return [
-                      "Vibrant business district",
-                      "Excellent dining and rooftop bars",
-                      "Close to Lumphini Park",
-                      "Easy access to BTS Chong Nonsi",
-                      "Modern skyscrapers & urban vibe"
-                    ];
-                  }
-                  return [
-                    "Vibrant local neighborhood",
-                    "Great food and local cafes",
-                    "Convenient transportation options",
-                    "Blend of traditional & modern lifestyle",
-                    "Highly desirable residential area"
-                  ];
-                })();
+                let areaKey = property.area.toLowerCase().replace(/\s+/g, "");
+                if (areaKey === "thonglo") areaKey = "thonglor";
+                const loveAreaBulletPoints = t.loveBullets[areaKey as keyof typeof t.loveBullets] || t.loveBullets.default;
 
                 return (
                   <div className="rounded-2xl p-5" style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}>
                     <div>
                       <h3 className="text-[11px] font-bold uppercase tracking-[1.5px] mb-3 font-outfit" style={{ color: "#1C3A2F" }}>
-                        Why you&apos;ll love {property.area}
+                        {t.whyYouWillLove} {translateArea(property.area, lang)}
                       </h3>
                       <ul className="list-none p-0 m-0 space-y-2">
                         {loveAreaBulletPoints.map((bp, i) => (
@@ -2539,7 +2759,7 @@ export default function PropertyDetail({
                           className="text-[11px] font-semibold hover:underline no-underline inline-flex items-center gap-1"
                           style={{ color: "#C9A84C" }}
                         >
-                          Learn more about {property.area} <span className="text-[9px]">→</span>
+                          {t.learnMoreAbout} {translateArea(property.area, lang)} <span className="text-[9px]">→</span>
                         </Link>
                       </div>
                     </div>
@@ -2554,10 +2774,10 @@ export default function PropertyDetail({
                   <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
                     <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
                       <span style={{ color: "#1C3A2F" }}><Icon.home /></span>
-                      <span>Type</span>
+                      <span>{t.specs.type}</span>
                     </div>
                     <div className="text-[12px] font-bold mt-1 capitalize" style={{ color: "#1A1A1A" }}>
-                      {property.propertyType}
+                      {translatePropertyType(property.propertyType, lang)}
                     </div>
                   </div>
 
@@ -2567,10 +2787,13 @@ export default function PropertyDetail({
                       <span style={{ color: "#1C3A2F" }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m16 14-4-4-4 4"/></svg>
                       </span>
-                      <span>Floor</span>
+                      <span>{t.specs.floor}</span>
                     </div>
                     <div className="text-[12px] font-bold mt-1" style={{ color: "#1A1A1A" }}>
-                      {property.floor ? String(property.floor) : getDynamicFloor(property.description, property.id, property.propertyType).split(" / ")[0]}
+                      {(() => {
+                        const fl = property.floor ? String(property.floor) : getDynamicFloor(property.description, property.id, property.propertyType).split(" / ")[0];
+                        return fl === "Ground" ? (lang === "en" ? "Ground" : lang === "th" ? "ชั้นกราวด์" : "地面层") : fl;
+                      })()}
                     </div>
                   </div>
 
@@ -2578,7 +2801,7 @@ export default function PropertyDetail({
                   <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
                     <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
                       <span style={{ color: "#1C3A2F" }}><Icon.stories /></span>
-                      <span>Total Floors</span>
+                      <span>{t.specs.totalFloors}</span>
                     </div>
                     <div className="text-[12px] font-bold mt-1" style={{ color: "#1A1A1A" }}>
                       {property.totalFloors ? String(property.totalFloors) : getDynamicFloor(property.description, property.id, property.propertyType).split(" / ")[1] || "—"}
@@ -2591,10 +2814,10 @@ export default function PropertyDetail({
                       <span style={{ color: "#1C3A2F" }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4-2c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5S8.83 8 8 8zm8 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5S16.83 8 16 8zm-4 8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                       </span>
-                      <span>Pets</span>
+                      <span>{t.specs.pets}</span>
                     </div>
                     <div className="text-[12px] font-bold mt-1" style={{ color: "#1A1A1A" }}>
-                      {property.petFriendly || houseRulesDefaults(property).pets ? "Yes" : "No"}
+                      {property.petFriendly || houseRulesDefaults(property).pets ? t.specs.yes : t.specs.no}
                     </div>
                   </div>
 
@@ -2602,10 +2825,10 @@ export default function PropertyDetail({
                   <div className="border p-3.5 rounded-xl flex flex-col justify-between min-h-[76px]" style={{ background: "#FAF8F3", borderColor: "#EDE8DF" }}>
                     <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold" style={{ color: "#999" }}>
                       <span style={{ color: "#1C3A2F" }}><Icon.calendar /></span>
-                      <span>Available</span>
+                      <span>{t.specs.available}</span>
                     </div>
                     <div className="text-[12px] font-bold mt-1 leading-tight truncate" style={{ color: "#1A1A1A" }}>
-                      {availableFromLabel(property) === "Immediate" || availableFromLabel(property) === "Negotiable" ? "Available Now" : availableFromLabel(property)}
+                      {availableFromLabel(property, lang)}
                     </div>
                   </div>
 
@@ -2615,10 +2838,15 @@ export default function PropertyDetail({
                       <span style={{ color: "#1C3A2F" }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                       </span>
-                      <span>Min. Stay</span>
+                      <span>{t.specs.minStay}</span>
                     </div>
                     <div className="text-[12px] font-bold mt-1 truncate" style={{ color: "#1A1A1A" }}>
-                      {property.listingType === "sale" ? "Freehold" : property.listingType === "short_stay" ? (property.leaseTerms || "3 Months") : (property.leaseTerms || "12 Months")}
+                      {property.listingType === "sale"
+                        ? t.specs.freehold
+                        : property.listingType === "short_stay"
+                          ? (property.leaseTerms === "3 Months" || !property.leaseTerms ? t.specs.months3 : property.leaseTerms)
+                          : (property.leaseTerms === "12 Months" || !property.leaseTerms ? t.specs.months12 : property.leaseTerms)
+                      }
                     </div>
                   </div>
                 </div>
@@ -2647,7 +2875,7 @@ export default function PropertyDetail({
           className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl text-[13px] font-bold bg-white border border-border text-charcoal cursor-pointer"
           style={{ fontFamily: "inherit" }}
         >
-          <Icon.calendar /> Request Viewing
+          <Icon.calendar /> {t.requestViewing}
         </button>
         <button
           onClick={() => {
@@ -2661,7 +2889,7 @@ export default function PropertyDetail({
           className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl text-[13px] font-bold bg-forest text-white cursor-pointer border-none"
           style={{ fontFamily: "inherit" }}
         >
-          Send Enquiry
+          {t.sendEnquiry}
         </button>
       </div>
 

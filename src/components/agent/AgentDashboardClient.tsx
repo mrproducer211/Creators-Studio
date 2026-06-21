@@ -1,6 +1,5 @@
 "use client";
 /* eslint-disable react-hooks/set-state-in-effect */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -25,6 +24,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { compressAndConvertToWebp } from "@/lib/image-optimizer";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { T_AGENT_DASHBOARD } from "@/data/agentTranslations";
 
 interface AgentDashboardClientProps {
   agent: {
@@ -40,6 +41,8 @@ interface AgentDashboardClientProps {
 }
 
 export default function AgentDashboardClient({ agent, initialProperties }: AgentDashboardClientProps) {
+  const { lang } = useLanguage();
+  const ta = T_AGENT_DASHBOARD[lang] || T_AGENT_DASHBOARD.en;
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"listings" | "leads" | "bookings" | "upload" | "settings">("listings");
   const [properties, setProperties] = useState<any[]>(initialProperties);
@@ -185,7 +188,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
 
   // Amenities checklist defined in PropertyDetail.tsx
   const ALL_AMENITIES = [
-    "Swimming Pool",
+    "{ta.upload.amenityPool}",
     "Fitness Center",
     "Garden",
     "Co-working Space",
@@ -604,7 +607,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                 color: activeTab === "listings" ? "#E2C97E" : "rgba(255,255,255,0.65)",
               }}
             >
-              <FolderOpen size={16} /> My Listings
+              <FolderOpen size={16} /> {ta.nav.listings}
             </button>
             <button
               onClick={() => setActiveTab("leads")}
@@ -614,7 +617,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                 color: activeTab === "leads" ? "#E2C97E" : "rgba(255,255,255,0.65)",
               }}
             >
-              <MessageSquare size={16} /> Leads & Enquiries
+              <MessageSquare size={16} /> {ta.nav.leads}
             </button>
             <button
               onClick={() => setActiveTab("bookings")}
@@ -624,7 +627,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                 color: activeTab === "bookings" ? "#E2C97E" : "rgba(255,255,255,0.65)",
               }}
             >
-              <Calendar size={16} /> Bookings & Tours
+              <Calendar size={16} /> {ta.nav.bookings}
             </button>
             {!agent.postingRestricted && (
               <button
@@ -638,7 +641,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                   color: activeTab === "upload" ? "#E2C97E" : "rgba(255,255,255,0.65)",
                 }}
               >
-                <Plus size={16} /> Upload Property
+                <Plus size={16} /> {ta.nav.upload}
               </button>
             )}
             <button
@@ -649,7 +652,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                 color: activeTab === "settings" ? "#E2C97E" : "rgba(255,255,255,0.65)",
               }}
             >
-              <Settings size={16} /> Profile & Settings
+              <Settings size={16} /> {ta.nav.settings}
             </button>
           </nav>
         )}
@@ -689,7 +692,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
             style={{ color: activeTab === "listings" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
           >
             <FolderOpen size={18} />
-            <span className="text-[9px] font-medium">Listings</span>
+            <span className="text-[9px] font-medium">{ta.nav.listings.split(" ")[1] || ta.nav.listings}</span>
           </button>
           <button
             onClick={() => setActiveTab("leads")}
@@ -697,7 +700,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
             style={{ color: activeTab === "leads" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
           >
             <MessageSquare size={18} />
-            <span className="text-[9px] font-medium">Leads</span>
+            <span className="text-[9px] font-medium">{ta.nav.leads.split(" ")[0] || ta.nav.leads}</span>
           </button>
           <button
             onClick={() => setActiveTab("bookings")}
@@ -705,7 +708,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
             style={{ color: activeTab === "bookings" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
           >
             <Calendar size={18} />
-            <span className="text-[9px] font-medium">Bookings</span>
+            <span className="text-[9px] font-medium">{ta.nav.bookings.split(" ")[0] || ta.nav.bookings}</span>
           </button>
           {!agent.postingRestricted && (
             <button
@@ -717,7 +720,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
               style={{ color: activeTab === "upload" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
             >
               <Plus size={18} />
-              <span className="text-[9px] font-medium">Upload</span>
+              <span className="text-[9px] font-medium">{ta.nav.upload.split(" ")[0] || ta.nav.upload}</span>
             </button>
           )}
           <button
@@ -726,7 +729,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
             style={{ color: activeTab === "settings" ? "#E2C97E" : "rgba(255,255,255,0.55)" }}
           >
             <Settings size={18} />
-            <span className="text-[9px] font-medium">Settings</span>
+            <span className="text-[9px] font-medium">{ta.nav.settings.split(" ")[2] || ta.nav.settings}</span>
           </button>
         </nav>
       )}
@@ -740,9 +743,9 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
               <AlertCircle size={24} />
             </div>
             <div>
-              <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-0.5">Verification Pending</h2>
+              <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-0.5">{ta.settings.statusPending || "Verification Pending"}</h2>
               <p className="text-[13px] font-light leading-relaxed text-[#666]">
-                Welcome, <strong>{agent.name}</strong>! Your application is currently in queue for admin verification. 
+                {ta.nav.welcome} <strong>{agent.name}</strong>! Your application is currently in queue for admin verification. 
                 You will receive full posting permissions as soon as an administrator approves your account.
               </p>
             </div>
@@ -755,10 +758,9 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
               <XCircle size={24} />
             </div>
             <div>
-              <h2 className="text-[16px] font-bold text-red-700 mb-0.5">Application Rejected</h2>
+              <h2 className="text-[16px] font-bold text-red-700 mb-0.5">{ta.listings.statusRejected || "Application Rejected"}</h2>
               <p className="text-[13px] font-light leading-relaxed text-[#666]">
-                We regret to inform you that your registration request as an agent partner was not approved. 
-                Please contact support at <strong>admin@nhp-bangkok.com</strong> for assistance.
+                {lang === "th" ? "เราขอแสดงความเสียใจที่ต้องแจ้งให้ทราบว่าใบสมัครเป็นพันธมิตรตัวแทนของคุณไม่ได้รับการอนุมัติ โปรดติดต่อฝ่ายสนับสนุนที่ admin@nhp-bangkok.com สำหรับการช่วยเหลือ" : lang === "zh" ? "很抱歉地通知您，您申请经纪人合作伙伴的请求未通过审核。如有疑问，请联系平台支持团队：admin@nhp-bangkok.com。" : "We regret to inform you that your registration request as an agent partner was not approved. Please contact support at admin@nhp-bangkok.com for assistance."}
               </p>
             </div>
           </div>
@@ -772,20 +774,20 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
               <div>
                 <h1 className="text-[20px] lg:text-[24px] font-bold text-[#1A1A1A] tracking-[-0.5px]">
                   {activeTab === "listings" 
-                    ? "My Property Listings" 
+                    ? "{ta.listings.title}" 
                     : activeTab === "leads" 
                     ? "Leads & Enquiries" 
                     : activeTab === "bookings" 
                     ? "Bookings & Tours" 
                     : activeTab === "upload" 
-                    ? "Upload New Property" 
+                    ? "{editingId ? ta.upload.titleEdit : ta.upload.titleNew}" 
                     : "Profile & Settings"}
                 </h1>
                 <p className="text-[12px] lg:text-[13px] text-[#999] font-light mt-0.5">
                   {activeTab === "listings" 
                     ? `Manage your portfolio of ${properties.length} listings in Bangkok.` 
                     : activeTab === "leads" 
-                    ? "Direct client enquiries submitted for your listings." 
+                    ? "{ta.leads.sub}" 
                     : activeTab === "bookings" 
                     ? "Scheduled virtual or physical home viewing tours." 
                     : activeTab === "upload" 
@@ -801,7 +803,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                   }}
                   className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-bold border-none cursor-pointer text-white transition-opacity hover:opacity-95 bg-[#1C3A2F]"
                 >
-                  <Plus size={14} /> Add Property
+                  <Plus size={14} /> {lang === "th" ? "+ เพิ่มอสังหาฯ" : lang === "zh" ? "+ 发布房源" : "+ Add Property"}
                 </button>
               )}
             </div>
@@ -810,15 +812,15 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
             {activeTab === "listings" && (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
                 <div className="p-4 rounded-xl border bg-white" style={{ borderColor: "#E5E0D8" }}>
-                  <div className="text-[9px] lg:text-[10px] font-semibold uppercase tracking-[0.8px] text-gray-400">Total Listings</div>
+                  <div className="text-[9px] lg:text-[10px] font-semibold uppercase tracking-[0.8px] text-gray-400">{lang === "th" ? "จำนวนอสังหาฯ ทั้งหมด" : lang === "zh" ? "房源总数" : "Total Listings"}</div>
                   <div className="text-[20px] lg:text-[24px] font-bold text-[#1C3A2F] mt-0.5">{totalListingsCount}</div>
                 </div>
                 <div className="p-4 rounded-xl border bg-white" style={{ borderColor: "#E5E0D8" }}>
-                  <div className="text-[9px] lg:text-[10px] font-semibold uppercase tracking-[0.8px] text-gray-400">Active Listed</div>
+                  <div className="text-[9px] lg:text-[10px] font-semibold uppercase tracking-[0.8px] text-gray-400">{lang === "th" ? "ลงประกาศอยู่" : lang === "zh" ? "已上架" : "Active {ta.listings.statusApproved}"}</div>
                   <div className="text-[20px] lg:text-[24px] font-bold text-[#2E7D4F] mt-0.5">{activeListingsCount}</div>
                 </div>
                 <div className="p-4 rounded-xl border bg-white" style={{ borderColor: "#E5E0D8" }}>
-                  <div className="text-[9px] lg:text-[10px] font-semibold uppercase tracking-[0.8px] text-gray-400">Draft / Unlisted</div>
+                  <div className="text-[9px] lg:text-[10px] font-semibold uppercase tracking-[0.8px] text-gray-400">{lang === "th" ? "ร่าง / ไม่แสดง" : lang === "zh" ? "草稿 / 未上架" : "Draft / Unlisted"}</div>
                   <div className="text-[20px] lg:text-[24px] font-bold text-[#8B6914] mt-0.5">{unlistedListingsCount}</div>
                 </div>
                 <div className="p-4 rounded-xl border bg-white" style={{ borderColor: "#E5E0D8" }}>
@@ -870,15 +872,15 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                               <td className="px-4 py-4 text-center">
                                 {prop.pendingVerification ? (
                                   <span className="text-[10px] font-semibold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-blue-200">
-                                    <AlertCircle size={10} /> Pending Verify
+                                    <AlertCircle size={10} /> {ta.listings.statusPending}
                                   </span>
                                 ) : isExpired ? (
                                   <span className="text-[10px] font-semibold bg-red-50 text-red-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-red-200 animate-pulse">
-                                    <AlertCircle size={10} /> Expired
+                                    <AlertCircle size={10} /> {lang === "th" ? "หมดอายุ" : lang === "zh" ? "已过期" : "Expired"}
                                   </span>
                                 ) : isUnlisted ? (
                                   <span className="text-[10px] font-semibold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-amber-200">
-                                    <EyeOff size={10} /> Draft (Unlisted)
+                                    <EyeOff size={10} /> {lang === "th" ? "ร่าง (ไม่แสดง)" : lang === "zh" ? "草稿 (未上架)" : "Draft (Unlisted)"}
                                   </span>
                                 ) : (
                                   <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full inline-flex items-center gap-1 border border-emerald-200">
@@ -903,7 +905,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                                       color: isUnlisted ? "#FFFFFF" : "#1C3A2F",
                                       borderColor: "#1C3A2F"
                                     }}
-                                    title={prop.pendingVerification ? "Pending Admin Approval" : isExpired ? "Expired Listing" : isUnlisted ? "Publish Listing" : "Unlist Listing"}
+                                    title={prop.pendingVerification ? "Pending Admin Approval" : isExpired ? (lang === "th" ? "ประกาศหมดอายุ" : lang === "zh" ? "已过期房源" : "Expired Listing") : isUnlisted ? "Publish Listing" : "Unlist Listing"}
                                   >
                                     {prop.pendingVerification ? "Pending" : isUnlisted ? "Publish" : "Unlist"}
                                   </button>
@@ -911,7 +913,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                                     onClick={() => handleDelete(prop.id)}
                                     disabled={actionLoading === prop.id}
                                     className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 bg-transparent border-none cursor-pointer rounded transition-colors"
-                                    title="Delete Listing"
+                                    title={ta.listings.actionDelete}
                                   >
                                     <Trash2 size={16} />
                                   </button>
@@ -952,7 +954,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                       {properties.length === 0 && (
                         <tr>
                           <td colSpan={6} className="text-center py-16 text-gray-400 text-[13px]">
-                            No listings posted yet. Click &quot;+ Add Property&quot; to upload your first listing!
+                            {ta.listings.empty}
                           </td>
                         </tr>
                       )}
@@ -991,11 +993,11 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                               </span>
                             ) : isExpired ? (
                               <span className="text-[9px] font-semibold bg-red-50 text-red-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1 border border-red-200">
-                                <AlertCircle size={8} /> Expired
+                                <AlertCircle size={8} /> {lang === "th" ? "หมดอายุ" : lang === "zh" ? "已过期" : "Expired"}
                               </span>
                             ) : isUnlisted ? (
                               <span className="text-[9px] font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1 border border-amber-200">
-                                <EyeOff size={8} /> Draft
+                                <EyeOff size={8} /> {lang === "th" ? "ร่าง" : lang === "zh" ? "草稿" : "Draft"}
                               </span>
                             ) : (
                               <span className="text-[9px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1 border border-emerald-200">
@@ -1140,7 +1142,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                           {enquiries.length === 0 && (
                             <tr>
                               <td colSpan={6} className="text-center py-16 text-gray-400 text-[13px]">
-                                No enquiries received yet.
+                                {ta.leads.empty}
                               </td>
                             </tr>
                           )}
@@ -1417,19 +1419,19 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                   <div className="flex flex-col gap-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Property Name / Title *</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.propNameEn} *</label>
                         <input
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          placeholder="e.g. Noble Solo Thonglor Luxury Penthouse"
+                          placeholder={lang === "th" ? "เช่น โนเบิล โซโล ทองหล่อ ลักชัวรี่ เพนต์เฮาส์" : lang === "zh" ? "例如：通罗 Noble Solo 豪华顶层公寓" : "e.g. Noble Solo Thonglor Luxury Penthouse"}
                           className="w-full px-4.5 py-3.5 rounded-xl text-[14px] focus:outline-none focus:border-[#C9A84C]"
                           style={inputStyle}
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Price (THB) *</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.priceLabel} *</label>
                         <input
                           type="number"
                           value={priceTHB}
@@ -1443,7 +1445,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Listing Type *</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.listingType} *</label>
                         <select
                           value={listingType}
                           onChange={(e) => handleListingTypeChange(e.target.value as any)}
@@ -1457,7 +1459,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                       </div>
 
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Property Type *</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.propertyType} *</label>
                         <select
                           value={propertyType}
                           onChange={(e) => setPropertyType(e.target.value as any)}
@@ -1473,7 +1475,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                       </div>
 
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Furnishing Status *</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{lang === "th" ? "สถานะการตกแต่ง *" : lang === "zh" ? "装修状态 *" : "Furnishing Status *"}</label>
                         <select
                           value={furnishing}
                           onChange={(e) => setFurnishing(e.target.value as any)}
@@ -1489,7 +1491,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Neighborhood Area *</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.areaDistrict} *</label>
                         <select
                           value={["Sukhumvit", "Sathorn", "Thong Lo", "Asok", "Silom", "On Nut", "Ekkamai", "Ari", "Rama 9", "Bang Na", "Huai Khwang", "Phaya Thai"].includes(area) ? area : "Other"}
                           onChange={(e) => {
@@ -1521,7 +1523,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                       </div>
 
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">District (Optional)</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{lang === "th" ? "เขต / อำเภอ (ไม่บังคับ)" : lang === "zh" ? "行政区 (选填)" : "District (Optional)"}</label>
                         <input
                           type="text"
                           value={district}
@@ -1535,7 +1537,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
 
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Bedrooms</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.bedrooms}</label>
                         <select
                           value={bedrooms}
                           onChange={(e) => setBedrooms(e.target.value)}
@@ -1549,7 +1551,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                       </div>
 
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Bathrooms</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.bathrooms}</label>
                         <select
                           value={bathrooms}
                           onChange={(e) => setBathrooms(e.target.value)}
@@ -1563,7 +1565,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                       </div>
 
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Sqm Size</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.areaSqM.split(" ")[0]}</label>
                         <input
                           type="number"
                           value={sqm}
@@ -1651,11 +1653,11 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
 
                     {/* Description Textarea */}
                     <div>
-                      <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Description Details</label>
+                      <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.descEn}</label>
                       <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Add a details summary about view, furniture, orientation..."
+                        placeholder={lang === "th" ? "เพิ่มสรุปรายละเอียดเกี่ยวกับวิว, เฟอร์นิเจอร์, ทิศทางห้อง..." : lang === "zh" ? "添加关于景观、家具、朝向等详细描述..." : "Add details summary..."}
                         rows={3}
                         className="w-full px-4 py-3 rounded-xl text-[14px]"
                         style={{ ...inputStyle, resize: "none" }}
@@ -1664,7 +1666,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
 
                     {/* Key Unique Features (Highlights) */}
                     <div>
-                      <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Key Unique Room Features (One per line)</label>
+                      <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{lang === "th" ? "คุณสมบัติเด่นของห้อง (หนึ่งรายการต่อบรรทัด)" : lang === "zh" ? "房源特色 (每行输入一项)" : "Key Unique Room Features"}</label>
                       <textarea
                         value={featuresText}
                         onChange={(e) => setFeaturesText(e.target.value)}
@@ -1677,7 +1679,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
 
                     {/* Amenities Checklist */}
                     <div className="p-4 rounded-xl border bg-[#FAF8F3]" style={{ borderColor: "#EDE8DF" }}>
-                      <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] mb-3">Select Amenities Available</label>
+                      <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] mb-3">{ta.upload.secAmenities}</label>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {ALL_AMENITIES.map((amenity) => (
                           <label key={amenity} className="flex items-center gap-2 text-[12px] text-gray-700 cursor-pointer select-none">
@@ -1697,7 +1699,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* Cover Photo */}
                       <div className="p-4 rounded-xl border bg-[#FAF8F3]" style={{ borderColor: "#EDE8DF" }}>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-[#1C3A2F] mb-2">Cover Image *</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-[#1C3A2F] mb-2">{ta.upload.photoHelp.split(".")[0] === "Upload" ? "Cover Image *" : ta.upload.photoHelp.split(".")[0]}</label>
                         <div className="border border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer relative overflow-hidden h-[120px] bg-white hover:border-[#C9A84C]" style={{ borderColor: "#E5E0D8" }}>
                           {coverImage ? (
                             <>
@@ -1742,12 +1744,12 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     {/* BTS station & tags */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Nearest BTS/MRT Station</label>
+                        <label className="block text-[10px] lg:text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.upload.btsProximity}</label>
                         <input
                           type="text"
                           value={btsStation}
                           onChange={(e) => setBtsStation(e.target.value)}
-                          placeholder="e.g. Thong Lo BTS"
+                          placeholder={ta.upload.btsProximity + " e.g. Thong Lo BTS"}
                           className="w-full px-4.5 py-3 rounded-xl text-[14px]"
                           style={inputStyle}
                         />
@@ -1804,7 +1806,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1.8fr] gap-6">
                       {/* Left preview card */}
                       <div className="rounded-2xl border p-4 bg-[#FAF8F3] shadow-inner" style={{ borderColor: "#EDE8DF" }}>
-                        <h4 className="text-[11px] font-bold uppercase tracking-[1px] text-gray-400 mb-3">Live Listing Preview</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-[1px] text-gray-400 mb-3">{lang === "th" ? "ตัวอย่างประกาศแบบเรียลไทม์" : lang === "zh" ? "房源实时预览" : "Live Listing Preview"}</h4>
                         
                         <div className="rounded-xl overflow-hidden bg-white border shadow-sm">
                           <div className="aspect-video w-full bg-gray-100 bg-cover bg-center relative" style={{ backgroundImage: `url(${coverImage})` }}>
@@ -1836,7 +1838,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
 
                       {/* Right details summary */}
                       <div className="flex flex-col gap-4">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[1px] text-gray-400">Specifications Summary</h4>
+                        <h4 className="text-[11px] font-bold uppercase tracking-[1px] text-gray-400">{lang === "th" ? "สรุปรายละเอียดสเปค" : lang === "zh" ? "房源参数摘要" : "Specifications Summary"}</h4>
                         
                         <div className="flex flex-col gap-2.5 text-[13px] text-[#1A1A1A]">
                           <div className="flex justify-between py-1 border-b border-gray-100">
@@ -1957,7 +1959,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                       <span className="font-semibold text-emerald-700">Full Upload Access</span>
                     </div>
 
-                    {/* Mobile Only Sign Out Button */}
+                    {/* Mobile Only {ta.nav.signOut} Button */}
                     <div className="lg:hidden mt-4 pt-4 border-t" style={{ borderColor: "#E5E0D8" }}>
                       <button
                         onClick={() => signOut({ callbackUrl: "/" })}
@@ -1999,7 +2001,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">Change Password (Optional)</label>
+                      <label className="block text-[11px] font-bold uppercase tracking-[1px] text-gray-500 mb-1.5">{ta.settings.secPassword} (Optional)</label>
                       <input
                         type="password"
                         value={agentPassword}

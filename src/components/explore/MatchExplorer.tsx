@@ -40,6 +40,8 @@ import {
   Sparkles
 } from "lucide-react";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { T_MATCH } from "@/data/matchTranslations";
 
 const MapComponent = dynamic(() => import("./MapComponent"), { ssr: false });
 
@@ -254,6 +256,8 @@ function renderProfileBadge(badge: string) {
 
 export default function MatchExplorer({ properties }: Props) {
   const { formatPrice } = useCurrency();
+  const { lang } = useLanguage();
+  const tm = T_MATCH[lang] || T_MATCH.en;
 
   // Wizard States
   const [step, setStep] = useState<number>(0); // Step 0 is Landing Hero
@@ -697,7 +701,7 @@ export default function MatchExplorer({ properties }: Props) {
     }
   };
 
-  // Generate динамические бейджи стиля жизни (Spotify Wrapped style)
+  // Generate dynamic lifestyle badges (Spotify Wrapped style)
   const lifestyleProfileBadges = useMemo(() => {
     const badges: string[] = [];
     if (selectedPrefs.includes("☕ Cafe Culture")) badges.push("☕ Cafe Explorer");
@@ -810,17 +814,17 @@ export default function MatchExplorer({ properties }: Props) {
               New Home Property Premium
             </span>
             <h1 className="text-[34px] font-bold leading-tight mb-4 max-w-[320px] font-outfit" style={{ letterSpacing: "-1px" }}>
-              Where Would You Belong In Bangkok?
+              {tm.landingTitle}
             </h1>
             <p className="text-[13.5px] text-[#D5CDBE] max-w-[280px] leading-relaxed mb-8 font-light">
-              Discover the neighborhoods that match your lifestyle, personality, budget, and goals.
+              {tm.landingDesc}
             </p>
             <button
               onClick={() => setStep(1)}
               className="px-8 py-4 rounded-full font-bold text-[13px] bg-[#C9A84C] text-[#1C3A2F] cursor-pointer border-none shadow-lg transition-transform hover:scale-105"
               style={{ fontFamily: "inherit" }}
             >
-              Start Auto Finder →
+              {tm.landingCTA}
             </button>
           </div>
         )}
@@ -831,8 +835,8 @@ export default function MatchExplorer({ properties }: Props) {
             {/* Header progress line */}
             <div className="mb-6">
               <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider text-[#C9A84C] mb-2">
-                <span>Auto Finder</span>
-                <span>Step {step} of 6</span>
+                <span>{tm.landingTitle2}</span>
+                <span>{tm.stepOf.replace("{step}", String(step))}</span>
               </div>
               <div className="w-full h-[3px] bg-gray-200 rounded-full overflow-hidden">
                 <div className="h-full bg-[#1C3A2F] transition-all duration-300" style={{ width: `${step * 16.66}%` }} />
@@ -843,8 +847,8 @@ export default function MatchExplorer({ properties }: Props) {
               {/* Step 1: Why Are You Coming To Bangkok? */}
               {step === 1 && (
                 <div>
-                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">Why are you coming to Bangkok?</h2>
-                  <p className="text-[12.5px] text-[#666] mb-5 font-light">Select all reasons that apply to save as your relocation intent.</p>
+                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">{tm.reasonsQuestion}</h2>
+                  <p className="text-[12.5px] text-[#666] mb-5 font-light">{tm.reasonsSub}</p>
                   
                   <div className="grid grid-cols-2 gap-3">
                     {REASONS.map((r) => {
@@ -872,7 +876,7 @@ export default function MatchExplorer({ properties }: Props) {
                           >
                             {renderReasonIcon(r.label)}
                           </div>
-                          <span className="text-[12.5px] font-bold text-[#1C3A2F] font-outfit tracking-wide transition-colors duration-300">{r.label}</span>
+                          <span className="text-[12.5px] font-bold text-[#1C3A2F] font-outfit tracking-wide transition-colors duration-300">{tm.reasons[r.label] || r.label}</span>
                           {isSelected && (
                             <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-[#1C3A2F] text-[#C9A84C] flex items-center justify-center text-[10px] font-extrabold shadow-sm border border-[#C9A84C]">
                               ✓
@@ -888,13 +892,13 @@ export default function MatchExplorer({ properties }: Props) {
               {/* Step 2: What Kind Of Life Do You Want? */}
               {step === 2 && (
                 <div>
-                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">What kind of life do you want?</h2>
-                  <p className="text-[12.5px] text-[#666] mb-5 font-light">Select up to 5 features that match your positive lifestyle preferences.</p>
+                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">{tm.preferencesQuestion}</h2>
+                  <p className="text-[12.5px] text-[#666] mb-5 font-light">{tm.preferencesSub}</p>
                   
                   <div className="flex flex-wrap gap-1.5 max-h-[350px] overflow-y-auto pr-1">
                     {PREFERENCES.map((pref) => {
                       const isSelected = selectedPrefs.includes(pref);
-                      const { label, icon } = getPreferenceDetails(pref);
+                      const { icon } = getPreferenceDetails(pref);
                       return (
                         <button
                           key={pref}
@@ -907,7 +911,7 @@ export default function MatchExplorer({ properties }: Props) {
                           }}
                         >
                           {icon}
-                          <span>{label}</span>
+                          <span>{(tm.preferences[pref] || pref).replace(/^[^A-Za-z0-9\s()&/-]+/, "").trim()}</span>
                         </button>
                       );
                     })}
@@ -918,8 +922,8 @@ export default function MatchExplorer({ properties }: Props) {
               {/* Step 3: What Do You Want To Avoid? */}
               {step === 3 && (
                 <div>
-                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight font-outfit">What do you want to avoid?</h2>
-                  <p className="text-[12.5px] text-[#666] mb-5 font-light">Select up to 3 parameters. Negative preferences shape matching scores significantly.</p>
+                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight font-outfit">{tm.avoidancesQuestion}</h2>
+                  <p className="text-[12.5px] text-[#666] mb-5 font-light">{tm.avoidancesSub}</p>
                   
                   <div className="grid grid-cols-2 gap-3">
                     {AVOIDANCES.map((av) => {
@@ -947,7 +951,7 @@ export default function MatchExplorer({ properties }: Props) {
                           >
                             {renderAvoidanceIcon(av.label)}
                           </div>
-                          <span className="text-[12.5px] font-bold text-[#1C3A2F] font-outfit tracking-wide transition-colors duration-300 pr-4">{av.label}</span>
+                          <span className="text-[12.5px] font-bold text-[#1C3A2F] font-outfit tracking-wide transition-colors duration-300 pr-4">{tm.avoidances[av.label] || av.label}</span>
                           {isSelected && (
                             <div className="absolute top-2.5 right-2.5 w-4.5 h-4.5 rounded-full bg-[#EF4444] text-white flex items-center justify-center text-[9px] font-extrabold shadow-sm">
                               ✓
@@ -963,8 +967,8 @@ export default function MatchExplorer({ properties }: Props) {
               {/* Step 4: Budget */}
               {step === 4 && (
                 <div>
-                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">Monthly housing budget</h2>
-                  <p className="text-[12.5px] text-[#666] mb-8 font-light">Select your budget limit. Budget compatibility forms 25% of the overall match.</p>
+                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">{tm.budgetQuestion}</h2>
+                  <p className="text-[12.5px] text-[#666] mb-8 font-light">{tm.budgetSub}</p>
                   
                   <div className="bg-[#FFFFFF] p-6 rounded-3xl border border-[#E5E0D8] text-center shadow-sm mb-6">
                     <span className="text-[10px] uppercase font-bold text-[#888] tracking-wider block mb-1">Affordable Range Target</span>
@@ -994,8 +998,8 @@ export default function MatchExplorer({ properties }: Props) {
               {/* Step 5: Length of Stay */}
               {step === 5 && (
                 <div>
-                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">Length of stay in Bangkok</h2>
-                  <p className="text-[12.5px] text-[#666] mb-5 font-light">Lease durations adjust recommended resident types and available properties.</p>
+                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">{tm.durationQuestion}</h2>
+                  <p className="text-[12.5px] text-[#666] mb-5 font-light">{tm.durationSub}</p>
                   
                   <div className="flex flex-col gap-2.5">
                     {DURATIONS.map((dur) => (
@@ -1008,7 +1012,7 @@ export default function MatchExplorer({ properties }: Props) {
                           borderWidth: stayDuration === dur ? "2px" : "1.5px",
                         }}
                       >
-                        <span className="text-[13px] font-bold text-[#1C3A2F]">{dur}</span>
+                        <span className="text-[13px] font-bold text-[#1C3A2F]">{tm.durations[dur] || dur}</span>
                         {stayDuration === dur && <span className="text-xs text-[#1C3A2F]">✓</span>}
                       </button>
                     ))}
@@ -1019,8 +1023,8 @@ export default function MatchExplorer({ properties }: Props) {
               {/* Step 6: Workplace or Destination */}
               {step === 6 && (
                 <div>
-                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">Workplace or frequent destination</h2>
-                  <p className="text-[12.5px] text-[#666] mb-5 font-light">Commute calculations form 20% of matching score. (Optional - will not penalize you if left empty).</p>
+                  <h2 className="text-[22px] font-bold mb-1 text-[#1C3A2F] leading-tight">{tm.workplaceQuestion}</h2>
+                  <p className="text-[12.5px] text-[#666] mb-5 font-light">{tm.workplaceSub}</p>
                   
                   <div className="flex flex-col gap-3">
                     <select
@@ -1030,7 +1034,7 @@ export default function MatchExplorer({ properties }: Props) {
                       style={{ border: "1.5px solid #E5E0D8", background: "#FFFFFF", color: "#1A1A1A", fontFamily: "inherit" }}
                     >
                       {DESTINATIONS_LIST.map((dest) => (
-                        <option key={dest} value={dest}>{dest}</option>
+                        <option key={dest} value={dest}>{tm.destinations[dest] || dest}</option>
                       ))}
                     </select>
 
@@ -1056,7 +1060,7 @@ export default function MatchExplorer({ properties }: Props) {
                 className="px-5 py-3 rounded-xl border border-gray-300 font-semibold cursor-pointer text-[#1C3A2F] bg-[#FFFFFF]"
                 style={{ fontFamily: "inherit" }}
               >
-                Back
+                {tm.back}
               </button>
               {step < 6 ? (
                 <button
@@ -1064,7 +1068,7 @@ export default function MatchExplorer({ properties }: Props) {
                   className="flex-1 py-3 rounded-xl font-bold cursor-pointer border-none bg-[#1C3A2F] text-[#FFFFFF]"
                   style={{ fontFamily: "inherit" }}
                 >
-                  Continue →
+                  {tm.next} →
                 </button>
               ) : (
                 <button
@@ -1072,7 +1076,7 @@ export default function MatchExplorer({ properties }: Props) {
                   className="flex-1 py-3 rounded-xl font-bold cursor-pointer border-none bg-[#1C3A2F] text-[#FFFFFF]"
                   style={{ fontFamily: "inherit" }}
                 >
-                  Generate Profile →
+                  {tm.finish} →
                 </button>
               )}
             </div>
@@ -1083,12 +1087,12 @@ export default function MatchExplorer({ properties }: Props) {
         {step === 7 && !hasSearched && (
           <div className="flex-1 flex flex-col justify-between">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[2px] text-[#C9A84C] block mb-2">Analysis Complete</span>
+              <span className="text-[10px] font-bold uppercase tracking-[2px] text-[#C9A84C] block mb-2">{tm.analysisComplete}</span>
               <h2 className="text-[26px] font-bold text-[#1C3A2F] leading-tight mb-4 font-outfit">Your Bangkok Lifestyle Profile</h2>
               
               <div className="bg-[#1C3A2F] text-[#F7F3EC] p-6 rounded-3xl shadow-lg border border-white/10 mb-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[#C9A84C]/10 rounded-full blur-2xl" />
-                <span className="text-[9px] uppercase font-bold text-[#C9A84C] tracking-widest block mb-4">Resident Identity Card</span>
+                <span className="text-[9px] uppercase font-bold text-[#C9A84C] tracking-widest block mb-4">{tm.idCard}</span>
                 
                 <div className="flex flex-col gap-3.5 mb-6">
                   {lifestyleProfileBadges.map((badge, index) => (

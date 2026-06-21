@@ -13,6 +13,11 @@ import { getAllPosts } from "@/lib/store/blog";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Bangkok Condos, Apartments & Luxury Properties | NHP Bangkok",
+  description: "Discover premium properties for rent and sale in Bangkok's best neighborhoods, including Thong Lo, Sathorn, Ari, and Asok. Your trusted Bangkok expat real estate platform.",
+};
+
 export default async function Home() {
   const allProperties = await getDbProperties();
   const allPosts = await getAllPosts();

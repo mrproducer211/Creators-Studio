@@ -48,14 +48,36 @@ function filtersFromParams(params: URLSearchParams): ExploreFilters {
 function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] {
   let result = [...props];
   if (f.search) {
-    const q = f.search.toLowerCase().replace(/\s+/g, "");
-    result = result.filter(
-      (p) =>
-        p.name.toLowerCase().replace(/\s+/g, "").includes(q) ||
-        p.area.toLowerCase().replace(/\s+/g, "").includes(q) ||
-        (p.district?.toLowerCase().replace(/\s+/g, "").includes(q) ?? false) ||
-        p.description.toLowerCase().replace(/\s+/g, "").includes(q)
-    );
+    const queryClean = f.search.toLowerCase().trim();
+    const searchTerms = queryClean.split(/\s+/).filter(Boolean);
+    
+    result = result.filter((p) => {
+      const nameLower = p.name.toLowerCase();
+      const areaLower = p.area.toLowerCase();
+      const districtLower = p.district?.toLowerCase() || "";
+      
+      // 1. Direct name, area or district match
+      if (queryClean.length >= 3 && (nameLower.includes(queryClean) || queryClean.includes(nameLower))) {
+        return true;
+      }
+      if (queryClean.length >= 3 && (areaLower.includes(queryClean) || queryClean.includes(areaLower))) {
+        return true;
+      }
+      if (queryClean.length >= 3 && districtLower && (districtLower.includes(queryClean) || queryClean.includes(districtLower))) {
+        return true;
+      }
+      
+      // 2. Word-by-word matching
+      const searchableText = `${p.name} ${p.area} ${p.district || ""} ${p.description} ${p.btsStation || ""} ${p.mrtStation || ""}`.toLowerCase();
+      const stopWords = ["in", "at", "on", "near", "under", "for", "with", "a", "an", "the", "และ", "ใน", "ที่", "ใกล้", "คอนโด", "condo", "apartment"];
+      const keyTerms = searchTerms.filter((t) => !stopWords.includes(t));
+      
+      if (keyTerms.length === 0) {
+        return searchTerms.every((term) => searchableText.includes(term));
+      }
+      
+      return keyTerms.every((term) => searchableText.includes(term));
+    });
   }
   if (f.listingType !== "all") result = result.filter((p) => p.listingType === f.listingType);
   if (f.propertyType !== "all") result = result.filter((p) => p.propertyType === f.propertyType);
@@ -111,19 +133,39 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
 
   const dynamicTitle = useMemo(() => {
     if (filters.area) {
-      return lang === "th"
-        ? `ค้นหาอสังหาริมทรัพย์ในกรุงเทพฯ ย่าน ${filters.area}`
-        : `Explore properties in Bangkok ${filters.area}`;
+      if (lang === "th") {
+        return `ค้นหาอสังหาริมทรัพย์ในกรุงเทพฯ ย่าน ${filters.area}`;
+      }
+      if (lang === "zh") {
+        const areaMap: Record<string, string> = {
+          "Sukhumvit": "素坤逸",
+          "Sathorn": "沙吞",
+          "Thong Lo": "通罗",
+          "Asok": "阿索克",
+          "Ekkamai": "伊卡迈",
+          "Silom": "是隆",
+          "On Nut": "安努",
+          "Ari": "阿里",
+          "Rama 9": "拉玛九世",
+          "Bang Na": "邦纳",
+          "Huai Khwang": "怀匡",
+          "Phaya Thai": "帕亚泰",
+          "Other": "其他区域",
+        };
+        const localized = areaMap[filters.area] || filters.area;
+        return `探索曼谷${localized}的房产`;
+      }
+      return `Explore properties in Bangkok ${filters.area}`;
     }
     if (filters.nearBts) {
-      return lang === "th"
-        ? "ค้นหาอสังหาริมทรัพย์ใกล้รถไฟฟ้าในกรุงเทพฯ"
-        : "Explore properties near BTS in Bangkok";
+      if (lang === "th") return "ค้นหาอสังหาริมทรัพย์ใกล้รถไฟฟ้าในกรุงเทพฯ";
+      if (lang === "zh") return "探索曼谷近轻轨与地铁的房产";
+      return "Explore properties near BTS in Bangkok";
     }
     if (filters.petFriendly) {
-      return lang === "th"
-        ? "ค้นหาอสังหาริมทรัพย์ที่เลี้ยงสัตว์ได้ในกรุงเทพฯ"
-        : "Explore pet friendly properties in Bangkok";
+      if (lang === "th") return "ค้นหาอสังหาริมทรัพย์ที่เลี้ยงสัตว์ได้ในกรุงเทพฯ";
+      if (lang === "zh") return "探索曼谷允许宠物的房产";
+      return "Explore pet friendly properties in Bangkok";
     }
     return t.explore.title;
   }, [filters, lang, t]);

@@ -19,7 +19,14 @@ export async function generateMetadata({ params }: Props) {
   const p = all.find((x) => x.slug === slug);
   if (!p) return { title: "Property Not Found — NHP" };
 
-  const title = `${p.name} — NHP Bangkok`;
+  const roomType = p.bedrooms === 0 ? "Studio" : `${p.bedrooms} Bed`;
+  const propType = p.propertyType ? p.propertyType.charAt(0).toUpperCase() + p.propertyType.slice(1) : "Condo";
+  const action = p.listingType === "sale" ? "Sale" : "Rent";
+  const priceVal = Number(p.priceTHB || 0);
+  const priceStr = priceVal > 0 ? `฿${priceVal.toLocaleString()}` : "";
+  const label = p.priceLabel || (p.listingType === "rent" ? "/mo" : "");
+  
+  const title = `${roomType} ${propType} for ${action} in ${p.area} | ${priceStr}${label} — NHP`;
   const description = p.description.slice(0, 160);
   const canonicalUrl = `https://nhpbangkok.com/property/${p.slug}`;
   const imageUrl = p.coverImage || "https://nhpbangkok.com/images/homepage_hero_v2.webp";

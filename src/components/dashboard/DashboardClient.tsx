@@ -7,6 +7,7 @@ import { PropertyCard } from "@/types/property";
 import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { T_DASHBOARD } from "@/data/dashboardTranslations";
 import ExplorePropertyCard from "@/components/explore/ExplorePropertyCard";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
 import {
@@ -65,6 +66,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
   const searchParams = useSearchParams();
   const { savedIds, count } = useSaved();
   const { lang, setLang } = useLanguage();
+  const td = T_DASHBOARD[lang] || T_DASHBOARD.en;
   const { currency, setCurrency } = useCurrency();
   const user = session?.user;
 
@@ -565,22 +567,22 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
       {/* Welcome Banner */}
       <div className="rounded-2xl p-6 md:p-8 mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md" style={{ background: "#1C3A2F" }}>
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-[2px]" style={{ color: "#C9A84C" }}>NHP Private Client</span>
+          <span className="text-[11px] font-bold uppercase tracking-[2px]" style={{ color: "#C9A84C" }}>{td.header?.client || "NHP Private Client"}</span>
           <h1 className="text-2xl md:text-3xl font-extrabold mt-1 text-white leading-tight">
-            Sawadee, {user?.name || "Member"}
+            {td.header?.welcome || "Sawadee, "}{user?.name || "Member"}
           </h1>
           <p className="text-sm font-light mt-1.5 text-white/60">
-            Welcome to your customized Bangkok concierge panel.
+            {td.header?.sub || "Welcome to your customized Bangkok concierge panel."}
           </p>
         </div>
         <div className="flex gap-4">
           <div className="px-5 py-3 rounded-xl text-center" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}>
             <div className="text-[18px] font-bold text-[#C9A84C]">{count}</div>
-            <div className="text-[10px] uppercase text-white/50 tracking-wider mt-0.5">Saved Homes</div>
+            <div className="text-[10px] uppercase text-white/50 tracking-wider mt-0.5">{td.header?.savedHomes || "Saved Homes"}</div>
           </div>
           <div className="px-5 py-3 rounded-xl text-center" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}>
             <div className="text-[18px] font-bold text-[#C9A84C]">{commuteHubsList.length || 0}</div>
-            <div className="text-[10px] uppercase text-white/50 tracking-wider mt-0.5">Commute Hubs</div>
+            <div className="text-[10px] uppercase text-white/50 tracking-wider mt-0.5">{td.header?.commuteHubs || "Commute Hubs"}</div>
           </div>
         </div>
       </div>
@@ -589,7 +591,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
         {/* Mobile Tab Navigation Dropdown */}
         <div className="w-full lg:hidden mb-4">
           <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-[1.5px] mb-1.5">
-            Dashboard Menu
+            {td.header?.menu || "Dashboard Menu"}
           </label>
           <select
             value={activeTab}
@@ -597,24 +599,24 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
             className="w-full px-4 py-3 rounded-xl border border-[#E5E0D8] outline-none text-[14px] font-semibold bg-white text-[#1C3A2F]"
             style={{ fontFamily: "inherit" }}
           >
-            <option value="feed">Profile & Match Feed</option>
-            <option value="saved">Saved Properties</option>
-            <option value="searches">Saved Searches</option>
-            <option value="commute">Commute Planner</option>
-            <option value="collab">Collaborative Lists</option>
-            <option value="settings">Settings</option>
+            <option value="feed">{td.tabs.feed}</option>
+            <option value="saved">{td.tabs.saved}</option>
+            <option value="searches">{td.tabs.searches}</option>
+            <option value="commute">{td.tabs.commute}</option>
+            <option value="collab">{td.tabs.collab}</option>
+            <option value="settings">{td.tabs.settings}</option>
           </select>
         </div>
 
         {/* Sidebar Nav (Desktop only) */}
         <aside className="hidden lg:flex lg:flex-col lg:w-[260px] flex-shrink-0 gap-1 bg-white p-2 rounded-2xl border border-[#E5E0D8]">
           {[
-            { id: "feed", label: "Profile & Match Feed", icon: <Compass size={16} /> },
-            { id: "saved", label: "Saved Properties", icon: <Heart size={16} /> },
-            { id: "searches", label: "Saved Searches", icon: <Bookmark size={16} /> },
-            { id: "commute", label: "Commute Planner", icon: <Car size={16} /> },
-            { id: "collab", label: "Collaborative Lists", icon: <Users size={16} /> },
-            { id: "settings", label: "Settings", icon: <Settings size={16} /> },
+            { id: "feed", label: td.tabs.feed, icon: <Compass size={16} /> },
+            { id: "saved", label: td.tabs.saved, icon: <Heart size={16} /> },
+            { id: "searches", label: td.tabs.searches, icon: <Bookmark size={16} /> },
+            { id: "commute", label: td.tabs.commute, icon: <Car size={16} /> },
+            { id: "collab", label: td.tabs.collab, icon: <Users size={16} /> },
+            { id: "settings", label: td.tabs.settings, icon: <Settings size={16} /> },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -644,15 +646,13 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                     <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(201,168,76,0.15)" }}>
                       <Compass size={24} className="text-[#C9A84C]" />
                     </div>
-                    <h2 className="text-[20px] font-bold text-[#1C3A2F] mb-1">Set Up Your Matchmaker Feed</h2>
-                    <p className="text-[13px] text-gray-500 font-light mb-6">
-                      Tell us your parameters to unlock a custom feed of highly relevant neighborhoods and property listings.
-                    </p>
+                    <h2 className="text-[20px] font-bold text-[#1C3A2F] mb-1">{td.feed.setupTitle}</h2>
+                    <p className="text-[13px] text-gray-500 font-light mb-6">{td.feed.setupDesc}</p>
 
                     <form onSubmit={handleSavePreferences} className="text-left flex flex-col gap-4">
                       {/* Budget */}
                       <div>
-                        <label className="text-[12px] font-bold text-gray-700 block mb-1">Max Monthly Budget (THB)</label>
+                        <label className="text-[12px] font-bold text-gray-700 block mb-1">{td.feed.budgetLabel}</label>
                         <div className="flex items-center gap-3">
                           <input
                             type="range"
@@ -669,25 +669,25 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
 
                       {/* Vibe */}
                       <div>
-                        <label className="text-[12px] font-bold text-gray-700 block mb-1">Preferred Neighborhood Vibe</label>
+                        <label className="text-[12px] font-bold text-gray-700 block mb-1">{td.feed.vibeLabel}</label>
                         <select
                           value={manualVibe}
                           onChange={(e) => setManualVibe(e.target.value)}
                           className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px] bg-white"
                           style={{ fontFamily: "inherit" }}
                         >
-                          <option>Trendy & Lively</option>
-                          <option>Quiet & Peaceful</option>
-                          <option>Business/City Center</option>
-                          <option>Local Cultural</option>
+                          <option value="Trendy & Lively">{td.feed.vibeOptions.trendy}</option>
+                          <option value="Quiet & Peaceful">{td.feed.vibeOptions.quiet}</option>
+                          <option value="Business/City Center">{td.feed.vibeOptions.business}</option>
+                          <option value="Local Cultural">{td.feed.vibeOptions.cultural}</option>
                         </select>
                       </div>
 
                       {/* Transit */}
                       <div className="flex items-center justify-between p-1">
                         <div>
-                          <span className="text-[13px] font-bold text-[#1C3A2F] block">Excellent Public Transport</span>
-                          <span className="text-[10px] text-gray-400">Must be within easy walk of BTS/MRT station</span>
+                          <span className="text-[13px] font-bold text-[#1C3A2F] block">{td.feed.transitLabel}</span>
+                          <span className="text-[10px] text-gray-400">{td.feed.transitSub}</span>
                         </div>
                         <input
                           type="checkbox"
@@ -697,11 +697,11 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                         />
                       </div>
 
-                      {/* Pet Friendly */}
+                      {/* {td.feed.petSub.split(" ")[0] === "Only" ? "Pet Friendly" : td.feed.petLabel} */}
                       <div className="flex items-center justify-between p-1">
                         <div>
-                          <span className="text-[13px] font-bold text-[#1C3A2F] block">Pet Friendly Buildings</span>
-                          <span className="text-[10px] text-gray-400">Only match listings allowing dogs/cats</span>
+                          <span className="text-[13px] font-bold text-[#1C3A2F] block">{td.feed.petLabel}</span>
+                          <span className="text-[10px] text-gray-400">{td.feed.petSub}</span>
                         </div>
                         <input
                           type="checkbox"
@@ -716,7 +716,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                         className="w-full py-3.5 rounded-xl text-[13px] font-semibold text-white mt-2 cursor-pointer border-none transition-opacity hover:opacity-95"
                         style={{ background: "#1C3A2F" }}
                       >
-                        Generate My Matches →
+                        {td.feed.generateBtn}
                       </button>
                     </form>
                   </div>
@@ -729,23 +729,23 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                     <div>
                       <h2 className="text-[16px] font-bold text-[#1C3A2F] flex items-center gap-1.5">
                         <Sliders size={16} className="text-[#C9A84C]" />
-                        Active Matchmaker Preferences
+                        {td.feed.preferencesTitle}
                       </h2>
                       <div className="flex flex-wrap gap-2 mt-2">
                         <span className="text-[10px] font-semibold bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-600">
-                          Budget: {finderPreferences.budget.toLocaleString()} THB
+                          {td.feed.budgetLabel.replace("Max ", "")}: {finderPreferences.budget.toLocaleString()} THB
                         </span>
                         <span className="text-[10px] font-semibold bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-600">
-                          Vibe: {finderPreferences.vibe}
+                          {td.feed.vibeLabel.replace("Preferred ", "")}: {finderPreferences.vibe === "Trendy & Lively" ? td.feed.vibeOptions.trendy : finderPreferences.vibe === "Quiet & Peaceful" ? td.feed.vibeOptions.quiet : finderPreferences.vibe === "Business/City Center" ? td.feed.vibeOptions.business : finderPreferences.vibe === "Local Cultural" ? td.feed.vibeOptions.cultural : finderPreferences.vibe}
                         </span>
                         {finderPreferences.transit && (
                           <span className="text-[10px] font-semibold bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-600 flex items-center gap-1">
-                            <TrainFront className="w-3 h-3 text-[#C9A84C]" /> Public Transit Preferred
+                            <TrainFront className="w-3 h-3 text-[#C9A84C]" /> {td.feed.transitLabel}
                           </span>
                         )}
                         {finderPreferences.pet && (
                           <span className="text-[10px] font-semibold bg-gray-50 border border-gray-100 px-2 py-1 rounded-lg text-gray-600 flex items-center gap-1">
-                            <Footprints className="w-3 h-3 text-[#C9A84C]" /> Pet Friendly
+                            <Footprints className="w-3 h-3 text-[#C9A84C]" /> {lang === "th" ? "อนุญาตให้เลี้ยงสัตว์" : lang === "zh" ? "允许携带宠物" : "Pet Friendly"}
                           </span>
                         )}
                       </div>
@@ -755,13 +755,13 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                       className="px-3.5 py-2 rounded-xl text-[11px] font-semibold border border-[#E5E0D8] bg-transparent text-[#1C3A2F] cursor-pointer hover:bg-gray-50"
                       style={{ fontFamily: "inherit" }}
                     >
-                      Update Profile
+                      {td.feed.editPreferences}
                     </button>
                   </div>
 
                   {/* Neighborhoods Match Deck */}
                   <div>
-                    <h3 className="text-[15px] font-bold text-[#1C3A2F] mb-3">Top Matching Neighborhoods</h3>
+                    <h3 className="text-[15px] font-bold text-[#1C3A2F] mb-3">{td.feed.matchedAreas}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {matchedNeighborhoods.slice(0, 3).map((n) => (
                         <div key={n.name} className="bg-white rounded-2xl border border-[#E5E0D8] p-4 shadow-sm flex flex-col justify-between">
@@ -781,7 +781,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                             href={`/neighborhood/${n.slug}`}
                             className="text-[11px] font-semibold text-[#1C3A2F] no-underline mt-4 flex items-center gap-1 w-fit border-b border-[#1C3A2F] pb-0.5"
                           >
-                            Explore neighborhood guides →
+                            {td.feed.viewGuide} →
                           </a>
                         </div>
                       ))}
@@ -790,10 +790,10 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
 
                   {/* Recommended Listings */}
                   <div>
-                    <h3 className="text-[15px] font-bold text-[#1C3A2F] mb-3">Recommended Properties for You</h3>
+                    <h3 className="text-[15px] font-bold text-[#1C3A2F] mb-3">{td.feed.matchedProps}</h3>
                     {matchedProperties.length === 0 ? (
                       <div className="bg-white rounded-2xl border border-[#E5E0D8] p-12 text-center text-gray-400 text-sm">
-                        No property listings matching your exact budget/pet preferences are currently listed.
+                        {td.feed.noPropsMatched}
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -816,12 +816,10 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                   <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(201,168,76,0.15)" }}>
                     <Heart size={24} className="text-[#C9A84C]" fill="#C9A84C" />
                   </div>
-                  <h3 className="text-[16px] font-bold text-[#1C3A2F] mb-1">Your shortlist is empty</h3>
-                  <p className="text-[13px] text-gray-400 font-light mb-6">
-                    Tap the heart icon on any property to save it to your local dashboard.
-                  </p>
+                  <h3 className="text-[16px] font-bold text-[#1C3A2F] mb-1">{td.saved.empty.split(".")[0]}</h3>
+                  <p className="text-[13px] text-gray-400 font-light mb-6">{td.saved.empty.split(".")[1] || td.saved.empty}</p>
                   <a href="/explore" className="px-5 py-3 rounded-xl text-[12px] font-semibold text-white no-underline inline-block" style={{ background: "#1C3A2F" }}>
-                    Browse Listings
+                    {lang === "th" ? "เรียกดูประกาศ" : lang === "zh" ? "浏览房源" : "Browse Listings"}
                   </a>
                 </div>
               ) : (
@@ -837,10 +835,8 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
           {/* 3. SAVED SEARCHES */}
           {activeTab === "searches" && (
             <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6 shadow-sm">
-              <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-1">Saved Searches & Alerts</h2>
-              <p className="text-[13px] text-gray-500 font-light mb-6">
-                Receive notifications when new properties matching your search parameters are uploaded.
-              </p>
+              <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-1">{td.searches.title}</h2>
+              <p className="text-[13px] text-gray-500 font-light mb-6">{td.searches.sub}</p>
 
               {searchesLoading ? (
                 <div className="flex items-center justify-center py-12">
@@ -848,7 +844,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                 </div>
               ) : savedSearchesList.length === 0 ? (
                 <div className="text-center py-12 text-gray-400 text-sm">
-                  You haven&apos;t saved any searches yet. Perform a search on the Explore page and click &quot;Save Search&quot;.
+                  {td.searches.empty}
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
@@ -863,7 +859,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                           &quot;{s.query}&quot;
                         </div>
                         <div className="text-[11px] text-gray-400 mt-1 flex items-center gap-1.5">
-                          Saved on {new Date(s.createdAt).toLocaleDateString()}
+                          {lang === "th" ? "บันทึกเมื่อ " : lang === "zh" ? "保存于 " : "Saved on "}{new Date(s.createdAt).toLocaleDateString()}
                         </div>
                       </div>
 
@@ -871,7 +867,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                         {/* Alert Switch */}
                         <div className="flex items-center gap-2">
                           <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
-                            Email Alerts
+                            {td.settings.savedAlerts}
                           </span>
                           <button
                             onClick={() => handleToggleAlert(s.id, s.alertEnabled)}
@@ -895,7 +891,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                           className="px-3.5 py-1.5 rounded-lg text-[11px] font-bold text-white border-none cursor-pointer hover:opacity-90"
                           style={{ background: "#C9A84C" }}
                         >
-                          Run Search
+                          {td.searches.runBtn}
                         </button>
 
                         {/* Delete */}
@@ -919,16 +915,14 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
             <div className="flex flex-col gap-6">
               {/* Form card */}
               <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6 shadow-sm">
-                <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-1">Add Commute Destination</h2>
-                <p className="text-[13px] text-gray-500 font-light mb-6">
-                  Set your commute hubs (office, school, gym) to calculate dynamic transit times on property cards.
-                </p>
+                <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-1">{td.commute.customHub}</h2>
+                <p className="text-[13px] text-gray-500 font-light mb-6">{td.commute.sub}</p>
 
                 <form onSubmit={handleAddHub} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Presets Selection */}
                   <div className="md:col-span-2">
                     <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Popular Commute Destinations
+                      {td.commute.presetHubs}
                     </label>
                     <select
                       value={newHubPreset}
@@ -936,24 +930,24 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                       className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px] bg-white"
                       style={{ fontFamily: "inherit" }}
                     >
-                      <option value="">-- Choose a preset destination (or select custom location below) --</option>
+                      <option value="">{lang === "th" ? "-- เลือกจุดหมายปลายทางแนะนำ (หรือพิมพ์ระบุด้านล่าง) --" : lang === "zh" ? "-- 选择推荐地标 (或在下方输入自定义地址) --" : "-- Choose a preset destination (or select custom location below) --"}</option>
                       {PRESET_HUBS.map((preset) => (
                         <option key={preset.name} value={preset.name}>
                           {preset.name} ({preset.address})
                         </option>
                       ))}
-                      <option value="custom">Custom Location (type name/address below)</option>
+                      <option value="custom">{lang === "th" ? "กำหนดจุดหมายปลายทางเอง (พิมพ์ระบุด้านล่าง)" : lang === "zh" ? "自定义目的地 (在下方输入名称/地址)" : "Custom Location (type name/address below)"}</option>
                     </select>
                   </div>
 
                   {/* Hub Name */}
                   <div>
                     <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Destination Name
+                      {td.commute.destinationCol}
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Work, School, Gym"
+                      placeholder={lang === "th" ? "เช่น ที่ทำงาน, โรงเรียน, ยิม" : lang === "zh" ? "例如：工作、学校、健身房" : "e.g. Work, School, Gym"}
                       value={newHubName}
                       onChange={(e) => setNewHubName(e.target.value)}
                       className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px]"
@@ -965,7 +959,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                   {/* Mode */}
                   <div>
                     <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Preferred Travel Mode
+                      {lang === "th" ? "โหมดการเดินทางที่ชอบ" : lang === "zh" ? "首选交通工具" : "Preferred Travel Mode"}
                     </label>
                     <select
                       value={newHubMode}
@@ -973,20 +967,20 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                       className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px] bg-white"
                       style={{ fontFamily: "inherit" }}
                     >
-                      <option value="transit">Public Transit (BTS/MRT)</option>
-                      <option value="driving">Driving / Taxi</option>
-                      <option value="walking">Walking</option>
+                      <option value="transit">{td.commute.transit}</option>
+                      <option value="driving">{td.commute.driving}</option>
+                      <option value="walking">{td.commute.walking}</option>
                     </select>
                   </div>
 
                   {/* Address */}
                   <div className="md:col-span-2">
                     <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Address / Description
+                      {lang === "th" ? "ที่อยู่ / คำอธิบายทำเล" : lang === "zh" ? "详细地址 / 地标说明" : "Address / Description"}
                     </label>
                     <input
                       type="text"
-                      placeholder="Street address or station name"
+                      placeholder={td.commute.addressPlaceholder}
                       value={newHubAddress}
                       onChange={(e) => setNewHubAddress(e.target.value)}
                       className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px]"
@@ -1009,7 +1003,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                       className="w-full py-3.5 rounded-xl text-[13px] font-semibold text-white cursor-pointer border-none transition-opacity hover:opacity-90"
                       style={{ background: "#1C3A2F" }}
                     >
-                      Save Commute Destination
+                      {td.commute.addBtn}
                     </button>
                   </div>
                 </form>
@@ -1017,14 +1011,14 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
 
               {/* Hub deck */}
               <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6 shadow-sm">
-                <h3 className="text-[15px] font-bold text-[#1C3A2F] mb-4">Saved Commute Hubs</h3>
+                <h3 className="text-[15px] font-bold text-[#1C3A2F] mb-4">{td.commute.title}</h3>
                 {commuteLoading ? (
                   <div className="flex items-center justify-center py-6">
                     <Loader2 className="animate-spin text-[#C9A84C]" size={20} />
                   </div>
                 ) : commuteHubsList.length === 0 ? (
                   <p className="text-gray-400 text-sm text-center py-6">
-                    No commute destinations configured. Use the form above to add your workplace or school.
+                    {td.commute.empty || "No commute destinations configured."}
                   </p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1057,7 +1051,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                           className="mt-4 w-full py-2 rounded-lg border border-red-50 hover:bg-red-50 hover:border-red-100 text-red-500 font-medium text-[11px] cursor-pointer bg-transparent transition-colors flex items-center justify-center gap-1"
                         >
                           <Trash2 size={12} />
-                          Remove Hub
+                          {td.commute.removeBtn}
                         </button>
                       </div>
                     ))}
@@ -1075,19 +1069,17 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                 <div className="flex flex-col gap-6">
                   {/* Create Card */}
                   <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6 shadow-sm">
-                    <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-1">Create Shared Shortlist</h2>
-                    <p className="text-[13px] text-gray-500 font-light mb-6">
-                      Collaborate on potential properties with your partner, roommate, or agent.
-                    </p>
+                    <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-1">{td.collab.createTitle}</h2>
+                    <p className="text-[13px] text-gray-500 font-light mb-6">{td.collab.sub}</p>
 
                     <form onSubmit={handleCreateShortlist} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="md:col-span-2">
                         <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                          Shortlist Title
+                          {lang === "th" ? "ชื่อรายการแชร์" : lang === "zh" ? "共享清单名称" : "Shortlist Title"}
                         </label>
                         <input
                           type="text"
-                          placeholder="e.g. Our Sathorn Condos search"
+                          placeholder={lang === "th" ? "เช่น บ้านและคอนโดแถวสาทรของเรา" : lang === "zh" ? "例如：我们看中的沙吞公寓列表" : "e.g. Our Sathorn Condos search"}
                           value={newCollabName}
                           onChange={(e) => setNewCollabName(e.target.value)}
                           className="w-full px-3 py-2.5 rounded-xl border border-[#E5E0D8] outline-none text-[13px]"
@@ -1098,7 +1090,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
 
                       <div>
                         <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                          Collaborator Email
+                          {lang === "th" ? "อีเมลของผู้ร่วมแชร์" : lang === "zh" ? "协同成员邮箱" : "Collaborator Email"}
                         </label>
                         <input
                           type="email"
@@ -1124,7 +1116,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                           className="w-full py-3 rounded-xl text-[13px] font-semibold text-white cursor-pointer border-none transition-opacity hover:opacity-90"
                           style={{ background: "#1C3A2F" }}
                         >
-                          Invite Collaborator & Create Shortlist
+                          {td.collab.generateBtn}
                         </button>
                       </div>
                     </form>
@@ -1132,14 +1124,14 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
 
                   {/* Active List */}
                   <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6 shadow-sm">
-                    <h3 className="text-[15px] font-bold text-[#1C3A2F] mb-4">Shared Collections</h3>
+                    <h3 className="text-[15px] font-bold text-[#1C3A2F] mb-4">{td.collab.title}</h3>
                     {collabLoading ? (
                       <div className="flex items-center justify-center py-6">
                         <Loader2 className="animate-spin text-[#C9A84C]" size={20} />
                       </div>
                     ) : shortlists.length === 0 ? (
                       <p className="text-gray-400 text-sm text-center py-6">
-                        No shared shortlists created yet. Invite someone above to get started.
+                        {td.collab.noComments || "No shared shortlists created yet."}
                       </p>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1160,10 +1152,10 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                                 </button>
                               </div>
                               <p className="text-[11px] text-gray-400 mt-1 flex items-center gap-1">
-                                Collaborator: <span className="font-semibold text-gray-600">{s.collaboratorEmail}</span>
+                                {lang === "th" ? "ผู้แชร์ร่วมกัน: " : lang === "zh" ? "共享成员： " : "Collaborator: "}<span className="font-semibold text-gray-600">{s.collaboratorEmail}</span>
                               </p>
                               <p className="text-[10px] text-gray-400/70 mt-1">
-                                Owner: {s.ownerEmail === user?.email ? "You" : s.ownerEmail}
+                                {lang === "th" ? "เจ้าของ: " : lang === "zh" ? "所有权： " : "Owner: "}{s.ownerEmail === user?.email ? "You" : s.ownerEmail}
                               </p>
                             </div>
 
@@ -1173,7 +1165,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                               style={{ background: "#1C3A2F" }}
                             >
                               <Eye size={12} />
-                              Open Shortlist Workspace
+                              {lang === "th" ? "เปิดพื้นที่แชร์ร่วมกัน" : lang === "zh" ? "进入共享工作区" : "Open Shortlist Workspace"}
                             </button>
                           </div>
                         ))}
@@ -1191,14 +1183,14 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                         onClick={() => setActiveShortlist(null)}
                         className="text-[11px] font-semibold text-[#1C3A2F] border-none bg-transparent cursor-pointer hover:underline p-0 flex items-center gap-1"
                       >
-                        ← Back to Collections
+                        {lang === "th" ? "← กลับไปคอลเลกชัน" : lang === "zh" ? "← 返回共享清单" : "← Back to Collections"}
                       </button>
                       <h2 className="text-[18px] font-bold text-[#1C3A2F] mt-2 flex items-center gap-2">
                         <Users size={20} className="text-[#C9A84C]" />
                         {activeShortlist.name}
                       </h2>
                       <p className="text-[11.5px] text-gray-400 mt-0.5">
-                        Shared with <span className="font-semibold text-gray-500">{activeShortlist.collaboratorEmail}</span>
+                        {lang === "th" ? "แชร์ร่วมกับ " : lang === "zh" ? "已共享给 " : "Shared with "}<span className="font-semibold text-gray-500">{activeShortlist.collaboratorEmail}</span>
                       </p>
                     </div>
                   </div>
@@ -1207,7 +1199,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                   <div className="flex flex-col gap-6">
                     {activeShortlistProps.length === 0 ? (
                       <div className="bg-white rounded-2xl border border-[#E5E0D8] p-12 text-center text-gray-400 text-sm">
-                        Loading shortlist properties...
+                        {lang === "th" ? "กำลังโหลดข้อมูลอสังหาฯ..." : lang === "zh" ? "正在加载房源数据..." : "Loading shortlist properties..."}
                       </div>
                     ) : (
                       activeShortlistProps.map((p, pIdx) => {
@@ -1231,7 +1223,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                               <div className="border-b border-[#EDE8DF] pb-2 mb-3 flex items-center gap-1.5">
                                 <MessageSquare size={14} className="text-[#C9A84C]" />
                                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#1C3A2F]">
-                                  Collaboration Thread ({comments.length})
+                                  {td.collab.commentsTitle} ({comments.length})
                                 </span>
                               </div>
 
@@ -1266,7 +1258,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                               <div className="mt-4 pt-3 border-t border-[#EDE8DF] flex gap-2">
                                 <input
                                   type="text"
-                                  placeholder="Type feedback, question, or visit schedule..."
+                                  placeholder={td.collab.addCommentPlaceholder}
                                   value={currentInput}
                                   onChange={(e) =>
                                     setCommentInputs((prev) => ({ ...prev, [p.id]: e.target.value }))
@@ -1304,22 +1296,20 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
           {activeTab === "settings" && (
             <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6 shadow-sm flex flex-col gap-6">
               <div>
-                <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-1">Account & Preferences</h2>
-                <p className="text-[13px] text-gray-500 font-light">
-                  Manage your personal details, preferred currency, language, and system settings.
-                </p>
+                <h2 className="text-[16px] font-bold text-[#1C3A2F] mb-1">{td.settings.title}</h2>
+                <p className="text-[13px] text-gray-500 font-light">{td.settings.sub}</p>
               </div>
 
               <form onSubmit={(e) => {
                 e.preventDefault();
-                setToastMessage("✓ Settings saved successfully!");
+                setToastMessage(td.settings.savedAlert || "✓ Settings saved successfully!");
                 setTimeout(() => setToastMessage(""), 3000);
               }} className="flex flex-col gap-6 max-w-xl">
                 {/* Profile Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Full Name
+                      {td.settings.nameLabel}
                     </label>
                     <input
                       type="text"
@@ -1330,7 +1320,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                   </div>
                   <div>
                     <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Email Address
+                      {td.settings.emailLabel}
                     </label>
                     <input
                       type="email"
@@ -1348,7 +1338,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      Preferred Currency
+                      {td.settings.currencyLabel}
                     </label>
                     <select
                       value={currency}
@@ -1364,7 +1354,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                   </div>
                   <div>
                     <label className="text-[11px] font-bold text-gray-600 block mb-1 uppercase tracking-wider">
-                      System Language
+                      {td.settings.languageLabel}
                     </label>
                     <select
                       value={lang}
@@ -1374,6 +1364,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                     >
                       <option value="en">English</option>
                       <option value="th">ไทย (Thai)</option>
+                      <option value="zh">中文 (Chinese)</option>
                     </select>
                   </div>
                 </div>
@@ -1383,13 +1374,13 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                 {/* Alert Notifications */}
                 <div className="flex flex-col gap-3">
                   <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider">
-                    Notification Settings
+                    {td.settings.notificationsTitle}
                   </span>
                   
                   <div className="flex items-center justify-between p-1">
                     <div>
-                      <span className="text-[13px] font-bold text-[#1C3A2F] block">New Listing Recommendations</span>
-                      <span className="text-[10px] text-gray-400">Receive weekly emails with properties matching your Auto Finder profile</span>
+                      <span className="text-[13px] font-bold text-[#1C3A2F] block">{td.settings.emailNotif}</span>
+                      <span className="text-[10px] text-gray-400">{td.settings.emailNotifSub}</span>
                     </div>
                     <input
                       type="checkbox"
@@ -1400,8 +1391,8 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
 
                   <div className="flex items-center justify-between p-1">
                     <div>
-                      <span className="text-[13px] font-bold text-[#1C3A2F] block">Shortlist Activity Alerts</span>
-                      <span className="text-[10px] text-gray-400">Notify me immediately when collaborators post comments on my shortlists</span>
+                      <span className="text-[13px] font-bold text-[#1C3A2F] block">{td.settings.savedAlerts}</span>
+                      <span className="text-[10px] text-gray-400">{td.settings.savedAlertsSub}</span>
                     </div>
                     <input
                       type="checkbox"
@@ -1416,7 +1407,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                   className="w-full py-3.5 rounded-xl text-[13px] font-semibold text-white mt-4 cursor-pointer border-none transition-opacity hover:opacity-90"
                   style={{ background: "#1C3A2F" }}
                 >
-                  Save Account Settings
+                  {td.settings.saveBtn}
                 </button>
               </form>
             </div>

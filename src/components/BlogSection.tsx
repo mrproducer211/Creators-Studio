@@ -64,6 +64,10 @@ export default function BlogSection({ posts }: BlogSectionProps) {
       const num = rt.replace(" min read", "");
       return `อ่าน ${num} ${t.blog.minRead}`;
     }
+    if (lang === "zh") {
+      const num = rt.replace(" min read", "");
+      return `${num} ${t.blog.minRead}`;
+    }
     return rt;
   };
 

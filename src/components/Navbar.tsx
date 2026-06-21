@@ -19,6 +19,7 @@ export default function Navbar() {
   const [userMenu, setUserMenu]    = useState(false);
   const [discoverOpen, setDiscoverOpen] = useState(false);
   const [lookingForOpen, setLookingForOpen] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!menuOpen) {
@@ -38,17 +39,26 @@ export default function Navbar() {
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14"
         style={{ background: "rgba(247,243,236,0.97)", backdropFilter: "blur(16px)", borderBottom: "1px solid #E5E0D8" }}
       >
-        {/* Mobile Logo: Text only "New Home Property" */}
-        <Link href="/" className="flex md:hidden flex-col leading-none no-underline">
-          <span className="text-[18px] font-extrabold tracking-[-0.5px]" style={{ color: "#1C3A2F" }}>New Home Property</span>
-          <span className="text-[9px] font-semibold tracking-[0.3px] mt-0.5" style={{ color: "#C9A84C" }}>Live. Belong. Bangkok.</span>
+        {/* Mobile Logo: Logo Image + Name */}
+        <Link href="/" className="flex md:hidden items-center gap-2 no-underline">
+          <img
+            src="/images/nhp-logo.webp"
+            alt="NHP Logo"
+            className="w-[30px] h-[30px] object-contain rounded-[6px]"
+          />
+          <div className="flex flex-col leading-none">
+            <span className="text-[16px] font-extrabold tracking-[-0.5px]" style={{ color: "#1C3A2F" }}>New Home Property</span>
+            <span className="text-[9px] font-semibold tracking-[0.3px] mt-0.5" style={{ color: "#C9A84C" }}>Live. Belong. Bangkok.</span>
+          </div>
         </Link>
 
-        {/* Desktop Logo: Green Box + Name */}
+        {/* Desktop Logo: Logo Image + Name */}
         <Link href="/" className="hidden md:flex items-center gap-2.5 no-underline flex-shrink-0">
-          <div className="rounded-[8px] flex items-center justify-center font-bold" style={{ width: "38px", height: "38px", fontSize: "15px", background: "#1C3A2F", color: "#C9A84C", letterSpacing: "-0.5px" }}>
-            NHP
-          </div>
+          <img
+            src="/images/nhp-logo.webp"
+            alt="NHP Logo"
+            className="w-[38px] h-[38px] object-contain rounded-[8px]"
+          />
           <div className="flex flex-col leading-tight">
             <span className="text-[15px] font-bold" style={{ color: "#1C3A2F" }}>New Home Property</span>
             <span className="text-[10px] font-medium uppercase tracking-[0.5px]" style={{ color: "#C9A84C" }}>Live. Belong. Bangkok.</span>
@@ -67,23 +77,50 @@ export default function Navbar() {
           <Link href="/explore?type=sale"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.buy}</Link>
           <Link href="/explore?type=rent"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.rent}</Link>
 
-          {/* Language toggle */}
-          <div className="flex items-center rounded-lg overflow-hidden" style={{ border: "1.5px solid #E5E0D8" }}>
-            {(["en", "th"] as const).map((l) => (
-              <button
-                key={l}
-                onClick={() => setLang(l)}
-                className="cursor-pointer border-none text-[11px] font-bold transition-all"
-                style={{
-                  padding: "4px 10px",
-                  background: lang === l ? "#1C3A2F" : "transparent",
-                  color:      lang === l ? "#F7F3EC" : "#888",
-                  fontFamily: "inherit",
-                }}
-              >
-                {l.toUpperCase()}
-              </button>
-            ))}
+          {/* Language toggle dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setLangMenuOpen(!langMenuOpen)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px] font-bold cursor-pointer transition-all hover:bg-white/80 bg-transparent"
+              style={{ borderColor: "#E5E0D8", color: "#1C3A2F", fontFamily: "inherit" }}
+            >
+              <span>{lang === "en" ? "EN" : lang === "th" ? "TH" : "中文"}</span>
+              <svg className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+            
+            {langMenuOpen && (
+              <>
+                {/* Click-outside backdrop */}
+                <div 
+                  className="fixed inset-0 z-40 cursor-default" 
+                  onClick={() => setLangMenuOpen(false)} 
+                />
+                <div 
+                  className="absolute right-0 mt-1.5 w-32 rounded-xl border p-1 shadow-lg z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+                  style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}
+                >
+                  {(["en", "th", "zh"] as const).map((l) => (
+                    <button
+                      key={l}
+                      onClick={() => {
+                        setLang(l);
+                        setLangMenuOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg cursor-pointer text-[12px] font-semibold transition-colors hover:bg-[#F7F3EC] border-none"
+                      style={{ 
+                        background: lang === l ? "#1C3A2F" : "transparent", 
+                        color: lang === l ? "#F7F3EC" : "#1C3A2F",
+                        fontFamily: "inherit"
+                      }}
+                    >
+                      {l === "en" ? "English" : l === "th" ? "ไทย (Thai)" : "中文 (Chinese)"}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -404,11 +441,11 @@ export default function Navbar() {
                 <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: "1px solid #EDE8DF" }}>
                   <span className="text-[12px]" style={{ color: "#999" }}>{t.nav.language}</span>
                   <div className="flex items-center rounded-lg overflow-hidden ml-auto" style={{ border: "1.5px solid #E5E0D8" }}>
-                    {(["en", "th"] as const).map((l) => (
+                    {(["en", "th", "zh"] as const).map((l) => (
                       <button key={l} onClick={() => setLang(l)}
                         className="cursor-pointer border-none text-[11px] font-bold"
-                        style={{ padding: "5px 12px", background: lang === l ? "#1C3A2F" : "transparent", color: lang === l ? "#F7F3EC" : "#888", fontFamily: "inherit" }}
-                      >{l.toUpperCase()}</button>
+                        style={{ padding: "5px 10px", background: lang === l ? "#1C3A2F" : "transparent", color: lang === l ? "#F7F3EC" : "#888", fontFamily: "inherit" }}
+                      >{l === "en" ? "EN" : l === "th" ? "TH" : "中文"}</button>
                     ))}
                   </div>
                 </div>

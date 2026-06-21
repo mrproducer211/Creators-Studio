@@ -5,8 +5,8 @@ import ExploreClient from "@/components/explore/ExploreClient";
 import { getDbProperties } from "@/lib/db/dbLoader";
 
 export const metadata = {
-  title: "Explore Properties — NHP Bangkok",
-  description: "Browse all Bangkok properties. Filter by sale, rent, short stay, area, type and more.",
+  title: "Bangkok Properties & Condos for Rent & Sale | Search NHP Bangkok",
+  description: "Explore premium properties for rent and sale in Bangkok. Filter by area, rental price, bedroom count, and property type to find your perfect home.",
 };
 
 export default async function ExplorePage() {

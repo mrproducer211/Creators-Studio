@@ -46,8 +46,46 @@ export default async function BlogPostPage({ params }: Props) {
   const bodyFont = post.fontFamily || "Inter";
   const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(headerFont)}:wght@400;600;700&family=${encodeURIComponent(bodyFont)}:wght@300;400;500;600&display=swap`;
 
+  // Build the absolute image URL for schema
+  const siteBase = "https://nhpbangkok.com";
+  const imageUrl = post.image.startsWith("http") ? post.image : `${siteBase}${post.image}`;
+
+  const blogJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.metaDesc,
+    image: imageUrl,
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: {
+      "@type": "Organization",
+      name: post.author || "NHP Bangkok Team",
+      url: siteBase,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "NHP Bangkok",
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteBase}/images/nhp-logo.webp`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${siteBase}/blog/${post.slug}`,
+    },
+    keywords: post.keywords.join(", "),
+    articleSection: post.category,
+    inLanguage: "en",
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
       <link rel="stylesheet" href={fontUrl} />
       <Navbar />
       <main style={{ paddingTop: 56, background: "#F7F3EC", fontFamily: `${bodyFont}, sans-serif` }}>

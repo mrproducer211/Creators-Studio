@@ -20,6 +20,47 @@ export const metadata: Metadata = {
     "Bangkok's premium property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
 };
 
+// Site-wide structured data — injected once in the root layout
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  name: "NHP Bangkok",
+  url: "https://nhpbangkok.com",
+  logo: "https://nhpbangkok.com/images/nhp-logo.webp",
+  description:
+    "Bangkok's premium property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
+  areaServed: {
+    "@type": "City",
+    name: "Bangkok",
+    addressCountry: "TH",
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer support",
+    areaServed: "TH",
+    availableLanguage: ["English", "Thai"],
+  },
+  sameAs: [
+    "https://www.facebook.com/nhpbangkok",
+    "https://www.instagram.com/nhpbangkok",
+  ],
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "NHP Bangkok",
+  url: "https://nhpbangkok.com",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: "https://nhpbangkok.com/explore?q={search_term_string}",
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,6 +69,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        {/* Site-wide structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <SessionProvider>
           <LanguageProvider>
             <CurrencyProvider>

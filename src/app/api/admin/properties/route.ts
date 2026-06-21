@@ -7,6 +7,7 @@ import { getCanonicalArea } from "@/lib/area";
 import { db } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { submitToGoogleIndexing } from "@/lib/google-indexing";
 
 export async function GET() {
   const guard = await requireAdminApi();
@@ -100,6 +101,11 @@ export async function POST(req: NextRequest) {
         `Created listing "${val.name}" (Slug: ${val.slug}) in database`
       );
 
+      // Notify Google immediately (fire-and-forget — never blocks the API response)
+      submitToGoogleIndexing(`https://nhpbangkok.com/property/${val.slug}`).catch((err) =>
+        console.warn("Google Indexing ping failed:", err)
+      );
+
       return NextResponse.json({ property: created }, { status: 201 });
     } catch (dbErr) {
       console.warn("DB insert failed, falling back to local fileStore:", dbErr);
@@ -117,6 +123,11 @@ export async function POST(req: NextRequest) {
     adminUser.email,
     "create_property",
     `Created listing "${val.name}" (Slug: ${val.slug}) in local JSON store`
+  );
+
+  // Notify Google immediately (fire-and-forget — never blocks the API response)
+  submitToGoogleIndexing(`https://nhpbangkok.com/property/${val.slug}`).catch((err) =>
+    console.warn("Google Indexing ping failed:", err)
   );
 
   return NextResponse.json({ property: created }, { status: 201 });

@@ -88,10 +88,32 @@ export default function TrustBadges() {
         desc: "เราทำให้การเดินทางและการย้ายมาใช้ชีวิตในกรุงเทพฯ ของคุณเป็นเรื่องง่าย",
         icon: ICONS[3]
       }
+    ],
+    zh: [
+      {
+        title: "本地专业知识",
+        desc: "来自本地居民的可靠洞察。",
+        icon: ICONS[0]
+      },
+      {
+        title: "个性化支持",
+        desc: "从社区搜寻到顺利入住的全程协助。",
+        icon: ICONS[1]
+      },
+      {
+        title: "高品质房源",
+        desc: "精心挑选契合您生活方式的理想家园。",
+        icon: ICONS[2]
+      },
+      {
+        title: "移居更加轻松",
+        desc: "助您开启顺畅的曼谷之旅。",
+        icon: ICONS[3]
+      }
     ]
   };
 
-  const activeItems = items[lang as "en" | "th"] || items.en;
+  const activeItems = items[lang as "en" | "th" | "zh"] || items.en;
 
   return (
     <section className="py-8 w-full border-t border-b" style={{ background: "#FDFCF9", borderColor: "#EDE8DF" }}>

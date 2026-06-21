@@ -1,18 +1,18 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import dynamic from "next/dynamic";
 import { PropertyCard } from "@/types/property";
-import { Neighborhood } from "@/data/neighborhoods";
+import { Neighborhood, NEIGHBORHOODS } from "@/data/neighborhoods";
+import { NEIGHBORHOOD_GUIDES } from "@/data/neighborhoodGuides";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSaved } from "@/contexts/SavedContext";
+import { T_NEIGHBORHOOD } from "@/data/neighborhoodTranslations";
 import Link from "next/link";
 import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
 
-// Dynamically load Map component to prevent window SSR errors
-const NeighborhoodMap = dynamic(() => import("./NeighborhoodMap"), { ssr: false });
+
 
 interface Props {
   neighborhood: Neighborhood;
@@ -230,14 +230,61 @@ const DEFAULT_METADATA = {
 };
 
 export default function NeighborhoodClient({ neighborhood, initialProperties }: Props) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { formatPrice } = useCurrency();
   const { isSaved: isPropertySaved, toggle: togglePropertySave } = useSaved();
 
   const [copied, setCopied] = useState(false);
-  const [showFullMap, setShowFullMap] = useState(false);
+  const [selectedLongFormSection, setSelectedLongFormSection] = useState<number | null>(null);
+
+  const trans = T_NEIGHBORHOOD[lang] || T_NEIGHBORHOOD.en;
+  const transN = trans.neighborhoods[neighborhood.slug.toLowerCase() as keyof typeof trans.neighborhoods];
+
+  const nName = transN?.name || neighborhood.name;
+  const nPersonality = transN?.personality || neighborhood.personality;
+  const nDescription = transN?.description || neighborhood.description;
+  const nNearestTransit = transN?.nearestTransit || neighborhood.nearestTransit;
 
   const meta = NEIGHBORHOOD_METADATA[neighborhood.slug.toLowerCase()] || DEFAULT_METADATA;
+
+  const nDistrict = transN?.district || meta.district;
+  const nBtsCode = transN?.btsCode || meta.btsCode;
+  const nAirportTime = transN?.airportTime || meta.airportTime;
+  const nVibe = transN?.vibe || meta.vibe;
+  const nBestFor = transN?.bestFor || meta.bestFor;
+  const nLifestyleDesc = transN?.lifestyleDesc || meta.lifestyleDesc || `A perfect blend of lifestyle and local culture. ${nName} is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok.`;
+  const nPros = transN?.pros || meta.pros;
+
+  const nVibeCards = useMemo(() => {
+    return meta.vibeCards.map((card, idx) => {
+      const transCard = transN?.vibeCards?.[idx];
+      return {
+        ...card,
+        title: transCard?.title || card.title,
+        subtitle: transCard?.subtitle || card.subtitle
+      };
+    });
+  }, [meta.vibeCards, transN]);
+
+  const guide = NEIGHBORHOOD_GUIDES[neighborhood.slug.toLowerCase()];
+
+  const NEARBY_MAP: Record<string, string[]> = {
+    ari: ["phaya-thai", "asok", "sukhumvit"],
+    sathorn: ["silom", "sukhumvit", "asok"],
+    silom: ["sathorn", "sukhumvit", "asok"],
+    "thong-lo": ["ekkamai", "on-nut", "sukhumvit"],
+    asok: ["sukhumvit", "rama-9", "thong-lo"],
+    "on-nut": ["ekkamai", "sukhumvit", "thong-lo"],
+    ekkamai: ["thong-lo", "on-nut", "sukhumvit"],
+    sukhumvit: ["asok", "thong-lo", "ekkamai"],
+    "rama-9": ["huai-khwang", "asok", "sukhumvit"],
+    "bang-na": ["on-nut", "ekkamai", "sukhumvit"],
+    "huai-khwang": ["rama-9", "asok", "phaya-thai"],
+    "phaya-thai": ["ari", "huai-khwang", "asok"]
+  };
+
+  const nearbySlugs = NEARBY_MAP[neighborhood.slug.toLowerCase()] || [];
+  const nearbyNeighborhoods = NEIGHBORHOODS.filter(n => nearbySlugs.includes(n.slug.toLowerCase()));
 
   const handleShare = () => {
     try {
@@ -258,6 +305,22 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
     ];
   }, [neighborhood.scores]);
 
+  const translatedMetricLabel = (label: string) => {
+    if (lang === "th") {
+      if (label === "Remote Work") return "ทำงานทางไกล";
+      if (label === "Lifestyle") return "ไลฟ์สไตล์";
+      if (label === "Commute") return "การเดินทาง";
+      if (label === "Nightlife") return "ชีวิตยามค่ำคืน";
+    }
+    if (lang === "zh") {
+      if (label === "Remote Work") return "远程工作";
+      if (label === "Lifestyle") return "生活方式";
+      if (label === "Commute") return "通勤交通";
+      if (label === "Nightlife") return "夜生活";
+    }
+    return label;
+  };
+
   // Featured Properties — real database listings for this neighbourhood only
   const displayProperties = useMemo(() => {
     return initialProperties.filter(
@@ -267,22 +330,79 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
 
   // Local guides specific to this neighborhood
   const localGuides = useMemo(() => {
-    const images = [
-      "https://images.unsplash.com/photo-1590073844006-33379778ae09?w=500&auto=format&q=80",
-      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&auto=format&q=80",
-      "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=500&auto=format&q=80",
-      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&auto=format&q=80",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&auto=format&q=80"
-    ];
+    const list: Array<{
+      title: string;
+      category: string;
+      readTime: string;
+      image: string;
+      slug: string;
+      isLongFormSection: boolean;
+      sectionIndex: number;
+    }> = [];
 
-    return [
-      { title: `${neighborhood.name}: The Complete Neighborhood Guide`, category: "NEIGHBORHOOD GUIDE", readTime: "6 min read", image: images[0], slug: `${neighborhood.slug}-complete-neighborhood-guide` },
-      { title: `10 Best Cafes in ${neighborhood.name} You Must Try`, category: "LIFESTYLE", readTime: "4 min read", image: images[1], slug: `${neighborhood.slug}-10-best-cafes` },
-      { title: `Cost of Living in ${neighborhood.name} for Expats`, category: "LIVING IN BANGKOK", readTime: "5 min read", image: images[2], slug: `${neighborhood.slug}-cost-of-living` },
-      { title: `Getting Around ${neighborhood.name} Made Easy`, category: "TRANSPORTATION", readTime: "3 min read", image: images[3], slug: `${neighborhood.slug}-getting-around` },
-      { title: `Is ${neighborhood.name} Right for You? A Complete Review`, category: "EXPAT TIPS", readTime: "5 min read", image: images[4], slug: `${neighborhood.slug}-complete-review` }
-    ];
-  }, [neighborhood.name, neighborhood.slug]);
+    if (guide && guide.longFormSections) {
+      const extraImages = [
+        "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500&auto=format&q=80", // modern house
+        "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=500&auto=format&q=80", // transit
+        "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&q=80", // fitness
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500&auto=format&q=80", // dining
+        "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500&auto=format&q=80"  // luxury condo/hotel
+      ];
+
+      guide.longFormSections.forEach((section, index) => {
+        let category = "EXPERT INSIGHTS";
+        const titleLower = section.heading.toLowerCase();
+        if (titleLower.includes("transit") || titleLower.includes("getting around") || titleLower.includes("mrt") || titleLower.includes("bts")) {
+          category = "TRANSPORTATION";
+        } else if (titleLower.includes("mall") || titleLower.includes("landmark") || titleLower.includes("terminal 21") || titleLower.includes("shopping")) {
+          category = "LANDMARKS & MALLS";
+        } else if (titleLower.includes("fitness") || titleLower.includes("park") || titleLower.includes("wellness") || titleLower.includes("connection")) {
+          category = "WELLNESS & PARKS";
+        } else if (titleLower.includes("nightlife") || titleLower.includes("dining") || titleLower.includes("eat") || titleLower.includes("cafe") || titleLower.includes("secret")) {
+          category = "DINING & NIGHTLIFE";
+        } else if (titleLower.includes("real estate") || titleLower.includes("condo") || titleLower.includes("housing") || titleLower.includes("rent") || titleLower.includes("suite")) {
+          category = "REAL ESTATE";
+        } else if (titleLower.includes("fast forward") || titleLower.includes("living in")) {
+          category = "NEIGHBORHOOD GUIDE";
+        }
+
+        // Translate category
+        let transCategory = category;
+        if (lang === "th") {
+          if (category === "EXPERT INSIGHTS") transCategory = "ข้อมูลเชิงลึกจากผู้เชี่ยวชาญ";
+          else if (category === "TRANSPORTATION") transCategory = "การเดินทางคมนาคม";
+          else if (category === "LANDMARKS & MALLS") transCategory = "แลนด์มาร์ก & ห้างสรรพสินค้า";
+          else if (category === "WELLNESS & PARKS") transCategory = "สุขภาพ & สวนสาธารณะ";
+          else if (category === "DINING & NIGHTLIFE") transCategory = "อาหาร & ชีวิตยามค่ำคืน";
+          else if (category === "REAL ESTATE") transCategory = "อสังหาริมทรัพย์";
+          else if (category === "NEIGHBORHOOD GUIDE") transCategory = "คู่มือนำเที่ยวย่าน";
+        } else if (lang === "zh") {
+          if (category === "EXPERT INSIGHTS") transCategory = "专家洞察";
+          else if (category === "TRANSPORTATION") transCategory = "交通出行";
+          else if (category === "LANDMARKS & MALLS") transCategory = "地标与商场";
+          else if (category === "WELLNESS & PARKS") transCategory = "康养与公园";
+          else if (category === "DINING & NIGHTLIFE") transCategory = "餐饮与夜生活";
+          else if (category === "REAL ESTATE") transCategory = "房产市场";
+          else if (category === "NEIGHBORHOOD GUIDE") transCategory = "社区指南";
+        }
+
+        const transSection = transN?.guides?.[index];
+        const heading = transSection?.heading || section.heading;
+
+        list.push({
+          title: heading,
+          category: transCategory,
+          readTime: trans.readTime,
+          image: extraImages[index % extraImages.length],
+          slug: "",
+          isLongFormSection: true,
+          sectionIndex: index
+        });
+      });
+    }
+
+    return list;
+  }, [neighborhood.name, neighborhood.slug, guide, lang, transN, trans.readTime]);
 
   return (
     <div className="flex flex-col w-full pb-10" style={{ background: "#FAF8F3" }}>
@@ -308,7 +428,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
             className="fixed top-20 right-4 z-50 px-4 py-2.5 rounded-lg text-xs font-semibold shadow-lg animate-fade-in border"
             style={{ background: "#1C3A2F", color: "#E2C97E", borderColor: "#C9A84C" }}
           >
-            ✓ Link copied to clipboard!
+            {trans.linkCopied}
           </div>
         )}
 
@@ -316,9 +436,9 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
         <div className="w-full max-w-[1440px] mx-auto z-10 flex items-center justify-between gap-4 mb-3 md:mb-5">
           {/* Breadcrumbs */}
           <div className="flex items-center gap-1.5 text-xs text-white/60 font-light">
-            <Link href="/" className="hover:text-white no-underline">Home</Link>
+            <Link href="/" className="hover:text-white no-underline">{trans.home}</Link>
             <span>&gt;</span>
-            <span className="font-semibold text-[#E2C97E]">{neighborhood.name} Neighborhood</span>
+            <span className="font-semibold text-[#E2C97E]">{nName} {trans.neighborhoodSuffix}</span>
           </div>
 
           {/* Action Buttons */}
@@ -328,7 +448,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
               className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border border-white/20 transition-colors"
               style={{ background: "rgba(255,255,255,0.08)", color: "#FFFFFF" }}
             >
-              <span className="flex items-center gap-1.5">Share <ArrowUpRight className="w-3.5 h-3.5" /></span>
+              <span className="flex items-center gap-1.5">{trans.share} <ArrowUpRight className="w-3.5 h-3.5" /></span>
             </button>
           </div>
         </div>
@@ -342,53 +462,53 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
               className="px-2.5 py-0.5 rounded text-[9px] font-bold tracking-[1.5px] uppercase mb-3"
               style={{ background: "rgba(201, 168, 76, 0.18)", border: "1px solid rgba(201, 168, 76, 0.3)", color: "#E2C97E" }}
             >
-              Neighborhood Guide
+              {trans.neighborhoodGuide}
             </span>
 
             {/* Neighborhood Name */}
             <h1 className="text-3xl md:text-5xl font-bold mb-1 leading-tight hero-title" style={{ color: "#FFFFFF" }}>
-              {neighborhood.name}
+              {nName}
             </h1>
 
             {/* Personality Tagline */}
             <p className="text-base md:text-xl font-medium italic text-[#E2C97E] mb-3 hero-tagline">
-              {neighborhood.personality}
+              {nPersonality}
             </p>
 
             {/* Description */}
             <p className="text-xs md:text-sm leading-relaxed text-white/80 max-w-xl font-light mb-5">
-              {neighborhood.description}
+              {nDescription}
             </p>
 
             {/* Transit Badges Row (Mobile only) */}
             <div className="flex flex-col gap-2 text-[10px] md:hidden w-full">
               <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 justify-start w-fit">
-                <Train size={11} className="text-[#E2C97E]" /> {neighborhood.nearestTransit} (5 min walk)
+                <Train size={11} className="text-[#E2C97E]" /> {nNearestTransit} (5 {trans.minWalk})
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 justify-start w-fit">
-                <Train size={11} className="text-[#E2C97E]" /> Sukhumvit Line (Easy access)
+                <Train size={11} className="text-[#E2C97E]" /> Sukhumvit Line ({trans.easyAccess})
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 justify-start w-fit">
-                <Coffee size={11} className="text-[#E2C97E]" /> Cafe Culture (Excellent)
+                <Coffee size={11} className="text-[#E2C97E]" /> {lang === 'en' ? 'Cafe Culture' : lang === 'th' ? 'วัฒนธรรมคาเฟ่' : '咖啡文化'} ({lang === 'en' ? 'Excellent' : lang === 'th' ? 'ยอดเยี่ยม' : '极佳'})
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 justify-start w-fit">
-                <Footprints size={11} className="text-[#E2C97E]" /> Walkability ({neighborhood.scores.walkability}/10)
+                <Footprints size={11} className="text-[#E2C97E]" /> {lang === 'en' ? 'Walkability' : lang === 'th' ? 'ความสะดวกในการเดิน' : '步行便利度'} ({neighborhood.scores.walkability}/10)
               </span>
             </div>
 
             {/* Transit Badges Row (Desktop only) */}
             <div className="hidden md:flex md:flex-wrap gap-2 text-[10.5px]">
               <span className="flex items-center gap-1.5 px-2.5 py-1.2 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10">
-                <Train size={11} className="text-[#E2C97E]" /> {neighborhood.nearestTransit} (5 min walk)
+                <Train size={11} className="text-[#E2C97E]" /> {nNearestTransit} (5 {trans.minWalk})
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.2 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10">
-                <Train size={11} className="text-[#E2C97E]" /> Sukhumvit Line (Easy access)
+                <Train size={11} className="text-[#E2C97E]" /> Sukhumvit Line ({trans.easyAccess})
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.2 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10">
-                <Coffee size={11} className="text-[#E2C97E]" /> Cafe Culture (Excellent)
+                <Coffee size={11} className="text-[#E2C97E]" /> {lang === 'en' ? 'Cafe Culture' : lang === 'th' ? 'วัฒนธรรมคาเฟ่' : '咖啡文化'} ({lang === 'en' ? 'Excellent' : lang === 'th' ? 'ยอดเยี่ยม' : '极佳'})
               </span>
               <span className="flex items-center gap-1.5 px-2.5 py-1.2 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10">
-                <Footprints size={11} className="text-[#E2C97E]" /> Walkability ({neighborhood.scores.walkability}/10)
+                <Footprints size={11} className="text-[#E2C97E]" /> {lang === 'en' ? 'Walkability' : lang === 'th' ? 'ความสะดวกในการเดิน' : '步行便利度'} ({neighborhood.scores.walkability}/10)
               </span>
             </div>
           </div>
@@ -401,8 +521,8 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
               style={{ background: "#10231D", borderColor: "rgba(201, 168, 76, 0.3)" }}
             >
               <div>
-                <h3 className="text-[10px] sm:text-xs font-bold text-[#E2C97E] tracking-wider uppercase mb-0.5">How {neighborhood.name} matches you</h3>
-                <p className="text-[9px] sm:text-[10px] text-white/50">Based on active neighborhood parameters</p>
+                <h3 className="text-[10px] sm:text-xs font-bold text-[#E2C97E] tracking-wider uppercase mb-0.5">{trans.matchesYou.replace("{name}", nName)}</h3>
+                <p className="text-[9px] sm:text-[10px] text-white/50">{trans.basedOnParams}</p>
               </div>
 
               {/* Gauges list */}
@@ -410,7 +530,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                 {matchMetrics.map((item) => (
                   <div key={item.label} className="flex flex-col gap-1">
                     <div className="flex justify-between text-[10px] sm:text-[11px] font-medium text-white/90">
-                      <span>{item.label}</span>
+                      <span>{translatedMetricLabel(item.label)}</span>
                       <span className="font-semibold" style={{ color: "#E2C97E" }}>{item.score}%</span>
                     </div>
                     {/* Gauge bar */}
@@ -432,7 +552,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                 onMouseEnter={(e) => (e.currentTarget.style.background = "#D4B665")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "#C9A84C")}
               >
-                See My Matches in {neighborhood.name} →
+                {trans.seeMatches.replace("{name}", nName)}
               </a>
             </div>
           </div>
@@ -451,50 +571,50 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
             {/* Column 1: AT A GLANCE (at-a-glance-col) */}
             <div className="flex flex-col gap-4 text-left at-a-glance-col">
               <h3 className="text-xs font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
-                At a Glance
+                {trans.atAGlance}
               </h3>
               <div className="flex flex-col gap-3 text-xs">
                 <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
                   <span className="text-gray-500 font-light flex items-center gap-1.5">
-                    <Building2 size={13} className="text-[#C9A84C]" /> Area
+                    <Building2 size={13} className="text-[#C9A84C]" /> {trans.area}
                   </span>
-                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{meta.district}</span>
+                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{nDistrict}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
                   <span className="text-gray-500 font-light flex items-center gap-1.5">
-                    <Train size={13} className="text-[#C9A84C]" /> BTS Station
+                    <Train size={13} className="text-[#C9A84C]" /> {trans.btsStation}
                   </span>
-                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{meta.btsCode}</span>
+                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{nBtsCode}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
                   <span className="text-gray-500 font-light flex items-center gap-1.5">
-                    <Train size={13} className="text-[#C9A84C]" /> Travel to Asoke
+                    <Train size={13} className="text-[#C9A84C]" /> {lang === 'en' ? 'Travel to Asok' : lang === 'th' ? 'เดินทางไปอโศก' : '前往阿索克'}
                   </span>
-                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{neighborhood.commuteMinutes["Asok"]} min</span>
+                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{neighborhood.commuteMinutes["Asok"]} {trans.min}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
                   <span className="text-gray-500 font-light flex items-center gap-1.5">
-                    <Train size={13} className="text-[#C9A84C]" /> Travel to Silom
+                    <Train size={13} className="text-[#C9A84C]" /> {lang === 'en' ? 'Travel to Silom' : lang === 'th' ? 'เดินทางไปสีลม' : '前往是隆'}
                   </span>
-                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{neighborhood.commuteMinutes["Silom"]} min</span>
+                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{neighborhood.commuteMinutes["Silom"]} {trans.min}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
                   <span className="text-gray-500 font-light flex items-center gap-1.5">
-                    <Plane size={13} className="text-[#C9A84C]" /> Airport (BKK)
+                    <Plane size={13} className="text-[#C9A84C]" /> {trans.airport}
                   </span>
-                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{meta.airportTime}</span>
+                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{nAirportTime}</span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-[#EDE8DF] items-center">
                   <span className="text-gray-500 font-light flex items-center gap-1.5">
-                    <Sparkles size={13} className="text-[#C9A84C]" /> Vibe
+                    <Sparkles size={13} className="text-[#C9A84C]" /> {trans.vibe}
                   </span>
-                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{meta.vibe}</span>
+                  <span className="font-medium" style={{ color: "#1C3A2F" }}>{nVibe}</span>
                 </div>
                 <div className="flex flex-col py-1.5">
                   <span className="text-gray-500 font-light mb-1 flex items-center gap-1.5">
-                    <ThumbsUp size={13} className="text-[#C9A84C]" /> Best For
+                    <ThumbsUp size={13} className="text-[#C9A84C]" /> {trans.bestFor}
                   </span>
-                  <span className="font-medium leading-relaxed" style={{ color: "#1C3A2F" }}>{meta.bestFor}</span>
+                  <span className="font-medium leading-relaxed" style={{ color: "#1C3A2F" }}>{nBestFor}</span>
                 </div>
               </div>
             </div>
@@ -502,18 +622,18 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
             {/* Column 2: LIFESTYLE & VIBE (lifestyle-col) */}
             <div className="flex flex-col gap-4 text-left lifestyle-col md:h-full">
               <h3 className="text-xs font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
-                Lifestyle & Vibe
+                {trans.lifestyleVibe}
               </h3>
               <p className="text-xs leading-relaxed text-gray-600 font-light md:hidden">
-                A perfect blend of lifestyle and local culture. {neighborhood.name} is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok.
+                {nLifestyleDesc}
               </p>
               <p className="text-xs md:text-sm leading-relaxed text-gray-600 font-light hidden md:block">
-                {meta.lifestyleDesc || `A perfect blend of lifestyle and local culture. ${neighborhood.name} is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok.`}
+                {nLifestyleDesc}
               </p>
               
               {/* Vibe cards row */}
               <div className="flex overflow-x-auto no-scrollbar gap-3 mt-2 md:mt-auto -mx-4 px-4 scroll-smooth md:grid md:grid-cols-4 md:mx-0 md:px-0">
-                {meta.vibeCards.map((card) => (
+                {nVibeCards.map((card) => (
                   <div
                     key={card.title}
                     className="relative rounded-xl overflow-hidden shadow-sm aspect-[4/3] group cursor-pointer w-[160px] min-w-[160px] flex-shrink-0 md:w-auto md:min-w-0 md:flex-shrink"
@@ -556,11 +676,11 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
             {/* Column 3: WHY PEOPLE LOVE & Map (love-map-col) */}
             <div className="flex flex-col gap-4 text-left w-full love-map-col md:h-full">
               <h3 className="text-xs font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
-                Why People Love {neighborhood.name}
+                {trans.whyPeopleLove.replace("{name}", nName)}
               </h3>
               <div className="love-map-grid gap-6 w-full items-stretch md:h-full md:flex-1">
                 <ul className="flex flex-col gap-2.5 text-xs text-gray-600 font-light pl-0 list-none">
-                  {meta.pros.map((pro, index) => (
+                  {nPros.map((pro, index) => (
                     <li
                       key={pro}
                       className={`flex items-start gap-2${index >= 5 ? " hidden md:flex" : ""}`}
@@ -571,19 +691,20 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                   ))}
                 </ul>
 
-                {/* Dynamic Map container - Desktop Only */}
-                <div className="hidden md:flex w-full flex-col gap-2 md:justify-end">
-                  <div className="w-full h-[210px] relative rounded-xl overflow-hidden border border-[#EDE8DF] shadow-inner">
-                    <NeighborhoodMap lat={neighborhood.lat} lng={neighborhood.lng} name={neighborhood.name} />
-                    
-                    {/* View on Map floating button */}
-                    <button
-                      onClick={() => setShowFullMap(true)}
-                      className="absolute bottom-2.5 right-2.5 z-10 px-3 py-1.5 rounded-lg text-[9.5px] font-bold shadow-md cursor-pointer border border-[#EDE8DF]"
-                      style={{ background: "rgba(255,255,255,0.9)", color: "#1C3A2F" }}
+                {/* Dynamic Promo container - Desktop Only */}
+                <div className="hidden md:flex w-full flex-col gap-2 md:justify-center">
+                  {/* Looking for a place promo box - Desktop Only */}
+                  <div className="bg-[#FAF8F3] p-6 rounded-3xl border border-[#EDE8DF] flex flex-col gap-3 text-left">
+                    <h4 className="text-sm font-bold text-[#1C3A2F] m-0">{trans.lookingForPlace.replace("{name}", nName)}</h4>
+                    <p className="text-xs text-gray-500 leading-relaxed font-light font-sans m-0">
+                      {trans.promoDesc.replace("{name}", nName)}
+                    </p>
+                    <a
+                      href="#properties-section"
+                      className="text-xs font-bold text-[#C9A84C] hover:text-[#1C3A2F] transition-colors no-underline"
                     >
-                      View on Map
-                    </button>
+                      {trans.viewListings}
+                    </a>
                   </div>
                 </div>
               </div>
@@ -593,46 +714,20 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
         </div>
       </section>
 
-      {/* ── MAP OVERLAY MODAL ── */}
-      {showFullMap && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(2px)" }}
-          onClick={() => setShowFullMap(false)}
-        >
-          <div
-            className="w-full max-w-[800px] h-[500px] rounded-2xl bg-white shadow-2xl p-4 flex flex-col gap-3 relative animate-scale-up"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center pb-2 border-b border-[#EDE8DF]">
-              <h3 className="font-bold text-base text-[#1C3A2F]">{neighborhood.name} Location Map</h3>
-              <button
-                onClick={() => setShowFullMap(false)}
-                className="w-8 h-8 rounded-full flex items-center justify-center border-none text-sm cursor-pointer"
-                style={{ background: "#EDE8DF", color: "#1C3A2F" }}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="flex-1 rounded-xl overflow-hidden">
-              <NeighborhoodMap lat={neighborhood.lat} lng={neighborhood.lng} name={neighborhood.name} />
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* ── FEATURED PROPERTIES ROW ── */}
       {displayProperties.length > 0 ? (
-        <section className="w-full px-4 md:px-8 mt-12 text-left">
+        <section id="properties-section" className="w-full px-4 md:px-8 mt-12 text-left">
           <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-5">
             {/* Header row */}
             <div className="flex items-end justify-between border-b border-[#EDE8DF] pb-3">
               <div>
                 <span className="text-[10px] font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
-                  Featured Properties in {neighborhood.name}
+                  {trans.featuredProperties.replace("{name}", nName)}
                 </span>
                 <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
-                  Condos & Rentals
+                  {trans.condosRentals}
                 </h2>
               </div>
               <a
@@ -640,13 +735,16 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                 className="text-[12px] font-semibold no-underline pb-px transition-colors duration-150 flex items-center gap-1 hover:text-[#C9A84C]"
                 style={{ color: "#1C3A2F" }}
               >
-                View all properties →
+                {trans.viewAllProperties}
               </a>
             </div>
 
             {/* Properties Grid / Scroll Container */}
-            <div className="properties-container no-scrollbar">
-              {displayProperties.map((prop) => {
+            <div
+              className="properties-container no-scrollbar"
+              data-count={Math.min(displayProperties.length, 8)}
+            >
+              {displayProperties.slice(0, 8).map((prop) => {
                 const isSaved = isPropertySaved(prop.id);
                 return (
                   <div
@@ -723,13 +821,13 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
           </div>
         </section>
       ) : (
-        <section className="w-full px-4 md:px-8 mt-12 text-left">
+        <section id="properties-section" className="w-full px-4 md:px-8 mt-12 text-left">
           <div className="w-full max-w-[1440px] mx-auto p-8 rounded-2xl border border-dashed border-[#EDE8DF] bg-[#FAFAF9] flex flex-col items-center justify-center text-center">
             <div className="text-[#C9A84C] mb-3">
               <Home size={32} strokeWidth={1.5} />
             </div>
-            <h3 className="text-base font-bold text-[#1C3A2F] mb-1">No listings currently available</h3>
-            <p className="text-xs text-gray-500 max-w-sm">We're constantly updating our database. Check back soon or adjust your filters to see more properties in this area.</p>
+            <h3 className="text-base font-bold text-[#1C3A2F] mb-1">{trans.noListings}</h3>
+            <p className="text-xs text-gray-500 max-w-sm">{trans.noListingsDesc}</p>
           </div>
         </section>
       )}
@@ -741,10 +839,10 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
           <div className="flex items-end justify-between border-b border-[#EDE8DF] pb-3">
             <div>
               <span className="text-[10px] font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
-                Local Guide to {neighborhood.name}
+                {trans.localGuideTo.replace("{name}", nName)}
               </span>
               <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
-                Guides & Articles
+                {trans.guidesArticles}
               </h2>
             </div>
             <Link
@@ -752,46 +850,194 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
               className="text-[12px] font-semibold no-underline pb-px transition-colors duration-150 hover:text-[#C9A84C]"
               style={{ color: "#1C3A2F" }}
             >
-              View all guides →
+              {trans.viewAllGuides}
             </Link>
           </div>
 
           {/* Guides horizontal scroll */}
           <div className="flex overflow-x-auto gap-4 no-scrollbar pb-4 -mx-4 px-4 md:-mx-0 md:px-0">
-            {localGuides.map((guide) => (
-              <Link
-                key={guide.title}
-                href={`/blog/${guide.slug}`}
-                className="w-[200px] min-w-[200px] md:w-[220px] md:min-w-[220px] flex flex-col rounded-2xl overflow-hidden shadow-sm border group hover:shadow-md transition-shadow no-underline text-left"
-                style={{ background: "#FFFFFF", borderColor: "#EDE8DF" }}
-              >
-                {/* Image */}
-                <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 relative">
-                  <img
-                    src={guide.image}
-                    alt={guide.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                {/* Text Content */}
-                <div className="p-3.5 flex flex-col flex-1 justify-between gap-3">
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[8.5px] font-bold tracking-wider uppercase text-[#C9A84C]">
-                      {guide.category}
-                    </span>
-                    <h4 className="text-[12.5px] font-bold leading-snug line-clamp-2 text-gray-800 group-hover:text-[#C9A84C]">
-                      {guide.title}
-                    </h4>
+            {localGuides.map((item, idx) => {
+              if (item.isLongFormSection) {
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedLongFormSection(item.sectionIndex)}
+                    className="w-[200px] min-w-[200px] md:w-[220px] md:min-w-[220px] flex flex-col rounded-2xl overflow-hidden shadow-sm border group hover:shadow-md transition-shadow no-underline text-left cursor-pointer p-0"
+                    style={{ background: "#FFFFFF", borderColor: "#EDE8DF" }}
+                  >
+                    {/* Image */}
+                    <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 relative">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                    {/* Text Content */}
+                    <div className="p-3.5 flex flex-col flex-1 justify-between gap-3 w-full box-border">
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-[8.5px] font-bold tracking-wider uppercase text-[#C9A84C]">
+                          {item.category}
+                        </span>
+                        <h4 className="text-[12.5px] font-bold leading-snug line-clamp-2 text-gray-800 group-hover:text-[#C9A84C] transition-colors m-0">
+                          {item.title}
+                        </h4>
+                      </div>
+                      <div className="text-[9.5px] text-gray-400 font-light">
+                        {item.readTime}
+                      </div>
+                    </div>
+                  </button>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.title}
+                  href={`/blog/${item.slug}`}
+                  className="w-[200px] min-w-[200px] md:w-[220px] md:min-w-[220px] flex flex-col rounded-2xl overflow-hidden shadow-sm border group hover:shadow-md transition-shadow no-underline text-left"
+                  style={{ background: "#FFFFFF", borderColor: "#EDE8DF" }}
+                >
+                  {/* Image */}
+                  <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 relative">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
                   </div>
-                  <div className="text-[9.5px] text-gray-400 font-light">
-                    {guide.readTime}
+                  {/* Text Content */}
+                  <div className="p-3.5 flex flex-col flex-1 justify-between gap-3">
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-[8.5px] font-bold tracking-wider uppercase text-[#C9A84C]">
+                        {item.category}
+                      </span>
+                      <h4 className="text-[12.5px] font-bold leading-snug line-clamp-2 text-gray-800 group-hover:text-[#C9A84C]">
+                        {item.title}
+                      </h4>
+                    </div>
+                    <div className="text-[9.5px] text-gray-400 font-light">
+                      {item.readTime}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
+      {/* ── NEARBY NEIGHBORHOODS CROSS-LINKS ── */}
+      {nearbyNeighborhoods.length > 0 && (
+        <section className="w-full px-4 md:px-8 mt-6 text-left mb-8">
+          <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-6">
+            <div className="border-b border-[#EDE8DF] pb-3">
+              <span className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">
+                {trans.exploreBangkok}
+              </span>
+              <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
+                {trans.nearbyNeighborhoods}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {nearbyNeighborhoods.map((n) => {
+                const nTrans = trans.neighborhoods[n.slug.toLowerCase() as keyof typeof trans.neighborhoods];
+                return (
+                  <Link
+                    key={n.slug}
+                    href={`/neighborhood/${n.slug}`}
+                    className="flex flex-col rounded-2xl overflow-hidden shadow-sm border border-[#EDE8DF] group hover:shadow-md transition-shadow no-underline text-left bg-white"
+                  >
+                    <div className="w-full aspect-[16/9] overflow-hidden bg-gray-100 relative">
+                      <img
+                        src={n.heroImage}
+                        alt={nTrans?.name || n.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="p-4 flex flex-col gap-1 flex-grow">
+                      <h4 className="text-sm font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors">
+                        {nTrans?.name || n.name}
+                      </h4>
+                      <p className="text-xs text-[#C9A84C] italic mb-1">
+                        {nTrans?.personality || n.personality}
+                      </p>
+                      <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">
+                        {nTrans?.description || n.description}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── EXPAT GUIDE CHAPTER READER MODAL ── */}
+      {selectedLongFormSection !== null && guide && guide.longFormSections[selectedLongFormSection] && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(2px)" }}
+          onClick={() => setSelectedLongFormSection(null)}
+        >
+          <div
+            className="w-full max-w-[650px] max-h-[85vh] rounded-3xl bg-white shadow-2xl p-6 md:p-8 flex flex-col gap-4 relative animate-scale-up overflow-y-auto border border-[#EDE8DF]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header info */}
+            {(() => {
+              const transSection = transN?.guides?.[selectedLongFormSection];
+              const modalHeading = transSection?.heading || guide.longFormSections[selectedLongFormSection].heading;
+              const modalParagraphs = transSection?.paragraphs || guide.longFormSections[selectedLongFormSection].paragraphs;
+              return (
+                <>
+                  <div className="flex justify-between items-start pb-4 border-b border-[#EDE8DF] text-left w-full">
+                    <div className="pr-8">
+                      <span className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">
+                        {trans.expertInsights.replace("{name}", nName)}
+                      </span>
+                      <h3 className="font-bold text-xl md:text-2xl mt-1 leading-snug" style={{ color: "#1C3A2F", fontFamily: "Georgia, serif" }}>
+                        {modalHeading}
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => setSelectedLongFormSection(null)}
+                      className="w-8 h-8 rounded-full flex items-center justify-center border-none text-sm cursor-pointer hover:bg-[#EDE8DF]/50 transition-colors flex-shrink-0"
+                      style={{ background: "#EDE8DF", color: "#1C3A2F" }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  {/* Paragraph content */}
+                  <div className="flex flex-col gap-4 text-gray-700 leading-relaxed text-sm md:text-base font-light text-left my-2">
+                    {modalParagraphs.map((p, pIdx) => (
+                      <p key={pIdx} className="text-gray-600 m-0">
+                        {p}
+                      </p>
+                    ))}
+                  </div>
+                  
+                  {/* Footer / close button */}
+                  <div className="pt-4 border-t border-[#EDE8DF] flex justify-end w-full">
+                    <button
+                      onClick={() => setSelectedLongFormSection(null)}
+                      className="px-5 py-2.5 rounded-xl font-bold text-xs cursor-pointer transition-colors border-none"
+                      style={{ background: "#1C3A2F", color: "#FFFFFF" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#2A5243")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "#1C3A2F")}
+                    >
+                      {trans.closeReader}
+                    </button>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
       <style>{`
         .hero-gradient-overlay {
           background: linear-gradient(to right, rgba(28, 58, 47, 0.95) 0%, rgba(28, 58, 47, 0.8) 50%, rgba(0, 0, 0, 0.15) 100%);
@@ -878,7 +1124,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
             width: 320px !important;
             min-width: 320px !important;
           }
-          .property-card-item:nth-child(n+5) {
+          .property-card-item:nth-child(n+9) {
             display: block !important;
           }
           .love-map-grid {
@@ -904,6 +1150,35 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
           }
           .love-map-col {
             grid-column: span 4 / span 4 !important;
+          }
+          .properties-container {
+            display: grid !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            grid-auto-rows: 240px !important;
+            grid-template-rows: none !important;
+            grid-auto-flow: row !important;
+            height: auto !important;
+            overflow-x: hidden !important;
+            gap: 16px !important;
+            padding-bottom: 0 !important;
+          }
+          /* Collapse to 1 row when 4 or fewer properties */
+          .properties-container[data-count="1"],
+          .properties-container[data-count="2"],
+          .properties-container[data-count="3"],
+          .properties-container[data-count="4"] {
+            grid-template-rows: 240px !important;
+            grid-auto-rows: 0px !important;
+            max-height: 240px !important;
+            overflow: hidden !important;
+          }
+          .property-card-item {
+            width: 100% !important;
+            min-width: 0 !important;
+            height: 240px !important;
+          }
+          .property-card-item:nth-child(n+9) {
+            display: none !important;
           }
         }
       `}</style>

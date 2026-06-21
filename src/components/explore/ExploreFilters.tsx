@@ -211,7 +211,7 @@ export default function ExploreFiltersBar({ filters, total, onChange, onReset }:
                 const val = a === "All Areas" ? "" : a;
                 return <option key={a} value={val}>{label}</option>;
               })}
-              <option value="Other">{lang === "th" ? "พื้นที่อื่นในกรุงเทพฯ" : "Other Bangkok Areas"}</option>
+              <option value="Other">{lang === "th" ? "พื้นที่อื่นในกรุงเทพฯ" : lang === "zh" ? "曼谷其他地区" : "Other Bangkok Areas"}</option>
             </select>
 
             {/* Beds */}
@@ -382,7 +382,7 @@ export default function ExploreFiltersBar({ filters, total, onChange, onReset }:
                   const val = a === "All Areas" ? "" : a;
                   return <option key={a} value={val}>{label}</option>;
                 })}
-                <option value="Other">{lang === "th" ? "พื้นที่อื่นในกรุงเทพฯ" : "Other Bangkok Areas"}</option>
+                <option value="Other">{lang === "th" ? "พื้นที่อื่นในกรุงเทพฯ" : lang === "zh" ? "曼谷其他地区" : "Other Bangkok Areas"}</option>
               </select>
 
               {/* Budget */}

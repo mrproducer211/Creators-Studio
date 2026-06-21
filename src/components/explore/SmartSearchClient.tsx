@@ -22,6 +22,8 @@ interface ParsedRequirements {
   propertyType: string;
   budget: number | null;
   lifestyle: string;
+  bedrooms: number | null;
+  amenities: string[];
 }
 
 // Similar neighborhoods data for "You Might Also Like"
@@ -141,6 +143,8 @@ export default function SmartSearchClient({ properties }: Props) {
         propertyType: "Condo / Apartment",
         budget: null,
         lifestyle: "Not Specified",
+        bedrooms: null,
+        amenities: [],
       };
     }
 
@@ -228,7 +232,32 @@ export default function SmartSearchClient({ properties }: Props) {
       lifestyle = lifestyles.join(" & ");
     }
 
-    return { area, petFriendly, nearBts, propertyType, budget, lifestyle };
+    // Bedrooms
+    let bedrooms: number | null = null;
+    const bedMatch = q.match(/(\d+)\s*(?:bed|br|bedroom)/i);
+    if (bedMatch) {
+      bedrooms = parseInt(bedMatch[1]);
+    } else if (q.includes("studio")) {
+      bedrooms = 0;
+    } else if (q.includes("one bed")) {
+      bedrooms = 1;
+    } else if (q.includes("two bed")) {
+      bedrooms = 2;
+    } else if (q.includes("three bed")) {
+      bedrooms = 3;
+    }
+
+    // Amenities
+    const amenities: string[] = [];
+    if (q.includes("pool")) amenities.push("pool");
+    if (q.includes("gym") || q.includes("fitness")) amenities.push("gym");
+    if (q.includes("security")) amenities.push("security");
+    if (q.includes("parking")) amenities.push("parking");
+    if (q.includes("garden")) amenities.push("garden");
+    if (q.includes("sauna")) amenities.push("sauna");
+    if (q.includes("cowork") || q.includes("co-work")) amenities.push("coworking");
+
+    return { area, petFriendly, nearBts, propertyType, budget, lifestyle, bedrooms, amenities };
   }, [activeQuery]);
 
   // Scoring Logic & Item Formatting
@@ -259,36 +288,54 @@ export default function SmartSearchClient({ properties }: Props) {
           };
           const similar = nearby[parsed.area] || [];
           if (similar.some((s) => property.area.toLowerCase() === s.toLowerCase())) {
-            score -= 15;
+            score -= 30; // Deduct more for adjacent areas so they rank lower
             reasons.push(`Located in adjacent high-value area: ${property.area}`);
           } else {
-            score -= 40;
+            score -= 60; // Unrelated location gets heavy deduction, dropping it below threshold
           }
         }
       }
 
-      // 2. Budget matching
-      if (parsed.budget) {
-        if (property.priceTHB <= parsed.budget) {
-          reasons.push(`Within your budget of ฿${parsed.budget.toLocaleString()}`);
-        } else if (property.priceTHB <= parsed.budget * 1.15) {
-          score -= 15;
-          reasons.push(`Slightly above budget (+15% buffer)`);
+      // 2. Property Type matching
+      if (parsed.propertyType && parsed.propertyType !== "Condo / Apartment") {
+        if (property.propertyType.toLowerCase() === parsed.propertyType.toLowerCase()) {
+          reasons.push(`Matches preferred type: ${parsed.propertyType}`);
         } else {
-          score -= 35;
+          score -= 45; // Penalize mismatched property types (e.g. house vs condo)
         }
       }
 
-      // 3. Pet Friendly matching
+      // 3. Bedrooms matching
+      if (parsed.bedrooms !== null) {
+        if (property.bedrooms === parsed.bedrooms) {
+          reasons.push(`Matches room count: ${parsed.bedrooms} Bed`);
+        } else {
+          score -= 45; // Penalize mismatched bedroom counts
+        }
+      }
+
+      // 4. Pet Friendly matching
       if (parsed.petFriendly === "Yes") {
         if (property.petFriendly) {
           reasons.push("Pet-friendly condominium building");
         } else {
-          score -= 20;
+          score -= 50; // Heavy penalty for non-pet-friendly listings
         }
       }
 
-      // 4. Transit matching
+      // 5. Budget matching
+      if (parsed.budget) {
+        if (property.priceTHB <= parsed.budget) {
+          reasons.push(`Within your budget of ฿${parsed.budget.toLocaleString()}`);
+        } else if (property.priceTHB <= parsed.budget * 1.15) {
+          score -= 20;
+          reasons.push(`Slightly above budget (+15% buffer)`);
+        } else {
+          score -= 50; // Exceeding budget gets heavily penalized
+        }
+      }
+
+      // 6. Transit matching
       if (parsed.nearBts === "Walking Distance") {
         if (property.nearBts) {
           const walk = property.btsWalkMin || property.mrtWalkMin || 5;
@@ -299,13 +346,38 @@ export default function SmartSearchClient({ properties }: Props) {
         }
       }
 
-      // 5. Property Type matching
-      if (parsed.propertyType && parsed.propertyType !== "Condo / Apartment") {
-        if (property.propertyType.toLowerCase() === parsed.propertyType.toLowerCase()) {
-          reasons.push(`Matches preferred type: ${parsed.propertyType}`);
-        } else {
-          score -= 10;
-        }
+      // 7. Amenities matching
+      if (parsed.amenities.length > 0) {
+        parsed.amenities.forEach((amenity) => {
+          let hasAmenity = false;
+          const propAmenities = property.amenities || [];
+          if (amenity === "pool") {
+            hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("pool"));
+            if (hasAmenity) reasons.push("Features a swimming pool");
+          } else if (amenity === "gym") {
+            hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("gym") || a.toLowerCase().includes("fitness"));
+            if (hasAmenity) reasons.push("Equipped with fitness center/gym");
+          } else if (amenity === "security") {
+            hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("security"));
+            if (hasAmenity) reasons.push("24h security protection");
+          } else if (amenity === "parking") {
+            hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("parking") || a.toLowerCase().includes("garage"));
+            if (hasAmenity) reasons.push("Includes resident parking");
+          } else if (amenity === "garden") {
+            hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("garden"));
+            if (hasAmenity) reasons.push("Features shared gardens");
+          } else if (amenity === "sauna") {
+            hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("sauna") || a.toLowerCase().includes("jacuzzi"));
+            if (hasAmenity) reasons.push("Access to sauna/jacuzzi facilities");
+          } else if (amenity === "coworking") {
+            hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("cowork") || a.toLowerCase().includes("co-work") || a.toLowerCase().includes("space"));
+            if (hasAmenity) reasons.push("Includes on-site co-working spaces");
+          }
+
+          if (!hasAmenity) {
+            score -= 15; // Deduct per missing requested amenity
+          }
+        });
       }
 
       // Add default if empty
@@ -313,7 +385,34 @@ export default function SmartSearchClient({ properties }: Props) {
         reasons.push("General lifestyle match in Bangkok");
       }
 
-      score = Math.max(50, Math.min(99, score));
+      // Name-matching boost
+      let matchesName = false;
+      if (activeQuery) {
+        const queryClean = activeQuery.toLowerCase().replace(/condo|apartment|house|villa|townhouse/g, "").trim();
+        const propNameClean = property.name.toLowerCase();
+        
+        // If the query contains the property name, or the property name contains the query (min 3 chars)
+        if (queryClean.length >= 3 && (propNameClean.includes(queryClean) || queryClean.includes(propNameClean))) {
+          matchesName = true;
+          reasons.unshift(`Matches property name: "${property.name}"`);
+        } else {
+          // Check if key words from property name are in the query
+          const nameWords = propNameClean.split(/\s+/).filter(w => w.length > 2 && w !== "the" && w !== "condo");
+          const queryWords = queryClean.split(/\s+/).filter(w => w.length > 2);
+          const matchingWords = nameWords.filter(w => queryClean.includes(w) || queryWords.some(qw => qw.includes(w) || w.includes(qw)));
+          
+          if (matchingWords.length >= 2 || (nameWords.length === 1 && matchingWords.length === 1 && nameWords[0] === queryWords[0])) {
+            matchesName = true;
+            reasons.unshift(`Matches property name: "${property.name}"`);
+          }
+        }
+      }
+
+      if (matchesName) {
+        score = Math.max(50, Math.min(99, score)) + 100;
+      } else {
+        score = Math.max(50, Math.min(99, score));
+      }
 
       return {
         property,
@@ -325,16 +424,88 @@ export default function SmartSearchClient({ properties }: Props) {
 
   // Filters & Sorting logic
   const filteredAndSortedProperties = useMemo(() => {
-    // We only show properties that have some decent matching score if query is active,
-    // otherwise show all properties.
     let items = [...scoredProperties];
 
     if (activeQuery) {
-      // Filter out low match items (e.g. score < 60) unless no properties match, to avoid complete empty state.
-      const highMatches = items.filter((item) => item.score >= 60);
-      if (highMatches.length > 0) {
-        items = highMatches;
-      }
+      // Apply strict filtering
+      items = items.filter((item) => {
+        // If it matches by name, bypass standard strict filters to show it
+        if (item.score >= 150) {
+          return true;
+        }
+
+        const p = item.property;
+
+        // 1. Area matching (strict)
+        if (parsed.area) {
+          if (p.area.toLowerCase() !== parsed.area.toLowerCase()) {
+            return false;
+          }
+        }
+
+        // 2. Property Type matching (strict)
+        if (parsed.propertyType && parsed.propertyType !== "Condo / Apartment") {
+          if (p.propertyType.toLowerCase() !== parsed.propertyType.toLowerCase()) {
+            return false;
+          }
+        }
+
+        // 3. Bedrooms matching (strict)
+        if (parsed.bedrooms !== null) {
+          if (p.bedrooms !== parsed.bedrooms) {
+            return false;
+          }
+        }
+
+        // 4. Pet Friendly matching (strict)
+        if (parsed.petFriendly === "Yes") {
+          if (!p.petFriendly) {
+            return false;
+          }
+        }
+
+        // 5. Budget matching (strict)
+        if (parsed.budget) {
+          if (p.priceTHB > parsed.budget) {
+            return false;
+          }
+        }
+
+        // 6. Near BTS matching (strict)
+        if (parsed.nearBts === "Walking Distance") {
+          if (!p.nearBts) {
+            return false;
+          }
+        }
+
+        // 7. Amenities matching (strict)
+        if (parsed.amenities.length > 0) {
+          const propAmenities = p.amenities || [];
+          for (const amenity of parsed.amenities) {
+            let hasAmenity = false;
+            if (amenity === "pool") {
+              hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("pool"));
+            } else if (amenity === "gym") {
+              hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("gym") || a.toLowerCase().includes("fitness"));
+            } else if (amenity === "security") {
+              hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("security"));
+            } else if (amenity === "parking") {
+              hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("parking") || a.toLowerCase().includes("garage"));
+            } else if (amenity === "garden") {
+              hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("garden"));
+            } else if (amenity === "sauna") {
+              hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("sauna") || a.toLowerCase().includes("jacuzzi"));
+            } else if (amenity === "coworking") {
+              hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("cowork") || a.toLowerCase().includes("co-work") || a.toLowerCase().includes("space"));
+            }
+            if (!hasAmenity) {
+              return false;
+            }
+          }
+        }
+
+        return true;
+      });
     }
 
     // Sort items
@@ -367,7 +538,7 @@ export default function SmartSearchClient({ properties }: Props) {
     });
 
     return items;
-  }, [scoredProperties, sortBy, activeQuery]);
+  }, [scoredProperties, sortBy, activeQuery, parsed]);
 
   // Scores map for Map Component
   const propertyScores = useMemo(() => {

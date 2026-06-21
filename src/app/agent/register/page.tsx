@@ -3,8 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { UserCheck, ShieldAlert, Sparkles, Building2, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { T_AGENT_REGISTER } from "@/data/agentTranslations";
 
 export default function AgentRegister() {
+  const { lang } = useLanguage();
+  const tr = T_AGENT_REGISTER[lang] || T_AGENT_REGISTER.en;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,17 +23,17 @@ export default function AgentRegister() {
     setError("");
 
     if (!name.trim() || !email.trim() || !password.trim()) {
-      setError("Please fill out all fields.");
+      setError(tr.validation.fillAll);
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      setError(tr.validation.passwordLength);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(tr.validation.passwordMismatch);
       return;
     }
 
@@ -47,7 +51,7 @@ export default function AgentRegister() {
       }
       setRegistered(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(err instanceof Error ? err.message : (lang === "th" ? "เกิดข้อผิดพลาดบางอย่าง" : lang === "zh" ? "发生了一些错误" : "Something went wrong."));
     } finally {
       setLoading(false);
     }
@@ -76,12 +80,12 @@ export default function AgentRegister() {
         </Link>
 
         <div>
-          <div className="text-[11px] uppercase tracking-[2px] font-semibold mb-4" style={{ color: "#C9A84C" }}>Agent Partners</div>
+          <div className="text-[11px] uppercase tracking-[2px] font-semibold mb-4" style={{ color: "#C9A84C" }}>{tr.benefitsTitle}</div>
           {[
-            { icon: <Building2 size={18} />, text: "Upload & manage your own properties" },
-            { icon: <UserCheck size={18} />, text: "Manual admin review ensures trusted network" },
-            { icon: <Sparkles size={18} />, text: "Premium exposure to verified home seekers" },
-            { icon: <ShieldAlert size={18} />, text: "Secure, credential-guarded access portal" },
+            { icon: <Building2 size={18} />, text: tr.benefits[0] },
+            { icon: <UserCheck size={18} />, text: tr.benefits[1] },
+            { icon: <Sparkles size={18} />, text: tr.benefits[2] },
+            { icon: <ShieldAlert size={18} />, text: tr.benefits[3] },
           ].map((b, idx) => (
             <div key={idx} className="flex items-center gap-3 mb-4">
               <span className="w-8 flex justify-center flex-shrink-0" style={{ color: "#C9A84C" }}>{b.icon}</span>
@@ -91,7 +95,7 @@ export default function AgentRegister() {
         </div>
 
         <p className="text-[12px] font-light" style={{ color: "rgba(255,255,255,0.3)" }}>
-          © 2026 New Home Property · Bangkok HQ
+          {tr.footer}
         </p>
       </div>
 
@@ -109,27 +113,22 @@ export default function AgentRegister() {
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(46,125,79,0.1)", color: "#2E7D4F" }}>
                 <UserCheck size={28} />
               </div>
-              <h2 className="text-[20px] font-bold mb-2 text-[#1C3A2F]">Application Submitted</h2>
-              <p className="text-[14px] font-light leading-relaxed text-[#666] mb-6">
-                Thanks for registering, <strong>{name}</strong>! Your agent account is pending manual review by our administrators. 
-                You will be able to access your dashboard and post properties once approved.
-              </p>
+              <h2 className="text-[20px] font-bold mb-2 text-[#1C3A2F]">{tr.successTitle}</h2>
+              <p className="text-[14px] font-light leading-relaxed text-[#666] mb-6">{tr.successDesc.replace("registering", "registering, " + name)}</p>
               <Link
                 href="/"
                 className="inline-block px-6 py-3 rounded-xl text-[13px] font-semibold no-underline transition-all"
                 style={{ background: "#1C3A2F", color: "#FFFFFF" }}
               >
-                Back to Homepage
+                {tr.backToHome}
               </Link>
             </div>
           ) : (
             <>
               <h1 className="text-[26px] font-bold mb-1" style={{ color: "#1A1A1A", letterSpacing: "-0.5px" }}>
-                Join as an Agent
+                {tr.title}
               </h1>
-              <p className="text-[14px] font-light mb-8" style={{ color: "#999" }}>
-                Register to upload properties. Applications are manually verified by admins.
-              </p>
+              <p className="text-[14px] font-light mb-8" style={{ color: "#999" }}>{tr.subtitle}</p>
 
               {error && (
                 <div
@@ -143,14 +142,14 @@ export default function AgentRegister() {
               <form onSubmit={handleRegister} className="flex flex-col gap-4">
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-[1px] text-[#666] mb-1.5">
-                    Full Name
+                    {tr.nameLabel}
                   </label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     disabled={loading}
-                    placeholder="e.g. Somchai Dev"
+                    placeholder={tr.namePlaceholder}
                     required
                     className="w-full px-4 py-3 rounded-xl text-[14px] transition-all focus:outline-none focus:border-[#C9A84C]"
                     style={inputStyle}
@@ -159,14 +158,14 @@ export default function AgentRegister() {
 
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-[1px] text-[#666] mb-1.5">
-                    Email Address
+                    {tr.emailLabel}
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={loading}
-                    placeholder="agent@example.com"
+                    placeholder={tr.emailPlaceholder}
                     required
                     className="w-full px-4 py-3 rounded-xl text-[14px] transition-all focus:outline-none focus:border-[#C9A84C]"
                     style={inputStyle}
@@ -175,7 +174,7 @@ export default function AgentRegister() {
 
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-[1px] text-[#666] mb-1.5">
-                    Password
+                    {tr.passwordLabel}
                   </label>
                   <div className="relative">
                     <input
@@ -183,7 +182,7 @@ export default function AgentRegister() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={loading}
-                      placeholder="Min. 6 characters"
+                      placeholder={lang === "th" ? "ขั้นต่ำ 6 ตัวอักษร" : lang === "zh" ? "至少6个字符" : "Min. 6 characters"}
                       required
                       className="w-full px-4 py-3 rounded-xl text-[14px] pr-10 transition-all focus:outline-none focus:border-[#C9A84C]"
                       style={inputStyle}
@@ -200,14 +199,14 @@ export default function AgentRegister() {
 
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-[1px] text-[#666] mb-1.5">
-                    Confirm Password
+                    {tr.confirmPasswordLabel}
                   </label>
                   <input
                     type={showPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={loading}
-                    placeholder="Repeat password"
+                    placeholder={lang === "th" ? "ป้อนรหัสผ่านอีกครั้ง" : lang === "zh" ? "重复密码" : "Repeat password"}
                     required
                     className="w-full px-4 py-3 rounded-xl text-[14px] transition-all focus:outline-none focus:border-[#C9A84C]"
                     style={inputStyle}
@@ -220,14 +219,14 @@ export default function AgentRegister() {
                   className="w-full py-3.5 rounded-xl text-[14px] font-bold tracking-[0.5px] cursor-pointer border-none transition-all disabled:opacity-60 mt-2"
                   style={{ background: "#1C3A2F", color: "#FFFFFF", fontFamily: "inherit" }}
                 >
-                  {loading ? "Submitting Application..." : "Submit Registration"}
+                  {loading ? tr.loading : tr.submitBtn}
                 </button>
               </form>
 
               <div className="text-center mt-6 text-[13px] text-[#888] font-light">
-                Already registered?{" "}
+                {lang === "th" ? "ลงทะเบียนแล้วใช่ไหม? " : lang === "zh" ? "已经注册？ " : "Already registered? "}
                 <Link href="/auth/signin" className="font-semibold underline" style={{ color: "#1C3A2F" }}>
-                  Sign In
+                  {lang === "th" ? "เข้าสู่ระบบ" : lang === "zh" ? "登录" : "Sign In"}
                 </Link>
               </div>
             </>
