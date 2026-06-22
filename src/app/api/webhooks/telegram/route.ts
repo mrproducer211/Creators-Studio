@@ -65,19 +65,37 @@ async function sendTelegramResponse(
   replyToMessageId?: number
 ) {
   try {
-    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    const payload: any = {
+      chat_id: chatId,
+      text: text,
+      parse_mode: "HTML",
+      disable_web_page_preview: false,
+    };
+    if (replyToMessageId) {
+      payload.reply_to_message_id = replyToMessageId;
+    }
+
+    let res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: text,
-        reply_to_message_id: replyToMessageId,
-        parse_mode: "HTML",
-        disable_web_page_preview: false,
-      }),
+      body: JSON.stringify(payload),
     });
+
+    // If it fails when replying, retry without the reply reference
+    if (!res.ok && replyToMessageId) {
+      console.warn("Failed to send message with reply reference. Retrying without reply_to_message_id...");
+      delete payload.reply_to_message_id;
+      res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+    }
+
     if (!res.ok) {
       console.error("Failed to send response back to Telegram:", await res.text());
     }
