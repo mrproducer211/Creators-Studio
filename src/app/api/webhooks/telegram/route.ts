@@ -721,22 +721,7 @@ function shouldSendFeedback(chatId: string | number): boolean {
 async function getDraftProperty(chatId: string | number, mediaGroupId: string | null): Promise<any | null> {
   if (!isDbConfigured) return null;
 
-  // 1. Try to find by mediaGroupId first if provided
-  if (mediaGroupId) {
-    const draft = await db
-      .select()
-      .from(propertiesTable)
-      .where(
-        and(
-          eq(propertiesTable.telegramMediaGroupId, mediaGroupId),
-          eq(propertiesTable.status, "draft")
-        )
-      )
-      .limit(1);
-    if (draft.length > 0) return draft[0];
-  }
-
-  // 2. Try to find by slug = draft-chat-{chatId}
+  // Always find the active draft for this chat
   const draft = await db
     .select()
     .from(propertiesTable)
@@ -758,7 +743,7 @@ async function createDraftProperty(
   imageUrl: string,
   videoUrl?: string
 ): Promise<any> {
-  const slug = mediaGroupId ? `draft-media-${mediaGroupId}` : `draft-chat-${chatId}`;
+  const slug = `draft-chat-${chatId}`;
 
   if (isDbConfigured) {
     // Delete any existing draft with this slug first to avoid unique constraint violations
