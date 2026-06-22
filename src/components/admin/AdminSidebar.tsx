@@ -79,7 +79,11 @@ export default function AdminSidebar({ userName }: { userName: string }) {
     <aside className="flex flex-col h-full w-60 flex-shrink-0" style={{ background: "#1C3A2F", borderRight: "1px solid rgba(255,255,255,0.08)" }}>
       {/* Brand */}
       <Link href="/" className="flex items-center gap-2.5 px-5 py-5 no-underline" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-        <div className="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-[13px]" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
+        <img
+          src="/images/nhp-logo.webp"
+          alt="NHP Logo"
+          className="w-9 h-9 object-contain rounded-lg"
+        />
         <div>
           <div className="text-[13px] font-semibold" style={{ color: "#FFFFFF" }}>NHP Admin</div>
           <div className="text-[10px]" style={{ color: "rgba(255,255,255,0.45)" }}>Bangkok HQ</div>

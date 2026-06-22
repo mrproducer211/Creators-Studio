@@ -56,17 +56,28 @@ export default function SavedPanel({ saved, onClose, onRemove }: Props) {
                   style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}
                 >
                   {/* Mini image */}
-                  <div
-                    className="w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center text-xs font-bold"
-                    style={{
-                      background: p.id % 2 === 0
-                        ? "linear-gradient(135deg,#254D3E,#1C3A2F)"
-                        : "linear-gradient(135deg,#8B6914,#C9A84C)",
-                      color: "rgba(255,255,255,0.2)",
-                    }}
-                  >
-                    NHP
-                  </div>
+                  {p.coverImage ? (
+                    <img
+                      src={p.coverImage}
+                      alt={p.name}
+                      className="w-16 h-16 rounded-xl flex-shrink-0 object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center"
+                      style={{
+                        background: p.id % 2 === 0
+                          ? "linear-gradient(135deg,#254D3E,#1C3A2F)"
+                          : "linear-gradient(135deg,#8B6914,#C9A84C)",
+                      }}
+                    >
+                      <img
+                        src="/images/nhp-logo.webp"
+                        alt="NHP Logo"
+                        className="w-8 h-8 object-contain opacity-30"
+                      />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{stripEmojis(p.name)}</div>
                     <div className="text-[12px]" style={{ color: "#1C3A2F" }}>

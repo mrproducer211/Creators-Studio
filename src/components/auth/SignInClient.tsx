@@ -128,7 +128,11 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         style={{ width: 420, background: "#1C3A2F" }}
       >
         <Link href="/" className="flex items-center gap-3 no-underline">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
+          <img
+            src="/images/nhp-logo.webp"
+            alt="NHP Logo"
+            className="w-10 h-10 object-contain rounded-xl"
+          />
           <div>
             <div className="text-[15px] font-semibold" style={{ color: "#FFFFFF" }}>New Home Property</div>
             <div className="text-[11px]" style={{ color: "rgba(255,255,255,0.45)" }}>Bangkok, Thailand</div>
@@ -161,7 +165,11 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         <div className="w-full max-w-[400px]">
           {/* Mobile logo */}
           <Link href="/" className="lg:hidden flex items-center justify-center gap-2 no-underline mb-8 mx-auto w-fit">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style={{ background: "#1C3A2F", color: "#C9A84C" }}>NHP</div>
+            <img
+              src="/images/nhp-logo.webp"
+              alt="NHP Logo"
+              className="w-9 h-9 object-contain rounded-xl"
+            />
             <span className="text-[15px] font-semibold" style={{ color: "#1C3A2F" }}>New Home Property</span>
           </Link>
 

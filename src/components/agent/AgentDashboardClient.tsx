@@ -588,7 +588,11 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
         {/* Desktop Logo Header */}
         <div className="hidden lg:block">
           <Link href="/" className="flex items-center gap-3 no-underline mb-8">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm bg-[#C9A84C] text-[#1C3A2F]">NHP</div>
+            <img
+              src="/images/nhp-logo.webp"
+              alt="NHP Logo"
+              className="w-9 h-9 object-contain rounded-lg"
+            />
             <div>
               <div className="text-[14px] font-semibold text-white">Agent Workspace</div>
               <div className="text-[10px] text-white/45">Bangkok, TH</div>

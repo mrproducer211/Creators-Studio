@@ -105,7 +105,11 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
       <div className="hidden md:flex flex-col justify-between px-8 py-8 flex-shrink-0" style={{ width: 260, background: "rgba(0,0,0,0.3)", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
         <div>
           <Link href="/" className="flex items-center gap-2 no-underline mb-8">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
+            <img
+              src="/images/nhp-logo.webp"
+              alt="NHP Logo"
+              className="w-9 h-9 object-contain rounded-xl"
+            />
             <div>
               <div className="text-[13px] font-semibold" style={{ color: "#FFFFFF" }}>{ts.swipe}</div>
               <div className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>Bangkok Properties</div>
@@ -235,7 +239,11 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
           {/* Mobile logo and search location badge */}
           <div className="md:hidden flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2 no-underline">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>NHP</div>
+              <img
+                src="/images/nhp-logo.webp"
+                alt="NHP Logo"
+                className="w-8 h-8 object-contain rounded-lg"
+              />
               <span className="text-[13px] font-semibold" style={{ color: "rgba(255,255,255,0.7)" }}>{ts.swipe}</span>
             </Link>
             {searchLocation && (
