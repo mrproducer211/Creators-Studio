@@ -341,13 +341,15 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
     }> = [];
 
     if (guide && guide.longFormSections) {
-      const extraImages = [
-        "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500&auto=format&q=80", // modern house
-        "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=500&auto=format&q=80", // transit
-        "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&q=80", // fitness
-        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500&auto=format&q=80", // dining
-        "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500&auto=format&q=80"  // luxury condo/hotel
-      ];
+      const categoryImages: Record<string, string> = {
+        "TRANSPORTATION": "/images/neighborhoods/guide_transit.webp",
+        "LANDMARKS & MALLS": "/images/neighborhoods/guide_landmarks.webp",
+        "WELLNESS & PARKS": "/images/neighborhoods/guide_wellness.webp",
+        "DINING & NIGHTLIFE": "/images/neighborhoods/guide_dining.webp",
+        "REAL ESTATE": "/images/neighborhoods/guide_real_estate.webp",
+        "NEIGHBORHOOD GUIDE": "/images/neighborhoods/guide_general.webp",
+        "EXPERT INSIGHTS": "/images/neighborhoods/guide_general.webp"
+      };
 
       guide.longFormSections.forEach((section, index) => {
         let category = "EXPERT INSIGHTS";
@@ -393,7 +395,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
           title: heading,
           category: transCategory,
           readTime: trans.readTime,
-          image: extraImages[index % extraImages.length],
+          image: section.image || categoryImages[category] || "/images/neighborhoods/guide_general.webp",
           slug: "",
           isLongFormSection: true,
           sectionIndex: index
@@ -402,7 +404,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
     }
 
     return list;
-  }, [neighborhood.name, neighborhood.slug, guide, lang, transN, trans.readTime]);
+  }, [guide, lang, transN, trans.readTime]);
 
   return (
     <div className="flex flex-col w-full pb-10" style={{ background: "#FAF8F3" }}>

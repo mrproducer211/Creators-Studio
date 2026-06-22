@@ -1,6 +1,7 @@
 export interface GuideSection {
   heading: string;
   paragraphs: string[];
+  image?: string;
 }
 
 export interface NeighborhoodGuide {
@@ -426,35 +427,40 @@ export const NEIGHBORHOOD_GUIDES: Record<string, NeighborhoodGuide> = {
         paragraphs: [
           "Sukhumvit, particularly the area centered around Phrom Phong, represents the prestigious retail and lifestyle heart of downtown Bangkok. Home to a large international expat community, luxury high-rises, and world-class shopping complexes, this neighborhood represents international convenience and luxury. The atmosphere is cosmopolitan and active, making it highly desirable for high earners and expat families who demand top-quality services. The main road is always moving with activity, representing the energy of Bangkok's retail core. As one of Bangkok's most famous avenues, Sukhumvit connects major commercial zones and provides a vibrant, upscale backdrop for high-end city living that is both exciting and highly convenient.",
           "The main thoroughfare is lined with luxury hotels, business offices, and premium residential towers. Despite being a highly dense urban area, the neighborhood maintains a clean, organized, and sophisticated feel. It is a district designed to provide residents with everything they need—from luxury shopping and international dining to wellness spas and green parks—within a few blocks of the BTS Skytrain, ensuring comfort and easy access to all city hubs."
-        ]
+        ],
+        image: "/images/neighborhoods/sukhumvit_retail.webp"
       },
       {
         heading: "The EmDistrict Experience: World-Class Retail and Leisure",
         paragraphs: [
           "The defining landmark of Phrom Phong is the EmDistrict, a massive luxury retail development by the Mall Group. The EmDistrict consists of three world-class shopping malls: Emporium, EmQuartier, and the newly opened EmSphere. Together, they offer a shopping, retail, and leisure experience that is unmatched in Southeast Asia, attracting shoppers from across the globe. Each mall has its own theme and target audience.",
           "Emporium focuses on luxury fashion brands, EmQuartier features vertical garden terraces and gourmet dining, and EmSphere offers trendy food markets, nightlife venues, and design stores. For residents, the EmDistrict is a daily extension of their living space, providing high-end grocery stores (Gourmet Market), international bookstores, and state-of-the-art cinemas right at the BTS station, making shopping, dining, and leisure effortless."
-        ]
+        ],
+        image: "/images/neighborhoods/sukhumvit_emdistrict.webp"
       },
       {
         heading: "International Dining and Expat Infrastructure in Phrom Phong",
         paragraphs: [
           "Phrom Phong is exceptionally cosmopolitan, hosting a large and diverse international expat community. The neighborhood has developed an outstanding infrastructure to support this global population, featuring premium Japanese supermarkets like Fuji Super, European bakeries like Holey Artisan, and international dining spots that serve everything from Italian pasta to Japanese ramen. You can find ingredients from anywhere in the world, making daily cooking and dining highly varied.",
           "The wellness scene here is also world-class, with luxury day spas like Let's Relax and high-end fitness clubs like Virgin Active offering premium services. The residential market is highly sought after, with modern high-rise condos renting for ฿30,000 to ฿80,000+ per month. The buildings feature beautiful design, city skyline views, and excellent security, ensuring a comfortable, high-end lifestyle with top-tier facilities."
-        ]
+        ],
+        image: "/images/neighborhoods/sukhumvit_dining.webp"
       },
       {
         heading: "Benjasiri Park: The Green Oasis of Sukhumvit Road",
         paragraphs: [
           "Directly next to the Phrom Phong BTS station and the Emporium luxury mall lies Benjasiri Park, providing a lush green escape from the surrounding high-speed retail action. Known affectionately as the 'Queen's Park,' Benjasiri features a large central lake with dynamic water fountains, mature tropical trees, shaded walking paths, and outdoor sports facilities, including basketball courts, volleyball courts, and an outdoor public swimming pool, making it a major wellness and fitness hub. The park offers a clean, secure, and welcoming space for all kinds of outdoor activities.",
           "On any given morning or evening, the park is highly active with expat residents jogging the paved loops, families playing on the lawns, and locals relaxing under the shade of massive trees. Having direct access to a beautiful, well-maintained park right next to the BTS station and luxury shopping hubs is a rare and highly valued luxury in downtown Sukhumvit, completing the balanced, active lifestyle that makes Phrom Phong one of the most prestigious and desired addresses in Bangkok, blending nature with urban luxury in a way that is highly satisfying."
-        ]
+        ],
+        image: "/images/neighborhoods/sukhumvit_park.webp"
       },
       {
         heading: "Luxury Real Estate: Branded Residences and High-End Condos in Phrom Phong",
         paragraphs: [
           "The real estate market in Phrom Phong (Sukhumvit Soi 24, 31, and 39) is among the most prestigious and premium in Bangkok. The neighborhood features iconic high-rise condominiums and luxury branded residences that cater to high-net-worth individuals, top corporate executives, and affluent expat families. Developments such as Marque Sukhumvit, Park Origin Phrom Phong, and Diplomat 39 offer exceptional living spaces with high ceilings, marble finishes, and private lift access. Renting a modern one-bedroom condo in this area typically starts at ฿35,000 per month, while spacious three-bedroom residences can range from ฿90,000 to ฿200,000+ per month. The building services are world-class, including 24-hour concierge, private spas, and valet parking.",
           "For long-term residents and families, Phrom Phong’s residential sub-sois (particularly Sukhumvit Soi 31 and Soi 39) offer older, spacious low-rise apartments and townhouses. These developments are highly prized because they provide larger square footage—often over 180 square meters for a two- or three-bedroom unit—along with green gardens, quiet swimming pools, and pet-friendly environments. A family-sized apartment in these quieter lanes can rent for ฿60,000 to ฿110,000 per month. The location is incredibly convenient, allowing residents to easily walk or take a shuttle to the EmDistrict malls, enjoy the green lawns of Benjasiri Park, and dine at top-tier international restaurants, making Phrom Phong a premier luxury home."
-        ]
+        ],
+        image: "/images/neighborhoods/sukhumvit_condo.webp"
       }
     ],
     faqs: [

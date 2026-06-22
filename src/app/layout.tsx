@@ -15,16 +15,20 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://newhomesproperty.com"),
-  title: "New Home Property — Live. Belong. Bangkok.",
+  title: "New Homes Property — Live. Belong. Bangkok.",
   description:
     "Bangkok's premium property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
+  openGraph: {
+    siteName: "New Homes Property",
+  },
 };
 
 // Site-wide structured data — injected once in the root layout
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
-  name: "NHP Bangkok",
+  name: "New Homes Property",
+  alternateName: ["NHP Bangkok", "NHP"],
   url: "https://newhomesproperty.com",
   logo: "https://newhomesproperty.com/images/nhp-logo.webp",
   description:
@@ -49,7 +53,8 @@ const orgJsonLd = {
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "NHP Bangkok",
+  name: "New Homes Property",
+  alternateName: ["NHP Bangkok", "NHP"],
   url: "https://newhomesproperty.com",
   potentialAction: {
     "@type": "SearchAction",
