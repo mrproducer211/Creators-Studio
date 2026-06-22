@@ -1211,7 +1211,8 @@ export async function POST(req: NextRequest) {
     console.error("Telegram Webhook processing error:", err);
     if (chatId) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      const failText = `<b>❌ Listing Post Failed</b>\n\n<b>Reason:</b> ${errMsg}`;
+      const cleanErrMsg = errMsg.substring(0, 1000);
+      const failText = `<b>❌ Listing Post Failed</b>\n\n<b>Reason:</b> ${cleanErrMsg}`;
       await sendTelegramResponse(botToken, chatId, failText, messageId);
     }
     return NextResponse.json({ error: "Failed to process Telegram post: " + (err instanceof Error ? err.message : String(err)) }, { status: 200 });
