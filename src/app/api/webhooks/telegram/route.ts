@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { db, isDbConfigured } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { getCanonicalArea } from "@/lib/area";
 import sharp from "sharp";
 
@@ -764,9 +764,6 @@ async function createDraftProperty(
   const slug = `draft-chat-${chatId}`;
 
   if (isDbConfigured) {
-    // Delete any existing draft with this slug first to avoid unique constraint violations
-    await db.delete(propertiesTable).where(eq(propertiesTable.slug, slug));
-
     const [inserted] = await db
       .insert(propertiesTable)
       .values({
@@ -788,7 +785,18 @@ async function createDraftProperty(
         saves: 0,
         clicks: 0,
       })
+      .onConflictDoNothing()
       .returning();
+
+    if (!inserted) {
+      // Conflicted! Draft was created concurrently. Load it and append the image.
+      const existing = await getDraftProperty(chatId, mediaGroupId);
+      if (existing) {
+        await appendMediaToDraft(existing.id, imageUrl, videoUrl);
+        return existing;
+      }
+    }
+
     return inserted;
   }
   return null;
@@ -801,24 +809,11 @@ async function appendMediaToDraft(
 ): Promise<void> {
   if (!isDbConfigured) return;
 
-  const [draft] = await db
-    .select({ images: propertiesTable.images })
-    .from(propertiesTable)
-    .where(eq(propertiesTable.id, draftId))
-    .limit(1);
-
-  if (!draft) return;
-
-  const currentImages = draft.images || [];
-  if (!currentImages.includes(imageUrl)) {
-    currentImages.push(imageUrl);
-  }
-
   await db
     .update(propertiesTable)
     .set({
-      images: currentImages,
-      ...(videoUrl ? { videoUrl, hasVideo: true } : {}),
+      images: sql`array_append(coalesce(${propertiesTable.images}, ARRAY[]::text[]), ${imageUrl})`,
+      ...(videoUrl ? { videoUrl: videoUrl, hasVideo: true } : {}),
     })
     .where(eq(propertiesTable.id, draftId));
 }
