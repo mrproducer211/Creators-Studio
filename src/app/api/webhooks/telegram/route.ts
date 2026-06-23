@@ -736,7 +736,7 @@ function shouldSendFeedback(chatId: string | number): boolean {
   return true;
 }
 
-async function getDraftProperty(chatId: string | number, mediaGroupId: string | null): Promise<any | null> {
+async function getDraftProperty(chatId: string | number): Promise<any | null> {
   if (!isDbConfigured) return null;
 
   // Always find the active draft for this chat
@@ -790,7 +790,7 @@ async function createDraftProperty(
 
     if (!inserted) {
       // Conflicted! Draft was created concurrently. Load it and append the image.
-      const existing = await getDraftProperty(chatId, mediaGroupId);
+      const existing = await getDraftProperty(chatId);
       if (existing) {
         await appendMediaToDraft(existing.id, imageUrl, videoUrl);
         return existing;
@@ -1119,7 +1119,7 @@ export async function POST(req: NextRequest) {
       
       if (newCloudinaryUrl) {
         // Check if there is an existing draft
-        const draft = await getDraftProperty(chatId, mediaGroupId);
+        const draft = await getDraftProperty(chatId);
         if (draft) {
           await appendMediaToDraft(draft.id, newCloudinaryUrl, videoObj ? newCloudinaryUrl : undefined);
         } else {
@@ -1131,7 +1131,7 @@ export async function POST(req: NextRequest) {
     // 2. Handle Text Caption (either alongside media, or as a standalone text message)
     if (text && text.trim() !== "") {
       // Find the draft
-      const draft = await getDraftProperty(chatId, mediaGroupId);
+      const draft = await getDraftProperty(chatId);
       
       // If no draft exists, and this is a text message, we can't publish yet because there are no images.
       if (!draft) {
@@ -1189,7 +1189,7 @@ export async function POST(req: NextRequest) {
         await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
-      const draft = await getDraftProperty(chatId, mediaGroupId);
+      const draft = await getDraftProperty(chatId);
       const imageCount = draft ? (draft.images?.length || 0) : 0;
       
       // If draft already has status !== 'draft', it was already published by the master request, so do nothing.

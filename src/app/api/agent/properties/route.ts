@@ -17,7 +17,7 @@ function slugify(text: string) {
     .replace(/\-\-+/g, "-"); // Replace multiple - with single -
 }
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   const guard = await requireAgentApi();
   if ("error" in guard) return guard.error;
 

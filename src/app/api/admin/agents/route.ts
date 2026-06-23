@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/auth-helpers";
 import { getAllAgents, updateAgentStatus, updateAgentRestrictions } from "@/lib/store/leads";
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   const guard = await requireAdminApi();
   if ("error" in guard) return guard.error;
 

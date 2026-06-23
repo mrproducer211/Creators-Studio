@@ -7,7 +7,7 @@ import { db, isDbConfigured } from "@/lib/db";
 import { appointments as appointmentsTable, properties as propertiesTable } from "@/lib/db/schema";
 import { eq, inArray } from "drizzle-orm";
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   const guard = await requireAgentApi();
   if ("error" in guard) return guard.error;
 
