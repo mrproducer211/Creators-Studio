@@ -426,7 +426,7 @@ export default function SmartSearchClient({ properties }: Props) {
         reasons,
       };
     });
-  }, [properties, parsed]);
+  }, [properties, parsed, activeQuery]);
 
   // Filters & Sorting logic
   const filteredAndSortedProperties = useMemo(() => {
