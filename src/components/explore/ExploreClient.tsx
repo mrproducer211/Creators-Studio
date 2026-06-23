@@ -83,7 +83,7 @@ function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] 
   if (f.propertyType !== "all") result = result.filter((p) => p.propertyType === f.propertyType);
   if (f.area) {
     if (f.area === "Other") {
-      const standardAreas = ["Sukhumvit", "Sathorn", "Thong Lo", "Asok", "Silom", "On Nut", "Ekkamai", "Ari", "Rama 9", "Bang Na", "Huai Khwang", "Phaya Thai"];
+      const standardAreas = ["Sukhumvit", "Sathorn", "Thong Lo", "Asok", "Silom", "On Nut", "Ekkamai", "Ari", "Rama 9", "Bang Na", "Chatuchak", "Rama 4"];
       result = result.filter((p) => !standardAreas.includes(p.area));
     } else {
       result = result.filter((p) => p.area === f.area);
