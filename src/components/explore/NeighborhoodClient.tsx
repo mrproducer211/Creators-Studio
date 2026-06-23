@@ -280,7 +280,9 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
     "rama-9": ["huai-khwang", "asok", "sukhumvit"],
     "bang-na": ["on-nut", "ekkamai", "sukhumvit"],
     "huai-khwang": ["rama-9", "asok", "phaya-thai"],
-    "phaya-thai": ["ari", "huai-khwang", "asok"]
+    "phaya-thai": ["ari", "huai-khwang", "asok"],
+    chatuchak: ["ari", "phaya-thai", "huai-khwang"],
+    "rama-4": ["sathorn", "silom", "sukhumvit"]
   };
 
   const nearbySlugs = NEARBY_MAP[neighborhood.slug.toLowerCase()] || [];

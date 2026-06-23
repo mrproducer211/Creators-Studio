@@ -717,5 +717,109 @@ export const NEIGHBORHOOD_GUIDES: Record<string, NeighborhoodGuide> = {
         answer: "Yes, Santiphap Park (Peace Park) is located nearby, offering a small, quiet green space for jogging, walking, and relaxing away from the busy transit streets."
       }
     ]
+  },
+  "chatuchak": {
+    slug: "chatuchak",
+    name: "Chatuchak",
+    longFormSections: [
+      {
+        heading: "The Vibe and Atmosphere of Chatuchak: Bangkok's Green Northern Gateway",
+        paragraphs: [
+          "Chatuchak is a dynamic, highly connected neighborhood located in northern Bangkok. Best known internationally for its massive weekend market, the district is primarily a thriving residential and transit hub for young professionals and families. It offers a unique balance between urban bustle and natural tranquillity, dominated by a massive three-park complex that forms the largest continuous green space in metropolitan Bangkok. The vibe here is local, active, and commuter-centric. Wide roads, major office parks, and transit terminals sit side-by-side with leafy sub-sois, retro cafes, and vintage furniture warehouses.",
+          "Walking through Chatuchak during the week, you will encounter office workers from major corporate headquarters (such as PTT and TMB), local students, and fitness enthusiasts jogging along the park pathways. On weekends, the atmosphere transforms as travelers and local shoppers head towards the market zones. Because Mo Chit BTS and Chatuchak Park MRT stations intersect here directly, the area acts as a primary gate for northern Bangkok, offering residents unmatched commuting convenience to central Sukhumvit or the Silom financial district."
+        ]
+      },
+      {
+        heading: "Bangkok's Green Lung: The Three-Park Complex",
+        paragraphs: [
+          "The standout feature of living in Chatuchak is direct access to over 370 rai of green space, consisting of three interconnected public parks: Chatuchak Park, Queen Sirikit Park, and Wachirabenchathat Park (commonly known as Railway Park). Railway Park is particularly popular for renting bicycles, hosting family picnics, and visiting the Bangkok Butterfly Garden. Having these massive green reserves right outside your condo door is a luxury that city-center locations like Sukhumvit or Asok cannot replicate.",
+          "On any given morning, these parks are filled with runners, yoga groups, and families. The presence of lakes, bridges, and botanical gardens makes Chatuchak one of the most pet-friendly and health-focused neighborhoods in Bangkok. It offers a fresh, clean-air environment that provides a needed escape from the capital's concrete jungle, making it a favorite for outdoor sports enthusiasts and pet owners."
+        ]
+      },
+      {
+        heading: "Market Shopping and Modern Retail",
+        paragraphs: [
+          "Retail in Chatuchak is world-renowned. The Chatuchak Weekend Market (JJ Market) features over 15,000 stalls selling everything from vintage clothing and local art to home decor and plants. During the week, JJ Mall offers air-conditioned wholesale shopping, while the nearby Chatuchak Playground focuses on vintage collectables and antique furniture. For daily lifestyle shopping, Central Plaza Lardprao and Union Mall are just one MRT stop away, serving as major hubs for fashion, international restaurants, and cinema complexes.",
+          "For food lovers, the neighborhood is a treasure trove. In addition to the market's endless street food selections, the sub-sois of Phahonyothin house cozy specialty coffee shops like Laliart Everyday and retro dining spots. The local food markets provide fresh ingredients at local Thai prices, making grocery shopping highly economical compared to premium expat districts."
+        ]
+      },
+      {
+        heading: "Condo Living and Affordability in Chatuchak",
+        paragraphs: [
+          "In terms of housing, Chatuchak is highly attractive for renters and buyers seeking value and modern building quality. The average rent for a modern one-bedroom condo ranges from ฿12,000 to ฿22,000 per month. Major developers have built luxury high-rises directly adjacent to the park and transit stations (such as Line Sukhumvit-Mochit, Equinox Phahol-Vibha, and M Jatujak). These buildings feature premium facilities, including sky pools, modern gyms, and co-working areas.",
+          "Because Chatuchak is situated slightly north of the central CBD, your rental budget gets you significantly more space and new building features than it would in central Thong Lo. The cost of daily life—from dining to laundry services—is also aligned with local rates, making the cost of living extremely manageable for expats, young professionals, and digital nomads."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "Is Chatuchak a good residential area for expats?",
+        answer: "Yes. It offers excellent modern condominiums, lower rent prices, direct park access, and a dual-line transit hub (BTS and MRT) that connects you to Siam or Asok in under 20 minutes."
+      },
+      {
+        question: "How is the commute to central Bangkok from Chatuchak?",
+        answer: "Highly efficient. Mo Chit BTS takes you directly to Siam (15 mins) and Asok (20 mins) without any transfers. Chatuchak Park MRT connects directly to Rama 9 (12 mins) and Asok/Sukhumvit MRT (15 mins)."
+      },
+      {
+        question: "Are there good international schools or hospitals in Chatuchak?",
+        answer: "Yes, the area is close to premium healthcare facilities like Paolo Hospital Phaholyothin and Vimut Hospital. St. John's International School and Horwang School are also nearby."
+      },
+      {
+        question: "Are there green spaces or parks in Chatuchak?",
+        answer: "Yes. Chatuchak is home to Bangkok's largest three-park complex: Chatuchak Park, Queen Sirikit Park, and Railway Park, providing extensive trails, lakes, and sports fields."
+      }
+    ]
+  },
+  "rama-4": {
+    slug: "rama-4",
+    name: "Rama 4",
+    longFormSections: [
+      {
+        heading: "The Vibe and Atmosphere of Rama 4: A Central Artery Reimagined",
+        paragraphs: [
+          "Rama 4 Road is undergoing one of the most spectacular urban transformations in Bangkok's modern history. Historically a commercial and industrial transport artery, it is rapidly evolving into a premium commercial, retail, and luxury residential corridor. Stretching alongside Lumpini Park and connecting the primary financial districts of Sathorn and Silom with the prime retail hubs of Sukhumvit, Rama 4 is characterized by towering skyscrapers, mega mixed-use developments, and direct park connections. The atmosphere is professional, fast-paced, and highly cosmopolitan.",
+          "Walking along Rama 4 today, the skyline is dominated by architectural marvels like One Bangkok, FYI Center, and The PARQ. This massive influx of commercial space has created a bustling corporate crowd during weekdays, which gives way to a relaxed leisure vibe on weekends as residents head to Lumpini Park or Benjakitti Park. The corridor is designed for busy professionals, corporate managers, and families who want maximum urban convenience with immediate access to premium office hubs."
+        ]
+      },
+      {
+        heading: "Mega Developments and Workspaces: The One Bangkok Era",
+        paragraphs: [
+          "The defining catalyst for Rama 4's transformation is One Bangkok, the largest private sector property development in Thailand's history. This mega-project features five-star luxury hotels, grade-A corporate office towers, high-end shopping districts, and performance venues, elevating Rama 4 to a global destination status. Adjacent commercial complexes like The PARQ and FYI Center offer state-of-the-art office spaces, co-working areas, and lifestyle retail lanes.",
+          "For residents, this means having world-class dining, luxury retail, and high-tech corporate offices within walking distance. Rama 4 has transitioned from a transit pass-through road into a self-contained destination where you can live, work, and socialize in premium spaces without ever needing to sit in Bangkok's famous traffic."
+        ]
+      },
+      {
+        heading: "Direct Park Connectivity: Benjakitti and Lumpini Parks",
+        paragraphs: [
+          "A major appeal of living in the Rama 4 corridor is its proximity to Bangkok's two most prestigious green spaces: Lumpini Park and Benjakitti Park. Lumpini Park offers 360 rai of shaded running paths, boating lakes, and open lawns, while the adjacent Benjakitti Park features spectacular wetland ecosystems, elevated forest canopy walks, and outdoor sports facilities. The two parks are connected by the 'Green Bridge' elevated pedestrian and bicycle path, allowing residents to walk or bike between them safely.",
+          "Having these massive green oases on either side of the corridor provides a rare wellness and active lifestyle opportunity in the center of Bangkok. In the evenings, the parks are filled with runners, cyclists, and families. Living here allows you to start your morning with a quiet park jog and end it with dinner in a high-rise rooftop restaurant."
+        ]
+      },
+      {
+        heading: "Residential Condominiums and Rental Market on Rama 4",
+        paragraphs: [
+          "The residential market on Rama 4 is characterized by new, premium high-rise developments designed for city professionals and corporate executives. Modern projects offer spectacular views of Lumpini Park and the city skyline, with top-tier facilities including infinity rooftop pools, sky gyms, and business lounges. Rents for a modern one-bedroom condo typically range from ฿18,000 to ฿45,000 per month, depending on proximity to One Bangkok and the MRT stations.",
+          "Expats and executives choose Rama 4 because it offers direct MRT access, bypassing Sukhumvit's congested side streets, while keeping rental costs competitive compared to prime central Thong Lo or Asok. The excellent building quality and immediate proximity to both the Sathorn CBD and Sukhumvit's retail centers make it a highly strategic and practical residential choice."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "What makes Rama 4 attractive for corporate professionals?",
+        answer: "Rama 4 offers direct access to the MRT Blue Line, connecting to Asok in 8 minutes and Sathorn/Silom in 5 minutes. It is also home to One Bangkok and FYI Center, placing major corporate headquarters right at your doorstep."
+      },
+      {
+        question: "How is the park access on Rama 4?",
+        answer: "Excellent. Rama 4 runs directly alongside Lumpini Park and Benjakitti Park. The two parks are connected by the elevated 'Green Bridge' walk, providing massive green spaces for running, cycling, and relaxation."
+      },
+      {
+        question: "What is the typical rent for properties on Rama 4?",
+        answer: "Rents for a modern 1-bedroom condo range from ฿18,000 to ฿35,000 per month. Premium residences overlooking Lumpini Park or inside One Bangkok can range from ฿40,000 to ฿80,000+ per month."
+      },
+      {
+        question: "Is Rama 4 a safe neighborhood?",
+        answer: "Yes. The area is highly developed and populated by corporate offices, high-end hotels, and luxury condominiums. It is well-lit, active day and night, and has high security across all major compounds."
+      }
+    ]
   }
 };

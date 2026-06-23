@@ -105,8 +105,8 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
       cards: [
         { slug: "rama-9",      name: t.category.areas.rama9,      count: getAreaCount("rama-9"),      image: "/images/neighborhoods/rama_9.webp", href: "/neighborhood/rama-9" },
         { slug: "bang-na",     name: t.category.areas.bangNa,     count: getAreaCount("bang-na"),     image: "/images/neighborhoods/bang_na.webp", href: "/neighborhood/bang-na" },
-        { slug: "chatuchak",   name: t.category.areas.chatuchak,   count: getAreaCount("chatuchak"),   image: "/images/neighborhoods/chatuchak.webp", href: "/explore?area=Chatuchak" },
-        { slug: "rama-4",      name: t.category.areas.rama4,      count: getAreaCount("rama-4"),      image: "/images/neighborhoods/rama_4.webp", href: "/explore?area=Rama+4" },
+        { slug: "chatuchak",   name: t.category.areas.chatuchak,   count: getAreaCount("chatuchak"),   image: "/images/neighborhoods/chatuchak.webp", href: "/neighborhood/chatuchak" },
+        { slug: "rama-4",      name: t.category.areas.rama4,      count: getAreaCount("rama-4"),      image: "/images/neighborhoods/rama_4.webp", href: "/neighborhood/rama-4" },
       ],
     },
   ];

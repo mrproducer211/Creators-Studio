@@ -150,27 +150,33 @@ export default function SmartSearchClient({ properties }: Props) {
 
     // Area Detection
     let area: string | null = null;
-    const areaKeywords = [
-      { name: "On Nut", match: ["on nut", "onnut"] },
-      { name: "Ari", match: ["ari"] },
-      { name: "Thong Lo", match: ["thong lo", "thonglo"] },
-      { name: "Sukhumvit", match: ["sukhumvit", "phrom phong", "phromphong", "ekkamai"] },
-      { name: "Bang Na", match: ["bang na", "bangna"] },
-      { name: "Sathorn", match: ["sathorn"] },
-      { name: "Silom", match: ["silom"] },
-      { name: "Ekkamai", match: ["ekkamai"] },
-      { name: "Asok", match: ["asok", "asoke"] },
-      { name: "Rama 9", match: ["rama 9", "rama9", "ratchada"] },
-      { name: "Huai Khwang", match: ["huai khwang", "huaikhwang"] },
-      { name: "Phaya Thai", match: ["phaya thai", "phayathai"] },
-    ];
-
-    if (q.includes("phrom phong") || q.includes("phromphong")) {
-      area = "Sukhumvit";
+    if (q.includes("other") || q.includes("พื้นที่อื่น") || q.includes("其他地区") || q.includes("其他区域")) {
+      area = "Other";
     } else {
-      for (const ak of areaKeywords) {
-        if (ak.match.some((m) => q.includes(m))) {
-          area = ak.name;
+      const uniqueAreas = Array.from(new Set(properties.map((p) => p.area).filter(Boolean)));
+      const aliases: Record<string, string[]> = {
+        "On Nut": ["onnut"],
+        "Thong Lo": ["thonglo"],
+        "Bang Na": ["bangna"],
+        "Rama 9": ["rama9", "ratchada"],
+        "Huai Khwang": ["huaikhwang"],
+        "Phaya Thai": ["phayathai"],
+        "Chatuchak": ["chatuchak", "jatujak"],
+        "Rama 4": ["rama4"],
+        "Sukhumvit": ["phrom phong", "phromphong", "ekkamai"],
+      };
+
+      const sortedAreas = [...uniqueAreas].sort((a, b) => b.length - a.length);
+
+      for (const areaName of sortedAreas) {
+        const lowerName = areaName.toLowerCase();
+        if (q.includes(lowerName)) {
+          area = areaName;
+          break;
+        }
+        const areaAliases = aliases[areaName] || [];
+        if (areaAliases.some(alias => q.includes(alias))) {
+          area = areaName;
           break;
         }
       }
@@ -258,7 +264,7 @@ export default function SmartSearchClient({ properties }: Props) {
     if (q.includes("cowork") || q.includes("co-work")) amenities.push("coworking");
 
     return { area, petFriendly, nearBts, propertyType, budget, lifestyle, bedrooms, amenities };
-  }, [activeQuery]);
+  }, [activeQuery, properties]);
 
   // Scoring Logic & Item Formatting
   const scoredProperties = useMemo(() => {

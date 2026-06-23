@@ -42,6 +42,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "huai-khwang",
     "bang-na",
     "phaya-thai",
+    "chatuchak",
+    "rama-4",
   ];
   const areaUrls = areas.map((area) => ({
     url: `${baseUrl}/neighborhood/${area}`,

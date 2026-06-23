@@ -10,6 +10,8 @@ import { rama9 } from "./rama9";
 import { bangNa } from "./bangNa";
 import { huaiKhwang } from "./huaiKhwang";
 import { phayaThai } from "./phayaThai";
+import { chatuchak } from "./chatuchak";
+import { rama4 } from "./rama4";
 
 export const T_NEIGHBORHOOD = {
   en: {
@@ -64,6 +66,8 @@ export const T_NEIGHBORHOOD = {
       "bang-na": bangNa.en,
       "huai-khwang": huaiKhwang.en,
       "phaya-thai": phayaThai.en,
+      chatuchak: chatuchak.en,
+      "rama-4": rama4.en,
     }
   },
   th: {
@@ -118,6 +122,8 @@ export const T_NEIGHBORHOOD = {
       "bang-na": bangNa.th,
       "huai-khwang": huaiKhwang.th,
       "phaya-thai": phayaThai.th,
+      chatuchak: chatuchak.th,
+      "rama-4": rama4.th,
     }
   },
   zh: {
@@ -172,6 +178,8 @@ export const T_NEIGHBORHOOD = {
       "bang-na": bangNa.zh,
       "huai-khwang": huaiKhwang.zh,
       "phaya-thai": phayaThai.zh,
+      chatuchak: chatuchak.zh,
+      "rama-4": rama4.zh,
     }
   }
 } as const;

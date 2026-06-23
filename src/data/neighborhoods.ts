@@ -806,5 +806,129 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       { author: "Yuki S.", role: "Travel Blogger", quote: "Living near Phaya Thai is perfect for my lifestyle. I can hop on the Airport Rail Link and be at Suvarnabhumi Airport in 25 minutes." },
       { author: "Dr. Anon K.", role: "Medical Resident", quote: "It's clean, modern, and extremely close to the hospital district. BTS connectivity makes it easy to go anywhere in central Bangkok." }
     ]
+  },
+  {
+    id: 13,
+    name: "Chatuchak",
+    slug: "chatuchak",
+    description: "A vibrant northern hub blending Bangkok's largest green spaces with the world-famous weekend market, creative pockets, and major transit links.",
+    lat: 13.8038,
+    lng: 100.5539,
+    personality: "The Green Market Explorer",
+    scores: {
+      remoteWork: 8,
+      petFriendly: 7,
+      familyFriendly: 8,
+      nightlife: 5,
+      cafeCulture: 8,
+      walkability: 7,
+      luxury: 5,
+      expatCommunity: 7,
+      japaneseCommunity: 5,
+      chineseCommunity: 4,
+      studentSuitability: 8,
+    },
+    avoidanceStats: {
+      traffic: 6,
+      noise: 5,
+      touristCrowds: 8,
+      density: 4,
+      busyness: 7
+    },
+    commuteMinutes: {
+      "Ari": 5,
+      "Sukhumvit": 20,
+      "Asok": 20,
+      "Thong Lo": 25,
+      "Ekkamai": 27,
+      "Silom": 25,
+      "Sathorn": 28,
+      "On Nut": 32,
+      "One Bangkok": 25,
+      "Asoke": 20,
+      "Chulalongkorn University": 23
+    },
+    averageRentMin: 12000,
+    averageRentMax: 30000,
+    nearestTransit: "Chatuchak Park MRT / Mo Chit BTS",
+    heroImage: "/images/neighborhoods/chatuchak_hero.webp",
+    residentTypes: ["Commuters", "Weekend Explorers", "Young Professionals", "Nature Lovers"],
+    cafes: ["Once Upon a Time Cafe", "Laliart Coffee", "Pompano Cafe", "Butter Up Cafe"],
+    coworkingSpaces: ["Union Space (nearby)", "Draft Board (nearby)"],
+    malls: ["Central Plaza Lardprao", "Union Mall", "JJ Mall"],
+    parks: ["Chatuchak Park", "Wachirabenchathat Park (Railway Park)", "Queen Sirikit Park"],
+    dayItinerary: [
+      { time: "8:30 AM", title: "Park Jogging", activity: "Start the day with a jog around the lakes in Wachirabenchathat Park." },
+      { time: "11:00 AM", title: "Market Stroll", activity: "Browse the vintage fashion and local crafts sections of Chatuchak Weekend Market." },
+      { time: "1:30 PM", title: "Cafe Lunch", activity: "Enjoy a pour-over coffee and local food at Laliart Coffee." },
+      { time: "4:00 PM", title: "Shopping Mall Escape", activity: "Cool off at Central Plaza Lardprao." },
+      { time: "7:00 PM", title: "Street Food Dinner", activity: "Dine at the local food stalls in the Ratchayothin area." }
+    ],
+    reviews: [
+      { author: "Tanawat P.", role: "Software Engineer", quote: "Chatuchak is the perfect commuter base. Having Mo Chit BTS and Chatuchak MRT right next to each other makes traveling anywhere in Bangkok incredibly fast." },
+      { author: "Sarah L.", role: "Graphic Designer", quote: "Living next to Wachirabenchathat Park is amazing. It is the largest green space in Bangkok, and my weekends feel very relaxed." }
+    ]
+  },
+  {
+    id: 14,
+    name: "Rama 4",
+    slug: "rama-4",
+    description: "A rapidly transforming central artery connecting major business hubs, offering park proximity and direct transit link to One Bangkok.",
+    lat: 13.7259,
+    lng: 100.5484,
+    personality: "The Modern Urban Executive",
+    scores: {
+      remoteWork: 8,
+      petFriendly: 7,
+      familyFriendly: 7,
+      nightlife: 6,
+      cafeCulture: 7,
+      walkability: 7,
+      luxury: 8,
+      expatCommunity: 8,
+      japaneseCommunity: 5,
+      chineseCommunity: 5,
+      studentSuitability: 7
+    },
+    avoidanceStats: {
+      traffic: 7,
+      noise: 5,
+      touristCrowds: 5,
+      density: 6,
+      busyness: 7
+    },
+    commuteMinutes: {
+      "Ari": 18,
+      "Sukhumvit": 10,
+      "Asok": 8,
+      "Thong Lo": 12,
+      "Ekkamai": 14,
+      "Silom": 5,
+      "Sathorn": 5,
+      "On Nut": 18,
+      "One Bangkok": 0,
+      "Asoke": 8,
+      "Chulalongkorn University": 5
+    },
+    averageRentMin: 18000,
+    averageRentMax: 45000,
+    nearestTransit: "Lumpini MRT / Queen Sirikit MRT",
+    heroImage: "/images/neighborhoods/rama_4_hero.webp",
+    residentTypes: ["Expatriates", "Corporate Managers", "Business Executives", "City Commuters"],
+    cafes: ["Kafae Tuktheaw", "H Dining (nearby)", "Sarnies Roastery (nearby)"],
+    coworkingSpaces: ["The Great Room One Bangkok", "FYI Center Workspaces"],
+    malls: ["One Bangkok Retail Mall", "The PARQ", "FYI Center Plaza"],
+    parks: ["Lumpini Park", "Benjakitti Park"],
+    dayItinerary: [
+      { time: "8:00 AM", title: "Morning Walk", activity: "Stroll across the Green Bridge connecting Benjakitti and Lumpini Parks." },
+      { time: "10:30 AM", title: "Corporate Coffee", activity: "Grab an artisan espresso at Sarnies Roastery." },
+      { time: "1:00 PM", title: "Business Lunch", activity: "Enjoy a healthy power lunch at The PARQ." },
+      { time: "4:00 PM", title: "Work Session", activity: "Take a hot-desk at FYI Center Workspaces." },
+      { time: "7:00 PM", title: "Mega Mall Dining", activity: "Explore the global restaurant selections at One Bangkok Retail Mall." }
+    ],
+    reviews: [
+      { author: "Nico V.", role: "Financial Analyst", quote: "Rama 4 is incredibly convenient now. Being next to One Bangkok and having MRT Lumpini means I can reach the office in Sathorn or Silom in 5 minutes." },
+      { author: "Piyanut S.", role: "Consultant", quote: "I love the duality here. You are next to Lumpini Park for quiet evening walks, yet situated on a major artery connecting Sukhumvit and the CBD." }
+    ]
   }
 ];
