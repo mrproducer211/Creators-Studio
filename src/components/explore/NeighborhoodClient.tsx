@@ -221,10 +221,10 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       "Proximity to major office zones (PTT, SCB, and Lardprao intersections)"
     ],
     vibeCards: [
-      { title: "Green Space", subtitle: "Exceptional", image: "/images/lifestyles/chatuchak_parks.webp" },
+      { title: "Green Space", subtitle: "Exceptional", image: "/images/neighborhoods/chatuchak_park.webp" },
       { title: "Transit Access", subtitle: "Outstanding", image: "/images/lifestyles/chatuchak_transit.webp" },
-      { title: "Shopping", subtitle: "World-class", image: "/images/lifestyles/chatuchak_shopping.webp" },
-      { title: "Affordability", subtitle: "Very Good", image: "/images/lifestyles/chatuchak_affordability.webp" }
+      { title: "Shopping", subtitle: "World-class", image: "/images/neighborhoods/chatuchak_market.webp" },
+      { title: "Affordability", subtitle: "Very Good", image: "/images/arisa_phone_live.webp" }
     ],
     lifestyleDesc: "A dynamic and highly active residential sanctuary in northern Bangkok. Chatuchak is celebrated for its rare combination of massive public parks and global-scale retail landmarks. Centered around the Mo Chit BTS and Chatuchak Park MRT interchange, it serves as the ultimate northern gateway for commuters. The neighborhood maintains a locally rooted, energetic atmosphere, drawing a mix of corporate office staff, young professionals, and nature lovers who seek room to breathe without sacrificing transit efficiency."
   },
