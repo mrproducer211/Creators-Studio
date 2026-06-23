@@ -63,6 +63,14 @@ const AREA_MAPPING: Record<string, string> = {
   // Phaya Thai mappings
   "phaya thai": "Phaya Thai",
   "phayathai": "Phaya Thai",
+
+  // Chatuchak mappings
+  "chatuchak": "Chatuchak",
+  "jatujak": "Chatuchak",
+
+  // Rama 4 mappings
+  "rama 4": "Rama 4",
+  "rama4": "Rama 4",
 };
 
 /**

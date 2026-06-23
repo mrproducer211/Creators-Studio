@@ -52,6 +52,8 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
       "bang-na": "Bang Na",
       "huai-khwang": "Huai Khwang",
       "phaya-thai": "Phaya Thai",
+      "chatuchak": "Chatuchak",
+      "rama-4": "Rama 4",
     };
     const targetArea = slugMap[slug];
     if (!targetArea) return 0;
@@ -94,17 +96,17 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
     },
     {
       anchor: {
-        slug:  "new-hubs",
+        slug:  "other-areas",
         label: t.category.lookingIn,
         name:  t.category.newHubs,
         image: "/images/neighborhoods/new_hubs_anchor.webp",
-        href:  "/explore?newHubs=true",
+        href:  "/explore?area=Other",
       },
       cards: [
         { slug: "rama-9",      name: t.category.areas.rama9,      count: getAreaCount("rama-9"),      image: "/images/neighborhoods/rama_9.webp", href: "/neighborhood/rama-9" },
         { slug: "bang-na",     name: t.category.areas.bangNa,     count: getAreaCount("bang-na"),     image: "/images/neighborhoods/bang_na.webp", href: "/neighborhood/bang-na" },
-        { slug: "huai-khwang",  name: t.category.areas.huaiKhwang,  count: getAreaCount("huai-khwang"),  image: "/images/neighborhoods/huai_khwang.webp", href: "/neighborhood/huai-khwang" },
-        { slug: "phaya-thai",  name: t.category.areas.phayaThai,  count: getAreaCount("phaya-thai"),  image: "/images/neighborhoods/phaya_thai.webp", href: "/neighborhood/phaya-thai" },
+        { slug: "chatuchak",   name: t.category.areas.chatuchak,   count: getAreaCount("chatuchak"),   image: "/images/neighborhoods/chatuchak.webp", href: "/explore?area=Chatuchak" },
+        { slug: "rama-4",      name: t.category.areas.rama4,      count: getAreaCount("rama-4"),      image: "/images/neighborhoods/rama_4.webp", href: "/explore?area=Rama+4" },
       ],
     },
   ];

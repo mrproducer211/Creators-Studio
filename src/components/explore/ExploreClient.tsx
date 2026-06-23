@@ -134,6 +134,9 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
   const dynamicTitle = useMemo(() => {
     if (filters.area) {
       if (lang === "th") {
+        if (filters.area === "Other") {
+          return "ค้นหาอสังหาริมทรัพย์ในพื้นที่อื่นในกรุงเทพฯ";
+        }
         return `ค้นหาอสังหาริมทรัพย์ในกรุงเทพฯ ย่าน ${filters.area}`;
       }
       if (lang === "zh") {
@@ -150,10 +153,13 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
           "Bang Na": "邦纳",
           "Huai Khwang": "怀匡",
           "Phaya Thai": "帕亚泰",
-          "Other": "其他区域",
+          "Other": "其他地区",
         };
         const localized = areaMap[filters.area] || filters.area;
         return `探索曼谷${localized}的房产`;
+      }
+      if (filters.area === "Other") {
+        return "Explore properties in Other Bangkok Areas";
       }
       return `Explore properties in Bangkok ${filters.area}`;
     }

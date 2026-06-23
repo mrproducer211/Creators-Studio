@@ -58,7 +58,7 @@ const T = {
       lookingIn: "Looking for property in",
       nearBts: "Near BTS & MRT",
       petFriendly: "Pet Friendly",
-      newHubs: "New Hubs & Suburbs",
+      newHubs: "Other Bangkok Areas",
       propsForYou: "Properties for you",
       props: "Props",
       areas: {
@@ -74,6 +74,8 @@ const T = {
         bangNa: "Bang Na",
         huaiKhwang: "Huai Khwang",
         phayaThai: "Phaya Thai",
+        chatuchak: "Chatuchak",
+        rama4: "Rama 4",
       },
     },
     latest: {
@@ -307,7 +309,7 @@ const T = {
       lookingIn: "กำลังหาอสังหาริมทรัพย์ใน",
       nearBts: "ใกล้รถไฟฟ้า BTS & MRT",
       petFriendly: "เลี้ยงสัตว์ได้",
-      newHubs: "ย่านใหม่ & ชานเมือง",
+      newHubs: "พื้นที่อื่นในกรุงเทพฯ",
       propsForYou: "รายการสำหรับคุณ",
       props: "รายการ",
       areas: {
@@ -323,6 +325,8 @@ const T = {
         bangNa: "บางนา",
         huaiKhwang: "ห้วยขวาง",
         phayaThai: "พญาไท",
+        chatuchak: "จตุจักร",
+        rama4: "พระราม 4",
       },
     },
     latest: {
@@ -556,7 +560,7 @@ const T = {
       lookingIn: "正在寻找房产于",
       nearBts: "近BTS & MRT",
       petFriendly: "允许宠物",
-      newHubs: "新兴区域 & 郊区",
+      newHubs: "曼谷其他地区",
       propsForYou: "为您推荐的房源",
       props: "房源",
       areas: {
@@ -572,6 +576,8 @@ const T = {
         bangNa: "邦纳",
         huaiKhwang: "怀匡",
         phayaThai: "帕亚泰",
+        chatuchak: "乍都乍",
+        rama4: "拉玛四世",
       },
     },
     latest: {
