@@ -205,6 +205,50 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       { title: "Parks & Green", subtitle: "Benjasiri Park", image: "/images/lifestyles/sukhumvit_parks.webp" }
     ],
     lifestyleDesc: "The prestigious retail and lifestyle heart of downtown Bangkok. Centered around Phrom Phong, this neighborhood represents international luxury, defined by the world-class EmDistrict shopping malls (EmPorium, EmQuartier, EmSphere). The area is exceptionally cosmopolitan, home to a large international expat community, upscale Japanese supermarkets, and premium international schools. With Benjasiri Park providing a lush green escape in the middle of the retail action, it offers an unmatched combination of luxury convenience and urban lifestyle."
+  },
+  chatuchak: {
+    district: "Chatuchak",
+    btsCode: "Mo Chit (N8)",
+    airportTime: "25–35 min",
+    vibe: "Active, Local, Green",
+    bestFor: "Commuters, Nature Lovers, Young Professionals, Couples",
+    pros: [
+      "Immediate access to Bangkok's largest three-park complex",
+      "Exceptional dual-line transit connectivity (BTS Mo Chit & MRT Chatuchak Park)",
+      "Unparalleled shopping at Chatuchak Weekend Market and JJ Mall",
+      "Highly affordable condo rents with modern high-rise facilities",
+      "Thriving local street food scene alongside trendy hidden cafes",
+      "Proximity to major office zones (PTT, SCB, and Lardprao intersections)"
+    ],
+    vibeCards: [
+      { title: "Green Space", subtitle: "Exceptional", image: "/images/lifestyles/chatuchak_parks.webp" },
+      { title: "Transit Access", subtitle: "Outstanding", image: "/images/lifestyles/chatuchak_transit.webp" },
+      { title: "Shopping", subtitle: "World-class", image: "/images/lifestyles/chatuchak_shopping.webp" },
+      { title: "Affordability", subtitle: "Very Good", image: "/images/lifestyles/chatuchak_affordability.webp" }
+    ],
+    lifestyleDesc: "A dynamic and highly active residential sanctuary in northern Bangkok. Chatuchak is celebrated for its rare combination of massive public parks and global-scale retail landmarks. Centered around the Mo Chit BTS and Chatuchak Park MRT interchange, it serves as the ultimate northern gateway for commuters. The neighborhood maintains a locally rooted, energetic atmosphere, drawing a mix of corporate office staff, young professionals, and nature lovers who seek room to breathe without sacrificing transit efficiency."
+  },
+  "rama-4": {
+    district: "Pathum Wan / Khlong Toei",
+    btsCode: "Lumpini MRT (BL25)",
+    airportTime: "25–35 min",
+    vibe: "Professional, High-End, Reimagined",
+    bestFor: "Corporate Managers, Business Executives, Expatriates, Couples",
+    pros: [
+      "Immediate proximity to Lumpini Park and Benjakitti Park",
+      "Direct transit integration with the massive One Bangkok mega-development",
+      "Fast, direct MRT Blue Line subway connectivity to Sathorn and Asok",
+      "Brand-new, premium high-rise condominiums with luxury sky facilities",
+      "Adjacent to prime Grade-A commercial hubs (The PARQ, FYI Center)",
+      "Excellent expressway highway connections for easy airport access"
+    ],
+    vibeCards: [
+      { title: "Park Access", subtitle: "Outstanding", image: "/images/neighborhoods/rama_4_park.webp" },
+      { title: "Commercial Hub", subtitle: "World-class", image: "/images/neighborhoods/rama_4_one_bangkok.webp" },
+      { title: "Transit Access", subtitle: "Excellent", image: "/images/neighborhoods/rama_4_hero.webp" },
+      { title: "Building Vibe", subtitle: "Ultra-modern", image: "/images/neighborhoods/rama_4_condo.webp" }
+    ],
+    lifestyleDesc: "A core central corridor experiencing a monumental modern renaissance. Rama 4 connects Bangkok's primary corporate CBD (Sathorn and Silom) directly with the main retail strip of Sukhumvit. The neighborhood operates at a fast-forward, highly professional pace, driven by a wave of brand-new corporate skyscrapers, commercial parks, and luxury sky residences. Centered around the Lumpini and Queen Sirikit MRT stations, it serves as the ultimate base for business executives and global professionals."
   }
 };
 
