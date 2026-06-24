@@ -33,7 +33,7 @@ export default function NotFound() {
             className="text-sm leading-relaxed mb-8 font-light" 
             style={{ color: "#555" }}
           >
-            The premium listing or page you are seeking is either no longer active, has changed location, or the web address was mistyped.
+            The listing or page you are seeking is either no longer active, has changed location, or the web address was mistyped.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">

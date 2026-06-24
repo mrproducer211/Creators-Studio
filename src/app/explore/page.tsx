@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Bangkok Properties & Condos for Rent & Sale | Search NHP Bangkok",
-  description: "Explore premium properties for rent and sale in Bangkok. Filter by area, rental price, bedroom count, and property type to find your perfect home.",
+  description: "Explore neighbourhood properties for rent and sale in Bangkok. Filter by area, rental price, bedroom count, and property type to find your perfect home.",
 };
 
 export default async function ExplorePage() {

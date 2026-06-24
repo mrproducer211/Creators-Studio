@@ -27,7 +27,7 @@ const T = {
       buying: "Buying",
     },
     hero: {
-      tag:         "Bangkok · Premium Properties",
+      tag:         "Bangkok · Neighbourhood Properties",
       h1a:         "Where Would You",
       h1b:         "Belong in Bangkok?",
       sub:         "Discover neighborhoods that match your lifestyle, goals, and budget — before you find your home.",
@@ -133,7 +133,7 @@ const T = {
       bath:      "Bath",
     },
     footer: {
-      tagline: "Bangkok's premium property platform for expats, digital nomads and international residents looking to buy, rent or stay.",
+      tagline: "Bangkok's neighbourhood property platform for expats, digital nomads and international residents looking to buy, rent or stay.",
       browse:  "Browse",
       areas:   "Areas",
       contact: "Contact",
@@ -278,7 +278,7 @@ const T = {
       buying: "ซื้อ",
     },
     hero: {
-      tag:         "กรุงเทพฯ · อสังหาริมทรัพย์พรีเมียม",
+      tag:         "กรุงเทพฯ · อสังหาริมทรัพย์ในย่านต่างๆ",
       h1a:         "คุณควรอยู่ย่านไหน",
       h1b:         "ในกรุงเทพฯ?",
       sub:         "ค้นหาย่านที่ตรงกับไลฟ์สไตล์ เป้าหมาย และงบประมาณของคุณ — ก่อนที่คุณจะเลือกบ้าน",
@@ -384,7 +384,7 @@ const T = {
       bath:      "ห้องน้ำ",
     },
     footer: {
-      tagline: "แพลตฟอร์มอสังหาริมทรัพย์พรีเมียมของกรุงเทพฯ สำหรับชาวต่างชาติ นักเดินทาง และผู้พักอาศัย",
+      tagline: "แพลตฟอร์มอสังหาริมทรัพย์ในย่านต่างๆ ของกรุงเทพฯ สำหรับชาวต่างชาติ นักเดินทาง และผู้พักอาศัย",
       browse:  "ค้นหา",
       areas:   "ย่าน",
       contact: "ติดต่อ",
@@ -529,7 +529,7 @@ const T = {
       buying: "购房",
     },
     hero: {
-      tag:         "曼谷 · 优质房产",
+      tag:         "曼谷 · 社区房产",
       h1a:         "您想住在曼谷",
       h1b:         "哪个社区？",
       sub:         "发现与您的生活方式、目标和预算相匹配的社区 — 在找到家之前。",
@@ -635,7 +635,7 @@ const T = {
       bath:      "浴室",
     },
     footer: {
-      tagline: "曼谷面向外籍人士、数字游民和国际居民的优质房产平台，提供购房、租赁及短期入住服务。",
+      tagline: "曼谷面向外籍人士、数字游民和国际居民的社区房产平台，提供购房、租赁及短期入住服务。",
       browse:  "浏览",
       areas:   "区域",
       contact: "联系我们",

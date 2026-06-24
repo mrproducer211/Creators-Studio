@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://newhomesproperty.com"),
   title: "New Homes Property — Live. Belong. Bangkok.",
   description:
-    "Bangkok's premium property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
+    "Bangkok's neighbourhood property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
   openGraph: {
     siteName: "New Homes Property",
   },
@@ -32,7 +32,7 @@ const orgJsonLd = {
   url: "https://newhomesproperty.com",
   logo: "https://newhomesproperty.com/images/nhp-logo.webp",
   description:
-    "Bangkok's premium property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
+    "Bangkok's neighbourhood property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
   areaServed: {
     "@type": "City",
     name: "Bangkok",
