@@ -199,6 +199,18 @@ export const leads = pgTable("leads", {
   createdAt:           timestamp("created_at").notNull().defaultNow(),
 });
 
+export const systemSettings = pgTable("system_settings", {
+  id:                  serial("id").primaryKey(),
+  adminEmail:          varchar("admin_email", { length: 255 }).notNull(),
+  adminPhone:          varchar("admin_phone", { length: 50 }).notNull(),
+  rentalExpiryEnabled: boolean("rental_expiry_enabled").notNull().default(false),
+  rentalExpiryDays:    integer("rental_expiry_days").notNull().default(30),
+  adminWhatsApp:       varchar("admin_whatsapp", { length: 50 }),
+  adminLine:           varchar("admin_line", { length: 100 }),
+  adminTelegram:       varchar("admin_telegram", { length: 100 }),
+  updatedAt:           timestamp("updated_at").notNull().defaultNow(),
+});
+
 export type Property  = typeof properties.$inferSelect;
 export type NewProperty = typeof properties.$inferInsert;
 export type Enquiry   = typeof enquiries.$inferSelect;
