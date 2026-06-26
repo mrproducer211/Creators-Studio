@@ -258,7 +258,7 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       {menuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMenuOpen(false)}>
+        <div className="fixed inset-0 md:hidden" style={{ zIndex: 45 }} onClick={() => setMenuOpen(false)}>
           <div className="absolute inset-0" style={{ background: "rgba(28,58,47,0.4)", backdropFilter: "blur(4px)" }} />
           <div
             className="absolute top-14 left-0 right-0 flex flex-col py-2 shadow-2xl"
