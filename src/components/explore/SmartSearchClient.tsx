@@ -8,6 +8,7 @@ import { PropertyCard } from "@/types/property";
 import { NEIGHBORHOODS, Neighborhood } from "@/data/neighborhoods";
 import SmartPropertyCard from "./SmartPropertyCard";
 import { Search, Map, AlertCircle, Save } from "lucide-react";
+import { getNearbyPlaces } from "@/data/nearbyPlaces";
 
 const MapComponent = dynamic(() => import("./SmartMapComponent"), { ssr: false });
 
@@ -24,6 +25,8 @@ interface ParsedRequirements {
   lifestyle: string;
   bedrooms: number | null;
   amenities: string[];
+  nearHospital: boolean;
+  hospitalName: string | null;
 }
 
 // Similar neighborhoods data for "You Might Also Like"
@@ -145,6 +148,8 @@ export default function SmartSearchClient({ properties }: Props) {
         lifestyle: "Not Specified",
         bedrooms: null,
         amenities: [],
+        nearHospital: false,
+        hospitalName: null,
       };
     }
 
@@ -263,7 +268,26 @@ export default function SmartSearchClient({ properties }: Props) {
     if (q.includes("sauna")) amenities.push("sauna");
     if (q.includes("cowork") || q.includes("co-work")) amenities.push("coworking");
 
-    return { area, petFriendly, nearBts, propertyType, budget, lifestyle, bedrooms, amenities };
+    // Hospital Detection
+    let nearHospital = false;
+    let hospitalName: string | null = null;
+    if (q.includes("hospital") || q.includes("โรงพยาบาล") || q.includes("医院")) {
+      nearHospital = true;
+    }
+    const hospitalList = [
+      "samitivej", "bumrungrad", "bnh", "saint louis", "camillian", "rutnin", 
+      "bangkok christian", "sukumvit", "kluaynamthai", "phyathai", "vimut", 
+      "praram 9", "rama 9", "piyavate", "wih", "sikarin", "bangkok hospital", "rajavithi"
+    ];
+    for (const name of hospitalList) {
+      if (q.includes(name)) {
+        nearHospital = true;
+        hospitalName = name;
+        break;
+      }
+    }
+
+    return { area, petFriendly, nearBts, propertyType, budget, lifestyle, bedrooms, amenities, nearHospital, hospitalName };
   }, [activeQuery, properties]);
 
   // Scoring Logic & Item Formatting
@@ -386,6 +410,36 @@ export default function SmartSearchClient({ properties }: Props) {
         });
       }
 
+      // Hospital Proximity matching
+      if (parsed.nearHospital) {
+        const places = getNearbyPlaces(property.area);
+        const hospitals = places.filter((h) => h.category === "Hospitals");
+        let matchesHospital = false;
+        let matchedHospitalName = "";
+        let matchedHospitalDistance = "";
+
+        if (parsed.hospitalName) {
+          const matched = hospitals.find((h) => h.name.toLowerCase().includes(parsed.hospitalName!.toLowerCase()));
+          if (matched) {
+            matchesHospital = true;
+            matchedHospitalName = matched.name;
+            matchedHospitalDistance = matched.distance;
+          }
+        } else {
+          if (hospitals.length > 0) {
+            matchesHospital = true;
+            matchedHospitalName = hospitals[0].name;
+            matchedHospitalDistance = hospitals[0].distance;
+          }
+        }
+
+        if (matchesHospital) {
+          reasons.push(`Near ${matchedHospitalName} (${matchedHospitalDistance})`);
+        } else {
+          score -= 50;
+        }
+      }
+
       // Add default if empty
       if (reasons.length === 0) {
         reasons.push("General lifestyle match in Bangkok");
@@ -505,6 +559,22 @@ export default function SmartSearchClient({ properties }: Props) {
               hasAmenity = propAmenities.some((a) => a.toLowerCase().includes("cowork") || a.toLowerCase().includes("co-work") || a.toLowerCase().includes("space"));
             }
             if (!hasAmenity) {
+              return false;
+            }
+          }
+        }
+
+        // 8. Near Hospital matching (strict)
+        if (parsed.nearHospital) {
+          const places = getNearbyPlaces(p.area);
+          const hospitals = places.filter((h) => h.category === "Hospitals");
+          if (parsed.hospitalName) {
+            const hasSpecHospital = hospitals.some((h) => h.name.toLowerCase().includes(parsed.hospitalName!.toLowerCase()));
+            if (!hasSpecHospital) {
+              return false;
+            }
+          } else {
+            if (hospitals.length === 0) {
               return false;
             }
           }

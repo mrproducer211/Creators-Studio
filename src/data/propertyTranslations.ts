@@ -138,8 +138,10 @@ export const T_PROPERTY = {
       fitness: "Fitness",
       parks: "Parks",
       "co-working": "Co-working",
-      markets: "Markets"
+      markets: "Markets",
+      hospitals: "Hospitals"
     },
+    linkCopied: "🔗 Link copied to clipboard!",
     errorEmptyCalc: "Please enter a location or address.",
     errorGeocode: "Could not resolve the property's location coordinates.",
     errorPlaceNotFound: "Could not find that location. Please try a different query."
@@ -283,8 +285,10 @@ export const T_PROPERTY = {
       fitness: "ฟิตเนส",
       parks: "สวนสาธารณะ",
       "co-working": "พื้นที่ทำงานร่วมกัน",
-      markets: "ตลาด"
+      markets: "ตลาด",
+      hospitals: "โรงพยาบาล"
     },
+    linkCopied: "🔗 คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว!",
     errorEmptyCalc: "กรุณาใส่สถานที่หรือที่อยู่",
     errorGeocode: "ไม่สามารถหาพิกัดของอสังหาริมทรัพย์ได้",
     errorPlaceNotFound: "ไม่พบสถานที่นั้น กรุณาลองค้นหาใหม่อีกครั้ง"
@@ -428,8 +432,10 @@ export const T_PROPERTY = {
       fitness: "健身中心",
       parks: "公园",
       "co-working": "共享办公",
-      markets: "市集"
+      markets: "市集",
+      hospitals: "医院"
     },
+    linkCopied: "🔗 链接已复制到剪贴板！",
     errorEmptyCalc: "请输入地点或地址。",
     errorGeocode: "无法解析该房源的定位坐标。",
     errorPlaceNotFound: "找不到该地点。请尝试其他搜索词。"
