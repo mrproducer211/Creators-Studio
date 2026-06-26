@@ -19,11 +19,15 @@ export async function generateMetadata({ params }: Props) {
   if (!post) return { title: "Post not found — NHP Blog" };
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
-    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+    || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
   let imageUrl = post.image || "/images/homepage_hero_v2.webp";
   if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
     imageUrl = `${baseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  }
+  // Convert Cloudinary WebP to JPG for better social platform link preview support
+  if (imageUrl.includes("cloudinary.com") && imageUrl.endsWith(".webp")) {
+    imageUrl = imageUrl.slice(0, -5) + ".jpg";
   }
 
   return {
@@ -70,7 +74,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   // Build the absolute image URL for schema
   const siteBase = process.env.NEXT_PUBLIC_SITE_URL 
-    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+    || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
   const imageUrl = post.image.startsWith("http") ? post.image : `${siteBase}${post.image.startsWith("/") ? "" : "/"}${post.image}`;
 
   const blogJsonLd = {

@@ -30,12 +30,16 @@ export async function generateMetadata({ params }: Props) {
   const description = p.description.slice(0, 160);
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
-    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+    || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
   const canonicalUrl = `${baseUrl}/property/${p.slug}`;
   
   let imageUrl = p.coverImage || "/images/homepage_hero_v2.webp";
   if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
     imageUrl = `${baseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  }
+  // Convert Cloudinary WebP to JPG for better social platform link preview support
+  if (imageUrl.includes("cloudinary.com") && imageUrl.endsWith(".webp")) {
+    imageUrl = imageUrl.slice(0, -5) + ".jpg";
   }
 
   return {
@@ -120,7 +124,7 @@ export default async function PropertyPage({ params }: Props) {
     .slice(0, 4);
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
-    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+    || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
   let pageImageUrl = property.coverImage || "/images/homepage_hero_v2.webp";
   if (!pageImageUrl.startsWith("http://") && !pageImageUrl.startsWith("https://")) {
