@@ -3,7 +3,8 @@ import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAllPosts } from "@/lib/store/blog";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://newhomesproperty.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
   // 1. Static Pages
   const routes = ["", "/about", "/privacy", "/explore"].map((route) => ({

@@ -13,8 +13,11 @@ const inter = Inter({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+  || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://newhomesproperty.com"),
+  metadataBase: new URL(baseUrl),
   title: "New Homes Property — Live. Belong. Bangkok.",
   description:
     "Bangkok's neighbourhood property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
@@ -29,8 +32,8 @@ const orgJsonLd = {
   "@type": "RealEstateAgent",
   name: "New Homes Property",
   alternateName: ["NHP Bangkok", "NHP"],
-  url: "https://newhomesproperty.com",
-  logo: "https://newhomesproperty.com/images/nhp-logo.webp",
+  url: baseUrl,
+  logo: `${baseUrl}/images/nhp-logo.webp`,
   description:
     "Bangkok's neighbourhood property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
   areaServed: {
@@ -55,12 +58,12 @@ const websiteJsonLd = {
   "@type": "WebSite",
   name: "New Homes Property",
   alternateName: ["NHP Bangkok", "NHP"],
-  url: "https://newhomesproperty.com",
+  url: baseUrl,
   potentialAction: {
     "@type": "SearchAction",
     target: {
       "@type": "EntryPoint",
-      urlTemplate: "https://newhomesproperty.com/explore?q={search_term_string}",
+      urlTemplate: `${baseUrl}/explore?q={search_term_string}`,
     },
     "query-input": "required name=search_term_string",
   },

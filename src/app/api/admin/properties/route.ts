@@ -102,7 +102,8 @@ export async function POST(req: NextRequest) {
       );
 
       // Notify Google immediately (fire-and-forget — never blocks the API response)
-      submitToGoogleIndexing(`https://newhomesproperty.com/property/${val.slug}`).catch((err) =>
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://newhomesproperty.com";
+      submitToGoogleIndexing(`${baseUrl}/property/${val.slug}`).catch((err) =>
         console.warn("Google Indexing ping failed:", err)
       );
 
@@ -126,7 +127,8 @@ export async function POST(req: NextRequest) {
   );
 
   // Notify Google immediately (fire-and-forget — never blocks the API response)
-  submitToGoogleIndexing(`https://newhomesproperty.com/property/${val.slug}`).catch((err) =>
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://newhomesproperty.com";
+  submitToGoogleIndexing(`${baseUrl}/property/${val.slug}`).catch((err) =>
     console.warn("Google Indexing ping failed:", err)
   );
 

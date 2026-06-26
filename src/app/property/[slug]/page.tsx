@@ -28,8 +28,15 @@ export async function generateMetadata({ params }: Props) {
   
   const title = `${roomType} ${propType} for ${action} in ${p.area} | ${priceStr}${label} — NHP`;
   const description = p.description.slice(0, 160);
-  const canonicalUrl = `https://newhomesproperty.com/property/${p.slug}`;
-  const imageUrl = p.coverImage || "https://newhomesproperty.com/images/homepage_hero_v2.webp";
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+  const canonicalUrl = `${baseUrl}/property/${p.slug}`;
+  
+  let imageUrl = p.coverImage || "/images/homepage_hero_v2.webp";
+  if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+    imageUrl = `${baseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  }
 
   return {
     title,
@@ -45,8 +52,8 @@ export async function generateMetadata({ params }: Props) {
       images: [
         {
           url: imageUrl,
-          width: 800,
-          height: 600,
+          width: 1200,
+          height: 630,
           alt: p.name,
         },
       ],
@@ -112,14 +119,22 @@ export default async function PropertyPage({ params }: Props) {
     )
     .slice(0, 4);
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+
+  let pageImageUrl = property.coverImage || "/images/homepage_hero_v2.webp";
+  if (!pageImageUrl.startsWith("http://") && !pageImageUrl.startsWith("https://")) {
+    pageImageUrl = `${baseUrl}${pageImageUrl.startsWith("/") ? "" : "/"}${pageImageUrl}`;
+  }
+
   // Structured Data (JSON-LD) for RealEstateListing
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
     "name": property.name,
     "description": property.description,
-    "url": `https://newhomesproperty.com/property/${property.slug}`,
-    "image": property.coverImage || "https://newhomesproperty.com/images/homepage_hero_v2.webp",
+    "url": `${baseUrl}/property/${property.slug}`,
+    "image": pageImageUrl,
     "address": {
       "@type": "PostalAddress",
       "addressLocality": property.district || property.area,
@@ -130,7 +145,7 @@ export default async function PropertyPage({ params }: Props) {
       "@type": "Offer",
       "priceCurrency": "THB",
       "price": property.priceTHB,
-      "url": `https://newhomesproperty.com/property/${property.slug}`,
+      "url": `${baseUrl}/property/${property.slug}`,
       "category": property.listingType === "sale" ? "sale" : "rent",
     },
   };

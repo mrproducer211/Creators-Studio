@@ -17,6 +17,15 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: "Post not found — NHP Blog" };
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+
+  let imageUrl = post.image || "/images/homepage_hero_v2.webp";
+  if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+    imageUrl = `${baseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  }
+
   return {
     title:       post.metaTitle,
     description: post.metaDesc,
@@ -24,8 +33,21 @@ export async function generateMetadata({ params }: Props) {
     openGraph: {
       title:       post.metaTitle,
       description: post.metaDesc,
-      images:      [{ url: post.image }],
+      images:      [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.metaTitle,
+        }
+      ],
       type:        "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title:       post.metaTitle,
+      description: post.metaDesc,
+      images:      [imageUrl],
     },
   };
 }
@@ -47,8 +69,9 @@ export default async function BlogPostPage({ params }: Props) {
   const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(headerFont)}:wght@400;600;700&family=${encodeURIComponent(bodyFont)}:wght@300;400;500;600&display=swap`;
 
   // Build the absolute image URL for schema
-  const siteBase = "https://newhomesproperty.com";
-  const imageUrl = post.image.startsWith("http") ? post.image : `${siteBase}${post.image}`;
+  const siteBase = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+  const imageUrl = post.image.startsWith("http") ? post.image : `${siteBase}${post.image.startsWith("/") ? "" : "/"}${post.image}`;
 
   const blogJsonLd = {
     "@context": "https://schema.org",
