@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Home } from "lucide-react";
 import ExploreFiltersBar from "./ExploreFilters";
 import ExplorePropertyCard from "./ExplorePropertyCard";
+import { getCanonicalArea } from "@/lib/area";
 
 const DEFAULT_FILTERS: ExploreFilters = {
   listingType: "all",
@@ -45,25 +46,57 @@ function filtersFromParams(params: URLSearchParams): ExploreFilters {
   return f;
 }
 
+function detectAreaInSearch(query: string): string | null {
+  const cleanQuery = query.toLowerCase().trim();
+  const keys = [
+    "sukhumvit", "phrom phong", "phromphong", "thong lo", "thonglo", "thonglor", "asok", "asoke", 
+    "ekkamai", "ekamai", "on nut", "onnut", "ari", "sathorn", "sathon", "silom", 
+    "rama 9", "rama9", "ratchada", "huai khwang", "huaikhwang", "phaya thai", "phayathai",
+    "chatuchak", "jatujak", "rama 4", "rama4", "bangna", "bang na", "udom suk", "udomsuk", "samyan", "sam yan"
+  ];
+  
+  for (const key of keys) {
+    const escaped = key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+    if (regex.test(cleanQuery)) {
+      return getCanonicalArea(key);
+    }
+  }
+  return null;
+}
+
 function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] {
   let result = [...props];
   if (f.search) {
     const queryClean = f.search.toLowerCase().trim();
     const searchTerms = queryClean.split(/\s+/).filter(Boolean);
+    const detectedArea = detectAreaInSearch(queryClean);
     
     result = result.filter((p) => {
+      // If a specific area was detected in the search query, strictly require the property's area to match it
+      if (detectedArea) {
+        const pAreaCanonical = getCanonicalArea(p.area).toLowerCase();
+        const targetAreaCanonical = detectedArea.toLowerCase();
+        if (pAreaCanonical !== targetAreaCanonical) {
+          return false;
+        }
+      }
+
       const nameLower = p.name.toLowerCase();
-      const areaLower = p.area.toLowerCase();
-      const districtLower = p.district?.toLowerCase() || "";
       
+      // Normalize both query and area using getCanonicalArea to handle space/spelling variations
+      const queryCanonical = getCanonicalArea(queryClean).toLowerCase();
+      const areaCanonical = getCanonicalArea(p.area).toLowerCase();
+      const districtCanonical = p.district ? getCanonicalArea(p.district).toLowerCase() : "";
+
       // 1. Direct name, area or district match
       if (queryClean.length >= 3 && (nameLower.includes(queryClean) || queryClean.includes(nameLower))) {
         return true;
       }
-      if (queryClean.length >= 3 && (areaLower.includes(queryClean) || queryClean.includes(areaLower))) {
+      if (queryClean.length >= 3 && (areaCanonical.includes(queryCanonical) || queryCanonical.includes(areaCanonical))) {
         return true;
       }
-      if (queryClean.length >= 3 && districtLower && (districtLower.includes(queryClean) || queryClean.includes(districtLower))) {
+      if (queryClean.length >= 3 && districtCanonical && (districtCanonical.includes(queryCanonical) || queryCanonical.includes(districtCanonical))) {
         return true;
       }
       
@@ -73,10 +106,16 @@ function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] 
       const keyTerms = searchTerms.filter((t) => !stopWords.includes(t));
       
       if (keyTerms.length === 0) {
-        return searchTerms.every((term) => searchableText.includes(term));
+        return searchTerms.every((term) => {
+          const termCanonical = getCanonicalArea(term).toLowerCase();
+          return searchableText.includes(term) || searchableText.includes(termCanonical);
+        });
       }
       
-      return keyTerms.every((term) => searchableText.includes(term));
+      return keyTerms.every((term) => {
+        const termCanonical = getCanonicalArea(term).toLowerCase();
+        return searchableText.includes(term) || searchableText.includes(termCanonical);
+      });
     });
   }
   if (f.listingType !== "all") result = result.filter((p) => p.listingType === f.listingType);

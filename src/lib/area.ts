@@ -71,6 +71,10 @@ const AREA_MAPPING: Record<string, string> = {
   // Rama 4 mappings
   "rama 4": "Rama 4",
   "rama4": "Rama 4",
+
+  // Sam Yan mappings
+  "samyan": "Sam Yan",
+  "sam yan": "Sam Yan",
 };
 
 /**
