@@ -61,18 +61,17 @@ function DesktopHero({
         <div
           className="inline-flex items-center gap-1.5 self-start mb-[10px]"
           style={{
-            background: "rgba(201,168,76,0.15)",
-            border: "1px solid rgba(201,168,76,0.3)",
-            color: "#E2C97E",
+            background: "#E2C97E",
+            color: "#1C3A2F",
             fontSize: 11,
-            fontWeight: 500,
+            fontWeight: 600,
             padding: "5px 12px",
             borderRadius: 100,
             letterSpacing: "0.5px",
           }}
         >
           <span
-            style={{ width: 5, height: 5, background: "#C9A84C", borderRadius: "50%", display: "inline-block" }}
+            style={{ width: 5, height: 5, background: "#1C3A2F", borderRadius: "50%", display: "inline-block" }}
           />
           {t.hero.tag}
         </div>
@@ -260,7 +259,7 @@ function DesktopHero({
               <span style={{ display: "block", fontSize: 20, fontWeight: 700, color: "#E2C97E", lineHeight: 1, marginBottom: 4, letterSpacing: "-0.5px" }}>
                 {s.num}
               </span>
-              <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "1px" }}>
+              <span style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", textTransform: "uppercase", letterSpacing: "1px" }}>
                 {s.label}
               </span>
             </div>
@@ -520,15 +519,14 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
 
         <div className="max-w-[480px] mx-auto relative z-10">
           <div
-            className="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-[5px] rounded-full mb-[18px]"
+            className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-[5px] rounded-full mb-[18px]"
             style={{
-              background: "rgba(201,168,76,0.15)",
-              border: "1px solid rgba(201,168,76,0.3)",
-              color: "#E2C97E",
+              background: "#E2C97E",
+              color: "#1C3A2F",
               letterSpacing: "0.5px",
             }}
           >
-            <span className="w-[5px] h-[5px] rounded-full inline-block" style={{ background: "#C9A84C" }} />
+            <span className="w-[5px] h-[5px] rounded-full inline-block" style={{ background: "#1C3A2F" }} />
             {t.hero.tag}
           </div>
 
@@ -621,7 +619,7 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
                 <span className="block text-[20px] font-bold leading-none mb-1" style={{ color: "#E2C97E" }}>
                   {s.num}
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.8px]" style={{ color: "rgba(255,255,255,0.45)" }}>
+                <span className="text-[10px] uppercase tracking-[0.8px]" style={{ color: "rgba(255,255,255,0.7)" }}>
                   {s.label}
                 </span>
               </div>

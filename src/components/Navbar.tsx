@@ -51,7 +51,7 @@ export default function Navbar() {
           />
           <div className="flex flex-col leading-none">
             <span className="text-[16px] font-extrabold tracking-[-0.5px]" style={{ color: "#1C3A2F" }}>New Home Property</span>
-            <span className="text-[9px] font-semibold tracking-[0.3px] mt-0.5" style={{ color: "#C9A84C" }}>Live. Belong. Bangkok.</span>
+            <span className="text-[9px] font-semibold tracking-[0.3px] mt-0.5" style={{ color: "#806414" }}>Live. Belong. Bangkok.</span>
           </div>
         </Link>
 
@@ -66,7 +66,7 @@ export default function Navbar() {
           />
           <div className="flex flex-col leading-tight">
             <span className="text-[15px] font-bold" style={{ color: "#1C3A2F" }}>New Home Property</span>
-            <span className="text-[10px] font-medium uppercase tracking-[0.5px]" style={{ color: "#C9A84C" }}>Live. Belong. Bangkok.</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.5px]" style={{ color: "#806414" }}>Live. Belong. Bangkok.</span>
           </div>
         </Link>
 

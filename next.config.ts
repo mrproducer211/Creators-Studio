@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+  experimental: {
+    // Ensure proper tree-shaking for icon libraries — reduces bundle size
+    optimizePackageImports: ["lucide-react"],
+  },
   images: {
     // Serve AVIF first, then WebP — browsers pick the best they support
     formats: ["image/avif", "image/webp"],

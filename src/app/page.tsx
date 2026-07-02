@@ -2,14 +2,37 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import TrustStrip from "@/components/TrustStrip";
 import BrowseModes from "@/components/BrowseModes";
-import CategorySection from "@/components/CategorySection";
-import LatestProperties from "@/components/LatestProperties";
-import BlogSection from "@/components/BlogSection";
-import TalkToUs from "@/components/TalkToUs";
-import TrustBadges from "@/components/TrustBadges";
 import Footer from "@/components/Footer";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAllPosts } from "@/lib/store/blog";
+import nextDynamic from "next/dynamic";
+import {
+  CategorySkeleton,
+  LatestSkeleton,
+  BlogSkeleton,
+  TalkSkeleton,
+  TrustSkeleton,
+} from "@/components/LoadingSkeletons";
+
+/* ── Below-the-fold components loaded lazily ──
+   These are deferred from the critical path, saving ~65KB of JS
+   from the initial bundle. Skeleton placeholders prevent layout shift. */
+const CategorySection = nextDynamic(() => import("@/components/CategorySection"), {
+  loading: () => <CategorySkeleton />,
+});
+const LatestProperties = nextDynamic(
+  () => import("@/components/LatestProperties"),
+  { loading: () => <LatestSkeleton /> }
+);
+const BlogSection = nextDynamic(() => import("@/components/BlogSection"), {
+  loading: () => <BlogSkeleton />,
+});
+const TalkToUs = nextDynamic(() => import("@/components/TalkToUs"), {
+  loading: () => <TalkSkeleton />,
+});
+const TrustBadges = nextDynamic(() => import("@/components/TrustBadges"), {
+  loading: () => <TrustSkeleton />,
+});
 
 export const dynamic = "force-dynamic";
 

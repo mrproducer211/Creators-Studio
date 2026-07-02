@@ -20,8 +20,17 @@ import { getCanonicalArea } from "@/lib/area";
  */
 import { getAllProperties, getPropertyById, updateProperty } from "@/lib/store/properties";
 
+let lastExpiryCheck = 0;
+const EXPIRY_CHECK_INTERVAL = 1000 * 60 * 60; // Run once per hour max to optimize performance
+
 export async function checkAndRunListingExpiry() {
   const now = new Date();
+  const currentTime = now.getTime();
+  if (currentTime - lastExpiryCheck < EXPIRY_CHECK_INTERVAL) {
+    return;
+  }
+  lastExpiryCheck = currentTime;
+
   try {
     const settings = await getSystemSettings();
     if (isDbConfigured) {
