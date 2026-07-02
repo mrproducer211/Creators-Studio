@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
 import { useSaved } from "@/contexts/SavedContext";
@@ -170,10 +171,12 @@ export default function SmartPropertyCard({
       {/* Upper Media Section */}
       <div className="relative h-[180px] sm:h-[135px] overflow-hidden flex-shrink-0">
         {property.coverImage && !imgErr ? (
-          <img
+          <Image
             src={property.coverImage}
             alt={stripEmojis(property.name)}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
             onError={() => setImgErr(true)}
           />
         ) : (

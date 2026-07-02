@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Compass, ThumbsUp, ThumbsDown, Users } from "lucide-react";
+import { Compass, ThumbsUp, ThumbsDown, Users, X, Search, Grid, List } from "lucide-react";
 import { PropertyCard } from "@/types/property";
 import { getCanonicalArea } from "@/lib/area";
 
@@ -30,6 +30,15 @@ interface VibeCheckCard {
   whoLovesIt: string;
 }
 
+interface NeighborhoodItem {
+  slug: string;
+  name: string;
+  image: string;
+  href: string;
+  category: string;
+  isProfileOnly?: boolean;
+}
+
 interface CategorySectionProps {
   properties?: PropertyCard[];
 }
@@ -37,6 +46,26 @@ interface CategorySectionProps {
 export default function CategorySection({ properties = [] }: CategorySectionProps) {
   const { t } = useLanguage();
   const [vibeCheckCard, setVibeCheckCard] = useState<VibeCheckCard | null>(null);
+  const [showAllModal, setShowAllModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [mobileView, setMobileView] = useState<"grid" | "list">("grid");
+
+  useEffect(() => {
+    if (showAllModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showAllModal]);
+
+  const closeModal = () => {
+    setShowAllModal(false);
+    setSearchQuery("");
+    setMobileView("grid");
+  };
 
   const getAreaCount = (slug: string) => {
     const slugMap: Record<string, string> = {
@@ -54,6 +83,14 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
       "phaya-thai": "Phaya Thai",
       "chatuchak": "Chatuchak",
       "rama-4": "Rama 4",
+      "sam-yan": "Sam Yan",
+      "khlong-san": "Khlong San",
+      "charoenkrung": "Charoenkrung",
+      "phra-khanong": "Phra Khanong",
+      "chidlom-ploenchit": "Chit Lom / Ploenchit",
+      "nana": "Nana",
+      "ladprao": "Ladprao",
+      "thonburi": "Thonburi",
     };
     const targetArea = slugMap[slug];
     if (!targetArea) return 0;
@@ -111,6 +148,31 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
     },
   ];
 
+  const allNeighborhoods: NeighborhoodItem[] = [
+    { slug: "sukhumvit", name: t.category.areas.sukhumvit, image: "/images/neighborhoods/sukhumvit.webp", href: "/neighborhood/sukhumvit", category: "Central & CBD" },
+    { slug: "sathorn", name: t.category.areas.sathorn, image: "/images/neighborhoods/sathorn.webp", href: "/neighborhood/sathorn", category: "Central & CBD" },
+    { slug: "asok", name: t.category.areas.asok, image: "/images/neighborhoods/asok.webp", href: "/neighborhood/asok", category: "Central & CBD" },
+    { slug: "silom", name: t.category.areas.silom, image: "/images/neighborhoods/silom.webp", href: "/neighborhood/silom", category: "Central & CBD" },
+    { slug: "chidlom-ploenchit", name: "Chit Lom / Ploenchit", image: "/images/neighborhoods/chidlom_ploenchit.webp", href: "/neighborhood/chidlom-ploenchit", category: "Central & CBD" },
+    { slug: "nana", name: "Nana", image: "/images/neighborhoods/nana.webp", href: "/neighborhood/nana", category: "Central & CBD" },
+    { slug: "thong-lo", name: t.category.areas.thongLo, image: "/images/neighborhoods/thong_lo.webp", href: "/neighborhood/thong-lo", category: "Trendy & Lifestyle" },
+    { slug: "ekkamai", name: t.category.areas.ekkamai, image: "/images/neighborhoods/ekkamai.webp", href: "/neighborhood/ekkamai", category: "Trendy & Lifestyle" },
+    { slug: "ari", name: t.category.areas.ari, image: "/images/neighborhoods/ari.webp", href: "/neighborhood/ari", category: "Trendy & Lifestyle" },
+    { slug: "phra-khanong", name: t.category.areas.phraKhanong, image: "/images/neighborhoods/phra_khanong.webp", href: "/neighborhood/phra-khanong", category: "Trendy & Lifestyle" },
+    { slug: "rama-9", name: t.category.areas.rama9, image: "/images/neighborhoods/rama_9.webp", href: "/neighborhood/rama-9", category: "Residential & Emerging" },
+    { slug: "bang-na", name: t.category.areas.bangNa, image: "/images/neighborhoods/bang_na.webp", href: "/neighborhood/bang-na", category: "Residential & Emerging" },
+    { slug: "on-nut", name: t.category.areas.onNut, image: "/images/neighborhoods/on_nut.webp", href: "/neighborhood/on-nut", category: "Residential & Emerging" },
+    { slug: "huai-khwang", name: t.category.areas.huaiKhwang, image: "/images/neighborhoods/huai_khwang.webp", href: "/neighborhood/huai-khwang", category: "Residential & Emerging" },
+    { slug: "phaya-thai", name: t.category.areas.phayaThai, image: "/images/neighborhoods/phaya_thai.webp", href: "/neighborhood/phaya-thai", category: "Residential & Emerging" },
+    { slug: "chatuchak", name: t.category.areas.chatuchak, image: "/images/neighborhoods/chatuchak.webp", href: "/neighborhood/chatuchak", category: "Residential & Emerging" },
+    { slug: "rama-4", name: t.category.areas.rama4, image: "/images/neighborhoods/rama_4.webp", href: "/neighborhood/rama-4", category: "Residential & Emerging" },
+    { slug: "ladprao", name: "Ladprao", image: "/images/neighborhoods/ladprao.webp", href: "/neighborhood/ladprao", category: "Residential & Emerging" },
+    { slug: "charoenkrung", name: t.category.areas.charoenkrung, image: "/images/neighborhoods/charoenkrung.webp", href: "/neighborhood/charoenkrung", category: "Riverside & Historic" },
+    { slug: "sam-yan", name: t.category.areas.samYan, image: "/images/neighborhoods/sam_yan.webp", href: "/neighborhood/sam-yan", category: "Riverside & Historic" },
+    { slug: "khlong-san", name: t.category.areas.khlongSan, image: "/images/neighborhoods/khlong_san.webp", href: "/neighborhood/khlong-san", category: "Riverside & Historic" },
+    { slug: "thonburi", name: "Thonburi", image: "/images/neighborhoods/thonburi.webp", href: "/neighborhood/thonburi", category: "Riverside & Historic" },
+  ];
+
   return (
     <section className="py-8" style={{ background: "#F7F3EC" }}>
 
@@ -124,9 +186,13 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
             {t.category.title}
           </h2>
         </div>
-        <a href="/explore" className="hidden md:block text-[12px] font-medium no-underline pb-px" style={{ color: "#1C3A2F", borderBottom: "1px solid #1C3A2F" }}>
+        <button
+          onClick={() => setShowAllModal(true)}
+          className="text-[12px] font-medium no-underline pb-px bg-transparent border-none cursor-pointer hover:opacity-85 transition-opacity"
+          style={{ color: "#1C3A2F", borderBottom: "1px solid #1C3A2F", padding: 0 }}
+        >
           {t.category.all}
-        </a>
+        </button>
       </div>
 
       {/* ── DESKTOP ── */}
@@ -387,6 +453,234 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
           </div>
         </div>
       )}
+
+      {/* Glassmorphic Modal Overlay for all neighborhoods */}
+      {showAllModal && (() => {
+        const filteredNeighborhoods = allNeighborhoods.filter((item) => {
+          const nameMatch = (item.name || "").toLowerCase().includes(searchQuery.toLowerCase());
+          const slugMatch = item.slug.toLowerCase().includes(searchQuery.toLowerCase());
+          const catMatch = item.category.toLowerCase().includes(searchQuery.toLowerCase());
+          return nameMatch || slugMatch || catMatch;
+        });
+
+        return (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(12px)" }} onClick={() => closeModal()}>
+            <div
+              className="relative w-full h-full p-6 md:p-12 lg:p-16 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom duration-300"
+              style={{ background: "#F7F3EC", color: "#1C3A2F" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between mb-6 pb-4" style={{ borderBottom: "1px solid rgba(28, 58, 47, 0.1)" }}>
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] block mb-1">
+                    Bangkok Neighborhoods
+                  </span>
+                  <h3 className="text-[26px] font-bold leading-tight" style={{ color: "#1C3A2F", letterSpacing: "-0.5px" }}>
+                    Explore All Categories & Guides
+                  </h3>
+                </div>
+                <button
+                  onClick={() => closeModal()}
+                  className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border-none transition-colors"
+                  style={{ background: "#EDE8DF", color: "#1C3A2F" }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = "#DCD5C9"}
+                  onMouseLeave={(e) => e.currentTarget.style.background = "#EDE8DF"}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Search and Toggle Controls */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center mb-6 z-10">
+                {/* Search Bar */}
+                <div className="relative flex-grow max-w-lg">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1C3A2F]/60" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search neighborhood or category..."
+                    className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-solid focus:outline-none focus:ring-1 focus:ring-[#C9A84C] text-[14px]"
+                    style={{
+                      background: "#EDE8DF",
+                      borderColor: "rgba(28, 58, 47, 0.15)",
+                      color: "#1C3A2F"
+                    }}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 border-none bg-transparent cursor-pointer text-[#1C3A2F]/60 hover:text-[#1C3A2F] p-0 flex items-center"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Toggle Controls (Mobile Only) */}
+                <div className="flex items-center gap-2 md:hidden">
+                  <span className="text-[12px] font-bold uppercase tracking-[1px] text-[#1C3A2F]/60">
+                    View:
+                  </span>
+                  <div className="flex p-0.5 rounded-lg" style={{ background: "#EDE8DF" }}>
+                    <button
+                      onClick={() => setMobileView("grid")}
+                      className={`p-2 rounded-md border-none cursor-pointer flex items-center justify-center transition-all ${mobileView === "grid" ? "shadow-sm" : "opacity-60"}`}
+                      style={{
+                        background: mobileView === "grid" ? "#1C3A2F" : "transparent",
+                        color: mobileView === "grid" ? "#FFFFFF" : "#1C3A2F",
+                      }}
+                    >
+                      <Grid className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setMobileView("list")}
+                      className={`p-2 rounded-md border-none cursor-pointer flex items-center justify-center transition-all ${mobileView === "list" ? "shadow-sm" : "opacity-60"}`}
+                      style={{
+                        background: mobileView === "list" ? "#1C3A2F" : "transparent",
+                        color: mobileView === "list" ? "#FFFFFF" : "#1C3A2F",
+                      }}
+                    >
+                      <List className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content: scrollable grid/list */}
+              <div className="overflow-y-auto pr-2 flex-grow mb-4" style={{ maxHeight: "calc(100vh - 250px)" }}>
+                {filteredNeighborhoods.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <Search className="w-12 h-12 opacity-30 mb-3 text-[#1C3A2F]" />
+                    <p className="text-[15px] font-bold" style={{ color: "#1C3A2F" }}>No Neighborhoods Found</p>
+                    <p className="text-[13px] opacity-75 mt-1" style={{ color: "#1C3A2F" }}>Try searching for a different area or category</p>
+                  </div>
+                ) : (
+                  <>
+                    {/* Mobile List View (rendered only when mobileView is 'list' on md and below) */}
+                    {mobileView === "list" && (
+                      <div className="flex flex-col gap-3 md:hidden">
+                        {filteredNeighborhoods.map((item) => {
+                          const count = getAreaCount(item.slug);
+                          const isProfileOnly = item.isProfileOnly || count === 0;
+
+                          return (
+                            <a
+                              key={item.slug}
+                              href={item.href}
+                              className="flex items-center justify-between p-3 rounded-2xl no-underline transition-all duration-300 hover:translate-y-[-2px] hover:shadow-md"
+                              style={{ background: "#EDE8DF" }}
+                            >
+                              <div className="flex items-center gap-4">
+                                {/* Small Thumbnail */}
+                                <div className="relative w-16 h-12 rounded-xl overflow-hidden flex-shrink-0">
+                                  <Image
+                                    src={item.image}
+                                    alt={item.name || item.slug}
+                                    fill
+                                    sizes="64px"
+                                    className={`object-cover ${isProfileOnly ? "grayscale" : ""}`}
+                                  />
+                                </div>
+                                {/* Name & Category */}
+                                <div>
+                                  <p className="text-[14px] font-bold leading-tight mb-1" style={{ color: "#1C3A2F" }}>
+                                    {item.name || item.slug}
+                                  </p>
+                                  <span className="text-[9px] font-bold uppercase tracking-[0.5px] opacity-60" style={{ color: "#1C3A2F" }}>
+                                    {item.category}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Count / Badge */}
+                              <div>
+                                {isProfileOnly ? (
+                                  <span className="text-[9px] font-semibold text-amber-700 bg-amber-500/10 px-2 py-0.5 rounded">
+                                    📖 Guide
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#1C3A2F]/10" style={{ color: "#1C3A2F" }}>
+                                    {count} {t.category.props}
+                                  </span>
+                                )}
+                              </div>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Grid View wrapper: hidden on mobile list, always shown on desktop */}
+                    <div className={`${mobileView === "list" ? "hidden md:grid" : "grid"} grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6`}>
+                      {filteredNeighborhoods.map((item) => {
+                        const count = getAreaCount(item.slug);
+                        const isProfileOnly = item.isProfileOnly || count === 0;
+
+                        return (
+                          <a
+                            key={item.slug}
+                            href={item.href}
+                            className="relative w-full h-40 rounded-2xl overflow-hidden no-underline group block"
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = "translateY(-4px)";
+                              e.currentTarget.style.boxShadow = "0 10px 20px rgba(0,0,0,0.15)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = "none";
+                              e.currentTarget.style.boxShadow = "none";
+                            }}
+                            style={{ transition: "all 0.3s ease" }}
+                          >
+                            {/* Image */}
+                            <Image
+                              src={item.image}
+                              alt={item.name || item.slug}
+                              fill
+                              sizes="(max-width: 768px) 100vw, 300px"
+                              className={`object-cover transition-transform duration-700 group-hover:scale-105 ${isProfileOnly ? "grayscale group-hover:grayscale-0" : ""}`}
+                            />
+
+                            {/* Gradient Overlay */}
+                            <div
+                              className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-90"
+                              style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 55%, transparent 100%)" }}
+                            />
+
+                            {/* Category Badge on top-right */}
+                            <div className="absolute top-3.5 right-3.5 z-10">
+                              <span className="text-[9px] font-bold uppercase tracking-[1px] px-2 py-0.5 rounded-md backdrop-blur-md" style={{ background: "rgba(28, 58, 47, 0.75)", color: "#F7F3EC" }}>
+                                {item.category}
+                              </span>
+                            </div>
+
+                            {/* Text overlay on top of the image */}
+                            <div className="absolute bottom-0 left-0 p-4 w-full text-left z-10">
+                              <h4 className="text-[16px] font-bold leading-tight mb-1.5 transition-colors group-hover:text-[#C9A84C]" style={{ color: "#FFFFFF" }}>
+                                {item.name || item.slug}
+                              </h4>
+                              {isProfileOnly ? (
+                                <span className="text-[10px] font-semibold text-amber-300 bg-amber-500/25 px-2 py-0.5 rounded backdrop-blur-sm inline-block">
+                                  📖 Guide Only
+                                </span>
+                              ) : (
+                                <p className="text-[11px] opacity-85 leading-none m-0" style={{ color: "rgba(255,255,255,0.9)" }}>
+                                  {count.toLocaleString()} {t.category.propsForYou}
+                                </p>
+                              )}
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </section>
   );
 }

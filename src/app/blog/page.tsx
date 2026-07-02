@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import Image from "next/image";
 import Footer from "@/components/Footer";
 import { getAllPosts } from "@/lib/store/blog";
 
@@ -41,10 +42,12 @@ export default async function BlogPage() {
                 style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}
               >
                 <div className="relative overflow-hidden flex-shrink-0" style={{ height: 220 }}>
-                  <img
+                  <Image
                     src={post.image}
                     alt={post.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-semibold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>
                     {post.category}

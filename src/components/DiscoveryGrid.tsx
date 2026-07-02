@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { PropertyCard } from "@/types/property";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -125,20 +126,26 @@ export default function DiscoveryGrid({ featuredProperty }: { featuredProperty: 
                 {/* Social Proof Avatars */}
                 <div className="flex items-center gap-2">
                   <div className="flex -space-x-2 flex-shrink-0">
-                    <img
+                    <Image
                       src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&h=80&q=80"
                       alt="User avatar"
-                      className="w-7 h-7 rounded-full border-2 border-[#FDFCF9] object-cover"
+                      width={28}
+                      height={28}
+                      className="rounded-full border-2 border-[#FDFCF9] object-cover"
                     />
-                    <img
+                    <Image
                       src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&h=80&q=80"
                       alt="User avatar"
-                      className="w-7 h-7 rounded-full border-2 border-[#FDFCF9] object-cover"
+                      width={28}
+                      height={28}
+                      className="rounded-full border-2 border-[#FDFCF9] object-cover"
                     />
-                    <img
+                    <Image
                       src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&h=80&q=80"
                       alt="User avatar"
-                      className="w-7 h-7 rounded-full border-2 border-[#FDFCF9] object-cover"
+                      width={28}
+                      height={28}
+                      className="rounded-full border-2 border-[#FDFCF9] object-cover"
                     />
                   </div>
                   <span className="text-[10px] sm:text-[10.5px] font-semibold text-forest/80 leading-tight">
@@ -149,11 +156,15 @@ export default function DiscoveryGrid({ featuredProperty }: { featuredProperty: 
             </div>
 
             {/* Right Portrait Image (Live clean Arisa photo) */}
-            <img
-              src="/images/arisa_phone_live.webp"
-              alt="Arisa"
-              className="absolute bottom-0 right-0 h-[82%] sm:h-[86%] w-auto max-w-[44%] sm:max-w-[48%] object-contain object-bottom select-none pointer-events-none z-0"
-            />
+            <div className="absolute bottom-0 right-0 h-[82%] sm:h-[86%] w-[44%] sm:w-[48%] z-0">
+              <Image
+                src="/images/arisa_phone_live.webp"
+                alt="Arisa"
+                fill
+                sizes="(max-width: 768px) 30vw, 200px"
+                className="object-contain object-bottom select-none pointer-events-none"
+              />
+            </div>
           </div>
 
           {/* Right Column Stack (Cards 2 & 3) */}

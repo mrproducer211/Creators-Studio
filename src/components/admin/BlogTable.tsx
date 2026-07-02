@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { BlogPost } from "@/data/blogPosts";
+import Image from "next/image";
 
 export default function BlogTable({ posts }: { posts: BlogPost[] }) {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function BlogTable({ posts }: { posts: BlogPost[] }) {
             <tr key={p.slug} style={{ borderBottom: "1px solid #F0EAE0" }}>
               <td className="px-4 py-3">
                 <div className="flex items-center gap-3">
-                  {p.image && <img src={p.image} alt="" className="w-12 h-9 rounded object-cover flex-shrink-0" />}
+                  {p.image && <Image src={p.image} alt="" width={48} height={36} className="rounded object-cover flex-shrink-0" unoptimized />}
                   <div className="min-w-0">
                     <div className="text-[13px] font-semibold truncate" style={{ color: "#1A1A1A" }}>{p.title}</div>
                     <div className="text-[11px] truncate" style={{ color: "#999" }}>/blog/{p.slug}</div>

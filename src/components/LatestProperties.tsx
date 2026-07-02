@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useSaved } from "@/contexts/SavedContext";
 import { stripEmojis } from "@/lib/emoji";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -55,10 +56,12 @@ function MagCard({
       className="relative overflow-hidden rounded-2xl block no-underline group w-full h-full"
     >
       {property.coverImage && !imgErr ? (
-        <img
+        <Image
           src={property.coverImage}
           alt={stripEmojis(property.name)}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
           onError={() => setImgErr(true)}
         />
       ) : (

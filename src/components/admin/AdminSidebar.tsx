@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface NavItem {
   href:  string;
@@ -79,10 +80,12 @@ export default function AdminSidebar({ userName }: { userName: string }) {
     <aside className="flex flex-col h-full w-60 flex-shrink-0" style={{ background: "#1C3A2F", borderRight: "1px solid rgba(255,255,255,0.08)" }}>
       {/* Brand */}
       <Link href="/" className="flex items-center gap-2.5 px-5 py-5 no-underline" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-        <img
+        <Image
           src="/images/nhp-logo.webp"
           alt="NHP Logo"
-          className="w-9 h-9 object-contain rounded-lg"
+          width={36}
+          height={36}
+          className="object-contain rounded-lg"
         />
         <div>
           <div className="text-[13px] font-semibold" style={{ color: "#FFFFFF" }}>NHP Admin</div>

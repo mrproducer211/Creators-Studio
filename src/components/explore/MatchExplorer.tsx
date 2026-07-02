@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 import { PropertyCard, ListingType } from "@/types/property";
 import { NEIGHBORHOODS, Neighborhood, DESTINATIONS } from "@/data/neighborhoods";
 import POSTS from "@/data/blogPosts";
@@ -1345,10 +1346,12 @@ export default function MatchExplorer({ properties }: Props) {
 
             {/* Hero Banner with Personality */}
             <div className="rounded-3xl overflow-hidden relative mb-6 shadow-sm border border-[#E5E0D8]" style={{ height: "220px" }}>
-              <img
+              <Image
                 src={selectedNeighborhood.heroImage}
                 alt={selectedNeighborhood.name}
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 1200px) 100vw, 1000px"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent flex items-end p-6">
                 <div>

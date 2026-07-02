@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Bookmark, Bell, BarChart3, Heart, Home, AlertTriangle } from "lucide-react";
 
 export default function SignInClient({ googleEnabled }: { googleEnabled: boolean }) {
@@ -128,10 +129,12 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         style={{ width: 420, background: "#1C3A2F" }}
       >
         <Link href="/" className="flex items-center gap-3 no-underline">
-          <img
+          <Image
             src="/images/nhp-logo.webp"
             alt="NHP Logo"
-            className="w-10 h-10 object-contain rounded-xl"
+            width={40}
+            height={40}
+            className="object-contain rounded-xl"
           />
           <div>
             <div className="text-[15px] font-semibold" style={{ color: "#FFFFFF" }}>New Home Property</div>
@@ -165,10 +168,12 @@ export default function SignInClient({ googleEnabled }: { googleEnabled: boolean
         <div className="w-full max-w-[400px]">
           {/* Mobile logo */}
           <Link href="/" className="lg:hidden flex items-center justify-center gap-2 no-underline mb-8 mx-auto w-fit">
-            <img
+            <Image
               src="/images/nhp-logo.webp"
               alt="NHP Logo"
-              className="w-9 h-9 object-contain rounded-xl"
+              width={36}
+              height={36}
+              className="object-contain rounded-xl"
             />
             <span className="text-[15px] font-semibold" style={{ color: "#1C3A2F" }}>New Home Property</span>
           </Link>

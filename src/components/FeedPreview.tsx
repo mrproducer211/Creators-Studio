@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useSaved } from "@/contexts/SavedContext";
+import Image from "next/image";
 import { stripEmojis } from "@/lib/emoji";
 import { PropertyCard as PropertyType } from "@/types/property";
 
@@ -63,10 +64,12 @@ function PropertyCard({ property }: { property: PropertyType }) {
       {/* Image placeholder */}
       <div className="w-full h-[200px] relative overflow-hidden">
         {property.coverImage ? (
-          <img
+          <Image
             src={property.coverImage}
             alt={stripEmojis(property.name)}
-            className="w-full h-full object-cover"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover"
           />
         ) : (
           <div

@@ -23,6 +23,7 @@ import {
   TrainFront
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { compressAndConvertToWebp } from "@/lib/image-optimizer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { T_AGENT_DASHBOARD } from "@/data/agentTranslations";
@@ -588,10 +589,12 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
         {/* Desktop Logo Header */}
         <div className="hidden lg:block">
           <Link href="/" className="flex items-center gap-3 no-underline mb-8">
-            <img
+            <Image
               src="/images/nhp-logo.webp"
               alt="NHP Logo"
-              className="w-9 h-9 object-contain rounded-lg"
+              width={36}
+              height={36}
+              className="object-contain rounded-lg"
             />
             <div>
               <div className="text-[14px] font-semibold text-white">Agent Workspace</div>
@@ -1707,7 +1710,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                         <div className="border border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer relative overflow-hidden h-[120px] bg-white hover:border-[#C9A84C]" style={{ borderColor: "#E5E0D8" }}>
                           {coverImage ? (
                             <>
-                              <img src={coverImage} alt="Cover Preview" className="absolute inset-0 w-full h-full object-cover" />
+                              <Image src={coverImage} alt="Cover Preview" fill sizes="200px" className="object-cover" unoptimized />
                               <div className="absolute inset-0 bg-black/45 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                                 <button type="button" onClick={() => setCoverImage("")} className="px-2.5 py-1 bg-red-600 text-white text-[10px] font-bold rounded cursor-pointer border-none">Remove</button>
                               </div>
@@ -1736,7 +1739,7 @@ export default function AgentDashboardClient({ agent, initialProperties }: Agent
                           <div className="flex gap-1.5 mt-2 flex-wrap">
                             {extraImages.map((img, i) => (
                               <div key={i} className="w-10 h-10 rounded border overflow-hidden relative">
-                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                <Image src={img} alt="" fill sizes="40px" className="object-cover" unoptimized />
                                 <button type="button" onClick={() => setExtraImages(extraImages.filter((_, idx) => idx !== i))} className="absolute top-0 right-0 bg-red-600 text-white rounded-bl border-none cursor-pointer p-0.5 text-[8px]">×</button>
                               </div>
                             ))}

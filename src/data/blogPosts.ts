@@ -278,6 +278,108 @@ const POSTS: BlogPost[] = [
       label:   "Browse Family Properties",
     },
   },
+  /* ─────────────────────────────── POST 4 ─────────────────────────────── */
+  {
+    slug:        "bangkok-riverside-living-charoenkrung-vs-thonburi",
+    category:    "Neighbourhood Guide",
+    title:       "Bangkok Riverside Living: A Guide to Charoenkrung & Thonburi",
+    metaTitle:   "Charoenkrung vs Thonburi: Bangkok Riverside Living Guide | NHP",
+    metaDesc:    "Comparing the Creative District of Charoenkrung with Thonburi's quiet canals and riverside charm. Find the perfect neighborhood next to Chao Phraya river.",
+    excerpt:     "Explore the historic charm, art spaces, and waterfront lifestyle of Bangkok's Chao Phraya River bank communities. Here is our detailed neighborhood guide.",
+    image:       "/images/blog/charoenkrung_thonburi.webp",
+    readTime:    "6 min read",
+    publishedAt: "2026-06-12",
+    author:      "NHP Bangkok Team",
+    keywords:    ["Charoenkrung apartments", "Thonburi condos", "Chao Phraya river living", "Bangkok creative district", "Riverside Bangkok rentals"],
+    intro: "There is something magical about living next to the Chao Phraya River. While Sukhumvit represents modern retail and Sathorn represents corporate finance, Bangkok's historic riverside represents the soul of the city. For expats and locals looking to wake up to river views, two neighborhoods stand out: Charoenkrung on the east bank, and Thonburi on the west bank. Both offer a rich history, amazing street food, and scenic water views, but they cater to entirely different lifestyles.",
+    sections: [
+      {
+        heading: "The Vibe: Creative Art Hub vs Traditional River Life",
+        body: [
+          "Charoenkrung (BTS Saphan Taksin) is the heart of Bangkok's Creative District. It is a neighborhood where 19th-century colonial shophouses meet modern art galleries, hipster coffee roasters, and TCDC design hub. The vibe is artistic, inspiring, and lively, popular with photographers, designers, and foodies who love character and design.",
+          "Thonburi (BTS Krung Thon Buri) represents a quieter, more traditional way of life. Situated on the west bank of the river, it was historically a separate province and has preserved a network of canals, local fresh markets, and old family homes. The pace is slower, the streets are quieter, and it offers a peaceful residential feel.",
+        ],
+      },
+      {
+        heading: "Rental Market & Riverside Condominiums",
+        body: [
+          "Charoenkrung offers high-end luxury residences like Four Seasons Private Residences alongside historic shophouses. Rental prices are premium near the river, with modern 1-bedroom condos starting around ฿25,000–฿45,000 per month. If you move further inland, you can find charming renovated apartments for ฿18,000–฿25,000.",
+          "Thonburi is much more budget-friendly. Rents for modern high-rise condos near Krung Thon Buri BTS range from ฿14,000 to ฿28,000 per month, offering a substantial discount compared to downtown Bangkok. You get excellent sky facilities, rooftop pools, and quiet surroundings.",
+        ],
+      },
+      {
+        heading: "Lifestyle & Social Spaces",
+        body: [
+          "In Charoenkrung, lifestyle is about design libraries, art workshops, and speakeasies. Converted warehouses like Warehouse 30 house designer boutiques and galleries, while Sarnies cafe serves artisanal food. The neighborhood is also a legendary street food haven, especially in the Bangrak market area.",
+          "In Thonburi, life centers around community hubs like The Jam Factory, where you can read books, visit art fairs, and enjoy riverside dining in a relaxed green courtyard. The massive ICONSIAM mega-mall is also close by, providing world-class shopping and dining right on the riverbank.",
+        ],
+      },
+      {
+        heading: "Which One is Right for You?",
+        body: [
+          "Choose Charoenkrung if you want to live in the center of Bangkok's art and creative scene, you value historic architecture and walkable streets, and you want to be close to Sathorn's corporate towers while enjoying an independent hipster lifestyle.",
+          "Choose Thonburi if you want a quieter, local-oriented residential base, you want more space and modern condo facilities for a lower budget, you love peaceful river views, and you appreciate the slower charm of west-bank canal living.",
+        ],
+      },
+    ],
+    cta: {
+      heading: "Explore Riverside Condos & Rentals",
+      body:    "Browse properties for rent in Charoenkrung and Thonburi to find your riverside home.",
+      href:    "/explore",
+      label:   "Browse Properties",
+    },
+  },
+  /* ─────────────────────────────── POST 5 ─────────────────────────────── */
+  {
+    slug:        "living-near-bangkok-academic-retail-centers-chidlom-vs-sam-yan",
+    category:    "Neighbourhood Guide",
+    title:       "Siam to Sam Yan: Bangkok's Retail and Academic Hubs",
+    metaTitle:   "Chit Lom vs Sam Yan: Bangkok Living Comparison | NHP",
+    metaDesc:    "Comparing the luxury shopping district of Chit Lom/Ploenchit with the youth and tech innovation hub of Sam Yan. Find the right neighborhood for your lifestyle.",
+    excerpt:     "Two central districts representing the contrasting faces of Bangkok: ultra-luxury retail and youthful academic innovation. Here is our detailed expat guide.",
+    image:       "/images/blog/chidlom_sam_yan.webp",
+    readTime:    "5 min read",
+    publishedAt: "2026-06-18",
+    author:      "NHP Bangkok Team",
+    keywords:    ["Chit Lom apartments", "Sam Yan condos", "Central Embassy rentals", "Samyan Mitrtown", "Bangkok student housing"],
+    intro: "For expats and professionals relocating to central Bangkok, choosing the right neighborhood is often a trade-off between premium luxury and youthful convenience. If you want to be in the center of the action, two neighborhoods stand out: Chit Lom/Ploenchit to the east of Siam, and Sam Yan to the south. One is Bangkok's elite diplomatic and luxury retail district; the other is a vibrant university hub built for innovation, technology, and 24-hour study.",
+    sections: [
+      {
+        heading: "The Vibe: Elite Diplomacy vs Academic Innovation",
+        body: [
+          "Chit Lom and Ploenchit represent the pinnacle of prestige. Centered around Wireless Road and Ploenchit BTS, it is home to major foreign embassies, luxury hotels, and corporate skyscrapers. The streets are clean, wide, and lined with mature trees, offering a polished, diplomatic atmosphere.",
+          "Sam Yan (MRT Sam Yan) is a youthful, energetic sandbox next to Chulalongkorn University. Managed with a focus on education and tech, it features student dining lanes, digital co-working spaces, and green parks. The vibe is collaborative, innovative, and highly active.",
+        ],
+      },
+      {
+        heading: "Rental Market & Condominiums",
+        body: [
+          "Chit Lom is one of the most expensive areas in Bangkok. Rents for a luxury 1-bedroom condo start around ฿35,000 and can easily reach ฿80,000+ per month. Developments feature top-class design, sky pools, and concierge services, catering to diplomats and high-earning corporate directors.",
+          "Sam Yan offers excellent modern student and executive housing. Rents for a 1-bedroom condo range from ฿16,000 to ฿30,000 per month. The buildings are modern, feature shared study lounges, high security, and are designed for active city dwellers.",
+        ],
+      },
+      {
+        heading: "Convenience, Parks & Workspaces",
+        body: [
+          "Chit Lom offers ultimate retail convenience, with direct BTS walkway connections to Central Embassy, Central Chidlom, and Siam Paragon. It also provides easy access to the Sirat Expressway and is a short walk from the northern tip of Lumpini Park.",
+          "Sam Yan revolves around Samyan Mitrtown, a mixed-use mall famous for its 24-hour retail and workspace zone, perfect for study and remote work. The neighborhood also boasts the CU Centenary Park, a gorgeous green space that doubles as a modern flood-prevention system.",
+        ],
+      },
+      {
+        heading: "The Verdict: Which Suits You?",
+        body: [
+          "Choose Chit Lom if you have a premium housing budget, value diplomatic security and elite addresses, prioritize proximity to luxury retail malls, and want to live in a highly polished, shaded central environment.",
+          "Choose Sam Yan if you want a youthful, active neighborhood with a lower cost of living, you are a student or tech professional seeking 24-hour workspaces, and you want to be steps from the MRT subway and central green parks.",
+        ],
+      },
+    ],
+    cta: {
+      heading: "Find Your Central Bangkok Home",
+      body:    "Explore premium properties for rent in Chit Lom and Sam Yan.",
+      href:    "/explore",
+      label:   "Browse Properties",
+    },
+  },
 ];
 
 export default POSTS;

@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
+import Image from "next/image";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { LayoutDashboard, Heart, Settings, LogOut, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -41,10 +42,12 @@ export default function Navbar() {
       >
         {/* Mobile Logo: Logo Image + Name */}
         <Link href="/" className="flex md:hidden items-center gap-2 no-underline">
-          <img
+          <Image
             src="/images/nhp-logo.webp"
             alt="NHP Logo"
-            className="w-[30px] h-[30px] object-contain rounded-[6px]"
+            width={30}
+            height={30}
+            className="object-contain rounded-[6px]"
           />
           <div className="flex flex-col leading-none">
             <span className="text-[16px] font-extrabold tracking-[-0.5px]" style={{ color: "#1C3A2F" }}>New Home Property</span>
@@ -54,10 +57,12 @@ export default function Navbar() {
 
         {/* Desktop Logo: Logo Image + Name */}
         <Link href="/" className="hidden md:flex items-center gap-2.5 no-underline flex-shrink-0">
-          <img
+          <Image
             src="/images/nhp-logo.webp"
             alt="NHP Logo"
-            className="w-[38px] h-[38px] object-contain rounded-[8px]"
+            width={38}
+            height={38}
+            className="object-contain rounded-[8px]"
           />
           <div className="flex flex-col leading-tight">
             <span className="text-[15px] font-bold" style={{ color: "#1C3A2F" }}>New Home Property</span>
@@ -171,7 +176,7 @@ export default function Navbar() {
                   className="flex items-center gap-2 cursor-pointer border-none bg-transparent p-0"
                 >
                   {user.image ? (
-                    <img src={user.image} alt={user.name ?? ""} className="w-8 h-8 rounded-full object-cover" />
+                    <Image src={user.image} alt={user.name ?? ""} width={32} height={32} className="rounded-full object-cover" />
                   ) : (
                     <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: "#1C3A2F", color: "#C9A84C" }}>
                       {initials}

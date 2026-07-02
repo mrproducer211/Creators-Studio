@@ -829,5 +829,341 @@ export const NEIGHBORHOOD_GUIDES: Record<string, NeighborhoodGuide> = {
         answer: "Yes. The area is highly developed and populated by corporate offices, high-end hotels, and luxury condominiums. It is well-lit, active day and night, and has high security across all major compounds."
       }
     ]
+  },
+  "chidlom-ploenchit": {
+    slug: "chidlom-ploenchit",
+    name: "Chit Lom / Ploenchit",
+    longFormSections: [
+      {
+        heading: "The Embassy and Retail Royalty: Bangkok's Most Prestigious Enclave",
+        paragraphs: [
+          "Chit Lom and Ploenchit represent the absolute pinnacle of luxury and prestige in Bangkok. Centered along the intersection of Ploenchit Road and Wireless Road (Witthayu), this district is defined by towering grade-A office buildings, ultra-luxury high-rise residences, and major foreign embassies. The streets are wide, clean, and lined with mature trees, offering a polished urban aesthetic that feels exceptionally well-organized and exclusive. Strolling down Wireless Road, you will find beautiful park-like embassy grounds including the US and British embassies, which give the area a diplomatic, secure, and serene atmosphere.",
+          "By day, the area is home to diplomats, corporate executives, and luxury shoppers. The neighborhood's central location on the BTS line makes it highly accessible, while its upscale environment sets it apart from other central zones. It represents a premium standard of living, offering a peaceful sanctuary in the middle of a high-energy capital city."
+        ]
+      },
+      {
+        heading: "World-Class Luxury Retail and Gastronomy",
+        paragraphs: [
+          "For shopping and fine dining, Chit Lom and Ploenchit are unmatched. The area is home to Central Embassy and Central Chidlom, two of the most luxurious retail developments in Southeast Asia. Here, residents can browse world-class fashion houses, watch films in VIP screening rooms, and dine at Michelin-recommended restaurants. Gaysorn Village adds to the boutique retail experience, offering niche designers and luxury watchmakers.",
+          "The dining scene is equally extraordinary, featuring top-tier international cuisines, organic breakfast bistros, and sophisticated rooftop lounges. Whether you want to enjoy a quiet afternoon tea at the Park Hyatt or dine at a renowned chef's table, the district offers an array of premium options right at your doorstep."
+        ],
+        image: "/images/neighborhoods/chidlom_ploenchit.webp"
+      },
+      {
+        heading: "Ultra-Luxury Condominiums and Rental Market",
+        paragraphs: [
+          "The residential market in Chit Lom and Ploenchit is characterized by some of the most expensive and exclusive addresses in Thailand. Landmarks like 98 Wireless and luxury high-rises along Soi Ton Son offer world-class building facilities and concierge services. Rents for a modern one-bedroom condo typically start at ฿35,000 and can easily reach ฿80,000+ per month for larger or brand-new luxury units.",
+          "High-net-worth individuals and expat executives choose this area because of the privacy, security, and prestige it offers. Proximity to Lumpini Park adds a wellness aspect, allowing residents to escape to Bangkok's premier green space within minutes."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "What is the average rent for a 1-bedroom condo in Ploenchit?",
+        answer: "The average rent for a modern 1-bedroom condo ranges from ฿35,000 to ฿65,000 per month. Ultra-luxury projects or large penthouses can cost ฿90,000 to ฿150,000+ per month."
+      },
+      {
+        question: "Is Chit Lom walkable?",
+        answer: "Yes, it is highly walkable. Elevated skywalks connect Chit Lom and Ploenchit BTS stations directly to Central Chidlom, Central Embassy, Gaysorn Village, and even Siam Paragon, making shopping comfortable."
+      },
+      {
+        question: "Are there green spaces nearby?",
+        answer: "Yes, the southern end of Wireless Road connects directly to Lumpini Park, providing easy access to running tracks, lakes, and shaded lawns."
+      }
+    ]
+  },
+  nana: {
+    slug: "nana",
+    name: "Nana",
+    longFormSections: [
+      {
+        heading: "Sukhumvit's Global Hub: Energetic and Culturally Diverse",
+        paragraphs: [
+          "Nana is one of Bangkok's most vibrant and energetic districts, situated in the heart of Sukhumvit. The neighborhood is famous for its cultural diversity, featuring a mix of Middle Eastern dining, global street food, and a lively entertainment scene. Walking down the side streets (sois) of Nana, you will encounter a bustling atmosphere with street vendors, local shops, and boutique hotels operating around the clock.",
+          "While parts of Nana are known for active nightlife, it also offers great convenience for expats, featuring immediate access to the BTS Skytrain and major shopping centers nearby. It is a highly central hub that appeals to those who enjoy a lively, colorful urban environment."
+        ]
+      },
+      {
+        heading: "Global Dining Scene and Medical Tourism",
+        paragraphs: [
+          "Nana's food scene is a major draw, boasting the best selection of Middle Eastern, Indian, and African cuisines in Bangkok. Soi Arab (Sukhumvit Soi 3/1) is lined with authentic restaurants serving kebabs, hummuses, and traditional teas. In addition, there are plenty of western bakeries and local Thai street stalls.",
+          "The neighborhood is also home to Bumrungrad International Hospital, one of the world's premier medical tourism hubs. This brings a large flow of international visitors, medical staff, and patients to the area, creating a highly cosmopolitan environment."
+        ],
+        image: "/images/neighborhoods/nana.webp"
+      },
+      {
+        heading: "Housing Options and Rent Affordability",
+        paragraphs: [
+          "Nana offers a wide variety of housing options, ranging from older, spacious apartments to modern high-rise condominiums. Rent for a typical one-bedroom condo in Nana ranges from ฿22,000 to ฿40,000 per month. Older buildings in the sub-sois often offer excellent value-for-money, providing twice the space of newer Sukhumvit condos at similar price points.",
+          "Residents choose Nana because of its central location, allowing them to commute to the Asok business district in just 3 minutes by BTS or walk to central shopping centers with ease."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "Is Nana safe for expats?",
+        answer: "Yes. Nana is an extremely busy and well-lit commercial area with constant pedestrian traffic. While it has lively nightlife zones, residential buildings maintain high-security standards."
+      },
+      {
+        question: "What is Nana famous for?",
+        answer: "Nana is famous for its nightlife, its diverse Middle Eastern dining enclave (Soi Arab), and Bumrungrad International Hospital, one of the top medical centers in Southeast Asia."
+      },
+      {
+        question: "How far is Nana from Asok?",
+        answer: "It is only one BTS station away. The journey takes about 3 minutes, making it highly convenient for commuters working in the Asok office towers."
+      }
+    ]
+  },
+  "phra-khanong": {
+    slug: "phra-khanong",
+    name: "Phra Khanong",
+    longFormSections: [
+      {
+        heading: "The Hipster Enclave: Sukhumvit's Creative Residential Hub",
+        paragraphs: [
+          "Phra Khanong has emerged as one of Bangkok's coolest residential pockets, popular among creative expats, digital nomads, and young professionals. Located just past the trendy district of Ekkamai, Phra Khanong offers a relaxed hipster vibe that is less crowded and more affordable than its Sukhumvit neighbors. The neighborhood blends old shophouses with modern community hubs, creating a unique local character.",
+          "The area is highly walkable and has a distinct artistic feel, with street art, independent galleries, and creative workspaces scattered throughout the lanes. It offers a great quality of life with a strong sense of community."
+        ]
+      },
+      {
+        heading: "W District and the Local Food Scene",
+        paragraphs: [
+          "The focal point of Phra Khanong's social scene is W District, a popular outdoor food market featuring a wide range of international cuisines, local beers, and live music. It is a favorite gathering spot for expats and locals in the evenings, offering a relaxed environment to socialize and dine under the stars.",
+          "Beyond W District, the neighborhood's sub-sois host an array of artisanal cafes, craft beer bars, and cozy Japanese bistros. Coffee lovers will find plenty of specialty roasters serving excellent brews at reasonable prices."
+        ],
+        image: "/images/neighborhoods/phra_khanong.webp"
+      },
+      {
+        heading: "Value Housing and Co-working Infrastructure",
+        paragraphs: [
+          "When it comes to accommodation, Phra Khanong is known for providing excellent value. Rents for a modern one-bedroom condo range from ฿15,000 to ฿28,000 per month, which is significantly lower than Thong Lo or Ekkamai. The area also features high-quality co-working spaces and laptop-friendly cafes, making it a great base for remote workers.",
+          "Expats choose Phra Khanong because they can enjoy a trendy lifestyle with modern amenities while keeping their living costs moderate."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "What is the average rent in Phra Khanong?",
+        answer: "A modern 1-bedroom condo typically rents for ฿15,000 to ฿25,000 per month. Spacious older apartments or townhouses can range from ฿30,000 to ฿45,000 per month."
+      },
+      {
+        question: "What is W District?",
+        answer: "W District is an open-air food court and social hub in Phra Khanong. It features dozens of food stalls serving Thai, Italian, Mexican, and Japanese food, popular for casual dinners."
+      },
+      {
+        question: "Is Phra Khanong close to the city center?",
+        answer: "Yes, it is on the BTS Sukhumvit Line. A ride to Asok takes about 8 minutes, and Thong Lo is only two stops away."
+      }
+    ]
+  },
+  ladprao: {
+    slug: "ladprao",
+    name: "Ladprao",
+    longFormSections: [
+      {
+        heading: "The Bustling Northern Gate: Local Vibe and Transit Hub",
+        paragraphs: [
+          "Ladprao is a massive residential and commercial district in northern Bangkok. Known for its lively local atmosphere, it is a major transit gateway that connects the northern suburbs to the city center. The intersection of Ladprao Road and Phaholyothin Road is a bustling hub filled with shopping plazas, restaurants, and residential towers, popular with local office staff and students.",
+          "Unlike central Sukhumvit, Ladprao has a very Thai feel, offering a lower cost of living and a wide range of local experiences. The presence of parks and excellent transit links makes it a highly practical base."
+        ]
+      },
+      {
+        heading: "Retail Giants and Street Dining",
+        paragraphs: [
+          "Ladprao is a shopper's paradise, home to Central Plaza Lardprao and Union Mall. Central Plaza is a massive mall offering premium brands, restaurants, and cinemas, while Union Mall is famous for its affordable local fashion, vintage clothes, and beauty salons. The streets around the malls are lined with street food stalls serving cheap, delicious Thai dishes.",
+          "The dining scene here is extensive, with plenty of local cafes, garden restaurants, and craft beer bars catering to a young crowd. It offers a great mix of local street life and modern convenience."
+        ],
+        image: "/images/neighborhoods/ladprao.webp"
+      },
+      {
+        heading: "Budget-Friendly Modern Condominiums",
+        paragraphs: [
+          "Housing in Ladprao is highly affordable compared to the downtown core. Rent for a modern one-bedroom condo typically ranges from ฿12,000 to ฿20,000 per month. Many new projects feature excellent amenities, such as rooftop pools and gyms, located close to the BTS and MRT stations.",
+          "The area is highly recommended for students, young professionals, and expats who want to live in a modern building and commute easily while saving on rent."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "Is Ladprao far from central Bangkok?",
+        answer: "By transit, it is very accessible. The BTS skytrain from Ha Yaek Lat Phrao goes directly to Siam in about 20 minutes, while the MRT subway links directly to Asok."
+      },
+      {
+        question: "What is Union Mall famous for?",
+        answer: "Union Mall is famous for young fashion, offering hundreds of small boutiques selling clothes, shoes, and accessories at highly competitive prices."
+      },
+      {
+        question: "How is the rent in Ladprao?",
+        answer: "Highly budget-friendly. You can easily find modern 1-bedroom condos with good facilities for ฿12,000 to ฿18,000 per month."
+      }
+    ]
+  },
+  thonburi: {
+    slug: "thonburi",
+    name: "Thonburi",
+    longFormSections: [
+      {
+        heading: "Historic Riverside Charm: Quiet Living on the West Bank",
+        paragraphs: [
+          "Thonburi is a peaceful historic district located on the west bank of the Chao Phraya River. Historically a separate province, Thonburi has preserved a unique local identity with old wooden houses, winding canals, and historic temples. It offers a quiet, relaxed atmosphere that feels a world away from Sukhumvit's high-rises, while being connected to the city center by the BTS skytrain.",
+          "Residents enjoy the proximity to the river, historic sites, and a slower pace of life. It is an ideal neighborhood for those who appreciate local culture, quiet streets, and scenic river views."
+        ]
+      },
+      {
+        heading: "The Jam Factory and Creative Spots",
+        paragraphs: [
+          "The social and creative hub of Thonburi is The Jam Factory, a restored warehouse complex featuring an art gallery, an independent bookstore, a lifestyle shop, and a riverside cafe. It is a popular weekend spot for creatives, hosting regular design markets and art exhibitions.",
+          "The local dining scene is highly traditional, with street food vendors selling classic Thai desserts and fresh seafood. There are also several cozy coffee shops and riverside restaurants offering scenic views of the water."
+        ],
+        image: "/images/neighborhoods/thonburi.webp"
+      },
+      {
+        heading: "Riverside Residences and Local Values",
+        paragraphs: [
+          "Housing options in Thonburi range from modern high-rise condos near the BTS stations to quiet riverside apartments. The rent for a modern one-bedroom condo in Thonburi typically ranges from ฿14,000 to ฿28,000 per month, offering excellent value compared to properties across the river in Sathorn.",
+          "Expat families, retirees, and local professionals choose Thonburi because it offers a peaceful, scenic environment with fast BTS connectivity to the Sathorn CBD."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "Is Thonburi safe for families?",
+        answer: "Yes, Thonburi is a highly residential, quiet, and safe district. The local communities are friendly, and there is minimal nightlife noise."
+      },
+      {
+        question: "How do you commute from Thonburi to Sathorn?",
+        answer: "By BTS skytrain. Krung Thon Buri BTS station connects directly to Chong Nonsi (Sathorn) in 8 minutes, making it a very short and easy commute."
+      },
+      {
+        question: "What is The Jam Factory?",
+        answer: "The Jam Factory is a popular creative compound in Thonburi featuring converted warehouses that house a cafe, bookstore, design office, and art galleries."
+      }
+    ]
+  },
+  charoenkrung: {
+    slug: "charoenkrung",
+    name: "Charoenkrung",
+    longFormSections: [
+      {
+        heading: "Bangkok's Creative District: Where History Meets Art",
+        paragraphs: [
+          "Charoenkrung is one of Bangkok's most historic neighborhoods, containing the city's first paved road built in the 1860s. Over the last decade, this district has transformed into a vibrant Creative District, where colonial architecture and historic shophouses meet cutting-edge art spaces, independent design studios, and trendy cafes.",
+          "The neighborhood runs parallel to the Chao Phraya River, offering beautiful heritage streets, street art alleys, and a high-energy artistic community. It is a favorite destination for photographers, foodies, and creative minds."
+        ]
+      },
+      {
+        heading: "TCDC, Warehouse 30, and Art Galleries",
+        paragraphs: [
+          "The heart of Charoenkrung's design scene is the Thailand Creative & Design Center (TCDC), housed inside the monumental Grand Postal Building. It features a massive design library, workspaces, and regular exhibitions. Nearby, Warehouse 30 is a creative complex of converted World War II warehouses housing fashion shops, art galleries, and cafes.",
+          "The dining options here are legendary, ranging from 80-year-old street food stalls in Bangrak to chic Michelin-starred restaurants, hipster cocktail lounges, and specialty coffee roasters like Sarnies."
+        ],
+        image: "/images/neighborhoods/charoenkrung.webp"
+      },
+      {
+        heading: "Charming Heritage Housing and Riverside Living",
+        paragraphs: [
+          "Living in Charoenkrung offers a unique experience, with accommodation options ranging from renovated shophouses to modern luxury condos overlooking the river. Rent for a typical one-bedroom condo in Charoenkrung ranges from ฿20,000 to ฿45,000 per month, depending on river proximity.",
+          "Residents choose Charoenkrung because of its rich cultural history, active art scene, and strategic location close to the Sathorn CBD."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "What makes Charoenkrung a Creative District?",
+        answer: "Charoenkrung is home to TCDC (Thailand Creative & Design Center), Warehouse 30, many independent art galleries, and design studios inside restored historical buildings."
+      },
+      {
+        question: "Is there street food in Charoenkrung?",
+        answer: "Yes, the Bangrak section of Charoenkrung is famous for having some of Bangkok's oldest and most legendary street food, including roasted duck, crispy pork, and traditional Thai desserts."
+      },
+      {
+        question: "How is the transit access in Charoenkrung?",
+        answer: "Saphan Taksin BTS station is the primary transit link, connecting you to Sathorn in 5 minutes. The Sathorn Pier also offers river shuttle boats to ICONSIAM and historic areas."
+      }
+    ]
+  },
+  "sam-yan": {
+    slug: "sam-yan",
+    name: "Sam Yan",
+    longFormSections: [
+      {
+        heading: "The Academic Sandbox: A Youthful Hub of Innovation",
+        paragraphs: [
+          "Sam Yan is a dynamic neighborhood located adjacent to Chulalongkorn University. Managed largely by the university's property bureau, the district has transformed into a modern educational and technology sandbox. It blends historic Chinese-Thai shophouses with modern mixed-use developments, creative hubs, and green public spaces, giving it a highly energetic and youthful vibe.",
+          "The neighborhood is dominated by student life, drawing researchers, startup founders, and tech professionals who value its central location and innovative infrastructure."
+        ]
+      },
+      {
+        heading: "Samyan Mitrtown and 24-Hour Study Spaces",
+        paragraphs: [
+          "The main lifestyle center of Sam Yan is Samyan Mitrtown, a mixed-use mall featuring a dedicated 24-hour zone with cafes, co-working spaces, and supermarkets. It is a favorite study spot for students and remote workers. Nearby, the CU Centenary Park provides a beautifully designed green park that also serves as a water management system for the city.",
+          "The dining scene is highly diverse, featuring cheap student food courts, legendary street food lanes serving grilled pork and noodles, and trendy dessert shops."
+        ],
+        image: "/images/neighborhoods/sam_yan.webp"
+      },
+      {
+        heading: "Modern Student Housing and Central Access",
+        paragraphs: [
+          "Accommodations in Sam Yan consist of modern high-rise condominiums designed for students and young professionals. Rent for a typical one-bedroom condo in Sam Yan ranges from ฿16,000 to ฿30,000 per month. Many buildings offer shared study rooms, fitness facilities, and high security.",
+          "Residents choose Sam Yan because it is highly walkable, has access to MRT Blue Line transit, and is situated right next to the Chulalongkorn University campus and the Silom business district."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "Is Sam Yan good for remote workers?",
+        answer: "Yes. Sam Yan is extremely student and nomad-friendly, featuring 24-hour workspaces at Samyan Mitrtown and cafes like Too Fast To Sleep."
+      },
+      {
+        question: "What is Samyan Mitrtown?",
+        answer: "Samyan Mitrtown is a mixed-use shopping mall with a unique 24-hour commercial zone containing cafes, study areas, and a big supermarket, catering to students."
+      },
+      {
+        question: "Is Sam Yan close to Silom?",
+        answer: "Yes, it is adjacent. A ride from Sam Yan MRT to Silom MRT takes just 2 minutes (one stop), making it popular for office workers too."
+      }
+    ]
+  },
+  "khlong-san": {
+    slug: "khlong-san",
+    name: "Khlong San",
+    longFormSections: [
+      {
+        heading: "West Bank Luxury: Premium Riverside Living",
+        paragraphs: [
+          "Khlong San is an exclusive residential and retail district situated along the west bank of the Chao Phraya River. Once a quiet port area, Khlong San has evolved into a premier luxury destination, dominated by the massive ICONSIAM shopping mall and high-end riverside condominiums. The area offers scenic views of the river and the city skyline, with a polished, upscale environment.",
+          "The neighborhood appeals to luxury seekers, retirees, and families who enjoy scenic river views and high-end dining, while staying connected to the Sathorn CBD."
+        ]
+      },
+      {
+        heading: "ICONSIAM and Riverside Dining",
+        paragraphs: [
+          "The main landmark in Khlong San is ICONSIAM, a mega-mall featuring international luxury brands, Michelin-recommended dining, and the spectacular SookSiam indoor market. SookSiam recreates a traditional floating market inside the mall, serving street foods from all 77 Thai provinces.",
+          "The riverbank is lined with high-end hotels, riverside bistros, and garden cafes where residents can watch boat traffic while dining. It offers a spectacular waterfront lifestyle."
+        ],
+        image: "/images/neighborhoods/khlong_san.webp"
+      },
+      {
+        heading: "Luxury Condominiums and Gold Line Transit",
+        paragraphs: [
+          "The residential market in Khlong San consists of high-end high-rise condominiums with panoramic river views, private piers, and luxury facilities. Rent for a typical one-bedroom condo ranges from ฿25,000 to ฿60,000 per month. The Gold Line skytrain runs through the area, connecting ICONSIAM directly to the BTS network.",
+          "High-earning expats and retirees choose Khlong San because it offers a premium riverside lifestyle with top-class shopping, dining, and secure high-rise living."
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: "What is the primary landmark in Khlong San?",
+        answer: "ICONSIAM, one of the largest and most luxurious shopping centers in Thailand, situated directly on the banks of the Chao Phraya River."
+      },
+      {
+        question: "How do you commute from Khlong San to Sathorn?",
+        answer: "The BTS Gold Line skytrain connects Khlong San to the Silom Line at Krung Thon Buri, or you can take the ICONSIAM shuttle boat directly to Sathorn Pier in 10 minutes."
+      },
+      {
+        question: "Is Khlong San expensive?",
+        answer: "Rents for riverside properties are premium, ranging from ฿25,000 to ฿70,000+ per month. However, properties further inland in the local alleys are more moderately priced."
+      }
+    ]
   }
 };

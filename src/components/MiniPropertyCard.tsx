@@ -3,6 +3,7 @@
 import { useSaved } from "@/contexts/SavedContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { PropertyCard } from "@/types/property";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function MiniPropertyCard({ property }: { property: PropertyCard }) {
@@ -59,12 +60,20 @@ export default function MiniPropertyCard({ property }: { property: PropertyCard 
       </div>
 
       {/* Interior Image */}
-      <div className="w-full h-[120px] sm:h-[105px] rounded-lg overflow-hidden border transition-all duration-300 group-hover:shadow" style={{ borderColor: "#E5E0D8" }}>
-        <img
-          src={property.coverImage}
-          alt={property.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+      <div className="relative w-full h-[120px] sm:h-[105px] rounded-lg overflow-hidden border transition-all duration-300 group-hover:shadow" style={{ borderColor: "#E5E0D8" }}>
+        {property.coverImage ? (
+          <Image
+            src={property.coverImage}
+            alt={property.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 200px"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center" style={{ background: "linear-gradient(135deg,#254D3E,#1C3A2F)" }}>
+            <span className="text-xl font-bold" style={{ color: "rgba(255,255,255,0.08)" }}>NHP</span>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -10,7 +10,17 @@ export const STANDARD_AREAS = [
   "Rama 9",
   "Bang Na",
   "Huai Khwang",
-  "Phaya Thai"
+  "Phaya Thai",
+  "Chatuchak",
+  "Rama 4",
+  "Chit Lom / Ploenchit",
+  "Nana",
+  "Phra Khanong",
+  "Ladprao",
+  "Thonburi",
+  "Charoenkrung",
+  "Sam Yan",
+  "Khlong San"
 ];
 
 const AREA_MAPPING: Record<string, string> = {
@@ -75,6 +85,42 @@ const AREA_MAPPING: Record<string, string> = {
   // Sam Yan mappings
   "samyan": "Sam Yan",
   "sam yan": "Sam Yan",
+  "chula": "Sam Yan",
+
+  // Chit Lom / Ploenchit mappings
+  "chidlom": "Chit Lom / Ploenchit",
+  "chit lom": "Chit Lom / Ploenchit",
+  "ploenchit": "Chit Lom / Ploenchit",
+  "plonchit": "Chit Lom / Ploenchit",
+  "wireless road": "Chit Lom / Ploenchit",
+  "wireless rd": "Chit Lom / Ploenchit",
+
+  // Nana mappings
+  "nana": "Nana",
+
+  // Phra Khanong mappings
+  "phra khanong": "Phra Khanong",
+  "phrakhanong": "Phra Khanong",
+
+  // Ladprao mappings
+  "ladprao": "Ladprao",
+  "lat phrao": "Ladprao",
+  "latphrao": "Ladprao",
+
+  // Thonburi mappings
+  "thonburi": "Thonburi",
+  "thon buri": "Thonburi",
+
+  // Charoenkrung mappings
+  "charoenkrung": "Charoenkrung",
+  "charoen krung": "Charoenkrung",
+  "bangrak": "Charoenkrung",
+  "bang rak": "Charoenkrung",
+
+  // Khlong San mappings
+  "khlong san": "Khlong San",
+  "khlongsan": "Khlong San",
+  "iconsiam": "Khlong San",
 };
 
 /**

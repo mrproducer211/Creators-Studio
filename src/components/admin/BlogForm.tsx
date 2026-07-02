@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { BlogPost, BlogSection } from "@/data/blogPosts";
 import Link from "next/link";
+import Image from "next/image";
 import { compressAndConvertToWebp } from "@/lib/image-optimizer";
 import { Camera, AlertTriangle } from "lucide-react";
 
@@ -182,7 +183,7 @@ export default function BlogForm({ initial, isNew }: { initial?: BlogPost; isNew
                 </div>
               </Field>
               {state.image && (
-                <img src={state.image} alt="Cover Preview" className="mt-2 h-16 rounded-lg border object-cover" />
+                <Image src={state.image} alt="Cover Preview" width={100} height={64} className="mt-2 h-16 rounded-lg border object-cover" unoptimized />
               )}
             </div>
           </div>

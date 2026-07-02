@@ -1,6 +1,7 @@
 "use client";
 
 import { PropertyCard } from "@/types/property";
+import Image from "next/image";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { Heart, MapPin } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
@@ -57,10 +58,12 @@ export default function SavedPanel({ saved, onClose, onRemove }: Props) {
                 >
                   {/* Mini image */}
                   {p.coverImage ? (
-                    <img
+                    <Image
                       src={p.coverImage}
                       alt={p.name}
-                      className="w-16 h-16 rounded-xl flex-shrink-0 object-cover"
+                      width={64}
+                      height={64}
+                      className="rounded-xl flex-shrink-0 object-cover"
                     />
                   ) : (
                     <div
@@ -71,10 +74,12 @@ export default function SavedPanel({ saved, onClose, onRemove }: Props) {
                           : "linear-gradient(135deg,#8B6914,#C9A84C)",
                       }}
                     >
-                      <img
+                      <Image
                         src="/images/nhp-logo.webp"
                         alt="NHP Logo"
-                        className="w-8 h-8 object-contain opacity-30"
+                        width={32}
+                        height={32}
+                        className="object-contain opacity-30"
                       />
                     </div>
                   )}

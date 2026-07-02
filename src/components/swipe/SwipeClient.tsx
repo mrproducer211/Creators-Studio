@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { PropertyCard, ListingType } from "@/types/property";
 import { SlidersHorizontal, X, Heart, MapPin, Undo2, PartyPopper, Bed, ShowerHead, Maximize2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { stripEmojis } from "@/lib/emoji";
 import SwipeCard from "./SwipeCard";
 import SavedPanel from "./SavedPanel";
@@ -105,10 +106,12 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
       <div className="hidden md:flex flex-col justify-between px-8 py-8 flex-shrink-0" style={{ width: 260, background: "rgba(0,0,0,0.3)", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
         <div>
           <Link href="/" className="flex items-center gap-2 no-underline mb-8">
-            <img
+            <Image
               src="/images/nhp-logo.webp"
               alt="NHP Logo"
-              className="w-9 h-9 object-contain rounded-xl"
+              width={36}
+              height={36}
+              className="object-contain rounded-xl"
             />
             <div>
               <div className="text-[13px] font-semibold" style={{ color: "#FFFFFF" }}>{ts.swipe}</div>
@@ -239,10 +242,12 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
           {/* Mobile logo and search location badge */}
           <div className="md:hidden flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2 no-underline">
-              <img
+              <Image
                 src="/images/nhp-logo.webp"
                 alt="NHP Logo"
-                className="w-8 h-8 object-contain rounded-lg"
+                width={32}
+                height={32}
+                className="object-contain rounded-lg"
               />
               <span className="text-[13px] font-semibold" style={{ color: "rgba(255,255,255,0.7)" }}>{ts.swipe}</span>
             </Link>
@@ -371,9 +376,15 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
       {/* ─── DESKTOP RIGHT PANEL (current card info) ── */}
       {current && (
         <div className="hidden md:flex flex-col justify-center px-8 py-8 flex-shrink-0" style={{ width: 300, background: "rgba(0,0,0,0.2)", borderLeft: "1px solid rgba(255,255,255,0.06)" }}>
-          <div className="rounded-2xl overflow-hidden mb-4" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div className="relative h-40 rounded-2xl overflow-hidden mb-4" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
             {current.coverImage ? (
-              <img src={current.coverImage} alt={current.name} className="w-full h-40 object-cover" />
+              <Image
+                src={current.coverImage}
+                alt={current.name}
+                fill
+                sizes="300px"
+                className="object-cover"
+              />
             ) : (
               <div className="w-full h-40 flex items-center justify-center" style={{ background: "linear-gradient(135deg,#254D3E,#1C3A2F)" }}>
                 <span className="text-3xl font-black" style={{ color: "rgba(255,255,255,0.06)" }}>NHP</span>

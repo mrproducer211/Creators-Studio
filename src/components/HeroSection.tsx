@@ -379,6 +379,7 @@ function DesktopHero({
             {/* Thumbnail */}
             <div
               style={{
+                position: "relative",
                 width: 60,
                 height: 60,
                 borderRadius: 10,
@@ -387,10 +388,12 @@ function DesktopHero({
               }}
             >
               {featured.coverImage ? (
-                <img
+                <Image
                   src={featured.coverImage}
                   alt=""
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  fill
+                  sizes="60px"
+                  style={{ objectFit: "cover" }}
                 />
               ) : (
                 <div

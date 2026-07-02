@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -129,7 +130,14 @@ export default function SwipeCard({ property, index, total, onSwipe }: Props) {
       {/* Image / gradient */}
       <div className="absolute inset-0" style={{ background: gradient }}>
         {property.coverImage && (
-          <img src={property.coverImage} alt={property.name} className="w-full h-full object-cover" />
+          <Image
+            src={property.coverImage}
+            alt={property.name}
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 400px"
+            className="object-cover"
+          />
         )}
         {/* Watermark */}
         <span

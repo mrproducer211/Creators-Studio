@@ -8,6 +8,7 @@ import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext";
 import { useSaved } from "@/contexts/SavedContext";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import Link from "next/link";
+import Image from "next/image";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import dynamic from "next/dynamic";
 import { StoredCommuteHub } from "@/lib/store/commuteHubs";
@@ -578,10 +579,12 @@ function PlacePhotoCard({ place, property, getDirectionsUrlFn }: PlacePhotoCardP
         />
       )}
 
-      <img
+      <Image
         src={imgSrc}
         alt={place.name}
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        fill
+        sizes="(max-width: 768px) 100vw, 300px"
+        className="object-cover transition-transform duration-500 group-hover:scale-110"
         style={{ opacity: imageLoaded ? 1 : 0, transition: "opacity 0.4s" }}
         onLoad={() => setImageLoaded(true)}
         onError={() => {
@@ -832,10 +835,12 @@ function Gallery({
                 }}
               >
                 {!imgErrors[i] && (
-                  <img
+                  <Image
                     src={src}
                     alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: i })}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 20vw, 80px"
+                    className="object-cover"
                     onError={() => setImgErrors((e) => ({ ...e, [i]: true }))}
                   />
                 )}
@@ -870,10 +875,13 @@ function Gallery({
           {(rawImages.length > 0 ? rawImages : [""]).map((src, idx) => (
             <div key={idx} className="w-full h-full flex-shrink-0 relative">
               {src && !imgErrors[idx] ? (
-                <img
+                <Image
                   src={src}
                   alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: idx })}
-                  className="w-full h-full object-cover"
+                  fill
+                  priority={idx === 0}
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  className="object-cover"
                   onError={() => setImgErrors((e) => ({ ...e, [idx]: true }))}
                 />
               ) : (
@@ -974,7 +982,14 @@ function Gallery({
                 }}
               >
                 {!imgErrors[i] && (
-                  <img src={src} alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: i })} className="absolute inset-0 w-full h-full object-cover" onError={() => setImgErrors((e) => ({ ...e, [i]: true }))} />
+                  <Image
+                    src={src}
+                    alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: i })}
+                    fill
+                    sizes="(max-width: 768px) 25vw, 100px"
+                    className="object-cover"
+                    onError={() => setImgErrors((e) => ({ ...e, [i]: true }))}
+                  />
                 )}
                 {isLastWithExtra && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "rgba(28,58,47,0.75)" }}>
@@ -1013,10 +1028,12 @@ function Gallery({
             onTouchEnd={onTouchEnd}
           >
             {rawImages[active % (rawImages.length || 1)] && (
-              <img 
+              <Image 
                 src={rawImages[active % (rawImages.length || 1)]} 
                 alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: active })} 
-                className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+                fill
+                sizes="(max-width: 1200px) 100vw, 1200px"
+                className="object-contain rounded-xl shadow-2xl"
               />
             )}
 
@@ -1176,7 +1193,14 @@ function SimilarCard({ property }: { property: PropertyCard }) {
     <a href={`/property/${property.slug}`} className="no-underline rounded-2xl overflow-hidden block group" style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}>
       <div className="relative h-36 overflow-hidden" style={{ background: "#1C3A2F" }}>
         {property.coverImage && !imgErr ? (
-          <img src={property.coverImage} alt={getDescriptiveAltText({ bedrooms: property.bedrooms, propertyType: property.propertyType, listingType: property.listingType, area: property.area, index: 0 })} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onError={() => setImgErr(true)} />
+          <Image
+            src={property.coverImage}
+            alt={getDescriptiveAltText({ bedrooms: property.bedrooms, propertyType: property.propertyType, listingType: property.listingType, area: property.area, index: 0 })}
+            fill
+            sizes="(max-width: 768px) 100vw, 300px"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={() => setImgErr(true)}
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center"><span className="text-3xl font-black" style={{ color: "rgba(255,255,255,0.08)" }}>NHP</span></div>
         )}

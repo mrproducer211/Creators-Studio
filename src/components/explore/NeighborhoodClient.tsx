@@ -9,10 +9,35 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSaved } from "@/contexts/SavedContext";
 import { T_NEIGHBORHOOD } from "@/data/neighborhoodTranslations";
 import Link from "next/link";
+import Image from "next/image";
 import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
 
-
+function VibeCard({ card }: { card: { title: string; subtitle: string; image: string } }) {
+  const [src, setSrc] = useState(card.image);
+  return (
+    <Image
+      src={src}
+      alt={card.title}
+      fill
+      sizes="(max-width: 768px) 160px, 250px"
+      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+      onError={() => {
+        if (src === card.image && card.image.includes("/images/lifestyles/")) {
+          if (card.title.toLowerCase().includes("cafe")) {
+            setSrc("https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&auto=format&q=80");
+          } else if (card.title.toLowerCase().includes("dining")) {
+            setSrc("https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&auto=format&q=80");
+          } else if (card.title.toLowerCase().includes("nightlife")) {
+            setSrc("https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=500&auto=format&q=80");
+          } else {
+            setSrc("https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&auto=format&q=80");
+          }
+        }
+      }}
+    />
+  );
+}
 
 interface Props {
   neighborhood: Neighborhood;
@@ -249,6 +274,182 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       { title: "Building Vibe", subtitle: "Ultra-modern", image: "/images/neighborhoods/rama_4_condo.webp" }
     ],
     lifestyleDesc: "A core central corridor experiencing a monumental modern renaissance. Rama 4 connects Bangkok's primary corporate CBD (Sathorn and Silom) directly with the main retail strip of Sukhumvit. The neighborhood operates at a fast-forward, highly professional pace, driven by a wave of brand-new corporate skyscrapers, commercial parks, and luxury sky residences. Centered around the Lumpini and Queen Sirikit MRT stations, it serves as the ultimate base for business executives and global professionals."
+  },
+  "chidlom-ploenchit": {
+    district: "Pathum Wan",
+    btsCode: "Chit Lom (E1) / Ploenchit (E2)",
+    airportTime: "30–40 min",
+    vibe: "Ultra-luxury, Prestigious, Elite",
+    bestFor: "High-net-worth Individuals, Diplomats, Corporate Leaders",
+    pros: [
+      "Access to Bangkok's most exclusive retail landmarks (Central Embassy)",
+      "Beautiful Wireless Road embassy row with park-like greenery",
+      "Ultimate central location on the BTS Sukhumvit line",
+      "Extremely secure and well-managed residential developments",
+      "Immediate proximity to top international restaurants and tea lounges",
+      "Adjacent access to Lumpini Park for outdoor sports"
+    ],
+    vibeCards: [
+      { title: "Embassy Row", subtitle: "Prestigious", image: "/images/neighborhoods/chidlom_ploenchit.webp" },
+      { title: "Luxury Retail", subtitle: "World-class", image: "/images/lifestyles/sukhumvit_dining.webp" },
+      { title: "Vibe", subtitle: "Elite & Shaded", image: "/images/lifestyles/sathorn_parks.webp" },
+      { title: "Dining", subtitle: "Fine Gastronomy", image: "/images/lifestyles/sathorn_dining.webp" }
+    ],
+    lifestyleDesc: "Bangkok's most prestigious central district, where global diplomacy, corporate power, and ultra-luxury living intersect. Lined with the grand estates of foreign embassies and towering Grade-A commercial towers, the area maintains a highly polished, secure, and exclusive atmosphere. It is the ultimate playground for high-net-worth individuals and corporate directors who demand the finest residential developments, Michelin-standard dining, and covered access to elite retail hubs like Central Embassy, while remaining minutes from Lumpini Park."
+  },
+  nana: {
+    district: "Watthana",
+    btsCode: "Nana (E3)",
+    airportTime: "30–40 min",
+    vibe: "Diverse, High-energy, International",
+    bestFor: "Young Professionals, Solo Travelers, Nightlife Seekers",
+    pros: [
+      "Central Sukhumvit location with instant BTS connection",
+      "Vibrant international food district including Soi Arab",
+      "Immediate access to Bumrungrad International Hospital",
+      "Abundant nightlife, rooftop bars, and active street markets",
+      "More spacious older condo layouts available at great prices",
+      "Close to major central office parks (Asok / Ploenchit)"
+    ],
+    vibeCards: [
+      { title: "Food Scene", subtitle: "Global Cuisines", image: "/images/lifestyles/on_nut_dining.webp" },
+      { title: "Nightlife", subtitle: "High Energy", image: "/images/lifestyles/asok_nightlife.webp" },
+      { title: "Healthcare", subtitle: "Bumrungrad Hub", image: "/images/arisa_phone_live.webp" },
+      { title: "Transit", subtitle: "BTS Accessible", image: "/images/lifestyles/chatuchak_transit.webp" }
+    ],
+    lifestyleDesc: "A bustling and highly cosmopolitan transit hub in the heart of Sukhumvit. Nana is celebrated for its incredible cultural diversity, offering some of the best Middle Eastern and international culinary enclaves in the city. By day, it is a key commercial zone close to Bumrungrad Hospital; by night, it transforms into an energetic entertainment center with lively street markets and rooftop lounges. It is popular with active urbanites who want central convenience, affordable space, and a non-stop city pulse."
+  },
+  "phra-khanong": {
+    district: "Watthana / Khlong Toei",
+    btsCode: "Phra Khanong (E8)",
+    airportTime: "30–40 min",
+    vibe: "Hip, Artistic, Community-centric",
+    bestFor: "Digital Nomads, Creatives, Budget-conscious Expats",
+    pros: [
+      "Trendy open-air social center at W District",
+      "Growing collection of indie cafes and artisan bakeries",
+      "Significantly lower rents compared to Thong Lo and Ekkamai",
+      "Active, friendly community of international designers and artists",
+      "Excellent BTS skytrain connectivity to downtown core",
+      "Relaxed residential sub-sois with minimal high-rise traffic"
+    ],
+    vibeCards: [
+      { title: "Creative Vibe", subtitle: "Hipster Pockets", image: "/images/lifestyles/ari_cafe.webp" },
+      { title: "Social Hub", subtitle: "W District", image: "/images/lifestyles/on_nut_nightlife.webp" },
+      { title: "Value", subtitle: "Outstanding Rent", image: "/images/lifestyles/on_nut_cafe.webp" },
+      { title: "Art Scene", subtitle: "Indie Galleries", image: "/images/lifestyles/ari_dining.webp" }
+    ],
+    lifestyleDesc: "A hip and creative residential sanctuary that serves as the artsy younger sibling to Thong Lo and Ekkamai. Phra Khanong has quickly become a favorite base for digital nomads, tech freelancers, and international creatives due to its unique blend of local Thai charm and modern hipster venues. The neighborhood revolves around community spaces like W District, where residents gather for casual dinners, draft beers, and live music, alongside a thriving network of independent roasters and co-working spots."
+  },
+  ladprao: {
+    district: "Chatuchak / Lat Phrao",
+    btsCode: "Ha Yaek Lat Phrao (N9) / Phahon Yothin MRT (BL14)",
+    airportTime: "30–40 min",
+    vibe: "Local, Bustling, Commuter Hub",
+    bestFor: "Students, Commuters, Budget-conscious Expats",
+    pros: [
+      "Outstanding dual-line transit (BTS Skytrain and MRT Subway)",
+      "Excellent local retail at Central Plaza Ladprao and Union Mall",
+      "Highly affordable cost of living and food choices",
+      "Great selection of modern high-rise condos with rooftop pools",
+      "Close to major university campuses and public park zones",
+      "Lively local night markets and authentic street food hubs"
+    ],
+    vibeCards: [
+      { title: "Shopping Malls", subtitle: "Union & Central", image: "/images/neighborhoods/chatuchak_market.webp" },
+      { title: "Transit hub", subtitle: "Dual-Line Access", image: "/images/lifestyles/chatuchak_transit.webp" },
+      { title: "Affordability", subtitle: "Exceptional Value", image: "/images/arisa_phone_live.webp" },
+      { title: "Local Life", subtitle: "Authentic Thai", image: "/images/lifestyles/on_nut_dining.webp" }
+    ],
+    lifestyleDesc: "A high-energy residential and retail corridor in northern Bangkok. Centered around a massive BTS and MRT transit interchange, Ladprao is a strategic home base for commuters, university students, and young professionals. The area feels genuinely local, featuring major shopping landmarks like Central Plaza Ladprao and Union Mall, cheap street dining, and pocket cafes. It offers a highly practical lifestyle where you can live in a modern building and travel anywhere in the city at a fraction of downtown prices."
+  },
+  thonburi: {
+    district: "Thon Buri",
+    btsCode: "Krung Thon Buri (G1)",
+    airportTime: "35–45 min",
+    vibe: "Peaceful, Historic, Traditional",
+    bestFor: "Retirees, Long-term Families, Local-leaning Expats",
+    pros: [
+      "Quiet residential alleys and canals on the west bank",
+      "Beautiful creative spaces like The Jam Factory",
+      "Affordable rental properties next to the river",
+      "Fast, direct BTS Skytrain access to the Sathorn CBD",
+      "Rich cultural history with historic temples and heritage streets",
+      "Proximity to massive ICONSIAM riverside shopping mall"
+    ],
+    vibeCards: [
+      { title: "Riverside Vibe", subtitle: "Quiet & Scenic", image: "/images/neighborhoods/thonburi.webp" },
+      { title: "Creative Hub", subtitle: "The Jam Factory", image: "/images/lifestyles/ari_cafe.webp" },
+      { title: "Transit", subtitle: "Direct BTS to CBD", image: "/images/lifestyles/chatuchak_transit.webp" },
+      { title: "History", subtitle: "Temples & Alleys", image: "/images/lifestyles/sathorn_parks.webp" }
+    ],
+    lifestyleDesc: "A peaceful and culturally rich historic sanctuary situated on the west bank of the Chao Phraya River. Historically a capital in its own right, Thonburi preserves a relaxed, neighborhood-centric atmosphere characterized by winding canals, low-rise homes, and centuries-old temples. With creative spaces like The Jam Factory offering art, books, and weekend design markets, it appeals to those seeking local character and room to breathe, while being just an 8-minute skytrain ride from Sathorn."
+  },
+  charoenkrung: {
+    district: "Bang Rak / Sathon",
+    btsCode: "Saphan Taksin (S6)",
+    airportTime: "35–45 min",
+    vibe: "Historic, Cultural, Artistic",
+    bestFor: "Art Lovers, Creative Professionals, Culinary Foodies",
+    pros: [
+      "Epicenter of Bangkok's historic Creative District",
+      "Access to design libraries and archives at TCDC Grand Postal",
+      "Legendary street food history combined with Michelin dining",
+      "Artisanal warehouse galleries and design hubs (Warehouse 30)",
+      "Scenic riverside connectivity and shuttle boats",
+      "Charming colonial-era architecture and shophouse lanes"
+    ],
+    vibeCards: [
+      { title: "Art District", subtitle: "TCDC & Galleries", image: "/images/neighborhoods/charoenkrung.webp" },
+      { title: "Coffee & Dining", subtitle: "Restored Shophouses", image: "/images/lifestyles/ekkamai_cafe.webp" },
+      { title: "Riverside", subtitle: "Saphan Taksin Hub", image: "/images/lifestyles/sathorn_parks.webp" },
+      { title: "Street Food", subtitle: "Bangrak Classics", image: "/images/lifestyles/on_nut_dining.webp" }
+    ],
+    lifestyleDesc: "A mesmerizing blend of historic heritage and forward-looking art. As Bangkok's oldest paved road, Charoenkrung is defined by its colonial architecture, ancient shophouses, and riverside piers. Reborn as the city's Creative District, it is home to the Thailand Creative & Design Center (TCDC), art hubs like Warehouse 30, and speakeasy bars. It is the ultimate base for creatives and food lovers who want an inspiring, walkable area full of history and character next to Sathon."
+  },
+  "sam-yan": {
+    district: "Pathum Wan",
+    btsCode: "Sam Yan MRT (BL27)",
+    airportTime: "30–40 min",
+    vibe: "Academic, Youthful, Emerging Tech",
+    bestFor: "Students, Tech Founders, Researchers, Couples",
+    pros: [
+      "Immediate proximity to Chulalongkorn University campus",
+      "Modern 24-hour study and retail facilities at Samyan Mitrtown",
+      "Gorgeous green spaces at CU Centenary Park",
+      "Abundant student food options and affordable dining lanes",
+      "Direct MRT Blue Line subway connection to central core",
+      "Highly walkable, clean streets with modern city layout"
+    ],
+    vibeCards: [
+      { title: "University Vibe", subtitle: "Youthful & Active", image: "/images/neighborhoods/sam_yan.webp" },
+      { title: "Study Spaces", subtitle: "24-Hour Nomading", image: "/images/lifestyles/ari_cafe.webp" },
+      { title: "Green Space", subtitle: "CU Centenary Park", image: "/images/neighborhoods/rama_4_park.webp" },
+      { title: "Affordability", subtitle: "Student Budgets", image: "/images/arisa_phone_live.webp" }
+    ],
+    lifestyleDesc: "A youthful and innovative hub of academic and technological activity next to Chulalongkorn University. Sam Yan has evolved into a smart city sandbox, combining digital workspaces, modern high-rises, and green parks like the CU Centenary Park. It is populated by university students, researchers, and tech startups, creating a fast-paced but collaborative environment with plenty of 24-hour convenience, student eateries, and fast subway access to Silom."
+  },
+  "khlong-san": {
+    district: "Khlong San",
+    btsCode: "Charoen Nakhon (Gold Line)",
+    airportTime: "35–45 min",
+    vibe: "Scenic, Luxury, Riverside",
+    bestFor: "Riverside Lovers, Luxury Renters, Retirees",
+    pros: [
+      "Access to ICONSIAM luxury mega-mall and SookSiam market",
+      "Panoramic views of the Chao Phraya River and city skyline",
+      "BTS Gold Line skytrain connection directly to Silom line",
+      "Premium, high-security luxury high-rises with private piers",
+      "World-class waterfront dining and luxury hotel options",
+      "Relaxed, scenic atmosphere away from central traffic jams"
+    ],
+    vibeCards: [
+      { title: "ICONSIAM", subtitle: "Luxury & Dining", image: "/images/neighborhoods/khlong_san.webp" },
+      { title: "River View", subtitle: "Panoramic Views", image: "/images/neighborhoods/thonburi.webp" },
+      { title: "Gold Line", subtitle: "Modern Transit", image: "/images/lifestyles/chatuchak_transit.webp" },
+      { title: "Luxury Condos", subtitle: "Private Piers", image: "/images/neighborhoods/rama_4_condo.webp" }
+    ],
+    lifestyleDesc: "An exclusive riverside enclave on the west bank of the Chao Phraya, defined by premium waterfront living and global-scale retail. Khlong San revolves around the landmark ICONSIAM mega-mall, offering world-class luxury shopping and dining options. It is home to upscale high-rise condos with private boat docks and resort facilities, providing a scenic, secure, and relaxed lifestyle for affluent expats, retirees, and riverside lovers who commute via the Gold Line skytrain."
   }
 };
 
@@ -461,10 +662,13 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
       >
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          <img
+          <Image
             src={neighborhood.heroImage}
             alt={neighborhood.name}
-            className="w-full h-full object-cover"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
           {/* Shaded overlay */}
           <div className="absolute inset-0 hero-gradient-overlay" />
@@ -686,26 +890,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                     key={card.title}
                     className="relative rounded-xl overflow-hidden shadow-sm aspect-[4/3] group cursor-pointer w-[160px] min-w-[160px] flex-shrink-0 md:w-auto md:min-w-0 md:flex-shrink"
                   >
-                    <img
-                      src={card.image}
-                      alt={card.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        if (target.src.includes("/images/lifestyles/")) {
-                          // Fallback to Unsplash images matching the card type if the local custom image doesn't exist yet
-                          if (card.title.toLowerCase().includes("cafe")) {
-                            target.src = "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500&auto=format&q=80";
-                          } else if (card.title.toLowerCase().includes("dining")) {
-                            target.src = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&auto=format&q=80";
-                          } else if (card.title.toLowerCase().includes("nightlife")) {
-                            target.src = "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=500&auto=format&q=80";
-                          } else {
-                            target.src = "https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&auto=format&q=80";
-                          }
-                        }
-                      }}
-                    />
+                    <VibeCard card={card} />
                     {/* Gradient overlay */}
                     <div
                       className="absolute inset-0"
@@ -800,11 +985,19 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                     className="property-card-item w-full min-w-0 h-[140px] md:w-[320px] md:min-w-[320px] md:h-[240px] rounded-2xl overflow-hidden relative border shadow-sm group hover:shadow-md transition-shadow"
                     style={{ borderColor: "#EDE8DF", background: "#1C3A2F" }}
                   >
-                    <img
-                      src={prop.coverImage}
-                      alt={prop.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
+                    {prop.coverImage ? (
+                      <Image
+                        src={prop.coverImage}
+                        alt={prop.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 320px"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center" style={{ background: "linear-gradient(135deg,#254D3E,#1C3A2F)" }}>
+                        <span className="text-white/10 font-bold select-none text-[36px]">NHP</span>
+                      </div>
+                    )}
                     {/* shading */}
                     <div
                       className="absolute inset-0"
@@ -915,10 +1108,12 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                   >
                     {/* Image */}
                     <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 relative">
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 220px"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
                     {/* Text Content */}
@@ -948,10 +1143,12 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                 >
                   {/* Image */}
                   <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 relative">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 220px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                   {/* Text Content */}
@@ -997,10 +1194,12 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
                     className="flex flex-col rounded-2xl overflow-hidden shadow-sm border border-[#EDE8DF] group hover:shadow-md transition-shadow no-underline text-left bg-white"
                   >
                     <div className="w-full aspect-[16/9] overflow-hidden bg-gray-100 relative">
-                      <img
+                      <Image
                         src={n.heroImage}
                         alt={nTrans?.name || n.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 360px"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
                     <div className="p-4 flex flex-col gap-1 flex-grow">

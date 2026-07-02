@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyCard, ListingType, PropertyType } from "@/types/property";
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, AlertTriangle } from "lucide-react";
 import { compressAndConvertToWebp } from "@/lib/image-optimizer";
 
@@ -330,7 +331,7 @@ export default function PropertyForm({ initial, isNew }: { initial?: PropertyCar
                 </div>
               </Field>
               {state.coverImage && (
-                <img src={state.coverImage} alt="Cover Preview" className="mt-2 h-20 rounded-lg border object-cover" />
+                <Image src={state.coverImage} alt="Cover Preview" width={150} height={80} className="mt-2 h-20 rounded-lg border object-cover" unoptimized />
               )}
             </div>
 

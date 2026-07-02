@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import Image from "next/image";
 import Footer from "@/components/Footer";
 import { getAllPosts, getPostBySlug } from "@/lib/store/blog";
 import Link from "next/link";
@@ -119,10 +120,13 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* ── Hero ── */}
         <div className="relative overflow-hidden" style={{ height: "clamp(280px, 40vw, 480px)", background: "#1C3A2F" }}>
-          <img
+          <Image
             src={post.image}
             alt={post.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%)" }} />
           <div className="absolute bottom-0 left-0 right-0 px-4 md:px-8 pb-8 max-w-3xl">
@@ -236,10 +240,12 @@ export default async function BlogPostPage({ params }: Props) {
                     style={{ background: "#F7F3EC", border: "1px solid #E5E0D8" }}
                   >
                     <div className="relative overflow-hidden" style={{ height: 140 }}>
-                      <img
+                      <Image
                         src={p.image}
                         alt={p.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 300px"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
                     <div className="p-4">

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
+import Image from "next/image";
 import { Clock, Eye, MousePointerClick, Heart, Star } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
 
@@ -223,7 +224,7 @@ export default function PropertiesTable({ properties }: { properties: PropertyCa
                    <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {p.coverImage ? (
-                        <img src={p.coverImage} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                         <Image src={p.coverImage} alt="" width={40} height={40} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" unoptimized />
                       ) : (
                         <div className="w-10 h-10 rounded-lg flex-shrink-0" style={{ background: "linear-gradient(135deg,#254D3E,#1C3A2F)" }} />
                       )}

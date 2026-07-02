@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BlogPost } from "@/data/blogPosts";
 import Link from "next/link";
+import Image from "next/image";
 
 const POSTS = [
   {
@@ -109,10 +110,12 @@ export default function BlogSection({ posts }: BlogSectionProps) {
           >
             {/* Cover image */}
             <div className="relative overflow-hidden flex-shrink-0" style={{ height: 190 }}>
-              <img
+              <Image
                 src={post.image}
                 alt={post.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               {/* Category pill over image */}
               <span

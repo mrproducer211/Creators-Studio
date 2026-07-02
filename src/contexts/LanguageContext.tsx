@@ -54,7 +54,7 @@ const T = {
     category: {
       label: "Browse by Category",
       title: "Find your perfect match",
-      all:   "All listings",
+      all:   "View All",
       lookingIn: "Looking for property in",
       nearBts: "Near BTS & MRT",
       petFriendly: "Pet Friendly",
@@ -76,6 +76,10 @@ const T = {
         phayaThai: "Phaya Thai",
         chatuchak: "Chatuchak",
         rama4: "Rama 4",
+        charoenkrung: "Charoenkrung",
+        samYan: "Sam Yan",
+        khlongSan: "Khlong San",
+        phraKhanong: "Phra Khanong",
       },
     },
     latest: {
@@ -327,6 +331,10 @@ const T = {
         phayaThai: "พญาไท",
         chatuchak: "จตุจักร",
         rama4: "พระราม 4",
+        charoenkrung: "เจริญกรุง",
+        samYan: "สามย่าน",
+        khlongSan: "คลองสาน",
+        phraKhanong: "พระโขนง",
       },
     },
     latest: {
@@ -578,6 +586,10 @@ const T = {
         phayaThai: "帕亚泰",
         chatuchak: "乍都乍",
         rama4: "拉玛四世",
+        charoenkrung: "石龙军路",
+        samYan: "三养",
+        khlongSan: "空讪",
+        phraKhanong: "帕卡侬",
       },
     },
     latest: {

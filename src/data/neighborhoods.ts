@@ -930,5 +930,501 @@ export const NEIGHBORHOODS: Neighborhood[] = [
       { author: "Nico V.", role: "Financial Analyst", quote: "Rama 4 is incredibly convenient now. Being next to One Bangkok and having MRT Lumpini means I can reach the office in Sathorn or Silom in 5 minutes." },
       { author: "Piyanut S.", role: "Consultant", quote: "I love the duality here. You are next to Lumpini Park for quiet evening walks, yet situated on a major artery connecting Sukhumvit and the CBD." }
     ]
+  },
+  {
+    id: 15,
+    name: "Chit Lom / Ploenchit",
+    slug: "chidlom-ploenchit",
+    description: "Bangkok's most prestigious retail and embassy district, offering ultra-luxury condominiums, high-end shopping malls like Central Embassy, and direct BTS transit.",
+    lat: 13.7442,
+    lng: 100.5431,
+    personality: "The Prestige Shopper & Diplomat",
+    scores: {
+      remoteWork: 8,
+      petFriendly: 6,
+      familyFriendly: 8,
+      nightlife: 6,
+      cafeCulture: 8,
+      walkability: 9,
+      luxury: 10,
+      expatCommunity: 9,
+      japaneseCommunity: 5,
+      chineseCommunity: 5,
+      studentSuitability: 6
+    },
+    avoidanceStats: {
+      traffic: 8,
+      noise: 5,
+      touristCrowds: 7,
+      density: 8,
+      busyness: 8
+    },
+    commuteMinutes: {
+      "Ari": 10,
+      "Sukhumvit": 5,
+      "Asok": 5,
+      "Thong Lo": 10,
+      "Ekkamai": 12,
+      "Silom": 10,
+      "Sathorn": 12,
+      "On Nut": 18,
+      "One Bangkok": 8,
+      "Asoke": 5,
+      "Chulalongkorn University": 8
+    },
+    averageRentMin: 35000,
+    averageRentMax: 90000,
+    nearestTransit: "Chit Lom BTS / Ploenchit BTS",
+    heroImage: "/images/neighborhoods/chidlom_ploenchit.webp",
+    residentTypes: ["Diplomats", "Corporate Executives", "High-net-worth Individuals", "Retail Lovers"],
+    cafes: ["Starbucks Reserve Central Embassy", "Cafe Kitsune", "Brawn & Brains"],
+    coworkingSpaces: ["The Great Room (Gaysorn Tower)", "Regus (Ploenchit)"],
+    malls: ["Central Embassy", "Central Chidlom", "Gaysorn Village"],
+    parks: ["Lumpini Park (nearby)"],
+    dayItinerary: [
+      { time: "9:00 AM", title: "Luxury Breakfast", activity: "Start the day with eggs benedict and specialty coffee at Central Embassy." },
+      { time: "11:30 AM", title: "Boutique Shopping", activity: "Browse international designer labels at Central Embassy and Gaysorn Village." },
+      { time: "2:00 PM", title: "Diplomatic Walk", activity: "Stroll along Wireless Road, admiring the lush greenery and embassy estates." },
+      { time: "5:00 PM", title: "Lumpini Park Run", activity: "Jog under the shaded trees in nearby Lumpini Park." },
+      { time: "8:00 PM", title: "Rooftop Drinks", activity: "Enjoy craft cocktails at a luxury rooftop bar overlooking Ploenchit skyline." }
+    ],
+    reviews: [
+      { author: "Charlotte M.", role: "Diplomatic Staff", quote: "Living in Ploenchit is outstanding. The Wireless Road area is beautiful, high-security, and has the most luxurious residences in Bangkok." },
+      { author: "Arawan S.", role: "Retail Director", quote: "It is the center of luxury shopping. Having direct covered walkway access from the BTS to Central Chidlom and Embassy makes shopping convenient." }
+    ]
+  },
+  {
+    id: 16,
+    name: "Nana",
+    slug: "nana",
+    description: "A high-energy central Sukhumvit district known for its diverse international food scene, active nightlife, and central convenience.",
+    lat: 13.7396,
+    lng: 100.5554,
+    personality: "The Nightlife Enthusiast",
+    scores: {
+      remoteWork: 7,
+      petFriendly: 5,
+      familyFriendly: 4,
+      nightlife: 10,
+      cafeCulture: 7,
+      walkability: 8,
+      luxury: 7,
+      expatCommunity: 9,
+      japaneseCommunity: 4,
+      chineseCommunity: 4,
+      studentSuitability: 5
+    },
+    avoidanceStats: {
+      traffic: 7,
+      noise: 7,
+      touristCrowds: 8,
+      density: 7,
+      busyness: 9
+    },
+    commuteMinutes: {
+      "Ari": 12,
+      "Sukhumvit": 3,
+      "Asok": 3,
+      "Thong Lo": 8,
+      "Ekkamai": 10,
+      "Silom": 12,
+      "Sathorn": 14,
+      "On Nut": 15,
+      "One Bangkok": 10,
+      "Asoke": 3,
+      "Chulalongkorn University": 12
+    },
+    averageRentMin: 22000,
+    averageRentMax: 50000,
+    nearestTransit: "Nana BTS",
+    heroImage: "/images/neighborhoods/nana.webp",
+    residentTypes: ["Young Expats", "Nightlife Lovers", "Short-term Renters", "Global Foodies"],
+    cafes: ["Holey Artisan Bakery", "Craft Cafe", "Artisan Cafe"],
+    coworkingSpaces: ["WeWork (T-One Building - nearby)", "Craft Coworking"],
+    malls: ["Terminal 21 (nearby)", "Nana Plaza", "Robinson Sukhumvit"],
+    parks: ["Chuvit Garden", "Benjakitti Park (nearby)"],
+    dayItinerary: [
+      { time: "9:30 AM", title: "Bakery Brunch", activity: "Savor artisanal croissants and coffee at Holey Artisan Bakery." },
+      { time: "12:00 PM", title: "Middle East Dining", activity: "Explore the diverse restaurants along Soi Arab (Sukhumvit Soi 3/1)." },
+      { time: "3:00 PM", title: "Bumrungrad Visit / Checkup", activity: "Visit the world-renowned Bumrungrad International Hospital zone." },
+      { time: "6:00 PM", title: "Chuvit Garden Walk", activity: "Relax in the quiet greenery of Chuvit Garden." },
+      { time: "9:00 PM", title: "Sukhumvit Nightlife", activity: "Experience the lively street markets and rooftop beer gardens of Nana." }
+    ],
+    reviews: [
+      { author: "Liam J.", role: "Digital Marketer", quote: "Nana is extremely central and alive. I love the variety of international foods available 24/7 on my doorstep." },
+      { author: "Mustafa A.", role: "Consultant", quote: "It is the most global part of Bangkok. Close to Bumrungrad Hospital, BTS station, and amazing Middle Eastern restaurants." }
+    ]
+  },
+  {
+    id: 17,
+    name: "Phra Khanong",
+    slug: "phra-khanong",
+    description: "A trendy, hipster enclave just past Ekkamai, known for its creative community, outdoor markets like W District, and artisanal cafes.",
+    lat: 13.7153,
+    lng: 100.5939,
+    personality: "The Creative Nomad",
+    scores: {
+      remoteWork: 9,
+      petFriendly: 8,
+      familyFriendly: 6,
+      nightlife: 7,
+      cafeCulture: 9,
+      walkability: 8,
+      luxury: 6,
+      expatCommunity: 8,
+      japaneseCommunity: 6,
+      chineseCommunity: 4,
+      studentSuitability: 8
+    },
+    avoidanceStats: {
+      traffic: 5,
+      noise: 4,
+      touristCrowds: 4,
+      density: 4,
+      busyness: 5
+    },
+    commuteMinutes: {
+      "Ari": 20,
+      "Sukhumvit": 8,
+      "Asok": 8,
+      "Thong Lo": 5,
+      "Ekkamai": 3,
+      "Silom": 18,
+      "Sathorn": 20,
+      "On Nut": 3,
+      "One Bangkok": 16,
+      "Asoke": 8,
+      "Chulalongkorn University": 18
+    },
+    averageRentMin: 15000,
+    averageRentMax: 35000,
+    nearestTransit: "Phra Khanong BTS",
+    heroImage: "/images/neighborhoods/phra_khanong.webp",
+    residentTypes: ["Digital Nomads", "Artists", "Young Professionals", "Value Seekers"],
+    cafes: ["Caffè Olives", "Hands and Heart", "Craftsman x"],
+    coworkingSpaces: ["Summer Hub Co-Working", "AIS D.C. (nearby)"],
+    malls: ["Summer Hill", "W District", "Gateway Ekkamai (nearby)"],
+    parks: ["Pocket Garden Phra Khanong"],
+    dayItinerary: [
+      { time: "9:00 AM", title: "Creative Espresso", activity: "Drink single-origin pour-overs at Caffè Olives." },
+      { time: "11:30 AM", title: "Art Gallery Visit", activity: "Explore local independent art galleries and creative workspaces in sub-sois." },
+      { time: "2:00 PM", title: "Workspace Session", activity: "Set up your laptop at a laptop-friendly community space in Summer Hill." },
+      { time: "5:30 PM", title: "W District Gathering", activity: "Meet friends at W District for outdoor dining, draft beers, and international food." },
+      { time: "8:30 PM", title: "Live Music Bar", activity: "Listen to local indie bands at a cozy hipster pub." }
+    ],
+    reviews: [
+      { author: "Marc D.", role: "UX Designer", quote: "Phra Khanong has the perfect creative energy. It's hipster, has cheaper rents than Thong Lo, and W District is amazing for dinners." },
+      { author: "Siriwan K.", role: "Art Curator", quote: "It's quieter than central Sukhumvit but loaded with hidden cafes and independent art studios. The creative expat community here is growing fast." }
+    ]
+  },
+  {
+    id: 18,
+    name: "Ladprao",
+    slug: "ladprao",
+    description: "A bustling residential area in northern Bangkok, popular for its massive shopping malls, green parks, and budget-friendly living.",
+    lat: 13.8135,
+    lng: 100.5604,
+    personality: "The Local Transit Commuter",
+    scores: {
+      remoteWork: 8,
+      petFriendly: 7,
+      familyFriendly: 8,
+      nightlife: 5,
+      cafeCulture: 8,
+      walkability: 7,
+      luxury: 5,
+      expatCommunity: 7,
+      japaneseCommunity: 4,
+      chineseCommunity: 5,
+      studentSuitability: 8
+    },
+    avoidanceStats: {
+      traffic: 7,
+      noise: 5,
+      touristCrowds: 6,
+      density: 5,
+      busyness: 7
+    },
+    commuteMinutes: {
+      "Ari": 8,
+      "Sukhumvit": 22,
+      "Asok": 22,
+      "Thong Lo": 25,
+      "Ekkamai": 27,
+      "Silom": 27,
+      "Sathorn": 30,
+      "On Nut": 35,
+      "One Bangkok": 27,
+      "Asoke": 22,
+      "Chulalongkorn University": 25
+    },
+    averageRentMin: 12000,
+    averageRentMax: 28000,
+    nearestTransit: "Phahon Yothin MRT / Ha Yaek Lat Phrao BTS",
+    heroImage: "/images/neighborhoods/ladprao.webp",
+    residentTypes: ["Commuters", "Students", "Families", "Local-leaning Expats"],
+    cafes: ["Bluekoff Education", "Sweet Cafe", "Espresso Gallery"],
+    coworkingSpaces: ["Union Space (nearby)", "Draft Board (nearby)"],
+    malls: ["Central Plaza Ladprao", "Union Mall"],
+    parks: ["Chatuchak Park (nearby)"],
+    dayItinerary: [
+      { time: "8:30 AM", title: "Morning Walk", activity: "Take a walk to nearby Chatuchak Park for some fresh air." },
+      { time: "11:00 AM", title: "Union Mall Fashion", activity: "Shop for trendy, affordable local fashion at Union Mall." },
+      { time: "1:30 PM", title: "Cafe Study Session", activity: "Study or work at Bluekoff Education cafe." },
+      { time: "4:00 PM", title: "Central Shopping", activity: "Cool off and buy essentials at Central Plaza Lardprao." },
+      { time: "7:00 PM", title: "Local Night Market", activity: "Eat fresh street food at a nearby northern night market." }
+    ],
+    reviews: [
+      { author: "Kittisak N.", role: "Marketing Specialist", quote: "Ladprao is very local and cheap compared to Sukhumvit. Having both BTS and MRT interchanges makes traveling extremely fast." },
+      { author: "Anna W.", role: "English Teacher", quote: "Rents here are highly affordable, and the malls have everything. I get a real Bangkok residential experience living here." }
+    ]
+  },
+  {
+    id: 19,
+    name: "Thonburi",
+    slug: "thonburi",
+    description: "A peaceful historic district on the west bank of the river, offering a quiet local atmosphere and fast BTS connection to the CBD.",
+    lat: 13.7208,
+    lng: 100.4964,
+    personality: "The Riverside Traditionalist",
+    scores: {
+      remoteWork: 7,
+      petFriendly: 7,
+      familyFriendly: 8,
+      nightlife: 4,
+      cafeCulture: 7,
+      walkability: 6,
+      luxury: 6,
+      expatCommunity: 7,
+      japaneseCommunity: 4,
+      chineseCommunity: 5,
+      studentSuitability: 7
+    },
+    avoidanceStats: {
+      traffic: 5,
+      noise: 4,
+      touristCrowds: 4,
+      density: 4,
+      busyness: 5
+    },
+    commuteMinutes: {
+      "Ari": 25,
+      "Sukhumvit": 20,
+      "Asok": 18,
+      "Thong Lo": 22,
+      "Ekkamai": 24,
+      "Silom": 10,
+      "Sathorn": 8,
+      "On Nut": 28,
+      "One Bangkok": 12,
+      "Asoke": 18,
+      "Chulalongkorn University": 12
+    },
+    averageRentMin: 14000,
+    averageRentMax: 32000,
+    nearestTransit: "Krung Thon Buri BTS",
+    heroImage: "/images/neighborhoods/thonburi.webp",
+    residentTypes: ["Retirees", "Expat Families", "Local-leaning Professionals", "History Buffs"],
+    cafes: ["The Jam Factory Cafe", "Sarnies Sukhumvit (nearby)", "10 O'Clock Cafe"],
+    coworkingSpaces: ["The Jam Factory Workspace", "Launchpad (nearby)"],
+    malls: ["Sena Fest", "ICONSIAM (nearby)"],
+    parks: ["Princess Mother Memorial Park"],
+    dayItinerary: [
+      { time: "9:00 AM", title: "Temple Stroll", activity: "Explore the historic temples and old Portuguese communities along the riverbank." },
+      { time: "11:30 AM", title: "Riverside Lunch", activity: "Dine on traditional Thai foods next to Chao Phraya river." },
+      { time: "2:00 PM", title: "The Jam Factory", activity: "Read books and sip iced teas in The Jam Factory creative space." },
+      { time: "5:00 PM", title: "Princess Park Walk", activity: "Enjoy a relaxing walk in the Princess Mother Memorial Park gardens." },
+      { time: "7:00 PM", title: "Sunset River Cruise", activity: "Take a shuttle boat to ICONSIAM for dinner and water shows." }
+    ],
+    reviews: [
+      { author: "Gregory S.", role: "Retired Teacher", quote: "Thonburi is peaceful. I love living across the river away from the concrete jungle, yet being only 10 minutes from Sathorn by BTS." },
+      { author: "Wipawee T.", role: "Architect", quote: "The historical character here is beautiful. There are many old wooden houses, canals, and quiet alleys that you can't find in Sukhumvit." }
+    ]
+  },
+  {
+    id: 20,
+    name: "Charoenkrung",
+    slug: "charoenkrung",
+    description: "Bangkok's oldest paved road transformed into a thriving creative district, combining colonial heritage, art spaces, and legendary street food.",
+    lat: 13.7225,
+    lng: 100.5147,
+    personality: "The Creative Heritage Historian",
+    scores: {
+      remoteWork: 8,
+      petFriendly: 7,
+      familyFriendly: 7,
+      nightlife: 6,
+      cafeCulture: 9,
+      walkability: 8,
+      luxury: 8,
+      expatCommunity: 8,
+      japaneseCommunity: 4,
+      chineseCommunity: 5,
+      studentSuitability: 7
+    },
+    avoidanceStats: {
+      traffic: 6,
+      noise: 5,
+      touristCrowds: 6,
+      density: 5,
+      busyness: 6
+    },
+    commuteMinutes: {
+      "Ari": 20,
+      "Sukhumvit": 15,
+      "Asok": 12,
+      "Thong Lo": 15,
+      "Ekkamai": 17,
+      "Silom": 8,
+      "Sathorn": 5,
+      "On Nut": 22,
+      "One Bangkok": 8,
+      "Asoke": 12,
+      "Chulalongkorn University": 8
+    },
+    averageRentMin: 20000,
+    averageRentMax: 55000,
+    nearestTransit: "Saphan Taksin BTS",
+    heroImage: "/images/neighborhoods/charoenkrung.webp",
+    residentTypes: ["Artists", "Creatives", "Foodies", "Riverside Expats"],
+    cafes: ["Sarnies Charoenkrung", "Tropic City", "Heijia Cafe"],
+    coworkingSpaces: ["TCDC Resource Center", "Launchpad (nearby)"],
+    malls: ["OP Place", "Robinson Bangrak", "Warehouse 30"],
+    parks: ["Chaloem Phrakiat Forest Park"],
+    dayItinerary: [
+      { time: "9:00 AM", title: "Sarnies Breakfast", activity: "Dine on sourdough toast and cold brews inside a restored 150-year-old shophouse." },
+      { time: "11:30 AM", title: "Warehouse 30 Art", activity: "Browse art exhibitions and designer boutiques in Warehouse 30 warehouse spaces." },
+      { time: "2:00 PM", title: "TCDC Design Library", activity: "Read design books at the Thailand Creative & Design Center inside the Grand Postal Building." },
+      { time: "5:30 PM", title: "Street Food Crawl", activity: "Eat crispy pork and duck noodles in the historic Bangrak culinary area." },
+      { time: "8:30 PM", title: "Tropic City Cocktails", activity: "Sip award-winning tropical rum cocktails at Tropic City bar." }
+    ],
+    reviews: [
+      { author: "Sophie L.", role: "Photographer", quote: "Charoenkrung has the best character. The mix of colonial architecture, street art, and TCDC design library makes it extremely inspiring for creatives." },
+      { author: "Chatchai D.", role: "Restaurant Owner", quote: "It is the culinary soul of Bangkok. You can get Michelin-starred dining right next to street food vendors who have operated for 80 years." }
+    ]
+  },
+  {
+    id: 21,
+    name: "Sam Yan",
+    slug: "sam-yan",
+    description: "A vibrant, youthful hub next to Chulalongkorn University, blending innovative workspaces, student dining, and modern mixed-use malls.",
+    lat: 13.7335,
+    lng: 100.5285,
+    personality: "The Academic Tech Entrepreneur",
+    scores: {
+      remoteWork: 8,
+      petFriendly: 6,
+      familyFriendly: 7,
+      nightlife: 5,
+      cafeCulture: 8,
+      walkability: 9,
+      luxury: 7,
+      expatCommunity: 8,
+      japaneseCommunity: 4,
+      chineseCommunity: 5,
+      studentSuitability: 10
+    },
+    avoidanceStats: {
+      traffic: 6,
+      noise: 4,
+      touristCrowds: 5,
+      density: 6,
+      busyness: 7
+    },
+    commuteMinutes: {
+      "Ari": 15,
+      "Sukhumvit": 12,
+      "Asok": 10,
+      "Thong Lo": 14,
+      "Ekkamai": 16,
+      "Silom": 5,
+      "Sathorn": 8,
+      "On Nut": 22,
+      "One Bangkok": 5,
+      "Asoke": 10,
+      "Chulalongkorn University": 0
+    },
+    averageRentMin: 16000,
+    averageRentMax: 35000,
+    nearestTransit: "Sam Yan MRT",
+    heroImage: "/images/neighborhoods/sam_yan.webp",
+    residentTypes: ["Students", "Tech Founders", "Researchers", "Young Couples"],
+    cafes: ["Too Fast To Sleep", "Sol Space", "Slowbkk"],
+    coworkingSpaces: ["Too Fast To Sleep", "Mitrtown Office Space"],
+    malls: ["Samyan Mitrtown", "Chamchuri Square"],
+    parks: ["Chulalongkorn University Centenary Park"],
+    dayItinerary: [
+      { time: "9:00 AM", title: "Student Brunch", activity: "Eat local snacks and iced coffee in Samyan Mitrtown." },
+      { time: "11:30 AM", title: "Centenary Park Walk", activity: "Take a walk in the award-winning CU Centenary Park designed for flood prevention." },
+      { time: "2:00 PM", title: "Co-working Focus", activity: "Work or study at Too Fast To Sleep, a legendary 24-hour study space." },
+      { time: "5:00 PM", title: "Chinatown Ride", activity: "Take the MRT 2 stops to Chinatown (Wat Mangkon) for street food exploration." },
+      { time: "7:30 PM", title: "Samyan Shabu Dinner", activity: "Enjoy hot-pot with university students in local dining lanes." }
+    ],
+    reviews: [
+      { author: "Alex R.", role: "Fintech Developer", quote: "Sam Yan has a great, energetic vibe. Being next to Chulalongkorn means there are many cheap food courts, parks, and 24-hour workspaces." },
+      { author: "Nattaporn S.", role: "PhD Student", quote: "It is highly walkable, green, and modern. Samyan Mitrtown is very convenient for groceries, and the MRT Blue Line connects me anywhere." }
+    ]
+  },
+  {
+    id: 22,
+    name: "Khlong San",
+    slug: "khlong-san",
+    description: "An exclusive riverside district on the west bank, dominated by the luxury ICONSIAM mall and premium high-rise residences with panoramic river views.",
+    lat: 13.7278,
+    lng: 100.5097,
+    personality: "The Riverside Luxury Connoisseur",
+    scores: {
+      remoteWork: 7,
+      petFriendly: 6,
+      familyFriendly: 8,
+      nightlife: 5,
+      cafeCulture: 8,
+      walkability: 7,
+      luxury: 9,
+      expatCommunity: 8,
+      japaneseCommunity: 5,
+      chineseCommunity: 6,
+      studentSuitability: 6
+    },
+    avoidanceStats: {
+      traffic: 6,
+      noise: 4,
+      touristCrowds: 7,
+      density: 5,
+      busyness: 6
+    },
+    commuteMinutes: {
+      "Ari": 25,
+      "Sukhumvit": 18,
+      "Asok": 15,
+      "Thong Lo": 18,
+      "Ekkamai": 20,
+      "Silom": 12,
+      "Sathorn": 10,
+      "On Nut": 25,
+      "One Bangkok": 12,
+      "Asoke": 15,
+      "Chulalongkorn University": 12
+    },
+    averageRentMin: 25000,
+    averageRentMax: 75000,
+    nearestTransit: "Charoen Nakhon BTS (Gold Line)",
+    heroImage: "/images/neighborhoods/khlong_san.webp",
+    residentTypes: ["Luxury Renters", "Retirees", "River Lovers", "Expat Couples"],
+    cafes: ["The Never Ending Summer Cafe", "Cafe Ciao", "Greyhound Cafe"],
+    coworkingSpaces: ["ICONSIAM Co-Working", "The Great Room (nearby)"],
+    malls: ["ICONSIAM", "The Lighthouse"],
+    parks: ["Saranrom Park (across river)"],
+    dayItinerary: [
+      { time: "9:00 AM", title: "River View Morning", activity: "Sip espresso on your high-rise balcony, watching the boats go down the Chao Phraya." },
+      { time: "11:30 AM", title: "ICONSIAM Indoor Market", activity: "Explore the SookSiam indoor floating market inside ICONSIAM mall for lunch." },
+      { time: "2:00 PM", title: "Library Study", activity: "Read and work in the luxury book lounges in ICONSIAM." },
+      { time: "5:00 PM", title: "Shuttle Boat Ride", activity: "Take the Gold Line skytrain and cross-river boat to Sathorn Pier." },
+      { time: "7:30 PM", title: "Riverside Fine Dining", activity: "Enjoy a scenic sunset dinner at The Never Ending Summer restaurant." }
+    ],
+    reviews: [
+      { author: "Hans W.", role: "Retired Executive", quote: "Living in Khlong San is fantastic. The river views are stunning, and ICONSIAM has all the luxury shopping and restaurants you could ever want." },
+      { author: "Kamonwan O.", role: "Investment Advisor", quote: "The Gold Line skytrain has made this area extremely accessible. You get high-security luxury river living next to the best shopping mall in Bangkok." }
+    ]
   }
 ];
