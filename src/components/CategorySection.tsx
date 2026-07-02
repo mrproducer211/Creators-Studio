@@ -561,7 +561,7 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                   <>
                     {/* Mobile List View (rendered only when mobileView is 'list' on md and below) */}
                     {mobileView === "list" && (
-                      <div className="flex flex-col gap-3 md:hidden">
+                      <div className="flex flex-col gap-4 md:hidden">
                         {filteredNeighborhoods.map((item) => {
                           const count = getAreaCount(item.slug);
                           const isProfileOnly = item.isProfileOnly || count === 0;
@@ -570,41 +570,44 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                             <a
                               key={item.slug}
                               href={item.href}
-                              className="flex items-center justify-between p-3 rounded-2xl no-underline transition-all duration-300 hover:translate-y-[-2px] hover:shadow-md"
-                              style={{ background: "#EDE8DF" }}
+                              className="relative w-full h-44 rounded-2xl overflow-hidden no-underline block"
+                              style={{ transition: "all 0.3s ease" }}
                             >
-                              <div className="flex items-center gap-4">
-                                {/* Small Thumbnail */}
-                                <div className="relative w-16 h-12 rounded-xl overflow-hidden flex-shrink-0">
-                                  <Image
-                                    src={item.image}
-                                    alt={item.name || item.slug}
-                                    fill
-                                    sizes="64px"
-                                    className={`object-cover ${isProfileOnly ? "grayscale" : ""}`}
-                                  />
-                                </div>
-                                {/* Name & Category */}
-                                <div>
-                                  <p className="text-[14px] font-bold leading-tight mb-1" style={{ color: "#1C3A2F" }}>
-                                    {item.name || item.slug}
-                                  </p>
-                                  <span className="text-[9px] font-bold uppercase tracking-[0.5px] opacity-60" style={{ color: "#1C3A2F" }}>
-                                    {item.category}
-                                  </span>
-                                </div>
+                              {/* Image */}
+                              <Image
+                                src={item.image}
+                                alt={item.name || item.slug}
+                                fill
+                                sizes="100vw"
+                                className={`object-cover ${isProfileOnly ? "grayscale" : ""}`}
+                              />
+
+                              {/* Gradient Overlay */}
+                              <div
+                                className="absolute inset-0"
+                                style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 65%, transparent 100%)" }}
+                              />
+
+                              {/* Category Badge on top-right */}
+                              <div className="absolute top-3.5 right-3.5 z-10">
+                                <span className="text-[10px] font-bold uppercase tracking-[1px] px-2.5 py-1 rounded-md backdrop-blur-md" style={{ background: "rgba(28, 58, 47, 0.75)", color: "#F7F3EC" }}>
+                                  {item.category}
+                                </span>
                               </div>
 
-                              {/* Count / Badge */}
-                              <div>
+                              {/* Text overlay on top of the image */}
+                              <div className="absolute bottom-0 left-0 p-4 w-full text-left z-10">
+                                <h4 className="text-[18px] font-bold leading-tight mb-1" style={{ color: "#FFFFFF" }}>
+                                  {item.name || item.slug}
+                                </h4>
                                 {isProfileOnly ? (
-                                  <span className="text-[9px] font-semibold text-amber-700 bg-amber-500/10 px-2 py-0.5 rounded">
-                                    📖 Guide
+                                  <span className="text-[10px] font-semibold text-amber-300 bg-amber-500/25 px-2 py-0.5 rounded backdrop-blur-sm inline-block">
+                                    📖 Guide Only
                                   </span>
                                 ) : (
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#1C3A2F]/10" style={{ color: "#1C3A2F" }}>
-                                    {count} {t.category.props}
-                                  </span>
+                                  <p className="text-[12px] opacity-90 leading-none m-0" style={{ color: "rgba(255,255,255,0.9)" }}>
+                                    {count.toLocaleString()} {t.category.propsForYou}
+                                  </p>
                                 )}
                               </div>
                             </a>
