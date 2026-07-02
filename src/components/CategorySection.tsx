@@ -466,42 +466,43 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
         return (
           <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(12px)" }} onClick={() => closeModal()}>
             <div
-              className="relative w-full h-full p-6 md:p-12 lg:p-16 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom duration-300"
+              className="relative w-full h-full p-4 md:p-12 lg:p-16 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom duration-300"
               style={{ background: "#F7F3EC", color: "#1C3A2F" }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-start justify-between mb-6 pb-4" style={{ borderBottom: "1px solid rgba(28, 58, 47, 0.1)" }}>
+              <div className="flex items-center justify-between mb-4 pb-3" style={{ borderBottom: "1px solid rgba(28, 58, 47, 0.1)" }}>
                 <div>
-                  <span className="text-[11px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] block mb-1">
+                  <span className="text-[10px] font-bold uppercase tracking-[1px] text-[#C9A84C] block md:hidden mb-0.5">Bangkok Guides</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] hidden md:block mb-1">
                     Bangkok Neighborhoods
                   </span>
-                  <h3 className="text-[26px] font-bold leading-tight" style={{ color: "#1C3A2F", letterSpacing: "-0.5px" }}>
+                  <h3 className="text-[16px] md:text-[26px] font-bold leading-tight" style={{ color: "#1C3A2F", letterSpacing: "-0.3px" }}>
                     Explore All Categories & Guides
                   </h3>
                 </div>
                 <button
                   onClick={() => closeModal()}
-                  className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border-none transition-colors"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center cursor-pointer border-none transition-colors flex-shrink-0"
                   style={{ background: "#EDE8DF", color: "#1C3A2F" }}
                   onMouseEnter={(e) => e.currentTarget.style.background = "#DCD5C9"}
                   onMouseLeave={(e) => e.currentTarget.style.background = "#EDE8DF"}
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
               </div>
 
               {/* Search and Toggle Controls */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center mb-6 z-10">
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-between items-stretch sm:items-center mb-5 z-10">
                 {/* Search Bar */}
-                <div className="relative flex-grow max-w-lg">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1C3A2F]/60" />
+                <div className="relative flex-grow max-w-xs md:max-w-lg">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#1C3A2F]/60" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search neighborhood or category..."
-                    className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-solid focus:outline-none focus:ring-1 focus:ring-[#C9A84C] text-[14px]"
+                    className="w-full pl-8 pr-8 py-1.5 md:py-2.5 rounded-lg md:rounded-xl border border-solid focus:outline-none focus:ring-1 focus:ring-[#C9A84C] text-[12px] md:text-[14px]"
                     style={{
                       background: "#EDE8DF",
                       borderColor: "rgba(28, 58, 47, 0.15)",
@@ -513,13 +514,13 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                       onClick={() => setSearchQuery("")}
                       className="absolute right-3 top-1/2 -translate-y-1/2 border-none bg-transparent cursor-pointer text-[#1C3A2F]/60 hover:text-[#1C3A2F] p-0 flex items-center"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-3.5 h-3.5" />
                     </button>
                   )}
                 </div>
 
                 {/* Toggle Controls (Mobile Only) */}
-                <div className="flex items-center gap-2 md:hidden">
+                <div className="flex items-center gap-2 md:hidden self-end">
                   <span className="text-[12px] font-bold uppercase tracking-[1px] text-[#1C3A2F]/60">
                     View:
                   </span>
@@ -613,7 +614,7 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                     )}
 
                     {/* Grid View wrapper: hidden on mobile list, always shown on desktop */}
-                    <div className={`${mobileView === "list" ? "hidden md:grid" : "grid"} grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6`}>
+                    <div className={`${mobileView === "list" ? "hidden md:grid" : "grid"} grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6`}>
                       {filteredNeighborhoods.map((item) => {
                         const count = getAreaCount(item.slug);
                         const isProfileOnly = item.isProfileOnly || count === 0;
@@ -622,7 +623,7 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                           <a
                             key={item.slug}
                             href={item.href}
-                            className="relative w-full h-40 rounded-2xl overflow-hidden no-underline group block"
+                            className="relative w-full h-28 md:h-40 rounded-xl md:rounded-2xl overflow-hidden no-underline group block"
                             onMouseEnter={(e) => {
                               e.currentTarget.style.transform = "translateY(-4px)";
                               e.currentTarget.style.boxShadow = "0 10px 20px rgba(0,0,0,0.15)";
@@ -649,23 +650,23 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                             />
 
                             {/* Category Badge on top-right */}
-                            <div className="absolute top-3.5 right-3.5 z-10">
-                              <span className="text-[9px] font-bold uppercase tracking-[1px] px-2 py-0.5 rounded-md backdrop-blur-md" style={{ background: "rgba(28, 58, 47, 0.75)", color: "#F7F3EC" }}>
+                            <div className="absolute top-2 right-2 md:top-3.5 md:right-3.5 z-10">
+                              <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.5px] md:tracking-[1px] px-1.5 py-0.5 md:px-2 rounded-md backdrop-blur-md" style={{ background: "rgba(28, 58, 47, 0.75)", color: "#F7F3EC" }}>
                                 {item.category}
                               </span>
                             </div>
 
                             {/* Text overlay on top of the image */}
-                            <div className="absolute bottom-0 left-0 p-4 w-full text-left z-10">
-                              <h4 className="text-[16px] font-bold leading-tight mb-1.5 transition-colors group-hover:text-[#C9A84C]" style={{ color: "#FFFFFF" }}>
+                            <div className="absolute bottom-0 left-0 p-3 md:p-4 w-full text-left z-10">
+                              <h4 className="text-[13px] md:text-[16px] font-bold leading-tight mb-1 transition-colors group-hover:text-[#C9A84C]" style={{ color: "#FFFFFF" }}>
                                 {item.name || item.slug}
                               </h4>
                               {isProfileOnly ? (
-                                <span className="text-[10px] font-semibold text-amber-300 bg-amber-500/25 px-2 py-0.5 rounded backdrop-blur-sm inline-block">
+                                <span className="text-[9px] md:text-[10px] font-semibold text-amber-300 bg-amber-500/25 px-1.5 py-0.5 rounded backdrop-blur-sm inline-block">
                                   📖 Guide Only
                                 </span>
                               ) : (
-                                <p className="text-[11px] opacity-85 leading-none m-0" style={{ color: "rgba(255,255,255,0.9)" }}>
+                                <p className="text-[9px] md:text-[11px] opacity-85 leading-none m-0" style={{ color: "rgba(255,255,255,0.9)" }}>
                                   {count.toLocaleString()} {t.category.propsForYou}
                                 </p>
                               )}
