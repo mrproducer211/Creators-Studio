@@ -214,7 +214,7 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                   alt={section.anchor.name}
                   fill
                   sizes="260px"
-                  quality={60}
+                  quality={45}
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 {/* gradient overlay */}
@@ -258,7 +258,7 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                       alt={card.name}
                       fill
                       sizes="(max-width: 768px) 170px, 278px"
-                      quality={60}
+                      quality={45}
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     {/* gradient overlay */}
@@ -313,7 +313,7 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                   alt={section.anchor.name}
                   fill
                   sizes="142px"
-                  quality={60}
+                  quality={45}
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div
@@ -350,7 +350,7 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                       alt={card.name}
                       fill
                       sizes="170px"
-                      quality={60}
+                      quality={45}
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div
@@ -583,7 +583,7 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                                 alt={item.name || item.slug}
                                 fill
                                 sizes="100vw"
-                                quality={60}
+                                quality={45}
                                 className={`object-cover ${isProfileOnly ? "grayscale" : ""}`}
                               />
 
@@ -648,7 +648,7 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
                               alt={item.name || item.slug}
                               fill
                               sizes="(max-width: 768px) 100vw, 300px"
-                              quality={60}
+                              quality={45}
                               className={`object-cover transition-transform duration-700 group-hover:scale-105 ${isProfileOnly ? "grayscale group-hover:grayscale-0" : ""}`}
                             />
 

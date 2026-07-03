@@ -47,6 +47,7 @@ export default function Navbar() {
             alt="NHP Logo"
             width={30}
             height={30}
+            priority
             className="object-contain rounded-[6px]"
           />
           <div className="flex flex-col leading-none">
@@ -62,6 +63,7 @@ export default function Navbar() {
             alt="NHP Logo"
             width={38}
             height={38}
+            priority
             className="object-contain rounded-[8px]"
           />
           <div className="flex flex-col leading-tight">
