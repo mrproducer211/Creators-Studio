@@ -10,7 +10,9 @@ import "./globals.css";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "600", "700"],
+  display: "swap",
+  preload: true,
 });
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
@@ -76,6 +78,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        {/* Preconnect to Google Fonts CDN for faster font delivery */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         {/* Site-wide structured data */}
         <script

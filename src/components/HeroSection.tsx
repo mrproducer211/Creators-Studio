@@ -275,7 +275,9 @@ function DesktopHero({
           alt="Premium Bangkok Condo"
           fill
           priority
+          fetchPriority="high"
           sizes="50vw"
+          quality={75}
           style={{ objectFit: "cover" }}
         />
 

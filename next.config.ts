@@ -5,6 +5,13 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+
+  // Enable gzip/brotli compression — reduces JS/CSS chunk sizes on the wire
+  compress: true,
+
+  // Remove the X-Powered-By header to reduce response overhead
+  poweredByHeader: false,
+
   experimental: {
     // Ensure proper tree-shaking for icon libraries — reduces bundle size
     optimizePackageImports: ["lucide-react"],
@@ -23,6 +30,21 @@ const nextConfig: NextConfig = {
       // Allow any https host for property images uploaded via the admin panel
       { protocol: "https", hostname: "**" },
     ],
+  },
+  // Add caching headers for public static image assets
+  async headers() {
+    return [
+      {
+        // Cache public images (logos, neighborhood photos) for 7 days
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=604800, stale-while-revalidate=86400",
+          },
+        ],
+      },
+    ];
   },
 };
 
