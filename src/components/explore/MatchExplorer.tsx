@@ -812,13 +812,13 @@ export default function MatchExplorer({ properties }: Props) {
         {step === 0 && !hasSearched && (
           <div className="flex-1 flex flex-col justify-center items-center text-center p-8 bg-[#1C3A2F] text-[#F7F3EC] min-h-[500px] mb-16 lg:mb-0">
             <span className="text-[10px] font-bold uppercase tracking-[3px] text-[#C9A84C] mb-3">
-              New Home Property Premium
+              New Home Property Neighbourhood
             </span>
             <h1 className="text-[34px] font-bold leading-tight mb-4 max-w-[320px] font-outfit" style={{ letterSpacing: "-1px" }}>
               {tm.landingTitle}
             </h1>
             <p className="text-[13.5px] text-[#D5CDBE] max-w-[280px] leading-relaxed mb-8 font-light">
-              {tm.landingDesc}
+              {tm.landingDesc.replace("{count}", String(NEIGHBORHOODS.length))}
             </p>
             <button
               onClick={() => setStep(1)}

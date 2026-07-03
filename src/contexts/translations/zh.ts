@@ -149,6 +149,7 @@ const zh: Translations = {
     thongLo: "通罗",
     asok: "阿索克",
     onNut: "安努",
+    blog: "博客",
   },
   cta: {
     ready: "准备好搬家了吗？",

@@ -53,7 +53,7 @@ export interface MatchTranslations {
 export const T_MATCH: Record<"en" | "th" | "zh", MatchTranslations> = {
   en: {
     landingTitle: "Where Would You Belong in Bangkok?",
-    landingDesc: "Answer 7 simple lifestyle questions and our algorithm will rank Bangkok's 12 major neighborhoods and match you with properties tailored for you.",
+    landingDesc: "Answer 7 simple lifestyle questions and our algorithm will rank Bangkok's {count} major neighborhoods and match you with properties tailored for you.",
     landingCTA: "Begin Auto Finder →",
     landingTitle2: "Auto Finder",
     stepOf: "Step {step} of 6",
@@ -154,7 +154,7 @@ export const T_MATCH: Record<"en" | "th" | "zh", MatchTranslations> = {
   },
   th: {
     landingTitle: "คุณเหมาะที่จะอยู่ย่านไหนในกรุงเทพฯ?",
-    landingDesc: "ตอบคำถามไลฟ์สไตล์ง่ายๆ 7 ข้อ แล้วอัลกอริทึมของเราจะจัดอันดับ 12 ย่านสำคัญในกรุงเทพฯ พร้อมทั้งจับคู่กับคอนโดและบ้านที่ตรงใจสำหรับคุณ",
+    landingDesc: "ตอบคำถามไลฟ์สไตล์ง่ายๆ 7 ข้อ แล้วอัลกอริทึมของเราจะจัดอันดับ {count} ย่านสำคัญในกรุงเทพฯ พร้อมทั้งจับคู่กับคอนโดและบ้านที่ตรงใจสำหรับคุณ",
     landingCTA: "เริ่มค้นหาย่านที่ใช่ของคุณ →",
     landingTitle2: "ระบบค้นหาย่านอัตโนมัติ (Auto Finder)",
     stepOf: "ขั้นตอนที่ {step} จาก 6",
@@ -255,7 +255,7 @@ export const T_MATCH: Record<"en" | "th" | "zh", MatchTranslations> = {
   },
   zh: {
     landingTitle: "您最适合居住在曼谷哪个社区？",
-    landingDesc: "回答 7 个简单的生活方式问题，我们的智能算法将为您对曼谷 12 个主要社区进行匹配度排序，并推荐最贴合您需求的房源。",
+    landingDesc: "回答 7 个简单的生活方式问题，我们的智能算法将为您对曼谷 {count} 个主要社区进行匹配度排序，并推荐最贴合您需求的房源。",
     landingCTA: "开始自动匹配社区 →",
     landingTitle2: "社区智能匹配 (Auto Finder)",
     stepOf: "步骤 {step} / 6",

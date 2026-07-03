@@ -149,6 +149,7 @@ const th: Translations = {
     thongLo: "ทองหล่อ",
     asok: "อโศก",
     onNut: "อ่อนนุช",
+    blog: "บล็อก",
   },
   cta: {
     ready: "พร้อมย้ายเข้าหรือยัง?",

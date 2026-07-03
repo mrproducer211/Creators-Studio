@@ -147,6 +147,7 @@ const en = {
     thongLo: "Thong Lo",
     asok: "Asok",
     onNut: "On Nut",
+    blog: "Blog",
   },
   cta: {
     ready: "Ready to move?",

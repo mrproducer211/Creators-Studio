@@ -5,7 +5,7 @@ export const T_ABOUT = {
     heroDesc: "NHP Bangkok connects foreigners with verified condos, apartments, and short-stay properties across Bangkok's most sought-after neighbourhoods — with real transit data, no dead listings, and local lifestyle context built in.",
     stats: [
       { value: "500+", label: "Verified Listings" },
-      { value: "12+", label: "Bangkok Neighbourhoods" },
+      { value: "22+", label: "Bangkok Neighbourhoods" },
       { value: "3", label: "Property Types" },
       { value: "1-tap", label: "Agent Contact" }
     ],
@@ -13,7 +13,7 @@ export const T_ABOUT = {
     storyParagraphs: [
       "Bangkok is one of Asia's great cities — endlessly layered, intensely alive, and deeply personal. But finding the right place to live here has always been harder than it should be. Listings scattered across Facebook groups, agents charging steep finder's fees, prices that bear no relation to what actually gets quoted — the international renter's experience in Bangkok has long been unnecessarily chaotic.",
       "New Home Property (NHP) was built to change that. We started as a small team of expats and Bangkok locals who were tired of the same broken experience. We wanted a platform that treated the international renter as the primary user — not an afterthought — and that brought genuine neighbourhood intelligence into every search.",
-      "Today, NHP covers 12+ Bangkok districts with curated, verified listings across condos, apartments, short-stay, and buy-to-own properties. Every listing includes real BTS/MRT walking times, local lifestyle context, and direct-access agent messaging via Line and WhatsApp. Our neighbourhood guides cover everything from cost of living and healthcare to expat communities and weekend activities.",
+      "Today, NHP covers 22+ Bangkok districts with curated, verified listings across condos, apartments, short-stay, and buy-to-own properties. Every listing includes real BTS/MRT walking times, local lifestyle context, and direct-access agent messaging via Line and WhatsApp. Our neighbourhood guides cover everything from cost of living and healthcare to expat communities and weekend activities.",
       "We don't just help you find a property. We help you find the right part of Bangkok for the life you want to live."
     ],
     differentTitle: "What Makes NHP Different",
@@ -83,7 +83,7 @@ export const T_ABOUT = {
     heroDesc: "NHP Bangkok เชื่อมต่อชาวต่างชาติกับคอนโด อพาร์ทเมนท์ และที่พักระยะสั้นที่ผ่านการยืนยันแล้วทั่วย่านยอดนิยมของกรุงเทพฯ — พร้อมข้อมูลการเดินทางจริง ไม่มีประกาศหมดอายุ และบริบทการใช้ชีวิตในท้องถิ่นในตัว",
     stats: [
       { value: "500+", label: "ประกาศที่ยืนยันแล้ว" },
-      { value: "12+", label: "ย่านชั้นนำในกรุงเทพฯ" },
+      { value: "22+", label: "ย่านชั้นนำในกรุงเทพฯ" },
       { value: "3", label: "ประเภทอสังหาฯ" },
       { value: "1-tap", label: "ติดต่อตัวแทนทันที" }
     ],
@@ -91,7 +91,7 @@ export const T_ABOUT = {
     storyParagraphs: [
       "กรุงเทพฯ เป็นหนึ่งในเมืองที่ยิ่งใหญ่ของเอเชีย — เต็มไปด้วยเรื่องราวที่หลากหลาย มีชีวิตชีวา และมีความเฉพาะตัวสูง แต่การหาที่อยู่อาศัยที่ใช่ที่นี่มักยากเกินความจำเป็น ประกาศที่กระจัดกระจายอยู่ในกลุ่ม Facebook, ตัวแทนที่คิดค่าบริการค้นหาที่สูงลิ่ว, ราคาที่ไม่ตรงกับความเป็นจริง — ประสบการณ์ของผู้เช่าชาวต่างชาติในกรุงเทพฯ นั้นสับสนวุ่นวายมานานเกินไป",
       "New Home Property (NHP) ถูกสร้างขึ้นเพื่อเปลี่ยนแปลงสิ่งนั้น เราเริ่มต้นจากการเป็นทีมเล็กๆ ของชาวต่างชาติและคนท้องถิ่นในกรุงเทพฯ ที่เหนื่อยหน่ายกับประสบการณ์เดิมที่น่าผิดหวัง เราต้องการแพลตฟอร์มที่ให้ความสำคัญกับผู้เช่าชาวต่างชาติเป็นผู้ใช้หลัก และนำข้อมูลเชิงลึกเกี่ยวกับย่านต่างๆ เข้ามาร่วมในการค้นหาอสังหาฯ อย่างแท้จริง",
-      "วันนี้ NHP ครอบคลุม 12 ย่านสำคัญในกรุงเทพฯ พร้อมประกาศคอนโด อพาร์ทเมนท์ ที่พักระยะสั้น และอสังหาริมทรัพย์เพื่อขายที่ได้รับการยืนยันและคัดสรรมาอย่างดี ทุกประกาศรวมระยะเวลาเดินจริงไปยังสถานี BTS/MRT บริบทไลฟ์สไตล์ท้องถิ่น และการติดต่อตัวแทนโดยตรงผ่าน Line และ WhatsApp ไกด์นำเที่ยวย่านของเราครอบคลุมทุกเรื่องตั้งแต่ค่าครองชีพและบริการทางการแพทย์ไปจนถึงชุมชนชาวต่างชาติและกิจกรรมวันหยุดสุดสัปดาห์",
+      "วันนี้ NHP ครอบคลุม 22 ย่านสำคัญในกรุงเทพฯ พร้อมประกาศคอนโด อพาร์ทเมนท์ ที่พักระยะสั้น และอสังหาริมทรัพย์เพื่อขายที่ได้รับการยืนยันและคัดสรรมาอย่างดี ทุกประกาศรวมระยะเวลาเดินจริงไปยังสถานี BTS/MRT บริบทไลฟ์สไตล์ท้องถิ่น และการติดต่อตัวแทนโดยตรงผ่าน Line และ WhatsApp ไกด์นำเที่ยวย่านของเราครอบคลุมทุกเรื่องตั้งแต่ค่าครองชีพและบริการทางการแพทย์ไปจนถึงชุมชนชาวต่างชาติและกิจกรรมวันหยุดสุดสัปดาห์",
       "เราไม่เพียงช่วยคุณหาที่อยู่อาศัย แต่เราช่วยคุณค้นหาย่านที่ใช่ในกรุงเทพฯ เพื่อใช้ชีวิตในแบบที่คุณต้องการ"
     ],
     differentTitle: "อะไรทำให้ NHP แตกต่าง",
@@ -161,7 +161,7 @@ export const T_ABOUT = {
     heroDesc: "NHP Bangkok 致力于为来泰的外籍人士建立与经平台验证的公寓、住宅和短租房源的顺畅连接。这里有真实的轨道交通出行时间、无重复过期的真实房源，并融入了当地的生活街区风情。",
     stats: [
       { value: "500+", label: "认证真实房源" },
-      { value: "12+", label: "曼谷热门社区" },
+      { value: "22+", label: "曼谷热门社区" },
       { value: "3", label: "房源类型" },
       { value: "一键", label: "直接联系经纪人" }
     ],
@@ -169,7 +169,7 @@ export const T_ABOUT = {
     storyParagraphs: [
       "曼谷是亚洲最宏伟的都市之一 —— 拥有无尽的文化层次、强烈的都市活力与深刻的市井气息。但长久以来，在这座城市寻找一个心仪的住所却远比想象中要繁琐。社交群组中零散无序的虚假广告、代理收取的高昂中介费、以及与实价不符的挂牌报价，令来泰的外国租客在寻找房源的过程中倍感困惑与疲惫。",
       "New Home Property (NHP) 正是为此而诞生。我们最初是由一小群厌倦了这种低效租房体验的曼谷外籍人士和本地居民联合创立。我们希望打造一个真正以全球客户为核心关注点、而非将其视为次要群体的专业平台，并将真实的社区生活情报融入每次房源搜索中。",
-      "如今，NHP 覆盖曼谷12个以上的核心轨道交通片区，精选并验证了涵盖公寓、住宅、短租和销售的所有房源。每套房源都标注了真实的 BTS/MRT 步行耗时、当地配套与生活氛围，并可通过 Line 和 WhatsApp 一键直连专业经纪人。我们的社区指南更是事无巨细地囊括了生活成本、优质医疗、国际学校分布及周末休闲指南等高价值干货。",
+      "如今，NHP 覆盖曼谷22个以上的核心轨道交通片区，精选并验证了涵盖公寓、住宅、短租和销售的所有房源。每套房源都标注了真实的 BTS/MRT 步行耗时、当地配套与生活氛围，并可通过 Line 和 WhatsApp 一键直连专业经纪人。我们的社区指南更是事无巨细地囊括了生活成本、优质医疗、国际学校分布及周末休闲指南等高价值干货。",
       "我们不仅仅是在帮您找一套房子，更是在帮您寻找最适合您理想曼谷生活方式的那一片专属街区。"
     ],
     differentTitle: "What Makes NHP Different",
