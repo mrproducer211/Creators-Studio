@@ -337,7 +337,7 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       { title: "Green Space", subtitle: "Exceptional", image: "/images/neighborhoods/chatuchak_park.webp" },
       { title: "Transit Access", subtitle: "Outstanding", image: "/images/lifestyles/chatuchak_transit.webp" },
       { title: "Shopping", subtitle: "World-class", image: "/images/neighborhoods/chatuchak_market.webp" },
-      { title: "Affordability", subtitle: "Very Good", image: "/images/lifestyles/on_nut_cafe.webp" }
+      { title: "Affordability", subtitle: "Very Good", image: "/images/lifestyles/chatuchak_affordability.png" }
     ],
     lifestyleDesc: "A dynamic and highly active residential sanctuary in northern Bangkok. Chatuchak is celebrated for its rare combination of massive public parks and global-scale retail landmarks. Centered around the Mo Chit BTS and Chatuchak Park MRT interchange, it serves as the ultimate northern gateway for commuters. The neighborhood maintains a locally rooted, energetic atmosphere, drawing a mix of corporate office staff, young professionals, and nature lovers who seek room to breathe without sacrificing transit efficiency."
   },
@@ -402,7 +402,7 @@ const NEIGHBORHOOD_METADATA: Record<string, {
     vibeCards: [
       { title: "Food Scene", subtitle: "Global Cuisines", image: "/images/lifestyles/on_nut_dining.webp" },
       { title: "Nightlife", subtitle: "High Energy", image: "/images/lifestyles/asok_nightlife.webp" },
-      { title: "Healthcare", subtitle: "Bumrungrad Hub", image: "/images/neighborhoods/guide_wellness.webp" },
+      { title: "Healthcare", subtitle: "Bumrungrad Hub", image: "/images/lifestyles/nana_healthcare.png" },
       { title: "Transit", subtitle: "BTS Accessible", image: "/images/lifestyles/chatuchak_transit.webp" }
     ],
     lifestyleDesc: "A bustling and highly cosmopolitan transit hub in the heart of Sukhumvit. Nana is celebrated for its incredible cultural diversity, offering some of the best Middle Eastern and international culinary enclaves in the city. By day, it is a key commercial zone close to Bumrungrad Hospital; by night, it transforms into an energetic entertainment center with lively street markets and rooftop lounges. It is popular with active urbanites who want central convenience, affordable space, and a non-stop city pulse."
@@ -446,7 +446,7 @@ const NEIGHBORHOOD_METADATA: Record<string, {
     vibeCards: [
       { title: "Shopping Malls", subtitle: "Union & Central", image: "/images/neighborhoods/chatuchak_market.webp" },
       { title: "Transit hub", subtitle: "Dual-Line Access", image: "/images/lifestyles/chatuchak_transit.webp" },
-      { title: "Affordability", subtitle: "Exceptional Value", image: "/images/lifestyles/on_nut_cafe.webp" },
+      { title: "Affordability", subtitle: "Exceptional Value", image: "/images/lifestyles/ladprao_affordability.png" },
       { title: "Local Life", subtitle: "Authentic Thai", image: "/images/lifestyles/on_nut_dining.webp" }
     ],
     lifestyleDesc: "A high-energy residential and retail corridor in northern Bangkok. Centered around a massive BTS and MRT transit interchange, Ladprao is a strategic home base for commuters, university students, and young professionals. The area feels genuinely local, featuring major shopping landmarks like Central Plaza Ladprao and Union Mall, cheap street dining, and pocket cafes. It offers a highly practical lifestyle where you can live in a modern building and travel anywhere in the city at a fraction of downtown prices."
