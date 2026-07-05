@@ -9,6 +9,9 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Smart Search — NHP Bangkok",
   description: "Search properties in Bangkok using natural language.",
+  alternates: {
+    canonical: "/explore/smart",
+  },
 };
 
 export default async function SmartSearchPage() {

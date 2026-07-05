@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAllPosts } from "@/lib/store/blog";
+import { NEIGHBORHOODS } from "@/data/neighborhoods";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
@@ -30,24 +31,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // 3. Dynamic Neighbourhood Guides
-  const areas = [
-    "sukhumvit",
-    "thong-lo",
-    "on-nut",
-    "ekkamai",
-    "asok",
-    "ari",
-    "sathorn",
-    "silom",
-    "rama-9",
-    "huai-khwang",
-    "bang-na",
-    "phaya-thai",
-    "chatuchak",
-    "rama-4",
-  ];
-  const areaUrls = areas.map((area) => ({
-    url: `${baseUrl}/neighborhood/${area}`,
+  const areaUrls = NEIGHBORHOODS.map((n) => ({
+    url: `${baseUrl}/neighborhood/${n.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.6,

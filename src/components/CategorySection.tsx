@@ -51,6 +51,24 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
   const [mobileView, setMobileView] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === "#all-neighborhoods") {
+        setShowAllModal(true);
+      } else {
+        setShowAllModal(false);
+      }
+    };
+
+    // Check hash on mount/render
+    handleHashChange();
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
+
+  useEffect(() => {
     if (showAllModal) {
       document.body.style.overflow = "hidden";
     } else {
@@ -65,6 +83,13 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
     setShowAllModal(false);
     setSearchQuery("");
     setMobileView("grid");
+    if (window.location.hash === "#all-neighborhoods") {
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search
+      );
+    }
   };
 
   const getAreaCount = (slug: string) => {
@@ -187,7 +212,10 @@ export default function CategorySection({ properties = [] }: CategorySectionProp
           </h2>
         </div>
         <button
-          onClick={() => setShowAllModal(true)}
+          onClick={() => {
+            setShowAllModal(true);
+            window.location.hash = "all-neighborhoods";
+          }}
           className="text-[12px] font-medium no-underline pb-px bg-transparent border-none cursor-pointer hover:opacity-85 transition-opacity"
           style={{ color: "#1C3A2F", borderBottom: "1px solid #1C3A2F", padding: 0 }}
         >

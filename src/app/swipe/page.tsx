@@ -6,6 +6,9 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Swipe Mode — NHP Bangkok",
   description: "Browse Bangkok properties Tinder-style. Swipe right to save, left to skip.",
+  alternates: {
+    canonical: "/swipe",
+  },
 };
 
 export default async function SwipePage() {

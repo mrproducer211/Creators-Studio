@@ -9,6 +9,9 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Auto Finder — Bangkok Neighborhood Lifestyle Finder",
   description: "Find your ideal Bangkok neighborhood and condos with AI and commute mapping.",
+  alternates: {
+    canonical: "/explore/match",
+  },
 };
 
 export default async function MatchPage() {

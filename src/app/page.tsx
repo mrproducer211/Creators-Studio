@@ -39,6 +39,9 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Bangkok Condos, Apartments & Luxury Properties | New Homes Property",
   description: "Discover neighbourhood properties for rent and sale in Bangkok's best neighborhoods, including Thong Lo, Sathorn, Ari, and Asok. Your trusted Bangkok expat real estate platform.",
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default async function Home() {

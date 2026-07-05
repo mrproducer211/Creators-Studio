@@ -7,6 +7,7 @@ import { useEnquiry } from "@/hooks/useEnquiry";
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext";
 import { useSaved } from "@/contexts/SavedContext";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
+import { NEIGHBORHOODS } from "@/data/neighborhoods";
 import Link from "next/link";
 import Image from "next/image";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -2002,24 +2003,28 @@ export default function PropertyDetail({
                 </div>
 
                 {/* Neighborhood Guide CTA Block */}
-                <div className="mt-5 pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">{lang === "en" ? "Local Guide" : lang === "th" ? "คู่มือท้องถิ่น" : "本地指南"}</span>
-                    <h4 className="text-[13.5px] font-bold text-[#1C3A2F] leading-tight">
-                      {t.livingIn} {translateArea(property.area, lang)}
-                    </h4>
-                    <p className="text-[11.5px] text-gray-500 font-light leading-normal">
-                      {t.guideSubtitle}
-                    </p>
+                {NEIGHBORHOODS.some(
+                  (n) => n.slug.toLowerCase() === getAreaSlug(property.area).toLowerCase()
+                ) && (
+                  <div className="mt-5 pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[9px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">{lang === "en" ? "Local Guide" : lang === "th" ? "คู่มือท้องถิ่น" : "本地指南"}</span>
+                      <h4 className="text-[13.5px] font-bold text-[#1C3A2F] leading-tight">
+                        {t.livingIn} {translateArea(property.area, lang)}
+                      </h4>
+                      <p className="text-[11.5px] text-gray-500 font-light leading-normal">
+                        {t.guideSubtitle}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/neighborhood/${getAreaSlug(property.area)}`}
+                      className="flex-shrink-0 px-4 py-2 rounded-lg text-xs font-semibold no-underline text-center text-white hover:opacity-90 transition-opacity whitespace-nowrap"
+                      style={{ background: "#1C3A2F" }}
+                    >
+                      {t.readGuide} &rarr;
+                    </Link>
                   </div>
-                  <Link
-                    href={`/neighborhood/${getAreaSlug(property.area)}`}
-                    className="flex-shrink-0 px-4 py-2 rounded-lg text-xs font-semibold no-underline text-center text-white hover:opacity-90 transition-opacity whitespace-nowrap"
-                    style={{ background: "#1C3A2F" }}
-                  >
-                    {t.readGuide} &rarr;
-                  </Link>
-                </div>
+                )}
               </div>
 
               {/* Column 2: AMENITIES & LOCATION Stacked */}

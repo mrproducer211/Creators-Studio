@@ -16,9 +16,16 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const n = NEIGHBORHOODS.find((item) => item.slug.toLowerCase() === slug.toLowerCase());
   if (!n) return {};
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+
   return {
     title: `${n.name} Condos & Rentals | Properties for Rent in ${n.name} Bangkok — NHP`,
     description: `Find the best properties for rent and sale in ${n.name}, Bangkok. Read our detailed expat neighborhood guide covering schools, BTS stations, cafes, and cost of living.`,
+    alternates: {
+      canonical: `${baseUrl}/neighborhood/${n.slug.toLowerCase()}`,
+    },
   };
 }
 

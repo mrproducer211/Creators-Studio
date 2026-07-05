@@ -231,6 +231,94 @@ const NEIGHBORHOOD_METADATA: Record<string, {
     ],
     lifestyleDesc: "The prestigious retail and lifestyle heart of downtown Bangkok. Centered around Phrom Phong, this neighborhood represents international luxury, defined by the world-class EmDistrict shopping malls (EmPorium, EmQuartier, EmSphere). The area is exceptionally cosmopolitan, home to a large international expat community, upscale Japanese supermarkets, and premium international schools. With Benjasiri Park providing a lush green escape in the middle of the retail action, it offers an unmatched combination of luxury convenience and urban lifestyle."
   },
+  "rama-9": {
+    district: "Huai Khwang / Din Daeng",
+    btsCode: "Rama 9 MRT (BL20)",
+    airportTime: "25–35 min",
+    vibe: "Modern, Commercial, High-Density",
+    bestFor: "Young Professionals, Office Commuters, Chinese Expats",
+    pros: [
+      "Rapidly growing corporate hub known as Bangkok's 'New CBD'",
+      "Direct MRT Blue Line access and connection to main transport nodes",
+      "Excellent retail options at Central Plaza Grand Rama 9 and Fortune Town",
+      "Very reasonable condo rents compared to Sukhumvit and Sathorn",
+      "Abundance of modern high-rise projects with top-tier facilities",
+      "Close to central office plazas and the IT shopping district"
+    ],
+    vibeCards: [
+      { title: "CBD Life", subtitle: "Modern High-Rises", image: "/images/neighborhoods/rama_9.webp" },
+      { title: "Tech & IT", subtitle: "Fortune Town Hub", image: "/images/lifestyles/asok_cafe.webp" },
+      { title: "Convenience", subtitle: "MRT Integrated Malls", image: "/images/lifestyles/sukhumvit_dining.webp" },
+      { title: "Rooftop Lounges", subtitle: "Skyline Views", image: "/images/lifestyles/silom_nightlife.webp" }
+    ],
+    lifestyleDesc: "A high-energy, modern business and transit corridor widely recognized as Bangkok's 'New CBD'. Rama 9 is characterized by its high-density skyscrapers, corporate offices, and massive shopping malls. Centered around the Rama 9 MRT station, it offers unmatched convenience for commuters and office workers who want to live adjacent to their workplace, with top-tier facilities, cheap IT shopping, and excellent local hot-pot dining."
+  },
+  "bang-na": {
+    district: "Bang Na",
+    btsCode: "Bang Na (E13) / Udom Suk (E12)",
+    airportTime: "25–35 min",
+    vibe: "Suburban, Spacious, Family-oriented",
+    bestFor: "Expat Families, International Teachers, Suburban Seekers",
+    pros: [
+      "Spacious suburban villa compounds and large gated estates",
+      "Immediate proximity to top international schools (Patana, Berkeley)",
+      "Unparalleled shopping at Mega Bangna and IKEA",
+      "Direct BTS Skytrain connection (Sukhumvit Line) to downtown core",
+      "Quiet residential environment away from inner-city traffic jams",
+      "Excellent road links to eastern industrial zones and beaches"
+    ],
+    vibeCards: [
+      { title: "Spacious Living", subtitle: "Family Villas", image: "/images/neighborhoods/bang_na.webp" },
+      { title: "Mega Retail", subtitle: "IKEA & Mega Bangna", image: "/images/neighborhoods/guide_real_estate.webp" },
+      { title: "Transit Links", subtitle: "BTS Sukhumvit Line", image: "/images/lifestyles/chatuchak_transit.webp" },
+      { title: "Garden Vibe", subtitle: "Green & Shaded Cafes", image: "/images/lifestyles/ekkamai_cafe.webp" }
+    ],
+    lifestyleDesc: "A spacious and family-centric suburban sanctuary popular with expat residents who want room to breathe. Bang Na offers a relaxed pace of life defined by large residential compounds, international schools, and expansive shopping complexes like Mega Bangna. With direct BTS Skytrain access to the central city, it provides the perfect compromise between suburban tranquility and urban convenience."
+  },
+  "huai-khwang": {
+    district: "Huai Khwang",
+    btsCode: "Huai Khwang MRT (BL18)",
+    airportTime: "30–40 min",
+    vibe: "Local, Vibrant, Culturally Rich",
+    bestFor: "Food Lovers, Asian Expats, Students, Budget Nomads",
+    pros: [
+      "Epicenter of Bangkok's 'New Chinatown' food strip",
+      "Fast MRT Blue Line subway connection to main city hubs",
+      "Highly affordable housing options and low cost of living",
+      "Vibrant nightlife, late-night dining, and active street markets",
+      "Close to 24-hour lifestyle complexes like The Street Ratchada",
+      "Charming local street vibes and high walkability"
+    ],
+    vibeCards: [
+      { title: "New Chinatown", subtitle: "Authentic Mala Hotpot", image: "/images/neighborhoods/huai_khwang.webp" },
+      { title: "Night Markets", subtitle: "Late Night Grazing", image: "/images/lifestyles/silom_nightlife.webp" },
+      { title: "24-Hour Nomading", subtitle: "The Street Ratchada", image: "/images/lifestyles/on_nut_cafe.webp" },
+      { title: "Local Market", subtitle: "Authentic Thai Stalls", image: "/images/neighborhoods/chatuchak_market.webp" }
+    ],
+    lifestyleDesc: "A culturally vibrant and budget-friendly residential hub famous for its colorful street life and New Chinatown culinary scene. Huai Khwang offers authentic dining, busy night markets, and 24-hour convenience hubs like The Street Ratchada. It is popular with Asian expats, university students, and digital nomads who appreciate the highly walkable streets, low rent, and late-night food culture."
+  },
+  "phaya-thai": {
+    district: "Ratchathewi",
+    btsCode: "Phaya Thai (N3) / ARL Station",
+    airportTime: "20–25 min",
+    vibe: "Transit-oriented, Academic, Convenient",
+    bestFor: "Students, Medical Professionals, Frequent Travelers",
+    pros: [
+      "Direct Airport Rail Link connection for fast airport transit",
+      "BTS interchange node connecting directly to Siam and Sukhumvit",
+      "Home to top hospitals, universities, and medical research zones",
+      "Popular student cafes, boutique eateries, and roasters along Rangnam Road",
+      "Within walking distance to Santiphap Park and King Power Duty Free",
+      "Clean, modern high-rise condos catering to young professionals"
+    ],
+    vibeCards: [
+      { title: "Transit Hub", subtitle: "BTS & Airport Link", image: "/images/neighborhoods/phaya_thai.webp" },
+      { title: "Rangnam Cafes", subtitle: "Specialty Roasters", image: "/images/lifestyles/ekkamai_cafe.webp" },
+      { title: "Santiphap Park", subtitle: "Quiet Green Space", image: "/images/lifestyles/silom_parks.webp" },
+      { title: "Duty Free", subtitle: "King Power Mall", image: "/images/lifestyles/ari_dining.webp" }
+    ],
+    lifestyleDesc: "A bustling, transit-oriented corridor that serves as a key gateway to the city and the airport. Phaya Thai blends academic life, clinical convenience, and modern high-rise living. With the Airport Rail Link and BTS Skytrain meeting at its core, it is highly favored by medical staff, students, and frequent flyers who appreciate its quick access to Siam Paragon, quiet green parks, and the boutique cafe scene along Rangnam Road."
+  },
   chatuchak: {
     district: "Chatuchak",
     btsCode: "Mo Chit (N8)",
@@ -249,7 +337,7 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       { title: "Green Space", subtitle: "Exceptional", image: "/images/neighborhoods/chatuchak_park.webp" },
       { title: "Transit Access", subtitle: "Outstanding", image: "/images/lifestyles/chatuchak_transit.webp" },
       { title: "Shopping", subtitle: "World-class", image: "/images/neighborhoods/chatuchak_market.webp" },
-      { title: "Affordability", subtitle: "Very Good", image: "/images/arisa_phone_live.webp" }
+      { title: "Affordability", subtitle: "Very Good", image: "/images/lifestyles/on_nut_cafe.webp" }
     ],
     lifestyleDesc: "A dynamic and highly active residential sanctuary in northern Bangkok. Chatuchak is celebrated for its rare combination of massive public parks and global-scale retail landmarks. Centered around the Mo Chit BTS and Chatuchak Park MRT interchange, it serves as the ultimate northern gateway for commuters. The neighborhood maintains a locally rooted, energetic atmosphere, drawing a mix of corporate office staff, young professionals, and nature lovers who seek room to breathe without sacrificing transit efficiency."
   },
@@ -314,7 +402,7 @@ const NEIGHBORHOOD_METADATA: Record<string, {
     vibeCards: [
       { title: "Food Scene", subtitle: "Global Cuisines", image: "/images/lifestyles/on_nut_dining.webp" },
       { title: "Nightlife", subtitle: "High Energy", image: "/images/lifestyles/asok_nightlife.webp" },
-      { title: "Healthcare", subtitle: "Bumrungrad Hub", image: "/images/arisa_phone_live.webp" },
+      { title: "Healthcare", subtitle: "Bumrungrad Hub", image: "/images/neighborhoods/guide_wellness.webp" },
       { title: "Transit", subtitle: "BTS Accessible", image: "/images/lifestyles/chatuchak_transit.webp" }
     ],
     lifestyleDesc: "A bustling and highly cosmopolitan transit hub in the heart of Sukhumvit. Nana is celebrated for its incredible cultural diversity, offering some of the best Middle Eastern and international culinary enclaves in the city. By day, it is a key commercial zone close to Bumrungrad Hospital; by night, it transforms into an energetic entertainment center with lively street markets and rooftop lounges. It is popular with active urbanites who want central convenience, affordable space, and a non-stop city pulse."
@@ -358,7 +446,7 @@ const NEIGHBORHOOD_METADATA: Record<string, {
     vibeCards: [
       { title: "Shopping Malls", subtitle: "Union & Central", image: "/images/neighborhoods/chatuchak_market.webp" },
       { title: "Transit hub", subtitle: "Dual-Line Access", image: "/images/lifestyles/chatuchak_transit.webp" },
-      { title: "Affordability", subtitle: "Exceptional Value", image: "/images/arisa_phone_live.webp" },
+      { title: "Affordability", subtitle: "Exceptional Value", image: "/images/lifestyles/on_nut_cafe.webp" },
       { title: "Local Life", subtitle: "Authentic Thai", image: "/images/lifestyles/on_nut_dining.webp" }
     ],
     lifestyleDesc: "A high-energy residential and retail corridor in northern Bangkok. Centered around a massive BTS and MRT transit interchange, Ladprao is a strategic home base for commuters, university students, and young professionals. The area feels genuinely local, featuring major shopping landmarks like Central Plaza Ladprao and Union Mall, cheap street dining, and pocket cafes. It offers a highly practical lifestyle where you can live in a modern building and travel anywhere in the city at a fraction of downtown prices."
@@ -425,7 +513,7 @@ const NEIGHBORHOOD_METADATA: Record<string, {
       { title: "University Vibe", subtitle: "Youthful & Active", image: "/images/neighborhoods/sam_yan.webp" },
       { title: "Study Spaces", subtitle: "24-Hour Nomading", image: "/images/lifestyles/ari_cafe.webp" },
       { title: "Green Space", subtitle: "CU Centenary Park", image: "/images/neighborhoods/rama_4_park.webp" },
-      { title: "Affordability", subtitle: "Student Budgets", image: "/images/arisa_phone_live.webp" }
+      { title: "Affordability", subtitle: "Student Budgets", image: "/images/lifestyles/on_nut_cafe.webp" }
     ],
     lifestyleDesc: "A youthful and innovative hub of academic and technological activity next to Chulalongkorn University. Sam Yan has evolved into a smart city sandbox, combining digital workspaces, modern high-rises, and green parks like the CU Centenary Park. It is populated by university students, researchers, and tech startups, creating a fast-paced but collaborative environment with plenty of 24-hour convenience, student eateries, and fast subway access to Silom."
   },

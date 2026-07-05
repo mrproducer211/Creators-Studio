@@ -35,6 +35,9 @@ export async function generateMetadata({ params }: Props) {
     title:       post.metaTitle,
     description: post.metaDesc,
     keywords:    post.keywords.join(", "),
+    alternates: {
+      canonical: `${baseUrl}/blog/${post.slug.toLowerCase()}`,
+    },
     openGraph: {
       title:       post.metaTitle,
       description: post.metaDesc,

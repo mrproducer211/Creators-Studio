@@ -8,6 +8,9 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Bangkok Property Guides & Expat Tips — NHP Blog",
   description: "Expert guides on living in Bangkok — neighbourhood comparisons, rental prices, digital nomad tips and family relocation advice from the NHP team.",
+  alternates: {
+    canonical: "/blog",
+  },
 };
 
 export default async function BlogPage() {
