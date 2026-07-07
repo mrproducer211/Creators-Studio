@@ -130,6 +130,7 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
           id: p.id,
           slug: p.slug,
           name: p.name,
+          projectName: p.projectName || undefined,
           description: p.description || "",
           listingType: p.listingType,
           propertyType: p.propertyType,

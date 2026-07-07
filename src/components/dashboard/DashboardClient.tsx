@@ -562,6 +562,60 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
     return allProperties.filter((p) => savedIds.has(p.id));
   }, [allProperties, savedIds]);
 
+  // Recommendations based on Saved Listings (Like and Save DNA)
+  const savedRecommendations = useMemo(() => {
+    if (savedListings.length === 0) return [];
+
+    // Extract saved project names (using projectName field or name fallback)
+    const savedProjects = Array.from(
+      new Set(
+        savedListings
+          .map((p) => p.projectName || p.name.split(/[—–-]/)[0].trim())
+          .filter(Boolean)
+      )
+    );
+    const savedAreas = Array.from(new Set(savedListings.map((p) => p.area).filter(Boolean)));
+    const savedIdsSet = new Set(savedListings.map((p) => p.id));
+
+    // Find other properties matching these projects or areas
+    const matched = allProperties.filter((p) => {
+      // Exclude already saved properties
+      if (savedIdsSet.has(p.id)) return false;
+
+      // Exclude unlisted/draft properties
+      if (p.status === "unlisted" || p.status === "draft") return false;
+
+      const pProject = p.projectName || p.name.split(/[—–-]/)[0].trim();
+
+      // Match by same project
+      if (savedProjects.some((proj) => proj.toLowerCase() === pProject.toLowerCase())) {
+        return true;
+      }
+
+      // Match by same area
+      if (savedAreas.includes(p.area)) {
+        return true;
+      }
+
+      return false;
+    });
+
+    // Sort: Prioritize project matches first, limit to 3 listings
+    return matched
+      .sort((a, b) => {
+        const aProject = a.projectName || a.name.split(/[—–-]/)[0].trim();
+        const bProject = b.projectName || b.name.split(/[—–-]/)[0].trim();
+
+        const aIsProjectMatch = savedProjects.some((proj) => proj.toLowerCase() === aProject.toLowerCase());
+        const bIsProjectMatch = savedProjects.some((proj) => proj.toLowerCase() === bProject.toLowerCase());
+
+        if (aIsProjectMatch && !bIsProjectMatch) return -1;
+        if (!aIsProjectMatch && bIsProjectMatch) return 1;
+        return 0;
+      })
+      .slice(0, 3);
+  }, [allProperties, savedListings]);
+
   return (
     <div className="max-w-[1360px] mx-auto px-4 py-8">
       {/* Welcome Banner */}
@@ -823,11 +877,41 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
                   </a>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {savedListings.map((p, idx) => (
-                    <ExplorePropertyCard key={p.id} property={p} index={idx} />
-                  ))}
-                </div>
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {savedListings.map((p, idx) => (
+                      <ExplorePropertyCard key={p.id} property={p} index={idx} />
+                    ))}
+                  </div>
+
+                  {/* DNA Recommendations Section */}
+                  {savedRecommendations.length > 0 && (
+                    <div className="mt-12 pt-8" style={{ borderTop: "1px solid #EDE8DF" }}>
+                      <p className="text-[11px] font-bold uppercase tracking-[1.5px] mb-1.5" style={{ color: "#C9A84C" }}>
+                        {lang === "th" ? "คัดสรรจากสิ่งที่คุณบันทึก" : lang === "zh" ? "基于您的收藏推荐" : "DNA Recommendations"}
+                      </p>
+                      <h3 className="text-[17px] font-bold mb-1 text-[#1C3A2F]">
+                        {lang === "th"
+                          ? "แนะนำสำหรับคุณตามสไตล์ที่คุณชอบ"
+                          : lang === "zh"
+                          ? "为您量身定制的房源推荐"
+                          : "Suggested for You"}
+                      </h3>
+                      <p className="text-[12px] text-gray-400 mb-6 font-light">
+                        {lang === "th"
+                          ? "คอนโดในโครงการเดียวกันหรือทำเลใกล้เคียงที่คุณน่าจะสนใจ"
+                          : lang === "zh"
+                          ? "与您收藏的项目或街区相匹配的精品房源"
+                          : "Condos in similar projects or locations matching your saved listings profile."}
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {savedRecommendations.map((p, idx) => (
+                          <ExplorePropertyCard key={p.id} property={p} index={idx} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}

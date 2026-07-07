@@ -6,6 +6,7 @@ export interface PropertyCard {
   id: number;
   slug: string;
   name: string;
+  projectName?: string;
   description: string;
   listingType: ListingType;
   propertyType: PropertyType;

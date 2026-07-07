@@ -86,9 +86,10 @@ const NEARBY_AREAS: Record<string, string[]> = {
   "Ari":       [],
 };
 
-/* Extract a building "hint" — text before any em-dash or comma */
-function buildingHint(name: string): string {
-  return name.split(/[—–-]/)[0].trim().toLowerCase();
+/* Extract a building "hint" — uses projectName if set, otherwise extracts from name text */
+function buildingHint(p: { projectName?: string; name: string }): string {
+  if (p.projectName) return p.projectName.trim().toLowerCase();
+  return p.name.split(/[—–-]/)[0].trim().toLowerCase();
 }
 
 export default async function PropertyPage({ params }: Props) {
@@ -97,7 +98,7 @@ export default async function PropertyPage({ params }: Props) {
   const property = all.find((p) => p.slug === slug);
   if (!property) notFound();
 
-  const bHint = buildingHint(property.name);
+  const bHint = buildingHint(property);
 
   // Recommendations should be active properties only
   const activeListings = all.filter((p) => p.status !== "unlisted");
@@ -110,7 +111,7 @@ export default async function PropertyPage({ params }: Props) {
 
   // 1. Same building properties (excluding current)
   const sameBuilding = activeListings
-    .filter((p) => p.id !== property.id && buildingHint(p.name) === bHint)
+    .filter((p) => p.id !== property.id && buildingHint(p) === bHint)
     .slice(0, 4);
 
   // 2. Nearby properties (excluding current and same building, matching area or adjacent areas)
@@ -118,7 +119,7 @@ export default async function PropertyPage({ params }: Props) {
   const nearby = activeListings
     .filter((p) => 
       p.id !== property.id && 
-      buildingHint(p.name) !== bHint && 
+      buildingHint(p) !== bHint && 
       (p.area === property.area || nearbyAreas.includes(p.area))
     )
     .slice(0, 4);

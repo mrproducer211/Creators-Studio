@@ -170,6 +170,14 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
   const filtered = useMemo(() => applyFilters(properties, filters), [properties, filters]);
   const update = (patch: Partial<ExploreFilters>) => setFilters((p) => ({ ...p, ...patch }));
 
+  const [visibleCount, setVisibleCount] = useState(12);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setVisibleCount(12);
+  }, [filters]);
+
   const dynamicTitle = useMemo(() => {
     if (filters.area) {
       if (lang === "th") {
@@ -256,10 +264,27 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
           <>
             {/* 1 col → 2 col → 3 col → 4 col */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {filtered.map((p, i) => (
+              {filtered.slice(0, visibleCount).map((p, i) => (
                 <ExplorePropertyCard key={p.id} property={p} index={i} />
               ))}
             </div>
+
+            {visibleCount < filtered.length && (
+              <div className="flex justify-center mt-10 mb-6">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 12)}
+                  className="px-6 py-3 rounded-xl text-[13px] font-semibold transition-all hover:opacity-90 cursor-pointer shadow-sm hover:shadow"
+                  style={{
+                    background: "#1C3A2F",
+                    color: "#FFFFFF",
+                    border: "1px solid #1C3A2F",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  {lang === "th" ? "โหลดเพิ่มเติม" : lang === "zh" ? "加载更多" : "Load More Properties"}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

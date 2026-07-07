@@ -76,19 +76,22 @@ export default function AboutClient() {
           style={{ background: "#ffffff", borderColor: "#E5E0D8" }}
         >
           <div className="max-w-4xl mx-auto px-4 py-5 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            {t.stats.map((s, idx) => (
-              <div key={idx} className="py-1">
-                <p
-                  className="text-[28px] md:text-[34px] font-bold"
-                  style={{ color: "#1C3A2F" }}
-                >
-                  {s.value}
-                </p>
-                <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mt-0.5">
-                  {s.label}
-                </p>
-              </div>
-            ))}
+            {t.stats.map((s, idx) => {
+              const isText = /[a-zA-Z\u0E00-\u0E7F\u4e00-\u9fa5]/.test(s.value);
+              return (
+                <div key={idx} className="py-1 flex flex-col justify-center items-center">
+                  <p
+                    className={isText ? "text-[20px] md:text-[24px] font-bold leading-tight min-h-[34px] md:min-h-[42px] flex items-center" : "text-[28px] md:text-[34px] font-bold leading-tight"}
+                    style={{ color: "#1C3A2F" }}
+                  >
+                    {s.value}
+                  </p>
+                  <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mt-0.5">
+                    {s.label}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -209,7 +212,7 @@ export default function AboutClient() {
                 {t.ctaBrowse}
               </Link>
               <Link
-                href="/neighborhood"
+                href="/#all-neighborhoods"
                 className="inline-block px-6 py-3 rounded-xl text-[13px] font-semibold no-underline border transition-all hover:bg-white/5"
                 style={{
                   background: "transparent",

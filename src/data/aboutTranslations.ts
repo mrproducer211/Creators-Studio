@@ -1,13 +1,13 @@
 export const T_ABOUT = {
   en: {
     badge: "Who We Are",
-    heroTitle: "Bangkok's Property Platform, Built for the World",
+    heroTitle: "Helping Foreigners Find Where They Belong in Bangkok",
     heroDesc: "NHP Bangkok connects foreigners with verified condos, apartments, and short-stay properties across Bangkok's most sought-after neighbourhoods — with real transit data, no dead listings, and local lifestyle context built in.",
     stats: [
       { value: "500+", label: "Verified Listings" },
       { value: "22+", label: "Bangkok Neighbourhoods" },
       { value: "3", label: "Property Types" },
-      { value: "1-tap", label: "Agent Contact" }
+      { value: "LOCAL", label: "Lifestyle Insights" }
     ],
     storyTitle: "Our Story",
     storyParagraphs: [
@@ -79,13 +79,13 @@ export const T_ABOUT = {
   },
   th: {
     badge: "พวกเราคือใคร",
-    heroTitle: "แพลตฟอร์มอสังหาฯ กรุงเทพฯ เพื่อคนทั่วโลก",
+    heroTitle: "ช่วยให้ชาวต่างชาติค้นพบสถานที่ที่เป็นของตัวเองในกรุงเทพฯ",
     heroDesc: "NHP Bangkok เชื่อมต่อชาวต่างชาติกับคอนโด อพาร์ทเมนท์ และที่พักระยะสั้นที่ผ่านการยืนยันแล้วทั่วย่านยอดนิยมของกรุงเทพฯ — พร้อมข้อมูลการเดินทางจริง ไม่มีประกาศหมดอายุ และบริบทการใช้ชีวิตในท้องถิ่นในตัว",
     stats: [
       { value: "500+", label: "ประกาศที่ยืนยันแล้ว" },
       { value: "22+", label: "ย่านชั้นนำในกรุงเทพฯ" },
       { value: "3", label: "ประเภทอสังหาฯ" },
-      { value: "1-tap", label: "ติดต่อตัวแทนทันที" }
+      { value: "LOCAL", label: "ข้อมูลเชิงลึกไลฟ์สไตล์" }
     ],
     storyTitle: "เรื่องราวของเรา",
     storyParagraphs: [
@@ -157,13 +157,13 @@ export const T_ABOUT = {
   },
   zh: {
     badge: "关于我们",
-    heroTitle: "专为全球客户打造的曼谷房产寻找平台",
+    heroTitle: "帮助外国人寻找在曼谷的归属之地",
     heroDesc: "NHP Bangkok 致力于为来泰的外籍人士建立与经平台验证的公寓、住宅和短租房源的顺畅连接。这里有真实的轨道交通出行时间、无重复过期的真实房源，并融入了当地的生活街区风情。",
     stats: [
       { value: "500+", label: "认证真实房源" },
       { value: "22+", label: "曼谷热门社区" },
       { value: "3", label: "房源类型" },
-      { value: "一键", label: "直接联系经纪人" }
+      { value: "LOCAL", label: "生活方式洞察" }
     ],
     storyTitle: "品牌故事",
     storyParagraphs: [

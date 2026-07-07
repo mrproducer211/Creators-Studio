@@ -21,12 +21,16 @@ export default function Navbar() {
   const [discoverOpen, setDiscoverOpen] = useState(false);
   const [lookingForOpen, setLookingForOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
+  const [mobileCurrencyOpen, setMobileCurrencyOpen] = useState(false);
 
   useEffect(() => {
     if (!menuOpen) {
       setTimeout(() => {
         setDiscoverOpen(false);
         setLookingForOpen(false);
+        setMobileLangOpen(false);
+        setMobileCurrencyOpen(false);
       }, 0);
     }
   }, [menuOpen]);
@@ -52,7 +56,7 @@ export default function Navbar() {
           />
           <div className="flex flex-col leading-none">
             <span className="text-[16px] font-extrabold tracking-[-0.5px]" style={{ color: "#1C3A2F" }}>New Home Property</span>
-            <span className="text-[9px] font-semibold tracking-[0.3px] mt-0.5" style={{ color: "#806414" }}>Live. Belong. Bangkok.</span>
+            <span className="text-[11px] font-bold tracking-[0.3px] mt-0.5" style={{ color: "#806414" }}>Live. Belong. Bangkok.</span>
           </div>
         </Link>
 
@@ -68,7 +72,7 @@ export default function Navbar() {
           />
           <div className="flex flex-col leading-tight">
             <span className="text-[15px] font-bold" style={{ color: "#1C3A2F" }}>New Home Property</span>
-            <span className="text-[10px] font-medium uppercase tracking-[0.5px]" style={{ color: "#806414" }}>Live. Belong. Bangkok.</span>
+            <span className="text-[11.5px] font-semibold uppercase tracking-[0.5px]" style={{ color: "#806414" }}>Live. Belong. Bangkok.</span>
           </div>
         </Link>
 
@@ -444,37 +448,106 @@ export default function Navbar() {
                   <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>AI</span>
                 </Link>
 
-                {/* Mobile language toggle */}
-                <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: "1px solid #EDE8DF" }}>
-                  <span className="text-[12px]" style={{ color: "#999" }}>{t.nav.language}</span>
-                  <div className="flex items-center rounded-lg overflow-hidden ml-auto" style={{ border: "1.5px solid #E5E0D8" }}>
-                    {(["en", "th", "zh"] as const).map((l) => (
-                      <button key={l} onClick={() => setLang(l)}
-                        className="cursor-pointer border-none text-[11px] font-bold"
-                        style={{ padding: "5px 10px", background: lang === l ? "#1C3A2F" : "transparent", color: lang === l ? "#F7F3EC" : "#888", fontFamily: "inherit" }}
-                      >{l === "en" ? "EN" : l === "th" ? "TH" : "中文"}</button>
-                    ))}
-                  </div>
+                {/* Mobile language toggle (collapsible dropdown) */}
+                <div>
+                  <button
+                    onClick={() => setMobileLangOpen(!mobileLangOpen)}
+                    className="w-full text-left px-5 py-3.5 text-[15px] font-medium border-b flex items-center justify-between cursor-pointer bg-transparent"
+                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF", fontFamily: "inherit" }}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{t.nav.language}</span>
+                      <span className="text-[11px] font-normal text-gray-400">
+                        ({lang === "en" ? "English" : lang === "th" ? "ไทย" : "中文"})
+                      </span>
+                    </span>
+                    <span
+                      className="text-[10px] transition-transform duration-200"
+                      style={{
+                        color: "#1C3A2F",
+                        transform: mobileLangOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        display: "inline-block",
+                      }}
+                    >
+                      ▼
+                    </span>
+                  </button>
+
+                  {mobileLangOpen && (
+                    <div
+                      className="flex flex-col bg-[rgba(28,58,47,0.03)] border-b"
+                      style={{ borderColor: "#EDE8DF" }}
+                    >
+                      {(["en", "th", "zh"] as const).map((l) => (
+                        <button
+                          key={l}
+                          onClick={() => {
+                            setLang(l);
+                            setMobileLangOpen(false);
+                          }}
+                          className="w-full text-left pl-8 pr-5 py-3 text-[14px] font-medium transition-colors hover:bg-black/5 bg-transparent border-none cursor-pointer"
+                          style={{
+                            color: lang === l ? "#1C3A2F" : "#666",
+                            fontWeight: lang === l ? "bold" : "normal",
+                            fontFamily: "inherit",
+                          }}
+                        >
+                          {l === "en" ? "English" : l === "th" ? "ไทย (Thai)" : "中文 (Chinese)"}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* Mobile currency toggle */}
-                <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: "1px solid #EDE8DF" }}>
-                  <span className="text-[12px]" style={{ color: "#999" }}>Currency</span>
-                  <div className="flex items-center rounded-lg overflow-hidden ml-auto" style={{ border: "1.5px solid #E5E0D8" }}>
-                    {(["THB", "USD", "EUR", "CNY"] as const).map((curr) => (
-                      <button key={curr} onClick={() => setCurrency(curr)}
-                        className="cursor-pointer border-none text-[10px] font-bold"
-                        style={{
-                          padding: "5px 10px",
-                          background: currency === curr ? "#1C3A2F" : "transparent",
-                          color: currency === curr ? "#F7F3EC" : "#888",
-                          fontFamily: "inherit"
-                        }}
-                      >
-                        {curr === "THB" ? "฿ THB" : curr === "USD" ? "$ USD" : curr === "EUR" ? "€ EUR" : "¥ CNY"}
-                      </button>
-                    ))}
-                  </div>
+                {/* Mobile currency toggle (collapsible dropdown) */}
+                <div>
+                  <button
+                    onClick={() => setMobileCurrencyOpen(!mobileCurrencyOpen)}
+                    className="w-full text-left px-5 py-3.5 text-[15px] font-medium border-b flex items-center justify-between cursor-pointer bg-transparent"
+                    style={{ color: "#1C3A2F", borderColor: "#EDE8DF", fontFamily: "inherit" }}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>Currency</span>
+                      <span className="text-[11px] font-normal text-gray-400">
+                        ({currency === "THB" ? "฿ THB" : currency === "USD" ? "$ USD" : currency === "EUR" ? "€ EUR" : "¥ CNY"})
+                      </span>
+                    </span>
+                    <span
+                      className="text-[10px] transition-transform duration-200"
+                      style={{
+                        color: "#1C3A2F",
+                        transform: mobileCurrencyOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        display: "inline-block",
+                      }}
+                    >
+                      ▼
+                    </span>
+                  </button>
+
+                  {mobileCurrencyOpen && (
+                    <div
+                      className="flex flex-col bg-[rgba(28,58,47,0.03)] border-b"
+                      style={{ borderColor: "#EDE8DF" }}
+                    >
+                      {(["THB", "USD", "EUR", "CNY"] as const).map((curr) => (
+                        <button
+                          key={curr}
+                          onClick={() => {
+                            setCurrency(curr);
+                            setMobileCurrencyOpen(false);
+                          }}
+                          className="w-full text-left pl-8 pr-5 py-3 text-[14px] font-medium transition-colors hover:bg-black/5 bg-transparent border-none cursor-pointer"
+                          style={{
+                            color: currency === curr ? "#1C3A2F" : "#666",
+                            fontWeight: currency === curr ? "bold" : "normal",
+                            fontFamily: "inherit",
+                          }}
+                        >
+                          {curr === "THB" ? "฿ THB (Thai Baht)" : curr === "USD" ? "$ USD (US Dollar)" : curr === "EUR" ? "€ EUR (Euro)" : "¥ CNY (Chinese Yuan)"}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {user && (

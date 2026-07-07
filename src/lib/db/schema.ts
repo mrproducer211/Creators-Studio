@@ -19,6 +19,7 @@ export const properties = pgTable("properties", {
   id:           serial("id").primaryKey(),
   slug:         varchar("slug", { length: 200 }).notNull().unique(),
   name:         varchar("name", { length: 300 }).notNull(),
+  projectName:  varchar("project_name", { length: 200 }),
   description:  text("description"),
 
   listingType:  listingTypeEnum("listing_type").notNull(),
