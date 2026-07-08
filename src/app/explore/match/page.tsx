@@ -7,7 +7,7 @@ import { getDbProperties } from "@/lib/db/dbLoader";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Auto Finder — Bangkok Neighborhood Lifestyle Finder",
+  title: "Neighborhood Match — Bangkok Neighborhood Lifestyle Finder",
   description: "Find your ideal Bangkok neighborhood and condos with AI and commute mapping.",
   alternates: {
     canonical: "/explore/match",

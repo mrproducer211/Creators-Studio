@@ -39,7 +39,7 @@ const zh: Translations = {
   browse: {
     label:    "浏览方式",
     title:    "三种找房方式",
-    swipeName:"智能匹配",
+    swipeName:"街区匹配 (Neighborhood Match)",
     swipeDesc:"找到符合您生活方式的曼谷完美社区和公寓。",
     gridName: "网格浏览",
     gridDesc: "带筛选器的经典搜索，一次查看所有房源。",

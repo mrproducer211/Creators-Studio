@@ -37,7 +37,7 @@ const en = {
   browse: {
     label:    "How You Browse",
     title:    "Three ways to find your property",
-    swipeName:"Auto Finder",
+    swipeName:"Neighborhood Match",
     swipeDesc:"Find your perfect Bangkok neighborhood and condos designed for how you want to live.",
     gridName: "Grid Browse",
     gridDesc: "Classic search with filters. See all listings at once.",

@@ -1,7 +1,7 @@
 export const T_DASHBOARD = {
   en: {
     tabs: {
-      feed: "Auto-Finder Match Feed",
+      feed: "Neighborhood Match Feed",
       saved: "Saved Properties",
       searches: "Saved Searches",
       commute: "Commute Planner",
@@ -33,7 +33,7 @@ export const T_DASHBOARD = {
       petSub: "Only match listings allowing dogs/cats",
       generateBtn: "Generate My Matches →",
       updatingBtn: "Updating My Preferences...",
-      preferencesTitle: "My Auto-Finder Feed",
+      preferencesTitle: "My Neighborhood Match Feed",
       editPreferences: "Edit Preferences",
       matchedAreas: "Matched Neighborhoods",
       matchedProps: "Matched Properties For You",
@@ -112,7 +112,7 @@ export const T_DASHBOARD = {
   },
   th: {
     tabs: {
-      feed: "ฟีดค้นหาอัตโนมัติ (Auto-Finder)",
+      feed: "จับคู่ย่านที่ใช่ (Neighborhood Match)",
       saved: "อสังหาฯ ที่บันทึกไว้",
       searches: "การค้นหาที่บันทึกไว้",
       commute: "วางแผนการเดินทาง",
@@ -223,7 +223,7 @@ export const T_DASHBOARD = {
   },
   zh: {
     tabs: {
-      feed: "自动房源匹配 (Auto-Finder)",
+      feed: "街区匹配 (Neighborhood Match)",
       saved: "已保存房源",
       searches: "已保存搜索",
       commute: "通勤规划",

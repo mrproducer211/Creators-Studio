@@ -1526,7 +1526,7 @@ export default function MatchExplorer({ properties }: Props) {
 
             {/* Step 14: Condo Recommendations (Gated at the very end) */}
             <div id="condo-recommendations-list" className="pt-6 border-t border-[#E5E0D8]">
-              <span className="text-[10px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] block mb-1">Result of Auto Finder</span>
+              <span className="text-[10px] font-bold uppercase tracking-[1.5px] text-[#C9A84C] block mb-1">{tm.resultOfAutoFinder}</span>
               <h3 className="text-[15px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4">
                 🏡 Handpicked Condos in {selectedNeighborhood.name}
               </h3>

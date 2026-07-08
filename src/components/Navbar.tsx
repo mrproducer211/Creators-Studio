@@ -83,7 +83,7 @@ export default function Navbar() {
           <Link href="/swipe"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.swipe}</Link>
           <Link href="/explore/match"         className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium flex items-center gap-1" style={{ color: "#1C3A2F", fontWeight: "bold" }}>
             <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" />
-            <span>Auto Finder</span>
+            <span>Neighborhood Match</span>
           </Link>
           <Link href="/explore?type=sale"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.buy}</Link>
           <Link href="/explore?type=rent"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.rent}</Link>
@@ -443,7 +443,7 @@ export default function Navbar() {
                 >
                   <span className="flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-[#C9A84C]" />
-                    <span>Auto Finder</span>
+                    <span>Neighborhood Match</span>
                   </span>
                   <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>AI</span>
                 </Link>
