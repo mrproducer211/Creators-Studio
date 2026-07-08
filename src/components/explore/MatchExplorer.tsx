@@ -273,6 +273,8 @@ export default function MatchExplorer({ properties }: Props) {
   const [isImmersive, setIsImmersive] = useState<boolean>(false);
   const [activeLayer, setActiveLayer] = useState<string>("match");
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
+  const [sharedByFriend, setSharedByFriend] = useState<boolean>(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -290,6 +292,62 @@ export default function MatchExplorer({ properties }: Props) {
   // Comparison Tool State
   const [compareSlugs, setCompareSlugs] = useState<string[]>([]);
   const [isComparing, setIsComparing] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("share") === "1") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSharedByFriend(true);
+
+      const urlReasons = params.get("reasons") ? params.get("reasons")!.split(",") : [];
+      const urlPrefs = params.get("prefs") ? params.get("prefs")!.split(",") : [];
+      const urlAvoids = params.get("avoids") ? params.get("avoids")!.split(",") : [];
+      const urlBudget = params.get("budget") ? parseInt(params.get("budget")!) : 60000;
+      const urlDuration = params.get("duration") || "6-12 Months";
+      const urlWorkplace = params.get("workplace") || "None / Not working";
+
+      setSelectedReasons(urlReasons);
+      setSelectedPrefs(urlPrefs);
+      setSelectedAvoids(urlAvoids);
+      setBudget(urlBudget);
+      setStayDuration(urlDuration);
+      setWorkplaceOption(urlWorkplace);
+
+      // Perform matching query automatically
+      const calculateSharedMatches = async () => {
+        setStep(7);
+        try {
+          const response = await fetch("/api/matchmaker", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              reason: urlReasons[0] || "Just Exploring Bangkok",
+              preferences: urlPrefs.map((p) => p.replace(/^[^a-zA-Z0-9\s]+/, "").trim()),
+              avoidances: urlAvoids,
+              budget: urlBudget,
+              stayDuration: urlDuration,
+              workplace: urlWorkplace,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.matches && data.matches.length > 0) {
+              setMatchedResults(data.matches);
+              setSelectedSlug(data.matches[0].slug);
+              setHasSearched(true);
+            }
+          }
+        } catch (err) {
+          console.error("MatchExplorer: failed to load shared matches:", err);
+        }
+      };
+
+      calculateSharedMatches();
+    }
+  }, []);
 
   const matchedSlugs = useMemo(() => matchedResults.map((r) => r.slug), [matchedResults]);
   const maxCommute = 20;
@@ -758,6 +816,24 @@ export default function MatchExplorer({ properties }: Props) {
     setIsImmersive(false);
   };
 
+  const handleShareProfile = () => {
+    const baseUrl = window.location.origin + window.location.pathname;
+    const params = new URLSearchParams();
+    params.set("share", "1");
+    if (selectedReasons.length > 0) params.set("reasons", selectedReasons.join(","));
+    if (selectedPrefs.length > 0) params.set("prefs", selectedPrefs.join(","));
+    if (selectedAvoids.length > 0) params.set("avoids", selectedAvoids.join(","));
+    params.set("budget", String(budget));
+    params.set("duration", stayDuration);
+    params.set("workplace", workplaceOption);
+
+    const shareUrl = `${baseUrl}?${params.toString()}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   const handleReset = () => {
     setStep(0);
     setHasSearched(false);
@@ -1127,25 +1203,59 @@ export default function MatchExplorer({ properties }: Props) {
         {/* Step 8: Redesigned Results Page */}
         {hasSearched && !isImmersive && !isComparing && (
           <div className="flex-1 flex flex-col">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 gap-3 flex-wrap">
               <button
-                onClick={handleReset}
+                onClick={() => {
+                  setSharedByFriend(false);
+                  window.history.replaceState({}, "", window.location.pathname);
+                  handleReset();
+                }}
                 className="text-[#C9A84C] font-bold text-xs uppercase tracking-wider bg-transparent border-none cursor-pointer flex items-center gap-1"
               >
                 ← Restart Survey
               </button>
 
-              {compareSlugs.length > 0 && (
+              <div className="flex gap-2">
                 <button
-                  onClick={() => setIsComparing(true)}
-                  disabled={compareSlugs.length < 2}
-                  className="px-4 py-2 rounded-full font-bold text-[10.5px] border-none bg-[#C9A84C] text-[#1C3A2F] cursor-pointer disabled:opacity-50"
+                  onClick={handleShareProfile}
+                  className="px-4 py-2 rounded-full font-bold text-[10.5px] border cursor-pointer flex items-center gap-1.5 transition-all bg-transparent text-[#C9A84C] border-[#C9A84C] hover:bg-[#C9A84C] hover:text-[#1C3A2F]"
                   style={{ fontFamily: "inherit" }}
                 >
-                  ⚖️ Compare Selected ({compareSlugs.length}/2)
+                  {copied ? "✅ Link Copied!" : "🔗 Share Profile"}
                 </button>
-              )}
+
+                {compareSlugs.length > 0 && (
+                  <button
+                    onClick={() => setIsComparing(true)}
+                    disabled={compareSlugs.length < 2}
+                    className="px-4 py-2 rounded-full font-bold text-[10.5px] border-none bg-[#C9A84C] text-[#1C3A2F] cursor-pointer disabled:opacity-50"
+                    style={{ fontFamily: "inherit" }}
+                  >
+                    ⚖️ Compare Selected ({compareSlugs.length}/2)
+                  </button>
+                )}
+              </div>
             </div>
+
+            {sharedByFriend && (
+              <div className="mb-6 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 border" style={{ background: "rgba(201,168,76,0.1)", borderColor: "#C9A84C" }}>
+                <div>
+                  <h4 className="text-[13px] font-bold text-[#1C3A2F] mb-0.5">👋 A friend shared their profile!</h4>
+                  <p className="text-[11.5px] text-[#666] font-light">They matched best with <b>{matchedResults[0]?.slug ? NEIGHBORHOODS.find(n => n.slug === matchedResults[0].slug)?.name : "Bangkok"}</b>. Take the quiz to find yours!</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setSharedByFriend(false);
+                    window.history.replaceState({}, "", window.location.pathname);
+                    handleReset();
+                  }}
+                  className="px-4 py-2.5 rounded-xl font-bold text-[11px] border-none text-white cursor-pointer hover:bg-opacity-95 transition-all whitespace-nowrap"
+                  style={{ background: "#1C3A2F", fontFamily: "inherit" }}
+                >
+                  Take the Lifestyle Quiz →
+                </button>
+              </div>
+            )}
 
             <h1 className="text-[26px] font-bold text-[#1C3A2F] leading-tight mb-2">
               Your Best Bangkok Neighborhoods
@@ -1539,6 +1649,14 @@ export default function MatchExplorer({ properties }: Props) {
                   ))}
                 </div>
               )}
+
+              {/* Dynamic browse all link to explore page filters */}
+              <a
+                href={`/explore?area=${encodeURIComponent(selectedNeighborhood.name)}&type=${stayDuration === "1-3 Months" || stayDuration === "3-6 Months" ? "short_stay" : "rent"}${selectedPrefs.includes("🐶 Pet Friendly") || selectedReasons.includes("Pet-Friendly Lifestyle") ? "&pets=true" : ""}${selectedPrefs.includes("🚇 Near BTS/MRT") ? "&bts=true" : ""}`}
+                className="w-full mt-5 py-3.5 rounded-xl font-bold text-[12px] bg-[#1C3A2F] text-white cursor-pointer border-none hover:bg-opacity-95 transition-all block text-center no-underline uppercase tracking-wider font-outfit"
+              >
+                Browse All Properties in {selectedNeighborhood.name} →
+              </a>
             </div>
           </div>
         )}
