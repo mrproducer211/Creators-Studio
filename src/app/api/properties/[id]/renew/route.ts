@@ -18,7 +18,7 @@ function slugify(text: string) {
 }
 
 export async function POST(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();

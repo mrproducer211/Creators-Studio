@@ -4,7 +4,7 @@ import { deleteLead } from "@/lib/store/leads";
 import { createAuditLog } from "@/lib/db/dbLoader";
 
 export async function DELETE(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const authCheck = await requireAdminApi();

@@ -12,6 +12,26 @@ export const metadata = {
   alternates: {
     canonical: "/explore/match",
   },
+  openGraph: {
+    title: "Neighborhood Match — Bangkok Neighborhood Lifestyle Finder",
+    description: "Find your ideal Bangkok neighborhood and condos with AI and commute mapping.",
+    url: "/explore/match",
+    images: [
+      {
+        url: "/images/neighborhood-match-og.webp",
+        width: 1200,
+        height: 630,
+        alt: "Neighborhood Match — Bangkok Neighborhood Lifestyle Finder",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Neighborhood Match — Bangkok Neighborhood Lifestyle Finder",
+    description: "Find your ideal Bangkok neighborhood and condos with AI and commute mapping.",
+    images: ["/images/neighborhood-match-og.webp"],
+  },
 };
 
 export default async function MatchPage() {
