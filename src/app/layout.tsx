@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
+import Script from "next/script";
 import { SavedProvider } from "@/contexts/SavedContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { RecentlyViewedProvider } from "@/contexts/RecentlyViewedContext";
@@ -84,6 +85,21 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        {/* Google Analytics tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-3MBFTGN0YR"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-3MBFTGN0YR');
+          `}
+        </Script>
+
         {/* Site-wide structured data */}
         <script
           type="application/ld+json"
