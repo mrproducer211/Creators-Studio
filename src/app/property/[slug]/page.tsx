@@ -210,9 +210,12 @@ export default async function PropertyPage({ params }: Props) {
   };
 
   // Find matching neighborhood to link to /neighborhood/[slug] instead of /explore?area={area}
-  const matchingNeighborhood = NEIGHBORHOODS.find(
-    (n) => n.name.toLowerCase().trim() === property.area.toLowerCase().trim()
-  );
+  const matchingNeighborhood = NEIGHBORHOODS.find((n) => {
+    const areaLower = property.area.toLowerCase().trim();
+    const matchesName = n.name.toLowerCase().trim() === areaLower;
+    const matchesAlias = n.aliases?.some((alias) => alias.toLowerCase().trim() === areaLower);
+    return matchesName || matchesAlias;
+  });
 
   const neighborhoodUrl = matchingNeighborhood
     ? `${baseUrl}/neighborhood/${matchingNeighborhood.slug.toLowerCase()}`

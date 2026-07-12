@@ -2,6 +2,7 @@ export interface Neighborhood {
   id: number;
   name: string;
   slug: string;
+  aliases?: string[];
   description: string;
   lat: number;
   lng: number;
@@ -935,6 +936,7 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     id: 15,
     name: "Chit Lom / Ploenchit",
     slug: "chidlom-ploenchit",
+    aliases: ["Ploenchit"],
     description: "Bangkok's most prestigious retail and embassy district, offering ultra-luxury condominiums, high-end shopping malls like Central Embassy, and direct BTS transit.",
     lat: 13.7442,
     lng: 100.5431,
@@ -1245,6 +1247,7 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     id: 20,
     name: "Charoenkrung",
     slug: "charoenkrung",
+    aliases: ["Charoen Krung / Riverside"],
     description: "Bangkok's oldest paved road transformed into a thriving creative district, combining colonial heritage, art spaces, and legendary street food.",
     lat: 13.7225,
     lng: 100.5147,
@@ -1307,6 +1310,7 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     id: 21,
     name: "Sam Yan",
     slug: "sam-yan",
+    aliases: ["Samyan"],
     description: "A vibrant, youthful hub next to Chulalongkorn University, blending innovative workspaces, student dining, and modern mixed-use malls.",
     lat: 13.7335,
     lng: 100.5285,
