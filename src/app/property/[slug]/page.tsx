@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyDetail from "@/components/property/PropertyDetail";
 import { getDbProperties } from "@/lib/db/dbLoader";
+import { NEIGHBORHOODS } from "@/data/neighborhoods";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -202,6 +203,15 @@ export default async function PropertyPage({ params }: Props) {
     },
   };
 
+  // Find matching neighborhood to link to /neighborhood/[slug] instead of /explore?area={area}
+  const matchingNeighborhood = NEIGHBORHOODS.find(
+    (n) => n.name.toLowerCase().trim() === property.area.toLowerCase().trim()
+  );
+
+  const neighborhoodUrl = matchingNeighborhood
+    ? `${baseUrl}/neighborhood/${matchingNeighborhood.slug.toLowerCase()}`
+    : `${baseUrl}/explore?area=${encodeURIComponent(property.area)}`;
+
   // Structured Data (JSON-LD) for BreadcrumbList
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -223,7 +233,7 @@ export default async function PropertyPage({ params }: Props) {
         "@type": "ListItem",
         "position": 3,
         "name": property.area,
-        "item": `${baseUrl}/explore?area=${encodeURIComponent(property.area)}`
+        "item": neighborhoodUrl
       },
       {
         "@type": "ListItem",
