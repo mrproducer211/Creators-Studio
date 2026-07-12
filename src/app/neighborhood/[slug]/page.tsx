@@ -41,6 +41,50 @@ export default async function NeighborhoodPage({ params }: Props) {
 
   const allProperties = await getDbProperties();
   const guide = NEIGHBORHOOD_GUIDES[slug.toLowerCase()];
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Neighborhoods",
+        "item": `${baseUrl}/neighborhood`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": neighborhood.name,
+        "item": `${baseUrl}/neighborhood/${neighborhood.slug.toLowerCase()}`
+      }
+    ]
+  };
+
+  const placeJsonLd = (typeof neighborhood.lat === 'number' && typeof neighborhood.lng === 'number') ? {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    "name": neighborhood.name,
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": neighborhood.lat,
+      "longitude": neighborhood.lng
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Bangkok",
+      "addressCountry": "TH"
+    }
+  } : null;
   
   const faqSchema = guide && guide.faqs && guide.faqs.length > 0 ? {
     "@context": "https://schema.org",
@@ -57,6 +101,16 @@ export default async function NeighborhoodPage({ params }: Props) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      {placeJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(placeJsonLd) }}
+        />
+      )}
       {faqSchema && (
         <script
           type="application/ld+json"

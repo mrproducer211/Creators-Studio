@@ -132,6 +132,53 @@ export default async function PropertyPage({ params }: Props) {
     pageImageUrl = `${baseUrl}${pageImageUrl.startsWith("/") ? "" : "/"}${pageImageUrl}`;
   }
 
+  // Generate caption: e.g. "{beds}-bedroom {type}, {neighbourhood}, Bangkok"
+  const bedStr = property.bedrooms === 0 ? "Studio" : `${property.bedrooms}-bedroom`;
+  const typeStr = property.propertyType ? property.propertyType.toLowerCase() : "property";
+  const areaStr = property.area || "";
+  
+  let imageCaption = `${bedStr} ${typeStr}`;
+  if (areaStr) {
+    imageCaption += `, ${areaStr}`;
+  }
+  imageCaption += `, Bangkok`;
+
+  const resolveAbsoluteUrl = (url: string) => {
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://")) return url;
+    return `${baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+  };
+
+  const coverImageObject = {
+    "@type": "ImageObject",
+    "url": pageImageUrl,
+    "caption": imageCaption
+  };
+
+  let schemaImages: any = coverImageObject;
+
+  if (property.images && Array.isArray(property.images) && property.images.length > 0) {
+    const allImageObjects = [
+      coverImageObject,
+      ...property.images.map((imgUrl, index) => ({
+        "@type": "ImageObject",
+        "url": resolveAbsoluteUrl(imgUrl),
+        "caption": `${imageCaption} - Image ${index + 1}`
+      }))
+    ];
+    // Remove duplicate cover images if present in images array
+    const uniqueImagesMap = new Map();
+    allImageObjects.forEach(imgObj => {
+      if (imgObj.url) {
+        uniqueImagesMap.set(imgObj.url, imgObj);
+      }
+    });
+    schemaImages = Array.from(uniqueImagesMap.values());
+    if (schemaImages.length === 1) {
+      schemaImages = schemaImages[0];
+    }
+  }
+
   // Structured Data (JSON-LD) for RealEstateListing
   const jsonLd = {
     "@context": "https://schema.org",
@@ -139,7 +186,7 @@ export default async function PropertyPage({ params }: Props) {
     "name": property.name,
     "description": property.description,
     "url": `${baseUrl}/property/${property.slug}`,
-    "image": pageImageUrl,
+    "image": schemaImages,
     "address": {
       "@type": "PostalAddress",
       "addressLocality": property.district || property.area,
@@ -155,11 +202,47 @@ export default async function PropertyPage({ params }: Props) {
     },
   };
 
+  // Structured Data (JSON-LD) for BreadcrumbList
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": property.listingType === "sale" ? "Buy" : property.listingType === "rent" ? "Rent" : "Short Stay",
+        "item": `${baseUrl}/explore`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": property.area,
+        "item": `${baseUrl}/explore?area=${encodeURIComponent(property.area)}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": property.name,
+        "item": `${baseUrl}/property/${property.slug}`
+      }
+    ]
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Navbar />
       <main style={{ paddingTop: "56px", background: "#F7F3EC", minHeight: "100vh" }}>
