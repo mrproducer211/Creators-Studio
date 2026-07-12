@@ -180,6 +180,8 @@ export default async function PropertyPage({ params }: Props) {
     }
   }
 
+  const unitType = (property.propertyType === "condo" || property.propertyType === "apartment") ? "Apartment" : "Residence";
+
   // Structured Data (JSON-LD) for RealEstateListing
   const jsonLd = {
     "@context": "https://schema.org",
@@ -188,11 +190,15 @@ export default async function PropertyPage({ params }: Props) {
     "description": property.description,
     "url": `${baseUrl}/property/${property.slug}`,
     "image": schemaImages,
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": property.district || property.area,
-      "addressRegion": "Bangkok",
-      "addressCountry": "TH",
+    "about": {
+      "@type": unitType,
+      "name": property.name,
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": property.district || property.area,
+        "addressRegion": "Bangkok",
+        "addressCountry": "TH",
+      },
     },
     "offers": {
       "@type": "Offer",

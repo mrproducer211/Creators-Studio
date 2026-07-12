@@ -42,7 +42,10 @@ const orgJsonLd = {
   areaServed: {
     "@type": "City",
     name: "Bangkok",
-    addressCountry: "TH",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "TH",
+    },
   },
   contactPoint: {
     "@type": "ContactPoint",
