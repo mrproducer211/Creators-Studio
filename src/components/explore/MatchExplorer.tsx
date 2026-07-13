@@ -43,6 +43,7 @@ import {
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { T_MATCH } from "@/data/matchTranslations";
+import Footer from "@/components/Footer";
 
 const MapComponent = dynamic(() => import("./MapComponent"), { ssr: false });
 
@@ -863,9 +864,12 @@ export default function MatchExplorer({ properties }: Props) {
     return compareSlugs.map(slug => NEIGHBORHOODS.find(n => n.slug === slug)).filter(Boolean) as Neighborhood[];
   }, [compareSlugs]);
 
+  const showFooter = step === 0 || hasSearched;
+
   return (
-    <div 
-      className="flex-1 flex flex-col lg:grid lg:grid-cols-12 mt-14" 
+    <>
+      <div 
+        className="flex-1 flex flex-col lg:grid lg:grid-cols-12 mt-14" 
       style={{ 
         background: "#F7F3EC",
         minHeight: isMobile ? "0px" : "calc(100vh - 56px)"
@@ -880,7 +884,7 @@ export default function MatchExplorer({ properties }: Props) {
           maxHeight: isMobile ? "none" : "calc(100vh - 56px)",
           overflowY: isMobile ? "visible" : "auto",
           borderRight: isMobile ? "none" : "1px solid #E5E0D8",
-          padding: step === 0 ? "0px" : (isMobile ? "20px 16px 80px 16px" : "32px 24px"),
+          padding: step === 0 ? "0px" : (isMobile ? (showFooter ? "20px 16px 80px 16px" : "20px 16px 24px 16px") : "32px 24px"),
         }}
       >
         
@@ -1165,7 +1169,7 @@ export default function MatchExplorer({ properties }: Props) {
           <div className="flex-1 flex flex-col justify-between">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-[2px] text-[#C9A84C] block mb-2">{tm.analysisComplete}</span>
-              <h2 className="text-[26px] font-bold text-[#1C3A2F] leading-tight mb-4 font-outfit">Your Bangkok Lifestyle Profile</h2>
+              <h2 className="text-[16px] min-[375px]:text-[18px] min-[480px]:text-[20px] lg:text-[26px] font-bold text-[#1C3A2F] leading-tight mb-4 font-outfit whitespace-nowrap lg:whitespace-normal">Your Bangkok Lifestyle Profile</h2>
               
               <div className="bg-[#1C3A2F] text-[#F7F3EC] p-6 rounded-3xl shadow-lg border border-white/10 mb-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[#C9A84C]/10 rounded-full blur-2xl" />
@@ -1257,7 +1261,7 @@ export default function MatchExplorer({ properties }: Props) {
               </div>
             )}
 
-            <h1 className="text-[26px] font-bold text-[#1C3A2F] leading-tight mb-2">
+            <h1 className="text-[16px] min-[375px]:text-[18px] min-[480px]:text-[20px] lg:text-[26px] font-bold text-[#1C3A2F] leading-tight mb-2 whitespace-nowrap lg:whitespace-normal">
               Your Best Bangkok Neighborhoods
             </h1>
             <p className="text-[13px] text-[#666] font-light mb-6">
@@ -1842,5 +1846,7 @@ export default function MatchExplorer({ properties }: Props) {
 
       </div>
     </div>
+    {showFooter && <Footer />}
+  </>
   );
 }

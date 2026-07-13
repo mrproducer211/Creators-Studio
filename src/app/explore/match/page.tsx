@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import MatchExplorer from "@/components/explore/MatchExplorer";
 import { getDbProperties } from "@/lib/db/dbLoader";
 
@@ -45,7 +44,6 @@ export default async function MatchPage() {
           <MatchExplorer properties={properties} />
         </Suspense>
       </main>
-      <Footer />
     </>
   );
 }
