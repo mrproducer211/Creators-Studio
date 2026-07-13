@@ -15,6 +15,7 @@ export interface BlogPost {
   readTime:    string;
   publishedAt: string;
   updatedAt?:  string;
+  trending?:   boolean;
   author:      string;
   keywords:    string[];
   intro:       string;

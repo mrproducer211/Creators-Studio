@@ -29,12 +29,22 @@ export default function BlogFeaturedHero({ post }: Props) {
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover transition-transform duration-700 group-hover:scale-103"
         />
-        <span
-          className="absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
-          style={{ background: "#C9A84C", color: "#1C3A2F" }}
-        >
-          Featured · {post.category}
-        </span>
+        <div className="absolute top-4 left-4 flex items-center gap-2">
+          <span
+            className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+            style={{ background: "#C9A84C", color: "#1C3A2F" }}
+          >
+            Featured · {post.category}
+          </span>
+          {post.trending && (
+            <span
+              className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider animate-pulse"
+              style={{ background: "#FF6B6B", color: "#FFFFFF" }}
+            >
+              🔥 Trending
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Content Container */}

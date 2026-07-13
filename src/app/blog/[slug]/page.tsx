@@ -9,6 +9,56 @@ import ShareButtons from "@/components/blog/ShareButtons";
 import AuthorBio from "@/components/blog/AuthorBio";
 import NewsletterCapture from "@/components/blog/NewsletterCapture";
 
+const NEIGHBOURHOOD_MAP: Record<string, string> = {
+  "ari": "Ari",
+  "thong lo": "Thong Lo",
+  "thonglor": "Thong Lo",
+  "on nut": "On Nut",
+  "onnut": "On Nut",
+  "sathorn": "Sathorn",
+  "silom": "Sathorn",
+  "ekkamai": "Ekkamai",
+  "phrom phong": "Phrom Phong",
+  "phromphong": "Phrom Phong",
+  "bang na": "Bang Na",
+  "bangna": "Bang Na",
+  "lat phrao": "Lat Phrao",
+  "ladprao": "Lat Phrao",
+  "nonthaburi": "Nonthaburi",
+  "chit lom": "Chit Lom",
+  "chidlom": "Chit Lom",
+  "sam yan": "Sam Yan",
+  "samyan": "Sam Yan",
+  "yaowarat": "Chinatown",
+  "chinatown": "Chinatown",
+  "bangrak": "Sathorn"
+};
+
+function renderParagraphWithLinks(text: string) {
+  const keys = Object.keys(NEIGHBOURHOOD_MAP).sort((a, b) => b.length - a.length);
+  const pattern = new RegExp(`\\b(${keys.join("|")})\\b`, "gi");
+
+  const parts = text.split(pattern);
+  if (parts.length === 1) return text;
+
+  return parts.map((part, idx) => {
+    const dbArea = NEIGHBOURHOOD_MAP[part.toLowerCase()];
+    if (dbArea) {
+      return (
+        <Link
+          key={idx}
+          href={`/explore?area=${encodeURIComponent(dbArea)}`}
+          className="font-bold underline hover:text-[#C9A84C] transition-colors"
+          style={{ color: "#1C3A2F" }}
+        >
+          {part}
+        </Link>
+      );
+    }
+    return part;
+  });
+}
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -84,6 +134,10 @@ export default async function BlogPostPage({ params }: Props) {
     day: "numeric", month: "long", year: "numeric",
   });
 
+  const formattedUpdateDate = post.updatedAt ? new Date(post.updatedAt).toLocaleDateString("en-GB", {
+    day: "numeric", month: "long", year: "numeric",
+  }) : null;
+
   const headerFont = post.headerFontFamily || "Outfit";
   const bodyFont = post.fontFamily || "Inter";
   const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(headerFont)}:wght@400;600;700&family=${encodeURIComponent(bodyFont)}:wght@300;400;500;600&display=swap`;
@@ -101,7 +155,7 @@ export default async function BlogPostPage({ params }: Props) {
     description: post.metaDesc,
     image: imageUrl,
     datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
     author: {
       "@type": "Organization",
       name: post.author || "NHP Bangkok Team",
@@ -176,16 +230,25 @@ export default async function BlogPostPage({ params }: Props) {
           />
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%)" }} />
           <div className="absolute bottom-0 left-0 right-0 px-4 md:px-8 pb-8 max-w-3xl">
-            <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold mb-3" style={{ background: "#C9A84C", color: "#1C3A2F" }}>
-              {post.category}
-            </span>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>
+                {post.category}
+              </span>
+              {post.trending && (
+                <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold animate-pulse" style={{ background: "#FF6B6B", color: "#FFFFFF" }}>
+                  🔥 Trending
+                </span>
+              )}
+            </div>
             <h1 className="text-[22px] md:text-[32px] font-bold leading-[1.2] mb-3" style={{ color: "#FFFFFF", letterSpacing: "-0.5px", fontFamily: `${headerFont}, sans-serif` }}>
               {post.title}
             </h1>
             <div className="flex items-center gap-4 text-[12px]" style={{ color: "rgba(255,255,255,0.6)" }}>
               <span>{post.author}</span>
               <span>·</span>
-              <span>{formattedDate}</span>
+              <span>
+                {formattedUpdateDate ? `Updated ${formattedUpdateDate}` : `Published ${formattedDate}`}
+              </span>
               <span>·</span>
               <span>{post.readTime}</span>
             </div>
@@ -209,14 +272,35 @@ export default async function BlogPostPage({ params }: Props) {
             className="text-[16px] md:text-[17px] leading-[1.8] mb-8 font-light"
             style={{ color: "#333", borderLeft: "3px solid #C9A84C", paddingLeft: 20 }}
           >
-            {post.intro}
+            {renderParagraphWithLinks(post.intro)}
           </p>
 
           <ShareButtons url={currentUrl} title={post.title} />
 
+          {/* Table of Contents */}
+          {post.sections && post.sections.length > 1 && (
+            <div className="rounded-2xl p-4 md:p-5 mt-6 mb-8 border border-[#EDE8DF] bg-white">
+              <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-3">
+                In this guide:
+              </h4>
+              <ul className="list-none p-0 m-0 flex flex-col gap-2">
+                {post.sections.map((section, idx) => (
+                  <li key={idx} className="m-0 text-[13px] font-light">
+                    <a
+                      href={`#section-${idx}`}
+                      className="text-[#C9A84C] hover:underline no-underline font-medium"
+                    >
+                      {idx + 1}. {section.heading}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Sections */}
           {post.sections.map((section, i) => (
-            <div key={i} className="mb-8">
+            <div key={i} id={`section-${i}`} className="mb-8 scroll-mt-20">
               <h2
                 className="text-[18px] md:text-[22px] font-bold mb-4"
                 style={{ color: "#1C3A2F", letterSpacing: "-0.3px", fontFamily: `${headerFont}, sans-serif` }}
@@ -229,7 +313,7 @@ export default async function BlogPostPage({ params }: Props) {
                   className="text-[15px] leading-[1.8] mb-4 font-light"
                   style={{ color: "#444" }}
                 >
-                  {para}
+                  {renderParagraphWithLinks(para)}
                 </p>
               ))}
             </div>

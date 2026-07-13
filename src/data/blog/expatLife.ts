@@ -188,6 +188,7 @@ export const EXPAT_LIFE: BlogPost[] = [
     slug: "cost-of-living-bangkok-2026",
     category: "Expat Tips",
     tags: ["Cost of Living", "Budget", "Expat Tips", "Renting"],
+    trending: true,
     title: "Cost of Living in Bangkok 2026: A Realistic Monthly Budget",
     metaTitle: "Cost of Living in Bangkok 2026: Expat Budget Breakdown | NHP",
     metaDesc: "A realistic breakdown of the cost of living in Bangkok. Rent, utility bills, food, transport, and entertainment budgets for different lifestyles.",

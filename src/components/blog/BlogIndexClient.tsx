@@ -145,12 +145,22 @@ export default function BlogIndexClient({ initialPosts }: Props) {
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-103"
                   />
-                  <span
-                    className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
-                    style={{ background: "#C9A84C", color: "#1C3A2F" }}
-                  >
-                    {post.category}
-                  </span>
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <span
+                      className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                      style={{ background: "#C9A84C", color: "#1C3A2F" }}
+                    >
+                      {post.category}
+                    </span>
+                    {post.trending && (
+                      <span
+                        className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider animate-pulse"
+                        style={{ background: "#FF6B6B", color: "#FFFFFF" }}
+                      >
+                        🔥 Trending
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Info & Text */}
