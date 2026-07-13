@@ -253,21 +253,28 @@ export const EXPAT_LIFE: BlogPost[] = [
     intro: "Walking out of Suvarnabhumi Airport into Bangkok's warm, humid air is the start of an exciting adventure. But once the initial excitement settles, you have a long checklist of practical tasks to complete during your first week. Getting these tasks done in the right order can save you hours of government bureaucracy and let you settle into your new life quickly. Here is your ultimate first-week survival guide.",
     sections: [
       {
-        heading: "1. Day 1: Get Connected (SIM Card & Transit)",
+        heading: "1. Day 0: Before You Land (TDAC Arrival Form)",
+        body: [
+          "Before you board your flight, make sure you complete the Thailand Digital Arrival Card (TDAC). This is a mandatory electronic entry form that replaces the old paper-based TM6 form. You must submit your travel details online within 72 hours prior to your arrival via the official government portal at https://tdac.immigration.go.th.",
+          "Submitting your details is completely free. Once completed, save the confirmation QR code on your phone or print it out, as you will need to present it at the immigration desk upon arrival."
+        ]
+      },
+      {
+        heading: "2. Day 1: Get Connected (SIM Card & Transit)",
         body: [
           "Do not buy a tourist SIM card at the airport arrivals hall—they are overpriced and have data limits. Instead, visit any official AIS, True, or DTAC shop inside a shopping mall (like CentralWorld or Terminal 21) on your first day. Bring your passport and buy a monthly unlimited data plan for around ฿300 to ฿450.",
           "Also, buy a Rabbit Card at the nearest BTS Skytrain station. This rechargeable card allows you to tap through the BTS gates quickly, saving you from queuing for tickets during rush hours."
         ]
       },
       {
-        heading: "2. Day 3: Secure Your Address & TM30 Registration",
+        heading: "3. Day 3: Secure Your Address & TM30 Registration",
         body: [
           "Once you sign a lease for your condo, your landlord must submit a TM30 form to Thai Immigration within 24 hours of your arrival. This form registers your address and is required to open a bank account, get a driving licence, or extend your visa.",
           "Ask your landlord for a copy of the TM30 receipt (or the online registration screenshot) immediately. Keep this document printed inside your passport at all times."
         ]
       },
       {
-        heading: "3. Day 5: Local Banking & QR Payments",
+        heading: "4. Day 5: Local Banking & QR Payments",
         body: [
           "Take your passport, TM30 receipt, and lease agreement to a main bank branch (like Bangkok Bank's head office on Silom Road) to open a savings account. Ask for mobile banking access and a debit card.",
           "Once set up, fund your account (using transfer services like Wise) and use the bank app to scan QR codes for payment. This is the national payment system (PromptPay)—it is accepted everywhere from street food carts to high-end malls, eliminating the need to carry cash."
