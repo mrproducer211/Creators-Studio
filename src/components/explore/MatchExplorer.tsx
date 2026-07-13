@@ -872,19 +872,19 @@ export default function MatchExplorer({ properties }: Props) {
         className="flex-1 flex flex-col lg:grid lg:grid-cols-12 mt-14" 
       style={{ 
         background: "#F7F3EC",
-        minHeight: isMobile ? "0px" : "calc(100vh - 56px)"
+        minHeight: "calc(100vh - 56px)"
       }}
     >
       
       {/* LEFT COLUMN: Premium relocation wizard or matched results */}
       <div
         id="match-explorer-left-column"
-        className="lg:col-span-5 flex flex-col relative w-full lg:flex"
+        className="flex-1 lg:flex-none lg:col-span-5 flex flex-col relative w-full lg:flex"
         style={{
           maxHeight: isMobile ? "none" : "calc(100vh - 56px)",
           overflowY: isMobile ? "visible" : "auto",
           borderRight: isMobile ? "none" : "1px solid #E5E0D8",
-          padding: step === 0 ? "0px" : (isMobile ? (showFooter ? "20px 16px 80px 16px" : "20px 16px 24px 16px") : "32px 24px"),
+          padding: step === 0 ? "0px" : (isMobile ? (showFooter ? "20px 16px 80px 16px" : "20px 16px 32px 16px") : "32px 24px"),
         }}
       >
         
