@@ -257,14 +257,15 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {post.keywords.map((kw) => (
-              <span
-                key={kw}
-                className="px-3 py-1 rounded-full text-[11px] font-medium"
-                style={{ background: "#EDE8DF", color: "#555" }}
+            {(post.tags || []).map((tag) => (
+              <Link
+                key={tag}
+                href={`/blog?tag=${encodeURIComponent(tag)}`}
+                className="px-3 py-1 rounded-full text-[11px] font-medium no-underline transition-colors hover:opacity-90"
+                style={{ background: "#EDE8DF", color: "#1C3A2F" }}
               >
-                {kw}
-              </span>
+                #{tag}
+              </Link>
             ))}
           </div>
 

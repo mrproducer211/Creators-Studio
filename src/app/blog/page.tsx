@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import { getAllPosts } from "@/lib/store/blog";
 import BlogIndexClient from "@/components/blog/BlogIndexClient";
 import NewsletterCapture from "@/components/blog/NewsletterCapture";
+import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +37,9 @@ export default async function BlogPage() {
         </div>
 
         {/* Client Side Search, Filter and Grid */}
-        <BlogIndexClient initialPosts={POSTS} />
+        <Suspense fallback={<div className="text-center py-10 text-xs text-gray-500">Loading guides...</div>}>
+          <BlogIndexClient initialPosts={POSTS} />
+        </Suspense>
         <div className="pb-10">
           <NewsletterCapture />
         </div>

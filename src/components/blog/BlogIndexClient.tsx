@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { BlogPost } from "@/data/blogPosts";
 import BlogFeaturedHero from "./BlogFeaturedHero";
 
@@ -14,6 +15,15 @@ interface Props {
 export default function BlogIndexClient({ initialPosts }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const tag = searchParams.get("tag");
+    if (tag) {
+      setSearchQuery(tag);
+      setSelectedCategory("All");
+    }
+  }, [searchParams]);
 
   // Extract all categories dynamically and sort them
   const categories = useMemo(() => {
@@ -33,7 +43,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.keywords.some((k) => k.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        post.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+        (post.tags || []).some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
 
       return matchesCategory && matchesSearch;
     });
