@@ -344,58 +344,6 @@ const STATIC_POSTS: BlogPost[] = [
       label:   "Browse Properties",
     },
   },
-  /* ─────────────────────────────── POST 5 ─────────────────────────────── */
-  {
-    slug:        "living-near-bangkok-academic-retail-centers-chidlom-vs-sam-yan",
-    category:    "Neighbourhood Guide",
-    tags:        ["Chit Lom", "Sam Yan", "Compare", "Shopping", "Students"],
-    title:       "Siam to Sam Yan: Bangkok's Retail and Academic Hubs",
-    metaTitle:   "Chit Lom vs Sam Yan: Bangkok Living Comparison | NHP",
-    metaDesc:    "Comparing the luxury shopping district of Chit Lom/Ploenchit with the youth and tech innovation hub of Sam Yan. Find the right neighborhood for your lifestyle.",
-    excerpt:     "Two central districts representing the contrasting faces of Bangkok: ultra-luxury retail and youthful academic innovation. Here is our detailed expat guide.",
-    image:       "/images/blog/chidlom_sam_yan.webp",
-    readTime:    "5 min read",
-    publishedAt: "2026-06-18",
-    author:      "NHP Bangkok Team",
-    keywords:    ["Chit Lom apartments", "Sam Yan condos", "Central Embassy rentals", "Samyan Mitrtown", "Bangkok student housing"],
-    intro: "For expats and professionals relocating to central Bangkok, choosing the right neighborhood is often a trade-off between premium luxury and youthful convenience. If you want to be in the center of the action, two neighborhoods stand out: Chit Lom/Ploenchit to the east of Siam, and Sam Yan to the south. One is Bangkok's elite diplomatic and luxury retail district; the other is a vibrant university hub built for innovation, technology, and 24-hour study.",
-    sections: [
-      {
-        heading: "The Vibe: Elite Diplomacy vs Academic Innovation",
-        body: [
-          "Chit Lom and Ploenchit represent the pinnacle of prestige. Centered around Wireless Road and Ploenchit BTS, it is home to major foreign embassies, luxury hotels, and corporate skyscrapers. The streets are clean, wide, and lined with mature trees, offering a polished, diplomatic atmosphere.",
-          "Sam Yan (MRT Sam Yan) is a youthful, energetic sandbox next to Chulalongkorn University. Managed with a focus on education and tech, it features student dining lanes, digital co-working spaces, and green parks. The vibe is collaborative, innovative, and highly active.",
-        ],
-      },
-      {
-        heading: "Rental Market & Condominiums",
-        body: [
-          "Chit Lom is one of the most expensive areas in Bangkok. Rents for a luxury 1-bedroom condo start around ฿35,000 and can easily reach ฿80,000+ per month. Developments feature top-class design, sky pools, and concierge services, catering to diplomats and high-earning corporate directors.",
-          "Sam Yan offers excellent modern student and executive housing. Rents for a 1-bedroom condo range from ฿16,000 to ฿30,000 per month. The buildings are modern, feature shared study lounges, high security, and are designed for active city dwellers.",
-        ],
-      },
-      {
-        heading: "Convenience, Parks & Workspaces",
-        body: [
-          "Chit Lom offers ultimate retail convenience, with direct BTS walkway connections to Central Embassy, Central Chidlom, and Siam Paragon. It also provides easy access to the Sirat Expressway and is a short walk from the northern tip of Lumpini Park.",
-          "Sam Yan revolves around Samyan Mitrtown, a mixed-use mall famous for its 24-hour retail and workspace zone, perfect for study and remote work. The neighborhood also boasts the CU Centenary Park, a gorgeous green space that doubles as a modern flood-prevention system.",
-        ],
-      },
-      {
-        heading: "The Verdict: Which Suits You?",
-        body: [
-          "Choose Chit Lom if you have a premium housing budget, value diplomatic security and elite addresses, prioritize proximity to luxury retail malls, and want to live in a highly polished, shaded central environment.",
-          "Choose Sam Yan if you want a youthful, active neighborhood with a lower cost of living, you are a student or tech professional seeking 24-hour workspaces, and you want to be steps from the MRT subway and central green parks.",
-        ],
-      },
-    ],
-    cta: {
-      heading: "Find Your Central Bangkok Home",
-      body:    "Explore premium properties for rent in Chit Lom and Sam Yan.",
-      href:    "/explore",
-      label:   "Browse Properties",
-    },
-  },
 ];
 
 const POSTS: BlogPost[] = [

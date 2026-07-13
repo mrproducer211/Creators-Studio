@@ -227,48 +227,4 @@ export const HIDDEN_BANGKOK: BlogPost[] = [
       label: "Find Properties"
     }
   },
-  {
-    slug: "off-the-beaten-path-temples",
-    category: "Hidden Bangkok",
-    tags: ["Temples", "Culture", "Quiet Spots", "Old Town"],
-    title: "Off-the-Beaten-Path Temples Worth Visiting Beyond Wat Phra Kaew",
-    metaTitle: "Secret Temples in Bangkok 2026: Quiet & Historic | NHP",
-    metaDesc: "Explore Bangkok's quiet, historic temples. A local guide to beautiful Buddhist temples with no tourist crowds and exceptional architecture.",
-    excerpt: "Avoid the massive tourist crowds and ticket prices. These 4 beautiful, historic temples offer quiet sanctuaries and exceptional architectural beauty.",
-    image: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?w=1200&auto=format&q=85",
-    readTime: "5 min read",
-    publishedAt: "2026-07-13",
-    author: "NHP Bangkok Team",
-    keywords: ["secret temples Bangkok", "quiet temples Bangkok", "Wat Saket golden mount", "Bangkok cultural sites"],
-    intro: "Visiting Wat Phra Kaew (The Grand Palace) and Wat Pho is a rite of passage for visitors to Bangkok. But these sites are often crowded with tour buses, loud megaphones, and ticket lines. They can feel more like museums than active spiritual sanctuaries. Fortunately, Bangkok is home to over 400 temples. In the quiet side streets of the old town and along the canals of Thonburi, beautiful historic temples offer quiet gardens, spectacular architecture, and active local communities. Here are our favorite quiet temples.",
-    sections: [
-      {
-        heading: "1. The Marble Temple: Wat Benchamabophit",
-        body: [
-          "Located in the quiet, green Dusit district, Wat Benchamabophit is famous for its elegant Italian marble architecture and clean, symmetrical lines. The main ordination hall is built from white Carrara marble, featuring traditional Thai roofs and golden details.",
-          "Unlike the city center temples, the grounds here are peaceful and spacious. You can walk through the quiet cloisters lined with bronze Buddha statues, listen to the monks chanting, or sit by the shaded canal that runs through the temple grounds. It is a spectacular sanctuary of design and calm."
-        ]
-      },
-      {
-        heading: "2. The Metal Castle: Wat Ratchanatdaram",
-        body: [
-          "Situated in the old town near Phan Fa pier, Wat Ratchanatdaram is home to Loha Prasat (the 'Metal Castle'), a unique multi-tiered building featuring 37 black metal spires that represent the 37 virtues toward enlightenment. It is one of the only remaining metal-roofed temples in the world.",
-          "You can climb the spiral staircase to the top tier, which houses a relic of the Buddha. The top balcony offers panoramic views over the old town roofs, Wat Saket (The Golden Mount), and the surrounding canals, with no tourist crowds in sight."
-        ]
-      },
-      {
-        heading: "3. The Canal Sanctuary: Wat Kalayanamit",
-        body: [
-          "Located on the west bank of the Chao Phraya River in Thonburi, Wat Kalayanamit is easily recognizable by its massive, high-ceilinged main hall. Inside sits a giant golden seated Buddha statue that dominates the space.",
-          "Because it is on the Thonburi side, it receives very few Western tourists, instead attracting local Thai-Chinese families who come to make merit. The riverside courtyard is a peaceful place to sit and watch the river traffic pass in quiet comfort."
-        ]
-      }
-    ],
-    cta: {
-      heading: "Want to live in historic Bangkok?",
-      body: "Discover unique apartments and houses for rent in Dusit, Phra Nakhon, and Thonburi.",
-      href: "/explore",
-      label: "Browse Old Town Listings"
-    }
-  }
 ];

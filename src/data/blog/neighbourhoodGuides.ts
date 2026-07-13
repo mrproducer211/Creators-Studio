@@ -1,57 +1,7 @@
 import { BlogPost } from "../blogPosts";
 
 export const NEIGHBORHOOD_GUIDES: BlogPost[] = [
-  {
-    slug: "ultimate-ari-guide-bangkok",
-    category: "Neighbourhood Guide",
-    tags: ["Ari", "Walkability", "Cafes", "Expat Life"],
-    title: "The Ultimate Ari Guide: Bangkok's Most Walkable Neighbourhood for Expats",
-    metaTitle: "Living in Ari Bangkok 2026: Expat Guide to Walkability & Cafes | NHP",
-    metaDesc: "Discover what it is like to live in Ari, Bangkok's premier residential sanctuary. Cafes, condos, cost of living, and the famous tree-lined side streets.",
-    excerpt: "Stepping off the Skytrain into Ari feels like entering a different city. Low-rise buildings, leafy side streets, and the best cafe roasters in Bangkok.",
-    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&auto=format&q=85",
-    readTime: "7 min read",
-    publishedAt: "2026-06-20",
-    author: "NHP Bangkok Team",
-    keywords: ["Living in Ari", "Ari cafes", "Ari condos for rent", "walkable neighbourhoods Bangkok"],
-    intro: "Step off the BTS at Ari and the first thing you'll notice is the silence. Well, relative silence. Compared to the concrete jungle of lower Sukhumvit or the corporate hustle of Sathorn, Ari feels like a village that happens to be plugged directly into the Skytrain. It's leafy, low-rise, and arguably the most walkable residential pocket in the entire city. For years, it was a quiet enclave for old-money Thai families, but today it is the undisputed capital of Bangkok's creative class and remote workers. If you want a neighbourhood with character, independent businesses, and actual shade, Ari is the first place you should look.",
-    sections: [
-      {
-        heading: "The Vibe: Shaded Sois and Quiet Residentials",
-        body: [
-          "Ari's unique appeal lies in its layout. Unlike most of Sukhumvit where side-sois are packed with high-rise developments and heavy commercial traffic, Ari's residential zones (like Phahon Yothin Soi 5, 7, and 9) are lined with mature trees, low-rise apartment blocks, and mid-century modern family homes. You can actually walk down the street here without dodging motorcycle taxis on the pavement. The local crowd is a relaxed mix of creative Thais, tech professionals, and long-term expats who value lifestyle over status.",
-          "Even the main drag, Phahon Yothin Soi 7, has a friendly, local energy. Street food vendors who have stood in the same spot for twenty years sit side-by-side with minimal, design-forward juice bars and craft beer spots. It's this lack of pretense that draws people in: you get the convenience of a modern Bangkok neighbourhood without the neon lights and commercial chaos."
-        ]
-      },
-      {
-        heading: "Specialty Coffee and Coworking: The Nomad Haven",
-        body: [
-          "If you work remotely, Ari is paradise. It's widely considered the specialty coffee capital of the city, home to roasters who take their beans very seriously. Spots like Nana Coffee Roasters, Common Room x Babe, and Laliart Everyday are filled with developers and writers typing away. Expect to pay between ฿120 and ฿180 for a top-tier pour-over.",
-          "For more structured work days, you have access to quiet co-working spaces and laptop-friendly hubs. The internet is consistently fast (condos here easily secure 1Gbps fiber plans), and because the area attracts a younger, creative crowd, you'll find plenty of networking events, design workshops, and community pop-ups that make it easy to meet people if you're new to town."
-        ]
-      },
-      {
-        heading: "Ari Condos: Space, Aesthetic, and Rent Prices",
-        body: [
-          "Renting in Ari is generally cheaper than in Thong Lo, but more expensive than On Nut. A modern 1-bedroom condo close to the BTS Skytrain (like Noble Reform, Rythm Ari, or Centric Ari) ranges from ฿20,000 to ฿30,000 per month. If you are willing to walk 10 minutes or take a quick ฿20 motorcycle ride down the quieter sub-sois, you can find older, spacious apartments (often 60+ sqm) with yards and retro details for ฿15,000 to ฿22,000.",
-          "The building styles here tend to be low-rise and boutique, though there are a few high-rise towers near the main station. The value here is in the space and green views—many condos overlook mature gardens and low-density residential properties rather than concrete walls."
-        ]
-      },
-      {
-        heading: "Daily Life: Street Food and Local Markets",
-        body: [
-          "Daily essentials are easy to source. Right at the BTS station is La Villa Ari, a community mall featuring a Villa Market fully stocked with imported cheese, wine, and Western groceries. If you prefer to cook local, the fresh market at the head of Soi 7 offers fresh vegetables and seafood daily at local prices.",
-          "Dining is Ari's strong suit. From the legendary pork noodle stalls on the main soi to high-end Italian restaurants, craft beer gardens, and natural wine bars, you will never run out of food options. The famous Chatuchak Weekend Market is also only two stops north on the Skytrain, giving you easy weekend shopping access."
-        ]
-      }
-    ],
-    cta: {
-      heading: "Want to call Ari home?",
-      body: "Browse verified condos and houses for rent in Bangkok's creative hub.",
-      href: "/explore?area=Ari",
-      label: "Browse Ari Listings"
-    }
-  },
+
   {
     slug: "phrom-phong-vs-ekkamai-sukhumvit",
     category: "Neighbourhood Guide",
