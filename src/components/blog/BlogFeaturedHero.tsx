@@ -16,11 +16,11 @@ export default function BlogFeaturedHero({ post }: Props) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group no-underline flex flex-col md:flex-row rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 mb-10 w-full"
+      className="group no-underline flex flex-col md:flex-row rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 mb-6 md:mb-10 w-full"
       style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}
     >
       {/* Image container */}
-      <div className="relative w-full md:w-1/2 aspect-[16/10] md:aspect-auto min-h-[260px] md:min-h-[360px] overflow-hidden">
+      <div className="relative w-full md:w-1/2 aspect-[16/10] md:aspect-auto min-h-[200px] md:min-h-[360px] overflow-hidden">
         <Image
           src={post.image}
           alt={post.title}
@@ -48,8 +48,8 @@ export default function BlogFeaturedHero({ post }: Props) {
       </div>
 
       {/* Content Container */}
-      <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-between gap-6">
-        <div className="flex flex-col gap-3">
+      <div className="w-full md:w-1/2 p-5 md:p-10 flex flex-col justify-between gap-4 md:gap-6">
+        <div className="flex flex-col gap-2 md:gap-3">
           <div className="flex items-center gap-3 text-[11px] font-medium" style={{ color: "#999" }}>
             <span>{post.author}</span>
             <span>·</span>

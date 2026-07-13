@@ -219,7 +219,7 @@ export default async function BlogPostPage({ params }: Props) {
       <main style={{ paddingTop: 56, background: "#F7F3EC", fontFamily: `${bodyFont}, sans-serif` }}>
 
         {/* ── Hero ── */}
-        <div className="relative overflow-hidden" style={{ height: "clamp(280px, 40vw, 480px)", background: "#1C3A2F" }}>
+        <div className="relative overflow-hidden" style={{ height: "clamp(200px, 35vw, 480px)", background: "#1C3A2F" }}>
           <Image
             src={post.image}
             alt={post.title}
@@ -256,10 +256,10 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
 
         {/* ── Article body ── */}
-        <div className="max-w-2xl mx-auto px-4 md:px-6 py-10">
+        <div className="max-w-2xl mx-auto px-4 md:px-6 py-6 md:py-10">
 
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-[12px] mb-8" style={{ color: "#999" }}>
+          <nav className="flex items-center gap-2 text-[12px] mb-4 md:mb-8" style={{ color: "#999" }}>
             <Link href="/" className="no-underline hover:underline" style={{ color: "#999" }}>Home</Link>
             <span>/</span>
             <Link href="/blog" className="no-underline hover:underline" style={{ color: "#999" }}>Guides</Link>
@@ -269,8 +269,8 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Intro */}
           <p
-            className="text-[16px] md:text-[17px] leading-[1.8] mb-8 font-light"
-            style={{ color: "#333", borderLeft: "3px solid #C9A84C", paddingLeft: 20 }}
+            className="text-[15.5px] md:text-[17px] leading-[1.8] mb-5 md:mb-8 font-light"
+            style={{ color: "#333", borderLeft: "3px solid #C9A84C", paddingLeft: 16 }}
           >
             {renderParagraphWithLinks(post.intro)}
           </p>
@@ -279,7 +279,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Table of Contents */}
           {post.sections && post.sections.length > 1 && (
-            <div className="rounded-2xl p-4 md:p-5 mt-6 mb-8 border border-[#EDE8DF] bg-white">
+            <div className="rounded-2xl p-4 md:p-5 mt-4 mb-6 md:mt-6 md:mb-8 border border-[#EDE8DF] bg-white">
               <h4 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-3">
                 In this guide:
               </h4>
@@ -300,7 +300,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Sections */}
           {post.sections.map((section, i) => (
-            <div key={i} id={`section-${i}`} className="mb-8 scroll-mt-20">
+            <div key={i} id={`section-${i}`} className="mb-6 md:mb-8 scroll-mt-20">
               <h2
                 className="text-[18px] md:text-[22px] font-bold mb-4"
                 style={{ color: "#1C3A2F", letterSpacing: "-0.3px", fontFamily: `${headerFont}, sans-serif` }}
@@ -321,7 +321,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* CTA box */}
           <div
-            className="rounded-2xl p-6 mt-6 mb-6"
+            className="rounded-2xl p-5 md:p-6 mt-5 mb-5 md:mt-6 md:mb-6"
             style={{ background: "#1C3A2F" }}
           >
             <h3 className="text-[18px] font-bold mb-2" style={{ color: "#E2C97E" }}>
@@ -340,7 +340,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-3 md:mb-4">
             {(post.tags || []).map((tag) => (
               <Link
                 key={tag}
@@ -360,11 +360,11 @@ export default async function BlogPostPage({ params }: Props) {
         {/* ── Related posts ── */}
         {related.length > 0 && (
           <div
-            className="px-4 md:px-8 py-10"
+            className="px-4 md:px-8 py-6 md:py-10"
             style={{ background: "#FFFFFF", borderTop: "1px solid #EDE8DF" }}
           >
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-[18px] font-bold mb-6" style={{ color: "#1C3A2F" }}>
+              <h2 className="text-[18px] font-bold mb-4 md:mb-6" style={{ color: "#1C3A2F" }}>
                 More guides
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">

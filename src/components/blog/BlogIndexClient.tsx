@@ -55,9 +55,9 @@ export default function BlogIndexClient({ initialPosts }: Props) {
   const gridPosts = filteredPosts.slice(1);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 flex flex-col gap-8">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-5 md:py-8 flex flex-col gap-5 md:gap-8">
       {/* Search & Filter Row */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EDE8DF] pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EDE8DF] pb-4 md:pb-6">
         {/* Category Pills (Scrollable) */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth">
           {categories.map((cat) => {
@@ -121,7 +121,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
 
       {/* Regular Posts Grid */}
       {gridPosts.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           {gridPosts.map((post) => {
             const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-GB", {
               day: "numeric",
@@ -164,8 +164,8 @@ export default function BlogIndexClient({ initialPosts }: Props) {
                 </div>
 
                 {/* Info & Text */}
-                <div className="flex flex-col flex-1 p-5 justify-between gap-4">
-                  <div className="flex flex-col gap-2">
+                <div className="flex flex-col flex-1 p-4 md:p-5 justify-between gap-3.5 md:gap-4">
+                  <div className="flex flex-col gap-1.5 md:gap-2">
                     <div className="flex items-center gap-2 text-[10px] text-gray-400 font-medium">
                       <span>{formattedDate}</span>
                       <span>·</span>
@@ -184,7 +184,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3" style={{ borderTop: "1px solid #EDE8DF" }}>
+                  <div className="flex items-center justify-between pt-2.5 md:pt-3" style={{ borderTop: "1px solid #EDE8DF" }}>
                     <span className="text-[11px] font-medium" style={{ color: "#999" }}>
                       By {post.author.replace(" NHP Bangkok Team", "NHP")}
                     </span>
