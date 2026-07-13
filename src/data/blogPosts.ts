@@ -6,6 +6,7 @@ export interface BlogSection {
 export interface BlogPost {
   slug:        string;
   category:    string;
+  tags:        string[];
   title:       string;
   metaTitle:   string;
   metaDesc:    string;
@@ -13,6 +14,7 @@ export interface BlogPost {
   image:       string;
   readTime:    string;
   publishedAt: string;
+  updatedAt?:  string;
   author:      string;
   keywords:    string[];
   intro:       string;
@@ -27,11 +29,19 @@ export interface BlogPost {
   };
 }
 
-const POSTS: BlogPost[] = [
+import { NEIGHBORHOOD_GUIDES } from "./blog/neighbourhoodGuides";
+import { HIDDEN_BANGKOK } from "./blog/hiddenBangkok";
+import { EXPAT_LIFE } from "./blog/expatLife";
+import { RETIREMENT } from "./blog/retirement";
+import { NOMAD_FAMILY } from "./blog/nomadFamily";
+import { ACTIVITIES } from "./blog/activities";
+
+const STATIC_POSTS: BlogPost[] = [
   /* ─────────────────────────────── POST 1 ─────────────────────────────── */
   {
     slug:        "thong-lo-vs-on-nut",
     category:    "Neighbourhood Guide",
+    tags:        ["Sukhumvit", "Compare", "Renting", "Lifestyle"],
     title:       "Thong Lo vs On Nut: Which Bangkok Neighbourhood Suits You?",
     metaTitle:   "Thong Lo vs On Nut Bangkok 2026 — Which Is Right for You? | NHP",
     metaDesc:    "Comparing Thong Lo and On Nut for expats and digital nomads in Bangkok. Prices, lifestyle, commute and vibe — everything you need to choose the right neighbourhood.",
@@ -90,6 +100,7 @@ const POSTS: BlogPost[] = [
   {
     slug:        "digital-nomad-guide-sukhumvit",
     category:    "Expat Tips",
+    tags:        ["Digital Nomad", "Sukhumvit", "Expat Tips", "WiFi"],
     title:       "A Digital Nomad's Complete Guide to Living in Sukhumvit, Bangkok",
     metaTitle:   "Digital Nomad Bangkok 2026: The Complete Sukhumvit Living Guide | NHP",
     metaDesc:    "Everything a digital nomad needs to know before moving to Sukhumvit, Bangkok. SIM cards, co-working, visa, healthcare, best coffee shops with fast WiFi and where to live.",
@@ -156,6 +167,7 @@ const POSTS: BlogPost[] = [
   {
     slug:        "what-40k-gets-you-bangkok",
     category:    "Property Insights",
+    tags:        ["Budget", "Renting", "Condos", "Sukhumvit", "Ari", "Sathorn"],
     title:       "What ฿40,000/Month Gets You in Bangkok's Top Expat Areas",
     metaTitle:   "Bangkok Rent Guide 2026: What ฿40,000/Month Gets You by Area | NHP",
     metaDesc:    "A detailed breakdown of what a ฿40,000/month rental budget gets you in Sukhumvit, Thong Lo, On Nut, Sathorn and Silom. Real examples with specs.",
@@ -222,6 +234,7 @@ const POSTS: BlogPost[] = [
   {
     slug:        "international-schools-bangkok",
     category:    "Family Living",
+    tags:        ["Family Living", "Schools", "Education", "Sukhumvit"],
     title:       "Top International Schools Near Bangkok's Expat Neighbourhoods",
     metaTitle:   "Best International Schools in Bangkok 2026 — Expat Family Guide | NHP",
     metaDesc:    "A guide to Bangkok's top international schools mapped against the city's best expat neighbourhoods. NIST, ISB, Bromsgrove, VERSO and more — locations, fees and proximity.",
@@ -282,6 +295,7 @@ const POSTS: BlogPost[] = [
   {
     slug:        "bangkok-riverside-living-charoenkrung-vs-thonburi",
     category:    "Neighbourhood Guide",
+    tags:        ["Riverside", "Compare", "Charoenkrung", "Thonburi"],
     title:       "Bangkok Riverside Living: A Guide to Charoenkrung & Thonburi",
     metaTitle:   "Charoenkrung vs Thonburi: Bangkok Riverside Living Guide | NHP",
     metaDesc:    "Comparing the Creative District of Charoenkrung with Thonburi's quiet canals and riverside charm. Find the perfect neighborhood next to Chao Phraya river.",
@@ -333,6 +347,7 @@ const POSTS: BlogPost[] = [
   {
     slug:        "living-near-bangkok-academic-retail-centers-chidlom-vs-sam-yan",
     category:    "Neighbourhood Guide",
+    tags:        ["Chit Lom", "Sam Yan", "Compare", "Shopping", "Students"],
     title:       "Siam to Sam Yan: Bangkok's Retail and Academic Hubs",
     metaTitle:   "Chit Lom vs Sam Yan: Bangkok Living Comparison | NHP",
     metaDesc:    "Comparing the luxury shopping district of Chit Lom/Ploenchit with the youth and tech innovation hub of Sam Yan. Find the right neighborhood for your lifestyle.",
@@ -380,6 +395,16 @@ const POSTS: BlogPost[] = [
       label:   "Browse Properties",
     },
   },
+];
+
+const POSTS: BlogPost[] = [
+  ...STATIC_POSTS,
+  ...NEIGHBORHOOD_GUIDES,
+  ...HIDDEN_BANGKOK,
+  ...EXPAT_LIFE,
+  ...RETIREMENT,
+  ...NOMAD_FAMILY,
+  ...ACTIVITIES
 ];
 
 export default POSTS;

@@ -2,33 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/auth-helpers";
 import { createPost } from "@/lib/store/blog";
 import { createAuditLog } from "@/lib/db/dbLoader";
-
-interface BlogSection {
-  heading: string;
-  body: string[];
-}
-
-interface BlogPost {
-  slug:        string;
-  category:    string;
-  title:       string;
-  metaTitle:   string;
-  metaDesc:    string;
-  excerpt:     string;
-  image:       string;
-  readTime:    string;
-  publishedAt: string;
-  author:      string;
-  keywords:    string[];
-  intro:       string;
-  sections:    BlogSection[];
-  cta: {
-    heading: string;
-    body:    string;
-    href:    string;
-    label:   string;
-  };
-}
+import { BlogPost } from "@/data/blogPosts";
 
 export async function POST(req: NextRequest) {
   // Check authorization
@@ -58,7 +32,8 @@ Return a JSON object conforming EXACTLY to the following TypeScript interface st
 
 {
   "slug": "url-friendly-slug", // e.g. "living-in-sathorn"
-  "category": "Neighbourhood Guide" | "Expat Tips" | "Property Insights" | "Family Living",
+  "category": "Neighbourhood Guide" | "Expat Tips" | "Property Insights" | "Family Living" | "Digital Nomad" | "Retirement in Thailand" | "Hidden Bangkok" | "Things To Do",
+  "tags": ["tag1", "tag2"], // 3-4 simple tag terms
   "title": "...", // Catchy headline
   "metaTitle": "...", // SEO Google Title (under 60 chars)
   "metaDesc": "...", // SEO Google Description (under 160 chars)
@@ -147,6 +122,7 @@ function generateMockBlogPost(topic: string): BlogPost {
   return {
     slug,
     category: "Neighbourhood Guide",
+    tags: [cleanTopic.toLowerCase(), "bangkok", "expat"],
     title: `The Ultimate Guide to ${cleanTopic} in Bangkok`,
     metaTitle: `Living in ${cleanTopic} Bangkok Guide | NHP`,
     metaDesc: `Find out what it's like to live, rent, and commute in ${cleanTopic}, Bangkok. Learn about local food, cafes, and condos.`,

@@ -59,6 +59,7 @@ interface BlogSection {
 interface BlogPost {
   slug: string;        // URL-friendly slug, e.g., "mrt-yellow-line-guide"
   category: string;    // e.g. "Neighbourhood Guide", "Expat Tips", "Market Report"
+  tags: string[];      // 3-4 simple tags like "Budget", "Ekkamai", etc.
   title: string;       // Catchy, click-worthy SEO title
   metaTitle: string;   // SEO title tag under 60 chars ending in " | NHP"
   metaDesc: string;    // SEO meta description under 160 chars
@@ -120,6 +121,7 @@ interface BlogPost {
   const post: BlogPost = {
     slug: payload.slug,
     category: payload.category || "Expat Tips",
+    tags: payload.tags || [],
     title: payload.title,
     metaTitle: payload.metaTitle,
     metaDesc: payload.metaDesc,

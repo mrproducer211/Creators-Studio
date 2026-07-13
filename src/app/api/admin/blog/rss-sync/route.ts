@@ -131,6 +131,7 @@ Conform EXACTLY to the following JSON structure:
       const newPost = {
         slug,
         category: "Property Insights",
+        tags: ["property-news", "rss-sync", "bangkok"],
         title: content.title.trim(),
         metaTitle: content.title.trim().substring(0, 50) + " | NHP",
         metaDesc: content.intro.substring(0, 150),

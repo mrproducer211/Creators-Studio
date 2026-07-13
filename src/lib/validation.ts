@@ -115,6 +115,10 @@ export function validateBlogPost(input: unknown): ValidationResult<{ post: impor
     ? (o.keywords as unknown[]).filter((k): k is string => typeof k === "string")
     : [];
 
+  const tags = Array.isArray(o.tags)
+    ? (o.tags as unknown[]).filter((t): t is string => typeof t === "string")
+    : [];
+
   const cta = o.cta && typeof o.cta === "object" ? o.cta as Record<string, unknown> : {};
 
   const fontFamily = str(o.fontFamily, 100) ?? "Inter";
@@ -123,6 +127,7 @@ export function validateBlogPost(input: unknown): ValidationResult<{ post: impor
   const post: import("@/data/blogPosts").BlogPost & { fontFamily?: string; headerFontFamily?: string } = {
     slug:        slug!,
     category:    category!,
+    tags,
     title:       title!,
     metaTitle:   str(o.metaTitle, 300) ?? title!,
     metaDesc:    str(o.metaDesc, 500) ?? excerpt!,

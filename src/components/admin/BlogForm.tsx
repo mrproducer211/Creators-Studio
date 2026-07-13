@@ -16,6 +16,7 @@ type BlogFormState = BlogPost & {
 const EMPTY: BlogFormState = {
   slug: "", category: "Neighbourhood Guide", title: "", metaTitle: "", metaDesc: "",
   excerpt: "", image: "", readTime: "5 min read",
+  tags: [],
   publishedAt: new Date().toISOString().split("T")[0], author: "NHP Bangkok Team",
   keywords: [], intro: "", sections: [],
   cta: { heading: "Browse Bangkok properties", body: "See what fits your budget right now.", href: "/explore", label: "Browse Properties" },
@@ -31,6 +32,7 @@ export default function BlogForm({ initial, isNew }: { initial?: BlogPost; isNew
   const router = useRouter();
   const [state, setState] = useState<BlogFormState>((initial as BlogFormState) ?? EMPTY);
   const [keywordsText, setKeywordsText] = useState((initial?.keywords ?? []).join(", "));
+  const [tagsText, setTagsText] = useState((initial?.tags ?? []).join(", "));
   const [sectionsText, setSectionsText] = useState(
     (initial?.sections ?? []).map((s: BlogSection) => `## ${s.heading}\n${s.body.join("\n\n")}`).join("\n\n---\n\n")
   );
@@ -110,6 +112,7 @@ export default function BlogForm({ initial, isNew }: { initial?: BlogPost; isNew
     const payload = {
       ...state,
       keywords:  keywordsText.split(",").map((s) => s.trim()).filter(Boolean),
+      tags:      tagsText.split(",").map((s) => s.trim()).filter(Boolean),
       sections:  parseSections(sectionsText),
       metaTitle: state.metaTitle || state.title,
       metaDesc:  state.metaDesc  || state.excerpt,
@@ -240,6 +243,9 @@ export default function BlogForm({ initial, isNew }: { initial?: BlogPost; isNew
             </Field>
             <Field label="Keywords" hint="Comma-separated.">
               <input className={inputCls} style={inputStyle} value={keywordsText} onChange={(e) => setKeywordsText(e.target.value)} placeholder="bangkok rent, expat tips" />
+            </Field>
+            <Field label="Tags" hint="Comma-separated (e.g. Budget, Renting, Compare).">
+              <input className={inputCls} style={inputStyle} value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="Budget, Renting, Compare" />
             </Field>
           </div>
         </div>

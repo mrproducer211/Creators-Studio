@@ -12,6 +12,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
+import POSTS from "@/data/blogPosts";
 
 function VibeCard({ card }: { card: { title: string; subtitle: string; image: string } }) {
   const [src, setSrc] = useState(card.image);
@@ -663,83 +664,25 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
     );
   }, [initialProperties, neighborhood]);
 
-  // Local guides specific to this neighborhood
-  const localGuides = useMemo(() => {
-    const list: Array<{
-      title: string;
-      category: string;
-      readTime: string;
-      image: string;
-      slug: string;
-      isLongFormSection: boolean;
-      sectionIndex: number;
-    }> = [];
+  // Relevant blog posts for this neighborhood
+  const relevantBlogs = useMemo(() => {
+    const nName = neighborhood.name.toLowerCase();
+    const filtered = POSTS.filter((post) => {
+      return (
+        post.title.toLowerCase().includes(nName) ||
+        post.excerpt.toLowerCase().includes(nName) ||
+        post.tags.some((t) => t.toLowerCase() === nName) ||
+        post.keywords.some((k) => k.toLowerCase().includes(nName))
+      );
+    });
 
-    if (guide && guide.longFormSections) {
-      const categoryImages: Record<string, string> = {
-        "TRANSPORTATION": "/images/neighborhoods/guide_transit.webp",
-        "LANDMARKS & MALLS": "/images/neighborhoods/guide_landmarks.webp",
-        "WELLNESS & PARKS": "/images/neighborhoods/guide_wellness.webp",
-        "DINING & NIGHTLIFE": "/images/neighborhoods/guide_dining.webp",
-        "REAL ESTATE": "/images/neighborhoods/guide_real_estate.webp",
-        "NEIGHBORHOOD GUIDE": "/images/neighborhoods/guide_general.webp",
-        "EXPERT INSIGHTS": "/images/neighborhoods/guide_general.webp"
-      };
-
-      guide.longFormSections.forEach((section, index) => {
-        let category = "EXPERT INSIGHTS";
-        const titleLower = section.heading.toLowerCase();
-        if (titleLower.includes("transit") || titleLower.includes("getting around") || titleLower.includes("mrt") || titleLower.includes("bts")) {
-          category = "TRANSPORTATION";
-        } else if (titleLower.includes("mall") || titleLower.includes("landmark") || titleLower.includes("terminal 21") || titleLower.includes("shopping")) {
-          category = "LANDMARKS & MALLS";
-        } else if (titleLower.includes("fitness") || titleLower.includes("park") || titleLower.includes("wellness") || titleLower.includes("connection")) {
-          category = "WELLNESS & PARKS";
-        } else if (titleLower.includes("nightlife") || titleLower.includes("dining") || titleLower.includes("eat") || titleLower.includes("cafe") || titleLower.includes("secret")) {
-          category = "DINING & NIGHTLIFE";
-        } else if (titleLower.includes("real estate") || titleLower.includes("condo") || titleLower.includes("housing") || titleLower.includes("rent") || titleLower.includes("suite")) {
-          category = "REAL ESTATE";
-        } else if (titleLower.includes("fast forward") || titleLower.includes("living in")) {
-          category = "NEIGHBORHOOD GUIDE";
-        }
-
-        // Translate category
-        let transCategory = category;
-        if (lang === "th") {
-          if (category === "EXPERT INSIGHTS") transCategory = "ข้อมูลเชิงลึกจากผู้เชี่ยวชาญ";
-          else if (category === "TRANSPORTATION") transCategory = "การเดินทางคมนาคม";
-          else if (category === "LANDMARKS & MALLS") transCategory = "แลนด์มาร์ก & ห้างสรรพสินค้า";
-          else if (category === "WELLNESS & PARKS") transCategory = "สุขภาพ & สวนสาธารณะ";
-          else if (category === "DINING & NIGHTLIFE") transCategory = "อาหาร & ชีวิตยามค่ำคืน";
-          else if (category === "REAL ESTATE") transCategory = "อสังหาริมทรัพย์";
-          else if (category === "NEIGHBORHOOD GUIDE") transCategory = "คู่มือนำเที่ยวย่าน";
-        } else if (lang === "zh") {
-          if (category === "EXPERT INSIGHTS") transCategory = "专家洞察";
-          else if (category === "TRANSPORTATION") transCategory = "交通出行";
-          else if (category === "LANDMARKS & MALLS") transCategory = "地标与商场";
-          else if (category === "WELLNESS & PARKS") transCategory = "康养与公园";
-          else if (category === "DINING & NIGHTLIFE") transCategory = "餐饮与夜生活";
-          else if (category === "REAL ESTATE") transCategory = "房产市场";
-          else if (category === "NEIGHBORHOOD GUIDE") transCategory = "社区指南";
-        }
-
-        const transSection = transN?.guides?.[index];
-        const heading = transSection?.heading || section.heading;
-
-        list.push({
-          title: heading,
-          category: transCategory,
-          readTime: trans.readTime,
-          image: section.image || categoryImages[category] || "/images/neighborhoods/guide_general.webp",
-          slug: "",
-          isLongFormSection: true,
-          sectionIndex: index
-        });
-      });
+    // If we have fewer than 3, pad with the latest general expat guides
+    if (filtered.length < 3) {
+      const general = POSTS.filter((post) => !filtered.some((f) => f.slug === post.slug));
+      return [...filtered, ...general].slice(0, 3);
     }
-
-    return list;
-  }, [guide, lang, transN, trans.readTime]);
+    return filtered.slice(0, 3);
+  }, [neighborhood]);
 
   return (
     <div className="flex flex-col w-full pb-10" style={{ background: "#FAF8F3" }}>
@@ -1185,72 +1128,36 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
 
           {/* Guides horizontal scroll */}
           <div className="flex overflow-x-auto gap-4 no-scrollbar pb-4 -mx-4 px-4 md:-mx-0 md:px-0">
-            {localGuides.map((item, idx) => {
-              if (item.isLongFormSection) {
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedLongFormSection(item.sectionIndex)}
-                    className="w-[200px] min-w-[200px] md:w-[220px] md:min-w-[220px] flex flex-col rounded-2xl overflow-hidden shadow-sm border group hover:shadow-md transition-shadow no-underline text-left cursor-pointer p-0"
-                    style={{ background: "#FFFFFF", borderColor: "#EDE8DF" }}
-                  >
-                    {/* Image */}
-                    <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 relative">
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 220px"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    {/* Text Content */}
-                    <div className="p-3.5 flex flex-col flex-1 justify-between gap-3 w-full box-border">
-                      <div className="flex flex-col gap-1.5">
-                        <span className="text-[8.5px] font-bold tracking-wider uppercase text-[#C9A84C]">
-                          {item.category}
-                        </span>
-                        <h4 className="text-[12.5px] font-bold leading-snug line-clamp-2 text-gray-800 group-hover:text-[#C9A84C] transition-colors m-0">
-                          {item.title}
-                        </h4>
-                      </div>
-                      <div className="text-[9.5px] text-gray-400 font-light">
-                        {item.readTime}
-                      </div>
-                    </div>
-                  </button>
-                );
-              }
-
+            {relevantBlogs.map((post) => {
               return (
                 <Link
-                  key={item.title}
-                  href={`/blog/${item.slug}`}
-                  className="w-[200px] min-w-[200px] md:w-[220px] md:min-w-[220px] flex flex-col rounded-2xl overflow-hidden shadow-sm border group hover:shadow-md transition-shadow no-underline text-left"
-                  style={{ background: "#FFFFFF", borderColor: "#EDE8DF" }}
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="w-[200px] min-w-[200px] md:w-[220px] md:min-w-[220px] flex flex-col rounded-2xl overflow-hidden shadow-sm border border-[#EDE8DF] group hover:shadow-md transition-all no-underline text-left bg-white"
                 >
                   {/* Image */}
                   <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 relative">
                     <Image
-                      src={item.image}
-                      alt={item.title}
+                      src={post.image}
+                      alt={post.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 220px"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                   {/* Text Content */}
-                  <div className="p-3.5 flex flex-col flex-1 justify-between gap-3">
+                  <div className="p-3.5 flex flex-col flex-grow justify-between gap-3 box-border">
                     <div className="flex flex-col gap-1.5">
                       <span className="text-[8.5px] font-bold tracking-wider uppercase text-[#C9A84C]">
-                        {item.category}
+                        {post.category}
                       </span>
-                      <h4 className="text-[12.5px] font-bold leading-snug line-clamp-2 text-gray-800 group-hover:text-[#C9A84C]">
-                        {item.title}
+                      <h4 className="text-[12.5px] font-bold leading-snug line-clamp-2 text-gray-800 group-hover:text-[#C9A84C] transition-colors m-0">
+                        {post.title}
                       </h4>
                     </div>
-                    <div className="text-[9.5px] text-gray-400 font-light">
-                      {item.readTime}
+                    <div className="text-[9.5px] text-gray-400 font-light flex items-center justify-between">
+                      <span>{post.readTime}</span>
+                      <span className="font-bold text-[#1C3A2F] group-hover:underline">Read →</span>
                     </div>
                   </div>
                 </Link>
@@ -1309,69 +1216,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
         </section>
       )}
 
-      {/* ── EXPAT GUIDE CHAPTER READER MODAL ── */}
-      {selectedLongFormSection !== null && guide && guide.longFormSections[selectedLongFormSection] && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(2px)" }}
-          onClick={() => setSelectedLongFormSection(null)}
-        >
-          <div
-            className="w-full max-w-[650px] max-h-[85vh] rounded-3xl bg-white shadow-2xl p-6 md:p-8 flex flex-col gap-4 relative animate-scale-up overflow-y-auto border border-[#EDE8DF]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header info */}
-            {(() => {
-              const transSection = transN?.guides?.[selectedLongFormSection];
-              const modalHeading = transSection?.heading || guide.longFormSections[selectedLongFormSection].heading;
-              const modalParagraphs = transSection?.paragraphs || guide.longFormSections[selectedLongFormSection].paragraphs;
-              return (
-                <>
-                  <div className="flex justify-between items-start pb-4 border-b border-[#EDE8DF] text-left w-full">
-                    <div className="pr-8">
-                      <span className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">
-                        {trans.expertInsights.replace("{name}", nName)}
-                      </span>
-                      <h3 className="font-bold text-xl md:text-2xl mt-1 leading-snug" style={{ color: "#1C3A2F", fontFamily: "Georgia, serif" }}>
-                        {modalHeading}
-                      </h3>
-                    </div>
-                    <button
-                      onClick={() => setSelectedLongFormSection(null)}
-                      className="w-8 h-8 rounded-full flex items-center justify-center border-none text-sm cursor-pointer hover:bg-[#EDE8DF]/50 transition-colors flex-shrink-0"
-                      style={{ background: "#EDE8DF", color: "#1C3A2F" }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  
-                  {/* Paragraph content */}
-                  <div className="flex flex-col gap-4 text-gray-700 leading-relaxed text-sm md:text-base font-light text-left my-2">
-                    {modalParagraphs.map((p, pIdx) => (
-                      <p key={pIdx} className="text-gray-600 m-0">
-                        {p}
-                      </p>
-                    ))}
-                  </div>
-                  
-                  {/* Footer / close button */}
-                  <div className="pt-4 border-t border-[#EDE8DF] flex justify-end w-full">
-                    <button
-                      onClick={() => setSelectedLongFormSection(null)}
-                      className="px-5 py-2.5 rounded-xl font-bold text-xs cursor-pointer transition-colors border-none"
-                      style={{ background: "#1C3A2F", color: "#FFFFFF" }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "#2A5243")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "#1C3A2F")}
-                    >
-                      {trans.closeReader}
-                    </button>
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-        </div>
-      )}
+      {/* Modal removed as guides now link to real blog posts */}
 
       <style>{`
         .hero-gradient-overlay {

@@ -4,6 +4,10 @@ import Image from "next/image";
 import Footer from "@/components/Footer";
 import { getAllPosts, getPostBySlug } from "@/lib/store/blog";
 import Link from "next/link";
+import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
+import ShareButtons from "@/components/blog/ShareButtons";
+import AuthorBio from "@/components/blog/AuthorBio";
+import NewsletterCapture from "@/components/blog/NewsletterCapture";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -66,7 +70,15 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   const all     = await getAllPosts();
-  const related = all.filter((p) => p.slug !== post.slug).slice(0, 3);
+  // Get posts in the same category first (excluding current post)
+  let related = all.filter((p) => p.category === post.category && p.slug !== post.slug);
+  // If we have fewer than 3, pad with other categories
+  if (related.length < 3) {
+    const otherPosts = all.filter((p) => p.category !== post.category && p.slug !== post.slug);
+    related = [...related, ...otherPosts].slice(0, 3);
+  } else {
+    related = related.slice(0, 3);
+  }
 
   const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-GB", {
     day: "numeric", month: "long", year: "numeric",
@@ -80,6 +92,7 @@ export default async function BlogPostPage({ params }: Props) {
   const siteBase = process.env.NEXT_PUBLIC_SITE_URL 
     || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
   const imageUrl = post.image.startsWith("http") ? post.image : `${siteBase}${post.image.startsWith("/") ? "" : "/"}${post.image}`;
+  const currentUrl = `${siteBase}/blog/${post.slug}`;
 
   const blogJsonLd = {
     "@context": "https://schema.org",
@@ -148,6 +161,7 @@ export default async function BlogPostPage({ params }: Props) {
       />
       <link rel="stylesheet" href={fontUrl} />
       <Navbar />
+      <ReadingProgressBar />
       <main style={{ paddingTop: 56, background: "#F7F3EC", fontFamily: `${bodyFont}, sans-serif` }}>
 
         {/* ── Hero ── */}
@@ -197,6 +211,8 @@ export default async function BlogPostPage({ params }: Props) {
           >
             {post.intro}
           </p>
+
+          <ShareButtons url={currentUrl} title={post.title} />
 
           {/* Sections */}
           {post.sections.map((section, i) => (
@@ -251,6 +267,9 @@ export default async function BlogPostPage({ params }: Props) {
               </span>
             ))}
           </div>
+
+          <AuthorBio />
+          <NewsletterCapture />
         </div>
 
         {/* ── Related posts ── */}
