@@ -237,7 +237,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* CTA box */}
           <div
-            className="rounded-2xl p-6 mt-10 mb-10"
+            className="rounded-2xl p-6 mt-6 mb-6"
             style={{ background: "#1C3A2F" }}
           >
             <h3 className="text-[18px] font-bold mb-2" style={{ color: "#E2C97E" }}>
@@ -256,7 +256,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-10">
+          <div className="flex flex-wrap gap-2 mb-4">
             {post.keywords.map((kw) => (
               <span
                 key={kw}
