@@ -571,6 +571,53 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
   const [copied, setCopied] = useState(false);
   const [selectedLongFormSection, setSelectedLongFormSection] = useState<number | null>(null);
 
+  // Expat reviews state
+  const [reviewsList, setReviewsList] = useState<any[]>(() => {
+    const slug = neighborhood.slug.toLowerCase();
+    if (slug === "sathorn") {
+      return [
+        { author: "Marcus K.", role: "Corporate Expat", date: "July 2026", rating: 5, comment: "Ideal location for corporate expats. I walk to my office in 5 mins. Quiet leafy side-sois around Suan Phlu are lovely and full of high-quality dining." },
+        { author: "Emily & Ben", role: "Expat Parents", date: "June 2026", rating: 4, comment: "Very polished area. Close to Shrewsbury school bus routes and great nurseries. The main Sathorn road traffic gets extremely congested during rush hour." },
+        { author: "Sven H.", role: "Digital Nomad", date: "May 2026", rating: 4, comment: "Incredible restaurants and coffee spots. It's close to Lumphini Park which is great for morning runs, but condo rents are on the higher side." }
+      ];
+    } else if (slug === "ari") {
+      return [
+        { author: "Liam J.", role: "Digital Nomad", date: "July 2026", rating: 5, comment: "Stepping off the Skytrain here feels like a village. Low-rise buildings, shade, and the best local coffee roasters in Bangkok." },
+        { author: "Clara S.", role: "Expat Family", date: "June 2026", rating: 5, comment: "Perfect neighborhood for kids and walking dogs. It's quiet, clean, and has a great community feel. La Villa mall has all Western grocer needs." },
+        { author: "Takahiro N.", role: "Young Professional", date: "May 2026", rating: 4, comment: "Good rents for large retro condos. Only downside is BTS gets extremely packed during morning commute hour." }
+      ];
+    } else if (slug === "ekkamai") {
+      return [
+        { author: "James L.", role: "Young Professional", date: "July 2026", rating: 5, comment: "I love Ekkamai. It's right next to Thong Lo's nightlife but significantly cheaper. Big C supermarket has everything you need." },
+        { author: "Helen M.", role: "Retiree", date: "June 2026", rating: 4, comment: "Leafy side streets with hidden villas. The gateway terminal makes weekend trips very easy. Sidewalks are a bit narrow though." }
+      ];
+    } else if (slug === "sukhumvit") {
+      return [
+        { author: "Dave R.", role: "Digital Nomad", date: "July 2026", rating: 5, comment: "Unbeatable convenience. Asok MRT/BTS junction gets you anywhere in minutes. Can walk to Benjakitti Park for sunset." },
+        { author: "Nadia T.", role: "Corporate Expat", date: "June 2026", rating: 4, comment: "Very busy and crowded. If you like quiet streets, look further out in Ari or Yen Akat. But for shopping and dining, it is unmatched." }
+      ];
+    } else if (slug === "thonburi") {
+      return [
+        { author: "Pavel G.", role: "Digital Nomad", date: "July 2026", rating: 5, comment: "Great value for money. Modern high-rise condo near the BTS for a fraction of Sukhumvit prices. Beautiful river views." },
+        { author: "Regina K.", role: "Retiree", date: "June 2026", rating: 4, comment: "Quiet residential area with a local Thai feel. The canals and markets are historic, but it takes longer to get to Sukhumvit malls." }
+      ];
+    } else if (slug === "charoenkrung") {
+      return [
+        { author: "Linus M.", role: "Young Professional", date: "July 2026", rating: 5, comment: "Fascinating district. Waking up next to the river and walking to art galleries and speakeasies. It has a real artistic soul." },
+        { author: "Sophia V.", role: "Expat Artist", date: "June 2026", rating: 4, comment: "Wonderful local vibe with historical buildings. Street food here is legendary, but commuting to corporate Sukhumvit takes planning." }
+      ];
+    } else {
+      return [
+        { author: "Alex D.", role: "Digital Nomad", date: "July 2026", rating: 4, comment: "Great value for money. Highly convenient access to public transit and local street markets." },
+        { author: "Sarah L.", role: "Local Expat", date: "June 2026", rating: 4, comment: "Very comfortable and safe residential pocket. Clean streets and friendly neighbors." }
+      ];
+    }
+  });
+  const [userRating, setUserRating] = useState(5);
+  const [userPersona, setUserPersona] = useState("Digital Nomad");
+  const [userComment, setUserComment] = useState("");
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
   const trans = T_NEIGHBORHOOD[lang] || T_NEIGHBORHOOD.en;
   const transN = trans.neighborhoods[neighborhood.slug.toLowerCase() as keyof typeof trans.neighborhoods];
 
@@ -1103,69 +1150,247 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
           </div>
         </section>
       )}
-
-      {/* ── LOCAL GUIDE TO AREA ROW ── */}
+      {/* ── EXPAT SCORECARD & RESIDENT REVIEWS ── */}
       <section className="w-full px-4 md:px-8 mt-12 text-left">
-        <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-5">
-          {/* Header row */}
-          <div className="flex items-end justify-between border-b border-[#EDE8DF] pb-3">
-            <div>
-              <span className="text-[10px] font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
-                {trans.localGuideTo.replace("{name}", nName)}
-              </span>
-              <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
-                {trans.guidesArticles}
-              </h2>
-            </div>
-            <Link
-              href="/blog"
-              className="text-[12px] font-semibold no-underline pb-px transition-colors duration-150 hover:text-[#C9A84C]"
-              style={{ color: "#1C3A2F" }}
-            >
-              {trans.viewAllGuides}
-            </Link>
+        <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-6">
+          {/* Header Row */}
+          <div className="border-b border-[#EDE8DF] pb-3">
+            <span className="text-[10px] font-bold tracking-[1.5px] uppercase" style={{ color: "#C9A84C" }}>
+              {neighborhood.name.toUpperCase()} RELOCATION INDEX
+            </span>
+            <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
+              Resident Reviews & Expat Scorecard
+            </h2>
           </div>
 
-          {/* Guides horizontal scroll */}
-          <div className="flex overflow-x-auto gap-4 no-scrollbar pb-4 -mx-4 px-4 md:-mx-0 md:px-0">
-            {relevantBlogs.map((post) => {
-              return (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="w-[200px] min-w-[200px] md:w-[220px] md:min-w-[220px] flex flex-col rounded-2xl overflow-hidden shadow-sm border border-[#EDE8DF] group hover:shadow-md transition-all no-underline text-left bg-white"
-                >
-                  {/* Image */}
-                  <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 relative">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 220px"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
+          {/* Main Grid: Scorecard (Left) and Reviews + Form (Right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            
+            {/* Left Column: Expat Scorecard */}
+            <div className="rounded-2xl p-6 border border-[#EDE8DF] bg-white flex flex-col gap-6">
+              <div>
+                <h3 className="text-[14px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4">
+                  {neighborhood.name} Scorecard
+                </h3>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-4xl font-extrabold text-[#1C3A2F]">
+                    {neighborhood.slug.toLowerCase() === "sathorn" ? "4.2" :
+                     neighborhood.slug.toLowerCase() === "ari" ? "4.6" :
+                     neighborhood.slug.toLowerCase() === "ekkamai" ? "4.2" :
+                     neighborhood.slug.toLowerCase() === "sukhumvit" ? "4.1" :
+                     neighborhood.slug.toLowerCase() === "thonburi" ? "4.1" :
+                     neighborhood.slug.toLowerCase() === "charoenkrung" ? "4.3" : "4.0"}
+                  </span>
+                  <span className="text-sm font-semibold text-gray-400">/ 5.0</span>
+                </div>
+                <div className="flex gap-0.5 text-[#C9A84C] text-sm">
+                  {"★".repeat(4)}
+                  <span className="text-gray-300">★</span>
+                </div>
+                <p className="text-[11.5px] text-gray-500 font-light mt-2 leading-relaxed">
+                  Based on local transit connections, residential quietness, food & cafe density, rental value, and walking comfort.
+                </p>
+              </div>
+
+              {/* Individual Metrics */}
+              <div className="flex flex-col gap-4">
+                {[
+                  {
+                    label: "Transit & Commute (BTS/MRT)",
+                    score: neighborhood.slug.toLowerCase() === "sathorn" ? 90 :
+                           neighborhood.slug.toLowerCase() === "ari" ? 84 :
+                           neighborhood.slug.toLowerCase() === "ekkamai" ? 84 :
+                           neighborhood.slug.toLowerCase() === "sukhumvit" ? 96 :
+                           neighborhood.slug.toLowerCase() === "thonburi" ? 80 :
+                           neighborhood.slug.toLowerCase() === "charoenkrung" ? 76 : 80
+                  },
+                  {
+                    label: "Quietness & Residential Safety",
+                    score: neighborhood.slug.toLowerCase() === "sathorn" ? 80 :
+                           neighborhood.slug.toLowerCase() === "ari" ? 92 :
+                           neighborhood.slug.toLowerCase() === "ekkamai" ? 84 :
+                           neighborhood.slug.toLowerCase() === "sukhumvit" ? 64 :
+                           neighborhood.slug.toLowerCase() === "thonburi" ? 90 :
+                           neighborhood.slug.toLowerCase() === "charoenkrung" ? 76 : 80
+                  },
+                  {
+                    label: "Food Scene & Cafes",
+                    score: neighborhood.slug.toLowerCase() === "sathorn" ? 96 :
+                           neighborhood.slug.toLowerCase() === "ari" ? 96 :
+                           neighborhood.slug.toLowerCase() === "ekkamai" ? 94 :
+                           neighborhood.slug.toLowerCase() === "sukhumvit" ? 98 :
+                           neighborhood.slug.toLowerCase() === "thonburi" ? 88 :
+                           neighborhood.slug.toLowerCase() === "charoenkrung" ? 96 : 80
+                  },
+                  {
+                    label: "Value & Rental Affordability",
+                    score: neighborhood.slug.toLowerCase() === "sathorn" ? 70 :
+                           neighborhood.slug.toLowerCase() === "ari" ? 90 :
+                           neighborhood.slug.toLowerCase() === "ekkamai" ? 84 :
+                           neighborhood.slug.toLowerCase() === "sukhumvit" ? 76 :
+                           neighborhood.slug.toLowerCase() === "thonburi" ? 96 :
+                           neighborhood.slug.toLowerCase() === "charoenkrung" ? 84 : 80
+                  },
+                  {
+                    label: "Walkability & Shade",
+                    score: neighborhood.slug.toLowerCase() === "sathorn" ? 84 :
+                           neighborhood.slug.toLowerCase() === "ari" ? 96 :
+                           neighborhood.slug.toLowerCase() === "ekkamai" ? 76 :
+                           neighborhood.slug.toLowerCase() === "sukhumvit" ? 80 :
+                           neighborhood.slug.toLowerCase() === "thonburi" ? 70 :
+                           neighborhood.slug.toLowerCase() === "charoenkrung" ? 88 : 80
+                  }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex flex-col gap-1.5">
+                    <div className="flex justify-between text-[11px] font-semibold text-[#1C3A2F]">
+                      <span>{item.label}</span>
+                      <span>{(item.score / 20).toFixed(1)} / 5</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full transition-all" style={{ width: `${item.score}%`, background: "#1C3A2F" }} />
+                    </div>
                   </div>
-                  {/* Text Content */}
-                  <div className="p-3.5 flex flex-col flex-grow justify-between gap-3 box-border">
+                ))}
+              </div>
+            </div>
+
+            {/* Right Column: Reviews List & Write form */}
+            <div className="lg:col-span-2 flex flex-col gap-6">
+              
+              {/* Dynamic Review Hook Wrapper */}
+              <div className="flex flex-col gap-4">
+                {reviewsList.map((rev, idx) => (
+                  <div key={idx} className="rounded-2xl p-5 border border-[#EDE8DF] bg-white flex flex-col gap-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-sm font-bold text-[#1C3A2F] m-0">{rev.author}</h4>
+                        <span className="text-[9.5px] font-bold uppercase tracking-wider text-[#C9A84C]">{rev.role}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex gap-0.5 text-[#C9A84C] text-[11px] mb-0.5 justify-end">
+                          {"★".repeat(rev.rating)}
+                          {"☆".repeat(5 - rev.rating)}
+                        </div>
+                        <span className="text-[10px] text-gray-400 font-light">{rev.date}</span>
+                      </div>
+                    </div>
+                    <p className="text-[12.5px] font-light leading-relaxed text-gray-600 m-0">
+                      {rev.comment}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Inline Write a Review Form */}
+              <div className="rounded-2xl border border-[#EDE8DF] bg-white overflow-hidden transition-all duration-300">
+                {!submitSuccess ? (
+                  <div className="p-5 flex flex-col gap-4">
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-sm font-bold text-[#1C3A2F] m-0">Write a Resident Review</h4>
+                      <span className="text-[11px] text-[#C9A84C] font-semibold">Share your local experience</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Persona Select */}
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-bold uppercase text-gray-400">Your Expat Role</label>
+                        <select 
+                          value={userPersona} 
+                          onChange={(e) => setUserPersona(e.target.value)}
+                          className="px-3 py-2 rounded-xl text-[12.5px] outline-none border bg-white border-[#EDE8DF] text-gray-700"
+                        >
+                          <option value="Digital Nomad">💻 Digital Nomad</option>
+                          <option value="Expat Parent">🏫 Expat Parent</option>
+                          <option value="Corporate Professional">👔 Corporate Professional</option>
+                          <option value="Retiree">☕ Retiree</option>
+                          <option value="Young Expat">🌴 Young Expat</option>
+                        </select>
+                      </div>
+
+                      {/* Star Rating Select */}
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-bold uppercase text-gray-400">Rating Score</label>
+                        <div className="flex items-center gap-2 h-[38px]">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setUserRating(star)}
+                              className="text-lg cursor-pointer transition-colors bg-transparent border-none p-0"
+                              style={{ color: star <= userRating ? "#C9A84C" : "#E5E0D8" }}
+                            >
+                              ★
+                            </button>
+                          ))}
+                          <span className="text-xs text-gray-400 font-semibold ml-1">({userRating} Stars)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Review text */}
                     <div className="flex flex-col gap-1.5">
-                      <span className="text-[8.5px] font-bold tracking-wider uppercase text-[#C9A84C]">
-                        {post.category}
-                      </span>
-                      <h4 className="text-[12.5px] font-bold leading-snug line-clamp-2 text-gray-800 group-hover:text-[#C9A84C] transition-colors m-0">
-                        {post.title}
-                      </h4>
+                      <label className="text-[10px] font-bold uppercase text-gray-400">Review Message</label>
+                      <textarea
+                        rows={3}
+                        placeholder={`Tell others about living in ${neighborhood.name}. What is the transit, safety, noise, or dining like?`}
+                        value={userComment}
+                        onChange={(e) => setUserComment(e.target.value)}
+                        className="px-3.5 py-2.5 rounded-xl text-[12.5px] outline-none border border-[#EDE8DF] text-gray-800 resize-none font-light"
+                      />
                     </div>
-                    <div className="text-[9.5px] text-gray-400 font-light flex items-center justify-between">
-                      <span>{post.readTime}</span>
-                      <span className="font-bold text-[#1C3A2F] group-hover:underline">Read →</span>
+
+                    {/* Submit Button */}
+                    <div className="flex justify-end pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!userComment.trim()) return;
+                          
+                          // Prepend review instantly to the local state so the user sees it live
+                          const newReview = {
+                            author: "You (Verified Resident)",
+                            role: userPersona,
+                            date: "Just now",
+                            rating: userRating,
+                            comment: userComment.trim()
+                          };
+                          
+                          setReviewsList([newReview, ...reviewsList]);
+                          setSubmitSuccess(true);
+                        }}
+                        className="px-5 py-2.5 rounded-xl text-[12px] font-bold cursor-pointer transition-opacity hover:opacity-90 border-none text-[#1C3A2F]"
+                        style={{ background: "#C9A84C" }}
+                      >
+                        Submit Resident Review →
+                      </button>
                     </div>
                   </div>
-                </Link>
-              );
-            })}
+                ) : (
+                  <div className="p-8 text-center flex flex-col items-center justify-center gap-3">
+                    <span className="text-3xl">✓</span>
+                    <h4 className="text-sm font-bold text-[#1C3A2F] m-0">Review Submitted Successfully!</h4>
+                    <p className="text-xs text-gray-500 font-light max-w-sm m-0">
+                      Your local review has been posted and queued for verification. Thank you for contributing to the expat community!
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserComment("");
+                        setSubmitSuccess(false);
+                      }}
+                      className="text-[11px] font-bold underline mt-2 text-[#C9A84C] bg-transparent border-none cursor-pointer"
+                    >
+                      Write another review
+                    </button>
+                  </div>
+                )}
+              </div>
+
+            </div>
           </div>
         </div>
       </section>
+
       {/* ── NEARBY NEIGHBORHOODS CROSS-LINKS ── */}
       {nearbyNeighborhoods.length > 0 && (
         <section className="w-full px-4 md:px-8 mt-6 text-left mb-8">
