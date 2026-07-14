@@ -16,15 +16,47 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const n = NEIGHBORHOODS.find((item) => item.slug.toLowerCase() === slug.toLowerCase());
   if (!n) return {};
-
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
     || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
+  let imageUrl = n.heroImage || "/images/homepage_hero_v2.webp";
+  if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+    imageUrl = `${baseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  }
+  // Convert Cloudinary WebP to JPG for better social platform link preview support
+  if (imageUrl.includes("cloudinary.com") && imageUrl.endsWith(".webp")) {
+    imageUrl = imageUrl.slice(0, -5) + ".jpg";
+  }
+
+  const title = `${n.name} Condos & Rentals | Properties for Rent in ${n.name} Bangkok — NHP`;
+  const description = `Find the best properties for rent and sale in ${n.name}, Bangkok. Read our detailed expat neighborhood guide covering schools, BTS stations, cafes, and cost of living.`;
+
   return {
-    title: `${n.name} Condos & Rentals | Properties for Rent in ${n.name} Bangkok — NHP`,
-    description: `Find the best properties for rent and sale in ${n.name}, Bangkok. Read our detailed expat neighborhood guide covering schools, BTS stations, cafes, and cost of living.`,
+    title,
+    description,
     alternates: {
       canonical: `${baseUrl}/neighborhood/${n.slug.toLowerCase()}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${baseUrl}/neighborhood/${n.slug.toLowerCase()}`,
+      siteName: "New Homes Property",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${n.name} Bangkok Guide`,
+        }
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
     },
   };
 }

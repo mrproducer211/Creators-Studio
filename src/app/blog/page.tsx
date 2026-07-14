@@ -13,6 +13,27 @@ export const metadata = {
   alternates: {
     canonical: "/blog",
   },
+  openGraph: {
+    title: "Bangkok Property Guides & Expat Tips — NHP Blog",
+    description: "Expert guides on living in Bangkok — neighbourhood comparisons, rental prices, digital nomad tips and family relocation advice from the NHP team.",
+    url: "https://newhomesproperty.com/blog",
+    siteName: "New Homes Property",
+    images: [
+      {
+        url: "/images/homepage_hero_v2.webp",
+        width: 1200,
+        height: 630,
+        alt: "New Homes Property Blog",
+      }
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bangkok Property Guides & Expat Tips — NHP Blog",
+    description: "Expert guides on living in Bangkok — neighbourhood comparisons, rental prices, digital nomad tips and family relocation advice from the NHP team.",
+    images: ["/images/homepage_hero_v2.webp"],
+  },
 };
 
 export default async function BlogPage() {

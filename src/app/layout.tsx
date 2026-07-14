@@ -26,7 +26,20 @@ export const metadata: Metadata = {
     "Bangkok's neighbourhood property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
   openGraph: {
     siteName: "New Homes Property",
+    images: [
+      {
+        url: "/images/homepage_hero_v2.webp",
+        width: 1200,
+        height: 630,
+        alt: "New Homes Property Bangkok",
+      }
+    ],
+    type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/images/homepage_hero_v2.webp"],
+  }
 };
 
 // Site-wide structured data — injected once in the root layout

@@ -42,6 +42,27 @@ export const metadata = {
   alternates: {
     canonical: "/",
   },
+  openGraph: {
+    title: "Bangkok Condos, Apartments & Luxury Properties | New Homes Property",
+    description: "Discover neighbourhood properties for rent and sale in Bangkok's best neighborhoods, including Thong Lo, Sathorn, Ari, and Asok. Your trusted Bangkok expat real estate platform.",
+    url: "https://newhomesproperty.com",
+    siteName: "New Homes Property",
+    images: [
+      {
+        url: "/images/homepage_hero_v2.webp",
+        width: 1200,
+        height: 630,
+        alt: "New Homes Property Bangkok",
+      }
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bangkok Condos, Apartments & Luxury Properties | New Homes Property",
+    description: "Discover neighbourhood properties for rent and sale in Bangkok's best neighborhoods, including Thong Lo, Sathorn, Ari, and Asok. Your trusted Bangkok expat real estate platform.",
+    images: ["/images/homepage_hero_v2.webp"],
+  },
 };
 
 export default async function Home() {
