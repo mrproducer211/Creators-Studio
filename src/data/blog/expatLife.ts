@@ -287,5 +287,98 @@ export const EXPAT_LIFE: BlogPost[] = [
       href: "/explore",
       label: "Find a Condo"
     }
+  },
+  {
+    slug: "things-not-to-do-in-thailand",
+    category: "Expat Tips",
+    tags: ["Cultural Taboos", "Expat Tips", "Local Laws", "First Week"],
+    title: "10 Things You Must Never Do in Thailand: A Foreigner's Guide to Cultural Taboos & Laws",
+    metaTitle: "10 Things Not to Do in Thailand: Expat & Tourist Taboo Guide | NHP",
+    metaDesc: "Avoid severe disrespect and legal issues in Thailand. A comprehensive guide to crucial Thai cultural taboos, Lèse-Majesté rules, temple etiquette, and local laws.",
+    excerpt: "Thailand is the 'Land of Smiles,' but minor cultural misunderstandings can lead to severe offense or even arrest. Here are 10 things you must never do.",
+    image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1200&auto=format&q=85",
+    readTime: "12 min read",
+    publishedAt: "2026-07-28",
+    author: "NHP Bangkok Team",
+    keywords: ["things not to do in Thailand", "Thai cultural taboos", "stepping on Thai currency", "temple etiquette Thailand", "monk rules women Thailand"],
+    intro: "Thailand is globally celebrated as the 'Land of Smiles,' famous for its warm hospitality, spectacular street food, and relaxed pace of life. However, beneath this welcoming exterior lies a deeply conservative, traditional society guided by Buddhist principles, ancient hierarchy, and strict legal codes. Many actions that seem completely harmless to a Western traveler can cause deep offense, public embarrassment, or even result in severe legal penalties. To help you navigate your stay smoothly and build respect with the locals, here is a detailed guide to the ten things you must never do while in Thailand.",
+    sections: [
+      {
+        heading: "1. Disrespect the Royal Family (And Stepping on Thai Currency)",
+        body: [
+          "The Royal Family is held in the highest esteem in Thailand, and criticism or disrespect toward them is a serious offense under the country's strict Lèse-Majesté laws (Section 112 of the Thai Criminal Code). This law is strictly enforced and carries penalties ranging from 3 to 15 years in prison per count. Even casual jokes, political debates, or sharing social media posts that could be interpreted as critical of the monarchy are highly illegal and socially unacceptable.",
+          "A practical extension of this rule involves Thai currency (coins and banknotes), which feature the portrait of the King. If a coin rolls away or a banknote blows in the wind, you must never step on it with your foot to stop it. In Thai culture, doing so is seen as stepping directly on the King's face—a severe act of disrespect. Instead, bend down and use your hand to catch it. Additionally, do not rip, burn, or write on Thai currency under any circumstances."
+        ]
+      },
+      {
+        heading: "2. Point Your Feet at People, Buddha Images, or Sacred Objects",
+        body: [
+          "In Thai Buddhist culture, the body is seen as a spiritual hierarchy. The head is the most sacred, highest part of the body, while the feet are considered the lowest, dirtiest, and most spiritually unclean part. Consequently, how you use and position your feet is highly scrutinized. You must never point the bottom of your feet at another person, a Buddha image, a temple, or any sacred objects, as this is considered a direct and crude insult.",
+          "When visiting temples or sitting on the floor in a Thai home, you should tuck your legs under or behind you (known as 'mermaid style') rather than sitting cross-legged with your feet pointing forward. Avoid propping your feet up on tables, desks, or the backs of chairs in public transport. If you accidentally brush against someone with your foot, immediately apologize with a polite smile and a slight bow to diffuse any potential offense."
+        ]
+      },
+      {
+        heading: "3. Touch Someone's Head (Even in a Friendly Manner)",
+        body: [
+          "Because the head is considered the highest and most spiritually pure part of the body, touching someone else's head is a major taboo. This rule applies to everyone, including close friends, colleagues, and even children. Ruffling a child's hair, patting someone on the head in a friendly gesture, or reaching over someone's head to grab an object is viewed as intrusive, disrespectful, and physically offensive.",
+          "If you accidentally touch someone's head (for example, in a crowded BTS Skytrain carriage or when passing an object), you should immediately say 'Khor thod khrap' (if you are male) or 'Khor thod kha' (if you are female) to offer a sincere apology. Thais are incredibly forgiving of tourists who make honest mistakes, provided they acknowledge them and show polite regret."
+        ]
+      },
+      {
+        heading: "4. Dress Inappropriately Inside Temples & Sacred Sites",
+        body: [
+          "Thai Buddhist temples (Wats) are active places of worship, not merely tourist attractions or backdrop locations for fashion photography. Dress codes are strictly enforced at major temples like Wat Phra Kaew (Temple of the Emerald Buddha) and Wat Pho, but the same respect should be shown at smaller local temples across the country. Wearing revealing clothing is considered deeply disrespectful to the monks and local devotees.",
+          "Both men and women must cover their shoulders and knees. This means no sleeveless shirts, tank tops, crop tops, short shorts, or mini-skirts. Tight leggings or ripped jeans are also frowned upon. A good rule of thumb is to wear loose, lightweight linen pants or a long skirt, and carry a sarong or scarf to cover up if needed. Additionally, you must remove your shoes before entering any temple hall (Ubosot) or holy structure. Look for the piles of shoes at the entrance as a guide."
+        ]
+      },
+      {
+        heading: "5. Touch a Monk (A Rule Strictly for Women)",
+        body: [
+          "In Theravada Buddhism, monks are bound by strict vows of celibacy (the Vinaya code), which prohibit them from having any physical contact with women. A monk is not allowed to touch a woman's body, her clothing, or even hand an object directly to her. If a monk touches a woman, he must undergo a lengthy purification ritual to restore his vows, which causes him great spiritual distress.",
+          "Women must be mindful of this rule in public. Never sit next to a monk on public transport (bus, BTS, or MRT), and maintain a respectful distance when passing them on the street. If a woman wants to give an offering or a gift to a monk, she must place it on a special cloth (Pha Krapประเคน) laid out by the monk, or hand it to a man who can then present it directly. Monks are highly respected community leaders, and respecting their boundaries is key to being a polite visitor."
+        ]
+      },
+      {
+        heading: "6. Lose Your Temper and Raise Your Voice in Public",
+        body: [
+          "Thai society is heavily anchored in the concept of 'saving face' and maintaining social harmony. Showing anger, raising your voice, shouting, or arguing loudly is seen as a sign of poor self-control, low breeding, and emotional immaturity. In Thailand, if you lose your temper during a dispute (such as negotiating with a taxi driver or resolving a hotel issue), you immediately lose the argument and the respect of everyone around you.",
+          "The preferred approach is to stay 'Jai Yen' (cool-headed). Thais respond far better to a calm, polite explanation accompanied by a smile than to aggressive demands. If you encounter a problem, take a deep breath, keep your voice soft, and explain the issue calmly. This will yield a faster, friendlier resolution and prevent a minor dispute from escalating into a dangerous confrontation where someone's pride is threatened."
+        ]
+      },
+      {
+        heading: "7. Treat Buddha Images as Home Decor or Fashion Tattoos",
+        body: [
+          "For Thais, Buddha is not a decorative theme, a lifestyle brand, or a fashion statement; he is a sacred religious figure. There is a national campaign led by the Knowing Buddha Organization to educate foreigners on the respectful treatment of Buddha images. Buying Buddha statues to place on the floor, in a bathroom, or as a garden ornament is considered highly offensive, as is purchasing Buddha-themed t-shirts or accessories.",
+          "Getting a tattoo of Buddha, particularly below the waistline, is seen as a major desecration because the lower body is considered unclean. Foreigners have been detained at immigration or refused entry to the country for displaying large, disrespectful Buddha tattoos. If you buy a small Buddha amulet, wear it around your neck and treat it with care. Respecting the faith of the local population is fundamental to a positive expat experience."
+        ]
+      },
+      {
+        heading: "8. Disregard Strict Rules on Drug Consumption & Overstays",
+        body: [
+          "While Thailand decriminalized cannabis in 2022 (though regulations are constantly evolving in 2026 to restrict it to medical/health use), the country maintains some of the strictest narcotics laws in the world for other substances. Possession, consumption, or trafficking of Category 1 drugs (like heroin, methamphetamine, or MDMA) carries severe penalties, including mandatory life imprisonment or even the death penalty. Thai prisons are notoriously harsh, and embassies have limited power to intervene in drug cases.",
+          "Another critical legal boundary is your visa status. Overstaying your visa, even by a single day, is illegal. The fine is ฿500 per day up to a maximum of ฿20,000. However, if you are caught by immigration police outside of an airport with an expired visa, you will be arrested, sent to the Immigration Detention Center (IDC), deported at your own expense, and banned from re-entering Thailand for up to 10 years. Always keep track of your stamp dates."
+        ]
+      },
+      {
+        heading: "9. Point Directly at People with a Single Finger",
+        body: [
+          "In many Western cultures, pointing at an object or a person with your index finger is common. In Thailand, however, pointing directly at a person with a single finger is considered aggressive, accusatory, and rude. It is a gesture reserved for pointing out criminals or indicating animals. Pointing at someone's face is particularly offensive and can trigger immediate hostility.",
+          "If you need to indicate or invite someone to step forward, the polite gesture is to extend your entire hand with your palm facing down and sweep your fingers toward yourself in a gentle waving motion. If you must refer to an object or direction, use your whole hand with your palm facing upward. This soft, welcoming body language is highly appreciated and aligns with the gentle nature of Thai communication."
+        ]
+      },
+      {
+        heading: "10. Keep Your Shoes On Where Taboo (Check the Entrance)",
+        body: [
+          "Thais maintain a high standard of cleanliness inside homes, temples, and even some businesses. The street is considered dirty and spiritually low, meaning shoes must not carry that dirt inside. Keeping your shoes on inside someone's home, a temple hall, or certain local shops is viewed as dirty, lazy, and extremely disrespectful to the owner.",
+          "As a rule of thumb, always look at the entrance before crossing a threshold. If you see a row of shoes, slides, or sandals parked outside, you must remove yours too. This practice is common in traditional massage shops, local pharmacies, boutique cafes, and residential condo units. Wearing slip-on shoes or easily removable footwear during your daily life in Bangkok will make adapting to this local habit effortless."
+        ]
+      }
+    ],
+    cta: {
+      heading: "Relocating to Bangkok soon?",
+      body: "Our local team helps you find the right condo, secure a lease, and transition smoothly into local life.",
+      href: "/explore",
+      label: "Start Your Search"
+    }
   }
 ];
