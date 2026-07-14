@@ -12,8 +12,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
-import POSTS from "@/data/blogPosts";
-
 function VibeCard({ card }: { card: { title: string; subtitle: string; image: string } }) {
   const [src, setSrc] = useState(card.image);
   return (
@@ -666,25 +664,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
     );
   }, [initialProperties, neighborhood]);
 
-  // Relevant blog posts for this neighborhood
-  const relevantBlogs = useMemo(() => {
-    const nName = neighborhood.name.toLowerCase();
-    const filtered = POSTS.filter((post) => {
-      return (
-        post.title.toLowerCase().includes(nName) ||
-        post.excerpt.toLowerCase().includes(nName) ||
-        post.tags.some((t) => t.toLowerCase() === nName) ||
-        post.keywords.some((k) => k.toLowerCase().includes(nName))
-      );
-    });
 
-    // If we have fewer than 3, pad with the latest general expat guides
-    if (filtered.length < 3) {
-      const general = POSTS.filter((post) => !filtered.some((f) => f.slug === post.slug));
-      return [...filtered, ...general].slice(0, 3);
-    }
-    return filtered.slice(0, 3);
-  }, [neighborhood]);
 
   return (
     <div className="flex flex-col w-full pb-10" style={{ background: "#FAF8F3" }}>
