@@ -54,57 +54,6 @@ export const NEIGHBORHOOD_GUIDES: BlogPost[] = [
     }
   },
   {
-    slug: "bang-na-underrated-suburban-gem",
-    category: "Neighbourhood Guide",
-    tags: ["Bang Na", "Suburban", "Family Living", "Budget"],
-    title: "Bang Na: Bangkok's Underrated Suburban Gem for Families",
-    metaTitle: "Living in Bang Na Bangkok 2026: Expat Family Guide & Rents | NHP",
-    metaDesc: "Why expat families and budget-conscious renters are moving to Bang Na. International schools, spacious houses, green spaces, and affordable rent.",
-    excerpt: "Looking for space, international schools, and actual yards? Bang Na offers suburban peace and modern convenience at a fraction of downtown prices.",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&auto=format&q=85",
-    readTime: "6 min read",
-    publishedAt: "2026-07-02",
-    author: "NHP Bangkok Team",
-    keywords: ["Bang Na Bangkok", "international schools Bang Na", "family housing Bangkok", "suburban living Bangkok"],
-    intro: "For years, expats dismissed Bang Na as 'too far out.' It was the industrial gateway to the eastern provinces, associated with the airport and traffic. But over the last five years, Bang Na has quietly transformed into one of Bangkok's premier family residential zones. With a density of international schools, massive community malls, and the Skytrain extension, it offers a suburban quality of life that Sukhumvit simply cannot match. If you have kids, need space, and want your budget to stretch, Bang Na is worth a serious look.",
-    sections: [
-      {
-        heading: "The Vibe: Spacious, Green, and Family-Focused",
-        body: [
-          "Bang Na feels open. Unlike the cramped, high-density areas of downtown, the roads here are wide, the developments are spread out, and many communities feature gated housing estates (Mubans) with private pools, yards, and quiet streets where kids can ride bicycles safely. It is a car-friendly neighbourhood, designed for families who want a Western suburban lifestyle with Thai convenience.",
-          "The expat community here revolves around schools and family activities. On weekends, you'll see families at local parks, dining at open-air garden restaurants, or shopping at Mega Bang Na, which is essentially the center of social life in the district."
-        ]
-      },
-      {
-        heading: "International Schools: The Major Draw",
-        body: [
-          "The main reason expat families move to Bang Na is the schools. Some of the most prestigious schools in the country are located here, including Bangkok Patana School (British curriculum), Berkeley International School (American curriculum), and ICS (International Community School).",
-          "By living in Bang Na, you eliminate the punishing 45-minute daily school commute from downtown Sukhumvit. Kids can walk or take a 5-minute school bus, giving them more free time and reducing family stress."
-        ]
-      },
-      {
-        heading: "Housing and Rental Market: More Space for Less",
-        body: [
-          "The property market in Bang Na is completely different from downtown. In Sukhumvit, ฿40,000/month gets you a 50 sqm 1-bedroom condo. In Bang Na, that same budget can secure a spacious 3-to-4-bedroom townhouse or a detached house with a garden in a gated community with shared pool and gym.",
-          "If you prefer condo living, modern high-rise developments near the BTS Bang Na or BTS Udom Suk stations offer 2-bedroom units for ฿18,000 to ฿25,000, often in brand-new buildings with spectacular sky facilities."
-        ]
-      },
-      {
-        heading: "Shopping and Connectivity",
-        body: [
-          "Bang Na is home to Mega Bang Na and IKEA, one of the largest shopping complexes in Southeast Asia. You also have Central Bang Na and the upcoming Bangkok Mall, which promises to be the largest mall in the country.",
-          "While it is suburban, connectivity is strong. The BTS Green Line puts you in Asok in 25 minutes from Bang Na station. For drivers, the tollways make accessing the CBD, the airport, or weekend beach destinations like Pattaya extremely quick."
-        ]
-      }
-    ],
-    cta: {
-      heading: "Ready to move your family to Bang Na?",
-      body: "Explore spacious houses and townhomes in Bangkok's family-friendly eastern hub.",
-      href: "/explore?area=Bang%20Na",
-      label: "Browse Bang Na Listings"
-    }
-  },
-  {
     slug: "silom-after-dark-expat-guide",
     category: "Neighbourhood Guide",
     tags: ["Silom", "Nightlife", "CBD", "Dining"],

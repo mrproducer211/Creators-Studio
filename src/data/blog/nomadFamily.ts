@@ -46,49 +46,6 @@ export const NOMAD_FAMILY: BlogPost[] = [
     }
   },
   {
-    slug: "moving-to-bangkok-with-kids-guide",
-    category: "Family Living",
-    tags: ["Family Living", "Schools", "Relocation", "Kids"],
-    title: "Moving to Bangkok with Kids: School Guide, Family Neighbourhoods, and What to Expect",
-    metaTitle: "Moving to Bangkok with Kids 2026: Expat Family Guide | NHP",
-    metaDesc: "An expat guide to moving to Bangkok with children. Mapped international schools, best family neighbourhoods, healthcare, and daily life tips.",
-    excerpt: "Relocating your family to Bangkok? We cover international schools, family-friendly neighbourhoods, health systems, and daily life tips to make the move smooth.",
-    image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=1200&auto=format&q=85",
-    readTime: "7 min read",
-    publishedAt: "2026-08-12",
-    author: "NHP Bangkok Team",
-    keywords: ["moving to Bangkok with kids", "family expat guide Bangkok", "international schools Sukhumvit", "kids activities Bangkok"],
-    intro: "Relocating to a new country with children adds a layer of complexity to the move. You aren't just thinking about your commute—you have to research school curricula, find safe residential streets, check proximity to pediatricians, and source kid-friendly activities. Fortunately, Bangkok is a highly welcoming, family-friendly city with an excellent international school system and world-class medical facilities. Here is our complete expat guide to relocating your family to the Thai capital.",
-    sections: [
-      {
-        heading: "1. The School Decision Comes First",
-        body: [
-          "In Bangkok, you should choose your children's school before you sign a lease on a condo. Bangkok's traffic can turn a 5km commute into a 45-minute journey. By choosing the school first, you can find a home nearby and save your kids from daily travel stress.",
-          "Most respected schools (like NIST in Asok or Bangkok Patana in On Nut) offer school bus services. Get their bus route maps when you apply—this will help you decide which neighbourhoods are practical."
-        ]
-      },
-      {
-        heading: "2. Best Family Neighbourhoods: On Nut & Ekkamai",
-        body: [
-          "On Nut and Ekkamai are the most popular areas for expat families. They offer a residential feel, excellent community malls with large international supermarkets, and are close to schools like Patana and Bromsgrove.",
-          "You can rent spacious 2-to-3-bedroom condos in these areas for ฿35,000 to ฿60,000. Gated housing estates (Mubans) further east in Bang Na are also popular, offering detached houses with gardens and quiet streets."
-        ]
-      },
-      {
-        heading: "3. Healthcare and Pediatric Care",
-        body: [
-          "Bangkok has world-class private hospitals. Samitivej Sukhumvit Hospital (Sukhumvit Soi 49) has an exceptional pediatric wing with English-speaking specialists, emergency care, and child-friendly play areas, making it the premier choice for expat parents."
-        ]
-      }
-    ],
-    cta: {
-      heading: "Browse family-sized rentals",
-      body: "Discover 2 and 3-bedroom condos for rent close to top international schools in Bangkok.",
-      href: "/explore",
-      label: "Find Family Condos"
-    }
-  },
-  {
     slug: "safest-bangkok-neighbourhoods-families",
     category: "Family Living",
     tags: ["Family Living", "Safest Areas", "Kids", "Ari"],
