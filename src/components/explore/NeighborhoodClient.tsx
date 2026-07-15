@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import { PropertyCard } from "@/types/property";
 import { Neighborhood, NEIGHBORHOODS } from "@/data/neighborhoods";
-import { NEIGHBORHOOD_GUIDES } from "@/data/neighborhoodGuides";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSaved } from "@/contexts/SavedContext";
@@ -567,7 +566,6 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
   const { isSaved: isPropertySaved, toggle: togglePropertySave } = useSaved();
 
   const [copied, setCopied] = useState(false);
-  const [selectedLongFormSection, setSelectedLongFormSection] = useState<number | null>(null);
 
 
 
@@ -599,8 +597,6 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
       };
     });
   }, [meta.vibeCards, transN]);
-
-  const guide = NEIGHBORHOOD_GUIDES[neighborhood.slug.toLowerCase()];
 
   const NEARBY_MAP: Record<string, string[]> = {
     ari: ["phaya-thai", "asok", "sukhumvit"],

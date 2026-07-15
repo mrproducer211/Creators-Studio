@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAllPosts } from "@/lib/store/blog";
 import { writeJson } from "@/lib/store/fileStore";
-import { BlogPost } from "@/data/blogPosts";
 
 export const dynamic = "force-dynamic";
 

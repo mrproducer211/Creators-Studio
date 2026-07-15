@@ -76,8 +76,10 @@ export default function BlogIndexClient({ initialPosts }: Props) {
   useEffect(() => {
     const tag = searchParams.get("tag");
     if (tag) {
-      setSearchQuery(tag);
-      setSelectedCategory("All");
+      setTimeout(() => {
+        setSearchQuery(tag);
+        setSelectedCategory("All");
+      }, 0);
     }
   }, [searchParams]);
 
@@ -172,7 +174,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
           <div className="text-gray-300 mb-3">🔍</div>
           <h3 className="text-base font-bold text-[#1C3A2F] mb-1">No articles found</h3>
           <p className="text-xs text-gray-500 max-w-xs">
-            We couldn't find any articles matching your search. Try adjusting your filters or keywords.
+            We couldn&apos;t find any articles matching your search. Try adjusting your filters or keywords.
           </p>
         </div>
       )}
