@@ -155,56 +155,6 @@ export const NEIGHBORHOOD_GUIDES: BlogPost[] = [
     }
   },
   {
-    slug: "lat-phrao-emerging-neighbourhood",
-    category: "Neighbourhood Guide",
-    tags: ["Lat Phrao", "Emerging", "Local Vibe", "Value"],
-    title: "Lat Phrao: Bangkok's Emerging Neighbourhood Nobody Talks About Yet",
-    metaTitle: "Living in Lat Phrao Bangkok 2026: Expat Guide & Rents | NHP",
-    metaDesc: "Why Lat Phrao is becoming the next big expat destination in north Bangkok. Rents, new MRT lines, local food, and the authentic residential lifestyle.",
-    excerpt: "With the new Yellow Line MRT and booming local cafe scenes, Lat Phrao offers authentic Bangkok living and great rental value just outside the center.",
-    image: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=1200&auto=format&q=85",
-    readTime: "6 min read",
-    publishedAt: "2026-07-09",
-    author: "NHP Bangkok Team",
-    keywords: ["Lat Phrao Bangkok", "Lat Phrao condos", "cheap rent Bangkok", "emerging neighbourhoods Bangkok"],
-    intro: "For a long time, expats only visited Lat Phrao to change trains or head to Chatuchak. It was considered a dense, residential Thai district in the north—too busy, too local, and too far from the Sukhumvit line. But times have changed. The completion of the MRT Yellow Line, the expansion of Central Plaza Lat Phrao, and a booming independent coffee and bar scene have made the district one of the most exciting emerging areas in the city. If you want authentic Bangkok living, modern condos, and prices that haven't been inflated by tourists, Lat Phrao is the place to look.",
-    sections: [
-      {
-        heading: "The Vibe: Authentic, Energetic, and Local",
-        body: [
-          "Lat Phrao is where real Bangkokians live. The vibe is fast-paced, dense, and full of local energy. Unlike the tourist zones, you won't find tailoring shops or Western pubs here. Instead, you get massive local food markets, family-run shophouse restaurants, and independent music bars where local university students gather on weekends.",
-          "The district is highly green in pockets, particularly near the Phahon Yothin junction where it connects to the massive Chatuchak and Railway Parks, offering some of the best running and cycling tracks in northern Bangkok."
-        ]
-      },
-      {
-        heading: "Transit Explosion: The MRT Yellow and Blue Lines",
-        body: [
-          "Lat Phrao's transformation is driven by transit. The intersection of the MRT Blue Line (subway) and the BTS Green Line (Skytrain) at Ha Yaek Lat Phrao makes getting downtown incredibly quick. You can reach Ari in 10 minutes and Siam in 20.",
-          "Additionally, the new MRT Yellow Line monorail runs directly down Lat Phrao Road, connecting the district to the eastern suburbs and making the area highly accessible for anyone working in the northern or eastern parts of the city."
-        ]
-      },
-      {
-        heading: "Rental Market: Maximum Value",
-        body: [
-          "This is Lat Phrao's biggest advantage. Because it is outside the main expat belt, rental prices are exceptionally low. A brand-new, modern 1-bedroom condo with sky facilities (pool, gym, co-working space) close to the BTS/MRT stations ranges from ฿12,000 to ฿18,000 per month.",
-          "For ฿25,000, which buys you a small studio in Thong Lo, you can secure a luxury 2-bedroom suite in a premium development in Lat Phrao. If you are looking to save money without sacrificing the quality of your building, Lat Phrao offers unmatched value."
-        ]
-      },
-      {
-        heading: "Food and Daily Life",
-        body: [
-          "The food scene here is massive. The Chok Chai 4 area is legendary among Bangkok foodies for its night street food market, serving some of the best crispy pork, noodle dishes, and traditional desserts in the city. For modern shopping, Central Plaza Lat Phrao and Union Mall offer endless retail and dining options."
-        ]
-      }
-    ],
-    cta: {
-      heading: "Explore Lat Phrao property value",
-      body: "Discover modern high-rise condos and apartments for rent in Bangkok's rising northern star.",
-      href: "/explore",
-      label: "Browse Listings"
-    }
-  },
-  {
     slug: "living-in-nonthaburi-guide",
     category: "Neighbourhood Guide",
     tags: ["Nonthaburi", "Quiet Living", "Suburban", "Budget"],

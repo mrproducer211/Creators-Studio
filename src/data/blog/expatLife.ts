@@ -141,50 +141,6 @@ export const EXPAT_LIFE: BlogPost[] = [
     }
   },
   {
-    slug: "thai-driving-licence-expat-guide",
-    category: "Expat Tips",
-    tags: ["Driving", "Legals", "Expat Tips", "First Month"],
-    title: "Getting a Thai Driving Licence as a Foreigner: Complete 2026 Guide",
-    metaTitle: "How to Get a Thai Driving Licence 2026: Expat Guide | NHP",
-    metaDesc: "Step-by-step guide to getting a Thai driving licence as a foreigner. Required documents, residency certificates, medical certificates, and test tips.",
-    excerpt: "Want to rent a car or ride a scooter legally in Thailand? Here is the step-by-step guide to getting your local Thai driving licence.",
-    image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=1200&auto=format&q=85",
-    readTime: "6 min read",
-    publishedAt: "2026-07-20",
-    author: "NHP Bangkok Team",
-    keywords: ["Thai driving licence", "driving in Thailand", "residency certificate Bangkok", "Land Transport Office"],
-    intro: "Riding a scooter through Bangkok's traffic or driving a car down the southern highways is the best way to explore the country. However, doing so with just a tourist visa and a home country licence is risky. If you are stopped by local police or involved in an accident, your travel insurance will likely be void if you do not hold a valid International Driving Permit (IDP) or a local Thai driving licence. Getting a Thai licence is relatively straightforward if you have the right documents. Here is the step-by-step guide.",
-    sections: [
-      {
-        heading: "1. The Document Checklist: What You Need",
-        body: [
-          "To apply at the Department of Land Transport (DLT), you will need: your passport with a non-immigrant visa (tourist visas are occasionally accepted at certain DLT offices if you have a residency certificate), your home country licence (translated into English and certified by your embassy if not in English), and a Medical Certificate (issued by any local clinic for around ฿100).",
-          "You also need a Certificate of Residency. This is a crucial document issued by either your embassy or local Thai immigration, verifying your residential address in Bangkok. You must show a copy of your lease agreement to get it."
-        ]
-      },
-      {
-        heading: "2. The Application Process at the DLT",
-        body: [
-          "Take your documents to the DLT office (the main office near BTS Mo Chit is the most popular for expats). You will need to take a physical reflex and color-blindness test.",
-          "If you hold a valid licence from your home country, you do not need to take the practical driving test—you will simply be issued your temporary 2-year Thai licence. If you do not hold a valid licence, you will need to take a written theory test (available in English) and a short practical test."
-        ]
-      },
-      {
-        heading: "3. Renewals and Benefits",
-        body: [
-          "Your first Thai licence is a temporary 2-year licence. When you renew it, you will be issued a 5-year licence, provided you still hold a non-immigrant visa.",
-          "Holding a Thai licence has several benefits: it serves as a valid national ID card (allowing you to leave your passport at home), and it often lets you pay the local Thai rate (rather than the tourist rate) at national parks and national museums."
-        ]
-      }
-    ],
-    cta: {
-      heading: "Secured your transport? Find your home.",
-      body: "Browse modern condos for rent with private parking garages in Bangkok.",
-      href: "/explore",
-      label: "Find Condos"
-    }
-  },
-  {
     slug: "cost-of-living-bangkok-2026",
     category: "Expat Tips",
     tags: ["Cost of Living", "Budget", "Expat Tips", "Renting"],
