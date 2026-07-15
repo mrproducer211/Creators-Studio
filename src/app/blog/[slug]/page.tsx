@@ -219,7 +219,7 @@ export default async function BlogPostPage({ params }: Props) {
       <main style={{ paddingTop: 56, background: "#F7F3EC", fontFamily: `${bodyFont}, sans-serif` }}>
 
         {/* ── Hero ── */}
-        <div className="relative overflow-hidden" style={{ height: "clamp(200px, 35vw, 480px)", background: "#1C3A2F" }}>
+        <div className="relative overflow-hidden w-full h-[280px] sm:h-[350px] md:h-[420px] lg:h-[480px]" style={{ background: "#1C3A2F" }}>
           <Image
             src={post.image}
             alt={post.title}
@@ -228,22 +228,22 @@ export default async function BlogPostPage({ params }: Props) {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%)" }} />
-          <div className="absolute bottom-0 left-0 right-0 px-4 md:px-8 pb-8 max-w-3xl">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%)" }} />
+          <div className="absolute bottom-0 left-0 right-0 px-4 md:px-8 pb-6 md:pb-8 max-w-3xl">
+            <div className="flex items-center gap-2 mb-2 md:mb-3">
+              <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold" style={{ background: "#C9A84C", color: "#1C3A2F" }}>
                 {post.category}
               </span>
               {post.trending && (
-                <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold animate-pulse" style={{ background: "#FF6B6B", color: "#FFFFFF" }}>
+                <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold animate-pulse" style={{ background: "#FF6B6B", color: "#FFFFFF" }}>
                   🔥 Trending
                 </span>
               )}
             </div>
-            <h1 className="text-[22px] md:text-[32px] font-bold leading-[1.2] mb-3" style={{ color: "#FFFFFF", letterSpacing: "-0.5px", fontFamily: `${headerFont}, sans-serif` }}>
+            <h1 className="text-[18px] sm:text-[24px] md:text-[32px] font-bold leading-[1.2] mb-2 md:mb-3" style={{ color: "#FFFFFF", letterSpacing: "-0.5px", fontFamily: `${headerFont}, sans-serif` }}>
               {post.title}
             </h1>
-            <div className="flex items-center gap-4 text-[12px]" style={{ color: "rgba(255,255,255,0.6)" }}>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] sm:text-[12px]" style={{ color: "rgba(255,255,255,0.6)" }}>
               <span>{post.author}</span>
               <span>·</span>
               <span>

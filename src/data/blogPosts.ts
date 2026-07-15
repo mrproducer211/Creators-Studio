@@ -48,7 +48,7 @@ const STATIC_POSTS: BlogPost[] = [
     metaDesc:    "Comparing Thong Lo and On Nut for expats and digital nomads in Bangkok. Prices, lifestyle, commute and vibe — everything you need to choose the right neighbourhood.",
     excerpt:     "Both are BTS-connected, expat-friendly and full of great food — but the vibe, price and lifestyle are worlds apart. Here's how to choose.",
     image:       "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200&auto=format&q=85",
-    readTime:    "5 min read",
+    readTime:    "11 min read",
     publishedAt: "2026-05-15",
     author:      "NHP Bangkok Team",
     keywords:    ["Thong Lo apartments", "On Nut condos", "Bangkok expat neighbourhood", "Thong Lo vs On Nut", "Bangkok rental guide"],
@@ -67,6 +67,20 @@ const STATIC_POSTS: BlogPost[] = [
           "This is where the gap becomes most visible. In Thong Lo, a quality 1-bedroom condo in a modern building will cost between ฿30,000 and ฿60,000 per month. A 2-bedroom in a premium development can reach ฿80,000–฿120,000. The premium is real but so is the quality — newer buildings, better finishes, stronger management.",
           "In On Nut, the same ฿35,000 budget that buys you a mid-range 1-bed in Thong Lo will secure a spacious 2-bedroom with a pool in a well-maintained building. Studios start around ฿12,000–฿18,000. For expats working with a fixed relocation allowance, On Nut simply offers more room, better value, and often newer buildings because development has continued more recently.",
         ],
+      },
+      {
+        heading: "Dining & Culinary Scene: Fine Dining vs Local Street Food",
+        body: [
+          "Thong Lo is widely regarded as the culinary capital of Bangkok, particularly for Japanese cuisine due to its high concentration of Japanese expat residents. Here, you will find some of the best sushi, ramen, and izakaya spots outside Tokyo. In addition, the neighbourhood is home to trendy brunch spots, European bistros, and high-end cocktail bars where mixologists curate bespoke drinks. The food scene is expensive but premium, designed for gourmands who don't mind spending ฿500–฿1,500 per meal.",
+          "On Nut offers a much more down-to-earth and affordable dining experience. While it has international restaurants located inside community malls like Century The Movie Plaza and Habito, its true strength lies in its local Thai eateries and street food markets. The outdoor food courts near the BTS serve everything from hotpot and grilled meats to fresh papaya salad for under ฿100. It is a haven for food lovers who appreciate authentic Thai flavors and affordable everyday dining."
+        ]
+      },
+      {
+        heading: "Remote Work & Cafe Culture",
+        body: [
+          "For digital nomads and remote workers, both neighbourhoods have excellent setups, but the vibes are distinct. Thong Lo offers design-forward, specialty coffee shops where you can work with high-speed internet, though some spots can be loud on weekends. Modern co-working facilities are available near the main roads, providing professional networking hubs.",
+          "On Nut is highly favored by long-term remote workers for its relaxed, residential work cafes. Habito Mall in the T77 community offers peaceful working areas, and smaller coffee shops along Sukhumvit 77 and Sukhumvit 50 are perfect for putting on headphones and focusing on work. It is less about showing off and more about everyday productivity."
+        ]
       },
       {
         heading: "Commute & Connectivity",

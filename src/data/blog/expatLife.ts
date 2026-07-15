@@ -10,7 +10,7 @@ export const EXPAT_LIFE: BlogPost[] = [
     metaDesc: "Confused about Thai visas? A complete 2026 expat guide explaining Tourist, Long-Term Resident (LTR), Thailand Elite, and Retirement visas.",
     excerpt: "Navigating Thai visas can be a headache. Here is a clear, simple guide to your visa options in 2026, from remote work to retirement.",
     image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&auto=format&q=85",
-    readTime: "8 min read",
+    readTime: "11 min read",
     publishedAt: "2026-07-15",
     author: "NHP Bangkok Team",
     keywords: ["Thailand visa 2026", "Thailand LTR visa", "Thailand Elite visa", "retirement visa Thailand"],
@@ -31,17 +31,30 @@ export const EXPAT_LIFE: BlogPost[] = [
         ]
       },
       {
-        heading: "3. Thailand Privilege (Elite Visa): Hassle-Free Residency",
+        heading: "3. The Destination Thailand Visa (DTV) — New in 2026",
         body: [
-          "If you don't meet the income requirements of the LTR but have the capital, the Thailand Privilege Card (formerly Elite Visa) offers guaranteed long-term residency. Membership packages range from 5 years to 20 years, starting at ฿900,000.",
+          "Introduced to cater specifically to digital nomads, remote workers, freelancers, and visitors interested in cultural activities (like Muay Thai or culinary classes), the Destination Thailand Visa (DTV) is a highly attractive addition to the visa landscape. It allows a stay of up to 180 days per entry, with the option to extend for another 180 days inside the country, and is valid for 5 years.",
+          "To qualify, you must show proof of remote employment or freelance portfolio work, and hold a minimum balance of ฿500,000 in a bank account. It is significantly cheaper than the LTR or Privilege visas, making it the most popular budget nomad option in 2026."
+        ]
+      },
+      {
+        heading: "4. Thailand Privilege (Elite Visa): Hassle-Free Residency",
+        body: [
+          "If you don't meet the income requirements of the LTR or DTV but have the capital, the Thailand Privilege Card (formerly Elite Visa) offers guaranteed long-term residency. Membership packages range from 5 years to 20 years, starting at ฿900,000.",
           "It provides a multi-entry visa, airport lounge access, limousine service, and assistance with government paperwork. There are no minimum income, age, or employment requirements, making it popular for high-net-worth nomads and retirees."
         ]
       },
       {
-        heading: "4. Retirement Visa (Non-OA / Non-O)",
+        heading: "5. Retirement Visa (Non-OA / Non-O)",
         body: [
           "If you are 50 years of age or older, the Retirement Visa is highly accessible. You need to demonstrate financial security by either keeping ฿800,000 in a Thai bank account for two months before the application, or showing a monthly pension income of at least ฿65,000.",
           "It must be renewed annually, and you must purchase local health insurance meeting government coverage requirements. It is a highly popular option for retirees living in Chiang Mai, Hua Hin, and quiet residential areas of Bangkok."
+        ]
+      },
+      {
+        heading: "6. Essential Document Prep & Translation Tips",
+        body: [
+          "No matter which visa you choose, preparation is key. All official documents (like marriage certificates, birth certificates, or criminal record checks) must be translated into English or Thai and legalized by your home country's embassy. Doing this before you travel saves months of delay and expensive courier fees once you are in Bangkok."
         ]
       }
     ],
@@ -61,7 +74,7 @@ export const EXPAT_LIFE: BlogPost[] = [
     metaDesc: "Step-by-step expat guide to opening a bank account in Thailand. Required documents, best banks (Bangkok Bank, K-Bank), and tips for tourist visas.",
     excerpt: "Opening a bank account in Thailand can be tricky without a work permit. Here is the step-by-step guide to the documents you need and the best banks to visit.",
     image: "https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?w=1200&auto=format&q=85",
-    readTime: "5 min read",
+    readTime: "10 min read",
     publishedAt: "2026-07-16",
     author: "NHP Bangkok Team",
     keywords: ["open bank account Thailand", "Bangkok bank foreigner", "Kasikornbank foreigner", "Thai debit card"],
@@ -87,6 +100,20 @@ export const EXPAT_LIFE: BlogPost[] = [
           "Do not visit small branches inside shopping malls on weekends; they are often busy and have strict rules. Instead, visit a major branch (ideally a head office or a branch in an expat area like Sukhumvit or Silom) on a weekday morning.",
           "Be polite, dress neatly, and present your documents clearly. If the first branch rejects you, do not be discouraged—simply walk down the street to a different branch or a different bank. Branch managers have high discretion, and rules can vary between offices."
         ]
+      },
+      {
+        heading: "4. International Transfers: How to Fund Your Account",
+        body: [
+          "Once your account is open, the next challenge is getting money into it without paying exorbitant bank fees. Standard SWIFT wire transfers from your home bank are secure but slow (taking 3–5 business days) and involve high flat fees and poor exchange rates.",
+          "Expat parents and nomads strongly recommend using Wise (formerly TransferWise) or similar peer-to-peer transfer apps. Wise connects directly to the Thai banking system, allowing you to transfer funds instantly at the mid-market exchange rate for a minimal fee. The money arrives in your Thai account via a local transfer, meaning your Thai bank won't charge you a foreign receiving fee."
+        ]
+      },
+      {
+        heading: "5. Credit Cards & Mortgages for Expats",
+        body: [
+          "Getting a credit card in Thailand is notoriously difficult for foreigners. Most banks require a valid work permit, a minimum monthly salary of ฿50,000–฿100,000, and at least 6 months of local employment history. Alternatively, you can open a 'fixed deposit' account where the bank freezes a specific amount (e.g., ฿50,000) as collateral for your credit card limit.",
+          "Mortgages are virtually impossible for individual foreign buyers unless you go through specialized international lending programs or purchase through a corporate structure. For the vast majority of expats, buying property requires full cash payments."
+        ]
       }
     ],
     cta: {
@@ -105,7 +132,7 @@ export const EXPAT_LIFE: BlogPost[] = [
     metaDesc: "Everything you need to know about healthcare in Bangkok. World-class private hospitals (Bumrungrad, Samitivej), clinic costs, and insurance tips.",
     excerpt: "Bangkok has some of the best private hospitals in the world. Here is our guide to costs, insurance, and the best facilities for expats.",
     image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200&auto=format&q=85",
-    readTime: "6 min read",
+    readTime: "10 min read",
     publishedAt: "2026-07-18",
     author: "NHP Bangkok Team",
     keywords: ["Bangkok healthcare", "Bumrungrad hospital", "Samitivej hospital", "expat insurance Thailand"],
@@ -130,6 +157,19 @@ export const EXPAT_LIFE: BlogPost[] = [
         body: [
           "Most expats carry an international or local health insurance policy. International plans (like Luma, Cigna, or Allianz) offer comprehensive global coverage and high limits, but premiums are high. Local Thai insurance companies offer affordable plans (often starting around ฿20,000/year for basic inpatient coverage) but have lower limits.",
           "If you are a digital nomad, travel-focused plans like SafetyWing or World Nomads offer cheap monthly packages (around USD 45/month) that cover emergency medical treatment and accidents, allowing you to pay cash for daily GP visits."
+        ]
+      },
+      {
+        heading: "4. Pharmacies & Over-the-Counter Medications",
+        body: [
+          "Thailand has a highly accessible pharmacy network. Local pharmacies (like Boots, Watsons, or independent neighborhood drugstores) can dispense many medications over the counter that would require a prescription in Western countries, including blood pressure medication, asthma inhalers, and antibiotics.",
+          "Pharmacists in Thailand are highly trained and often speak excellent English. For minor ailments (like food poisoning or a cold), visiting a pharmacist is much faster and cheaper than visiting a hospital clinic. Always ask for the local generic brand instead of the imported brand to save 50% or more on the cost."
+        ]
+      },
+      {
+        heading: "5. World-Class Dental Care & Dental Tourism",
+        body: [
+          "Dental care in Bangkok is exceptional and very affordable. Many dental clinics (like Bangkok International Dental Center or Dental Hospital Bangkok) cater specifically to international patients and feature specialists who trained abroad. A standard cleaning and checkup costs around ฿1,000–฿1,500, while premium procedures like crowns, root canals, and veneers are priced at a fraction of Western costs, making Bangkok a major hub for dental tourism."
         ]
       }
     ],
@@ -202,7 +242,7 @@ export const EXPAT_LIFE: BlogPost[] = [
     metaDesc: "The ultimate first-week survival guide for expats in Bangkok. How to get a SIM card, open a bank account, register TM30, and find your feet.",
     excerpt: "Landed in Bangkok? Here is your step-by-step checklist to get connected, sorted, and legally registered during your first week.",
     image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&auto=format&q=85",
-    readTime: "5 min read",
+    readTime: "11 min read",
     publishedAt: "2026-07-24",
     author: "NHP Bangkok Team",
     keywords: ["first week Bangkok", "TM30 Thailand", "residency registration Bangkok", "expat checklist Thailand"],
@@ -223,17 +263,31 @@ export const EXPAT_LIFE: BlogPost[] = [
         ]
       },
       {
-        heading: "3. Day 3: Secure Your Address & TM30 Registration",
+        heading: "3. Day 2: Navigating Transport (Ride-Hailing & Transit Apps)",
+        body: [
+          "Traffic in Bangkok can be overwhelming. On your second day, download Grab and Bolt, the two primary ride-hailing apps in Thailand. They allow you to book cars, taxis, and motorcycle taxis with upfront pricing, eliminating the need to negotiate with drivers. Link your international credit card to Grab for cash-free rides.",
+          "Additionally, download the 'ViaBus' app, which provides real-time GPS tracking for local buses, and the 'BKK Rail' app to plan your journeys across the expanding BTS Skytrain and MRT Subway networks."
+        ]
+      },
+      {
+        heading: "4. Day 3: Secure Your Address & TM30 Registration",
         body: [
           "Once you sign a lease for your condo, your landlord must submit a TM30 form to Thai Immigration within 24 hours of your arrival. This form registers your address and is required to open a bank account, get a driving licence, or extend your visa.",
           "Ask your landlord for a copy of the TM30 receipt (or the online registration screenshot) immediately. Keep this document printed inside your passport at all times."
         ]
       },
       {
-        heading: "4. Day 5: Local Banking & QR Payments",
+        heading: "5. Day 5: Local Banking & QR Payments",
         body: [
           "Take your passport, TM30 receipt, and lease agreement to a main bank branch (like Bangkok Bank's head office on Silom Road) to open a savings account. Ask for mobile banking access and a debit card.",
           "Once set up, fund your account (using transfer services like Wise) and use the bank app to scan QR codes for payment. This is the national payment system (PromptPay)—it is accepted everywhere from street food carts to high-end malls, eliminating the need to carry cash."
+        ]
+      },
+      {
+        heading: "6. Day 6: Emergency Contacts & 7-Eleven Essentials",
+        body: [
+          "To conclude your survival week, save key emergency numbers on your phone: dial 1155 for the Tourist Police (who speak English and handle tourist-related disputes), and 1669 for medical emergencies.",
+          "Finally, buy a rechargeable smart card at your local 7-Eleven. 7-Eleven is the center of daily convenience in Thailand, offering everything from fresh toasted sandwiches and coffee to SIM card top-ups, bills payment, and basic pharmacy items."
         ]
       }
     ],

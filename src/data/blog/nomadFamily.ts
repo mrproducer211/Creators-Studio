@@ -54,7 +54,7 @@ export const NOMAD_FAMILY: BlogPost[] = [
     metaDesc: "Explore the safest, most family-friendly neighbourhoods in Bangkok. Expat parent reviews of Ari, Ekkamai, and the gated estates of Nichada Thani.",
     excerpt: "Safety is the top priority for expat parents. We list the safest, most child-friendly neighbourhoods in Bangkok based on real parent recommendations.",
     image: "https://images.unsplash.com/photo-1473649035226-11738407ee4d?w=1200&auto=format&q=85",
-    readTime: "6 min read",
+    readTime: "10 min read",
     publishedAt: "2026-08-15",
     author: "NHP Bangkok Team",
     keywords: ["safest areas Bangkok", "family neighbourhoods Bangkok", "living in Nichada Thani", "Ekkamai family expat"],
@@ -79,6 +79,19 @@ export const NOMAD_FAMILY: BlogPost[] = [
         body: [
           "Located in Pak Kret (northern Bangkok), Nichada Thani is a massive gated expat community built around a private lake and the International School Bangkok (ISB). It is car-free in many zones—residents commute by golf cart or bicycle.",
           "It features its own security force, private clinic, supermarkets, and restaurants. It is the safest, most controlled environment for expat families in Thailand, offering a complete US-style suburban experience."
+        ]
+      },
+      {
+        heading: "4. School Commute Safety & Bus Networks",
+        body: [
+          "One of the biggest contributors to child safety and stress reduction is avoiding long daily commutes in Bangkok's heavy traffic. Expat parents strongly recommend selecting a home that is either close to the school or lies along the school's dedicated shuttle bus route. School buses in Bangkok are highly secure, featuring GPS tracking, onboard supervisors, and direct check-in/check-out notifications for parents.",
+          "Living along the BTS line (like in Ekkamai or Phrom Phong) also allows older children to use public transit safely. The BTS stations are well-staffed, clean, and extremely secure, giving teenagers a sense of independence in a very safe environment."
+        ]
+      },
+      {
+        heading: "5. Pediatric Healthcare Accessibility",
+        body: [
+          "For families with young children, quick access to international-standard pediatric care is a key safety parameter. Neighborhoods like Phrom Phong and Ekkamai put you within 10 minutes of Samitivej Kids Hospital (Sukhumvit Soi 49), which features a world-class, child-friendly emergency room and English-speaking specialists. Bumrungrad International Hospital (Sukhumvit Soi 3) also offers extensive 24/7 pediatric care."
         ]
       }
     ],

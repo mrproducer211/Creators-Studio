@@ -10,37 +10,42 @@ import BlogFeaturedHero from "./BlogFeaturedHero";
 
 export function getJourneyCategory(post: BlogPost): string {
   const slug = post.slug;
-  const dbCat = post.category;
   
-  if (dbCat === "Digital Nomad" || slug === "thailand-ltr-visa-remote-workers") {
+  // 1. Digital Nomad
+  if (slug === "thailand-ltr-visa-remote-workers") {
     return "Digital Nomad";
   }
-  if (dbCat === "Retirement in Thailand" || slug === "retiring-in-bangkok-retirement-visa-guide") {
+  
+  // 2. Retirement
+  if (slug === "retiring-in-bangkok-retirement-visa-guide") {
     return "Retirement";
   }
+  
+  // 3. Things to Do
   if (
-    dbCat === "Hidden Bangkok" ||
-    dbCat === "Things To Do" ||
     slug === "hidden-gem-restaurants-bangkok" ||
     slug === "things-not-to-do-in-thailand"
   ) {
     return "Things to Do";
   }
+  
+  // 4. Moving to Bangkok (First-timers / Setup / Neighborhood Selection)
   if (
-    dbCat === "Neighbourhood Guide" ||
     slug === "thong-lo-vs-on-nut" ||
     slug === "phrom-phong-vs-ekkamai-sukhumvit" ||
     slug === "ari-neighbourhood-guide" ||
-    slug === "opening-bank-account-thailand" ||
-    slug === "medical-care-expat-guide" ||
-    slug === "learning-thai-expat-guide" ||
-    slug === "thailand-elite-visa-guide" ||
+    slug === "thailand-visa-guide-2026" ||
+    slug === "open-bank-account-thailand-foreigner" ||
+    slug === "bangkok-healthcare-guide-expats" ||
+    slug === "first-week-bangkok-survival-guide" ||
     slug === "safest-bangkok-neighbourhoods-families"
   ) {
     return "Moving to Bangkok";
   }
+  
+  // 5. Living in Bangkok (Settled Expats / Long-term / Day-to-day)
   if (
-    dbCat === "Expat Tips" ||
+    slug === "cost-of-living-bangkok-2026" ||
     slug === "thai-taxes-expats-guide" ||
     slug === "buying-property-thailand-foreigner" ||
     slug === "living-in-nonthaburi-guide" ||
@@ -48,6 +53,7 @@ export function getJourneyCategory(post: BlogPost): string {
   ) {
     return "Living in Bangkok";
   }
+  
   return "Moving to Bangkok";
 }
 

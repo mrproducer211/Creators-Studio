@@ -11,7 +11,7 @@ export const NEIGHBORHOOD_GUIDES: BlogPost[] = [
     metaDesc: "A comparison between Phrom Phong's luxury malls and Ekkamai's quiet residential side streets. Find the right mid-Sukhumvit base for your budget.",
     excerpt: "They are only two BTS stops apart, but the lifestyles they offer are entirely different. One is high-end retail and luxury condos; the other is hipster cafes and local charm.",
     image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1200&auto=format&q=85",
-    readTime: "6 min read",
+    readTime: "11 min read",
     publishedAt: "2026-06-25",
     author: "NHP Bangkok Team",
     keywords: ["Phrom Phong vs Ekkamai", "living in Phrom Phong", "Ekkamai condos", "Sukhumvit expat area"],
@@ -29,6 +29,20 @@ export const NEIGHBORHOOD_GUIDES: BlogPost[] = [
         body: [
           "Phrom Phong is premium. If you want a modern 1-bedroom condo within walking distance of the station, expect to pay between ฿35,000 and ฿55,000 per month. Newer luxury developments easily start at ฿60,000. It is a highly coveted address, and the property prices reflect that.",
           "In Ekkamai, your budget goes significantly further. You can secure a modern 1-bedroom condo in a building with a pool and gym for ฿20,000 to ฿30,000. If you look at low-rise townhouses or older, spacious apartments further down the soi, you can find 80+ sqm spaces for under ฿25,000. For anyone wanting space and modern amenities on a mid-range budget, Ekkamai wins hands down."
+        ]
+      },
+      {
+        heading: "Dining & Coffee: Fine Dining and Izakayas vs Hipster Cafes",
+        body: [
+          "Phrom Phong's food scene is upscale and international. The alleys around Phrom Phong are packed with traditional Japanese izakayas, ramen shops, and high-end sushi bars catering to the local Japanese population. The malls (EmQuartier, Emporium, EmSphere) offer a wide range of premium international dining, from Michelin-starred dim sum to gourmet burger joints. The coffee shops here are chic, often located inside design boutiques or luxury hotels.",
+          "Ekkamai has a cooler, more independent food and drink scene. It is famous for its hipster coffee roasters where baristas treat brewing like an art form. The side streets are home to local craft beer bars, open-air garden bistros, and legendary local restaurants that have served traditional beef noodles for decades. Ekkamai's culinary scene is more about casual exploration and discovery than upscale prestige."
+        ]
+      },
+      {
+        heading: "Lifestyle & Fitness facilities",
+        body: [
+          "In Phrom Phong, fitness options are premium. You have access to top-tier health clubs like Virgin Active inside EmQuartier, offering high-end equipment, climbing walls, and class schedules. Benchasiri Park next to the BTS is great for running or playing sports in a green oasis.",
+          "Ekkamai's lifestyle facilities are more boutique. It features specialized fitness studios, Muay Thai training camps, and personal training gyms tucked away in quiet alleys. The pace is relaxed, making it easy to establish a regular, low-stress routine."
         ]
       },
       {
