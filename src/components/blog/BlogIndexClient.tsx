@@ -8,6 +8,49 @@ import { useSearchParams } from "next/navigation";
 import { BlogPost } from "@/data/blogPosts";
 import BlogFeaturedHero from "./BlogFeaturedHero";
 
+export function getJourneyCategory(post: BlogPost): string {
+  const slug = post.slug;
+  const dbCat = post.category;
+  
+  if (dbCat === "Digital Nomad" || slug === "thailand-ltr-visa-remote-workers") {
+    return "Digital Nomad";
+  }
+  if (dbCat === "Retirement in Thailand" || slug === "retiring-in-bangkok-retirement-visa-guide") {
+    return "Retirement";
+  }
+  if (
+    dbCat === "Hidden Bangkok" ||
+    dbCat === "Things To Do" ||
+    slug === "hidden-gem-restaurants-bangkok" ||
+    slug === "things-not-to-do-in-thailand"
+  ) {
+    return "Things to Do";
+  }
+  if (
+    dbCat === "Neighbourhood Guide" ||
+    slug === "thong-lo-vs-on-nut" ||
+    slug === "phrom-phong-vs-ekkamai-sukhumvit" ||
+    slug === "ari-neighbourhood-guide" ||
+    slug === "opening-bank-account-thailand" ||
+    slug === "medical-care-expat-guide" ||
+    slug === "learning-thai-expat-guide" ||
+    slug === "thailand-elite-visa-guide" ||
+    slug === "safest-bangkok-neighbourhoods-families"
+  ) {
+    return "Moving to Bangkok";
+  }
+  if (
+    dbCat === "Expat Tips" ||
+    slug === "thai-taxes-expats-guide" ||
+    slug === "buying-property-thailand-foreigner" ||
+    slug === "living-in-nonthaburi-guide" ||
+    slug === "silom-after-dark-expat-guide"
+  ) {
+    return "Living in Bangkok";
+  }
+  return "Moving to Bangkok";
+}
+
 interface Props {
   initialPosts: BlogPost[];
 }
@@ -25,20 +68,22 @@ export default function BlogIndexClient({ initialPosts }: Props) {
     }
   }, [searchParams]);
 
-  // Extract all categories dynamically and sort them
-  const categories = useMemo(() => {
-    const cats = new Set<string>();
-    initialPosts.forEach((post) => {
-      if (post.category) cats.add(post.category);
-    });
-    return ["All", ...Array.from(cats).sort()];
-  }, [initialPosts]);
+  // Explicit Journey-Stage Categories
+  const categories = [
+    "All",
+    "Moving to Bangkok",
+    "Living in Bangkok",
+    "Things to Do",
+    "Digital Nomad",
+    "Retirement"
+  ];
 
-  // Filter posts based on category and search query
+  // Filter posts based on journey category and search query
   const filteredPosts = useMemo(() => {
     return initialPosts.filter((post) => {
+      const journeyCategory = getJourneyCategory(post);
       const matchesCategory =
-        selectedCategory === "All" || post.category === selectedCategory;
+        selectedCategory === "All" || journeyCategory === selectedCategory;
       const matchesSearch =
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -108,7 +153,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
 
       {/* Featured Post Card */}
       {featuredPost ? (
-        <BlogFeaturedHero post={featuredPost} />
+        <BlogFeaturedHero post={featuredPost} displayCategory={getJourneyCategory(featuredPost)} />
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="text-gray-300 mb-3">🔍</div>
@@ -150,7 +195,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
                       className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
                       style={{ background: "#C9A84C", color: "#1C3A2F" }}
                     >
-                      {post.category}
+                      {getJourneyCategory(post)}
                     </span>
                     {post.trending && (
                       <span

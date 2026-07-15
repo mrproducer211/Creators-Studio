@@ -4,9 +4,10 @@ import { BlogPost } from "@/data/blogPosts";
 
 interface Props {
   post: BlogPost;
+  displayCategory?: string;
 }
 
-export default function BlogFeaturedHero({ post }: Props) {
+export default function BlogFeaturedHero({ post, displayCategory }: Props) {
   const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
@@ -34,7 +35,7 @@ export default function BlogFeaturedHero({ post }: Props) {
             className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
             style={{ background: "#C9A84C", color: "#1C3A2F" }}
           >
-            Featured · {post.category}
+            Featured · {displayCategory || post.category}
           </span>
           {post.trending && (
             <span
