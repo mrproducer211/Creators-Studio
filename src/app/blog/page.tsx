@@ -43,15 +43,15 @@ export default async function BlogPage() {
       <Navbar />
       <main style={{ paddingTop: 56, background: "#F7F3EC", minHeight: "100vh" }}>
         {/* Header */}
-        <div className="px-4 md:px-8 py-10" style={{ background: "#1C3A2F" }}>
+        <div className="px-4 md:px-8 py-8 md:py-12" style={{ background: "#1C3A2F" }}>
           <div className="max-w-4xl mx-auto">
-            <p className="text-[11px] font-semibold uppercase tracking-[1.5px] mb-2" style={{ color: "#C9A84C" }}>
+            <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[1.5px] mb-1.5" style={{ color: "#C9A84C" }}>
               Local Guides
             </p>
-            <h1 className="text-[28px] md:text-[36px] font-bold mb-3" style={{ color: "#FFFFFF", letterSpacing: "-0.5px" }}>
+            <h1 className="text-[24px] sm:text-[28px] md:text-[36px] font-bold mb-2 md:mb-3 leading-[1.2] md:leading-[1.15]" style={{ color: "#FFFFFF", letterSpacing: "-0.5px" }}>
               Know Bangkok before you arrive
             </h1>
-            <p className="text-[14px] font-light max-w-lg" style={{ color: "rgba(255,255,255,0.6)" }}>
+            <p className="text-[13px] md:text-[14px] font-light max-w-lg leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
               Honest neighbourhood guides, rental price breakdowns, expat tips and family relocation advice — written by the NHP team who live here.
             </p>
           </div>
