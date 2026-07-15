@@ -9,7 +9,7 @@ export const NOMAD_FAMILY: BlogPost[] = [
     metaTitle: "Thailand LTR Visa Guide 2026: Remote Work Requirements | NHP",
     metaDesc: "A complete step-by-step guide to the Thailand Long-Term Resident (LTR) visa for remote workers. Requirements, income criteria, tax benefits, and how to apply.",
     excerpt: "Want a 10-year residency visa and a flat 17% income tax rate? Here is the step-by-step guide to the LTR visa for remote workers.",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&auto=format&q=85",
+    image: "/images/blog/thailand-ltr-visa-remote-workers.webp",
     readTime: "6 min read",
     publishedAt: "2026-08-10",
     author: "NHP Bangkok Team",
