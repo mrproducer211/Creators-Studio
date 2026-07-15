@@ -17,7 +17,14 @@ export function getJourneyCategory(post: BlogPost): string {
   }
   
   // 2. Retirement
-  if (slug === "retiring-in-bangkok-retirement-visa-guide") {
+  if (
+    slug === "retiring-in-bangkok-retirement-visa-guide" ||
+    slug === "retiring-bangkok-vs-chiang-mai-vs-hua-hin" ||
+    slug === "thailand-retirement-visa-guide-2026" ||
+    slug === "best-bangkok-neighbourhoods-retirees" ||
+    slug === "healthcare-costs-thailand-retirees" ||
+    slug === "live-comfortably-bangkok-2000-budget"
+  ) {
     return "Retirement";
   }
   
