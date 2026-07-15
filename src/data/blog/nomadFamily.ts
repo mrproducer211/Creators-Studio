@@ -53,7 +53,7 @@ export const NOMAD_FAMILY: BlogPost[] = [
     metaTitle: "Safest Neighbourhoods for Families in Bangkok 2026 | NHP",
     metaDesc: "Explore the safest, most family-friendly neighbourhoods in Bangkok. Expat parent reviews of Ari, Ekkamai, and the gated estates of Nichada Thani.",
     excerpt: "Safety is the top priority for expat parents. We list the safest, most child-friendly neighbourhoods in Bangkok based on real parent recommendations.",
-    image: "https://images.unsplash.com/photo-1473649035226-11738407ee4d?w=1200&auto=format&q=85",
+    image: "/images/blog/safest-bangkok-neighbourhoods-families.webp",
     readTime: "10 min read",
     publishedAt: "2026-08-15",
     author: "NHP Bangkok Team",

@@ -10,7 +10,7 @@ export const NEIGHBORHOOD_GUIDES: BlogPost[] = [
     metaTitle: "Phrom Phong vs Ekkamai 2026: Expat Rental & Vibe Comparison | NHP",
     metaDesc: "A comparison between Phrom Phong's luxury malls and Ekkamai's quiet residential side streets. Find the right mid-Sukhumvit base for your budget.",
     excerpt: "They are only two BTS stops apart, but the lifestyles they offer are entirely different. One is high-end retail and luxury condos; the other is hipster cafes and local charm.",
-    image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1200&auto=format&q=85",
+    image: "/images/blog/phrom-phong-vs-ekkamai-sukhumvit.webp",
     readTime: "11 min read",
     publishedAt: "2026-06-25",
     author: "NHP Bangkok Team",

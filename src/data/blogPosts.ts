@@ -47,7 +47,7 @@ const STATIC_POSTS: BlogPost[] = [
     metaTitle:   "Thong Lo vs On Nut Bangkok 2026 — Which Is Right for You? | NHP",
     metaDesc:    "Comparing Thong Lo and On Nut for expats and digital nomads in Bangkok. Prices, lifestyle, commute and vibe — everything you need to choose the right neighbourhood.",
     excerpt:     "Both are BTS-connected, expat-friendly and full of great food — but the vibe, price and lifestyle are worlds apart. Here's how to choose.",
-    image:       "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200&auto=format&q=85",
+    image:       "/images/blog/thong-lo-vs-on-nut.webp",
     readTime:    "11 min read",
     publishedAt: "2026-05-15",
     author:      "NHP Bangkok Team",
