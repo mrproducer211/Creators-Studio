@@ -9,7 +9,7 @@ export const HIDDEN_BANGKOK: BlogPost[] = [
     metaTitle: "10 Secret Restaurants in Bangkok 2026: Local Food Guide | NHP",
     metaDesc: "Discover Bangkok's best secret restaurants. Hidden shophouses, local canal-side dining, and legendary street spots off the tourist path.",
     excerpt: "Forget the Michelin guides. These 10 hidden local restaurants serve the best food in the city from unmarked shophouses and quiet back alleys.",
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&auto=format&q=85",
+    image: "/images/blog/hidden-gem-restaurants-bangkok.webp",
     readTime: "6 min read",
     publishedAt: "2026-06-28",
     author: "NHP Bangkok Team",
