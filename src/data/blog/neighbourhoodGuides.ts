@@ -76,35 +76,38 @@ export const NEIGHBORHOOD_GUIDES: BlogPost[] = [
     metaDesc: "Explore Silom after dark. A local guide to the best craft beer bars, rooftop lounges, and the famous street food lanes of Bangkok's financial district.",
     excerpt: "By day, Silom is Bangkok's Wall Street. But once the office towers empty, the neighbourhood transforms into a food and nightlife playground.",
     image: "/images/blog/silom-after-dark-expat-guide.webp",
-    readTime: "5 min read",
+    readTime: "11 min read",
     publishedAt: "2026-07-06",
     author: "NHP Bangkok Team",
     keywords: ["Silom nightlife", "Silom street food", "best bars Silom", "living in Silom"],
     intro: "Walk down Silom Road at 2 PM and you'll see a sea of corporate lanyards, high-speed office workers, and suits heading to business lunches. It is the financial heart of Bangkok. But return at 8 PM and the suits are gone, replaced by neon lights, the smell of sizzling charcoal, and a lively mix of locals and tourists. Silom has one of the most diverse and energetic nightlife scenes in Bangkok, stretching from street food lanes to hidden speakeasies and world-class rooftops. Here is how to navigate it like a local.",
     sections: [
       {
-        heading: "The Food Scene: Street Lanes and Michelin Plates",
+        heading: "1. The Food Scene: Street Lanes and Michelin Plates",
         body: [
           "Nightlife in Silom starts with food. The street food scene around Silom Soi 20 is legendary, serving fresh noodle soups, grilled meats, and seafood at local prices. For a sit-down local experience, the open-air seafood joints along Convent Road offer amazing fried fish and spicy salads.",
+          "Convent Road serves as Silom's culinary spine after dark. In addition to local pushcarts, it features excellent noodle spots and Isan shophouses where you can sit and eat spicy minced pork (Larb Moo) and green papaya salad (Som Tum).",
           "If you want something upscale, Silom has plenty. The neighborhood hosts several Michelin-recognized spots and independent dining rooms, particularly along the quiet, trendy lanes of Soi Sala Daeng and Soi Pipat."
         ]
       },
       {
-        heading: "Best Bars: From Craft Beer to Speakeasies",
+        heading: "2. Best Bars: From Craft Beer to Speakeasies",
         body: [
           "Silom's bar scene is diverse. For craft beer, head to the side alleys where small, independent bars serve local and imported IPAs. If you prefer cocktails, hidden speakeasies offer curated drink menus in intimate settings.",
-          "The neighborhood is also famous for its vibrant LGBTQ+ nightlife, centered around Silom Soi 2 and Soi 4. These streets are packed with open-air bars, DJs, and dance venues that draw a diverse and welcoming international crowd every night of the week."
+          "The neighborhood is also famous for its vibrant LGBTQ+ nightlife, centered around Silom Soi 2 and Soi 4. These streets are packed with open-air bars, DJs, and dance venues that draw a diverse and welcoming international crowd every night of the week.",
+          "A classic expat spot is Soi 4, which is lined with outdoor terraces where you can sit, socialize, and enjoy people-watching. Soi 2, by contrast, is more music-oriented and packed with high-energy dance clubs."
         ]
       },
       {
-        heading: "Rooftop Views without the Crowds",
+        heading: "3. Rooftop Views without the Crowds",
         body: [
           "While everyone knows the famous Sky Bar at Lebua (which can be crowded and expensive), Silom has several excellent alternative rooftops. Venues like the Mahanakhon SkyWalk offer breathtaking 360-degree views of the Bangkok skyline from the city's tallest building.",
-          "For a more relaxed drink, several boutique hotels along Silom and Surawong roads host rooftop bars where you can enjoy the sunset over Lumpini Park without having to book weeks in advance."
+          "For a more relaxed drink, several boutique hotels along Silom and Surawong roads host rooftop bars where you can enjoy the sunset over Lumpini Park without having to book weeks in advance.",
+          "Check out the rooftop bar at the Amara Hotel or the Yào Rooftop Bar at the Bangkok Marriott Hotel The Surawongse. These offer premium Chinese-inspired cocktails, soft music, comfortable seating, and unmatched views of the Sathorn and Silom high-rise skylines."
         ]
       },
       {
-        heading: "Living in Silom: Vibe Check",
+        heading: "4. Living in Silom: Vibe Check",
         body: [
           "If you rent an apartment in Silom, this energy is on your doorstep. The residential pockets (like Sala Daeng) are surprisingly quiet despite being steps from the action. You get ultimate convenience: walking access to Lumpini Park, direct interchange between the BTS Skytrain (Sala Daeng) and MRT Subway (Silom), and a food scene that never sleeps."
         ]
@@ -126,35 +129,38 @@ export const NEIGHBORHOOD_GUIDES: BlogPost[] = [
     metaDesc: "Discover what it is like to live in Nonthaburi. An expat guide to quiet residential living, riverside views, MRT Purple Line transit, and cheap rent.",
     excerpt: "Want to escape the concrete jungle? Nonthaburi offers quiet residential living, riverside parks, and traditional markets, all connected by the MRT Purple Line.",
     image: "/images/blog/living-in-nonthaburi-guide.webp",
-    readTime: "6 min read",
+    readTime: "10 min read",
     publishedAt: "2026-07-12",
     author: "NHP Bangkok Team",
     keywords: ["Nonthaburi expat", "living in Nonthaburi", "MRT Purple Line", "Bangkok suburb"],
     intro: "Technically, Nonthaburi is a separate province. But practically, it is Bangkok's quiet northern neighbor. If you look at a transit map, the MRT Purple Line runs deep into Nonthaburi, making the border between the two provinces invisible. While most expats crowd into the center, a growing community of teachers, retirees, and remote workers are choosing Nonthaburi. They get quiet streets, clean air near the river, massive public parks, and rental prices that are half of what you pay in Sukhumvit. Here is what daily life in Nonthaburi looks like.",
     sections: [
       {
-        heading: "The Vibe: Relaxed, Riverside, and Traditional",
+        heading: "1. The Vibe: Relaxed, Riverside, and Traditional",
         body: [
           "Nonthaburi feels like a slower version of Bangkok. Life here centers around the Chao Phraya River and traditional canals. The streets are wider, the air feels cleaner, and the pace is residential. It is common to see people cycling, visiting local temples, or relaxing in riverside parks like Makut Saranrom Park.",
-          "The neighborhood is famous for Ko Kret, a small car-free island in the river known for its traditional pottery, local market, and weekend food stalls. Living in Nonthaburi means having this laid-back, traditional lifestyle right on your doorstep."
+          "The neighborhood is famous for Ko Kret, a small car-free island in the river known for its traditional pottery, local market, and weekend food stalls. Living in Nonthaburi means having this laid-back, traditional lifestyle right on your doorstep.",
+          "Ko Kret is highly popular with expats on weekends who want to escape the traffic and high-rises. You can rent a bicycle for ฿40, ride around the island's narrow paths, stop at local cafes, and enjoy traditional Mon-style terracotta pottery demonstrations."
         ]
       },
       {
-        heading: "Transit: The MRT Purple and Pink Lines",
+        heading: "2. Transit: The MRT Purple and Pink Lines",
         body: [
           "In the past, living in Nonthaburi meant facing terrible highway traffic to get into the city. But the MRT Purple Line (sky train) changed everything. It runs through the center of Nonthaburi, connecting directly to the MRT Blue Line at Tao Poon. You can travel from Nonthaburi to central Bangkok (Asok) in about 45 minutes in air-conditioned comfort.",
-          "Additionally, the new Pink Line monorail runs across the northern part of the province, making cross-town commutes to Lak Si or Ram Inthra incredibly easy."
+          "Additionally, the new Pink Line monorail runs across the northern part of the province, making cross-town commutes to Lak Si or Ram Inthra incredibly easy.",
+          "This monorail connection makes Pak Kret and Chaeng Watthana key residential areas. You have high-speed monorail access directly to the Government Complex and major shopping spaces like Central Chaengwattana."
         ]
       },
       {
-        heading: "Cost of Living: Unbelievable Rental Value",
+        heading: "3. Cost of Living: Unbelievable Rental Value",
         body: [
           "This is why people move to Nonthaburi. The rental market is highly affordable. A modern 1-bedroom condo near the MRT station (like the river-view developments near Phra Nang Klao Bridge) costs between ฿8,000 and ฿12,000 per month.",
-          "For ฿15,000 to ฿20,000, you can rent a large, brand-new 2-bedroom condo with sky facilities, or a townhouse in a quiet residential muban. Food, transport, and local markets are also priced for locals, making the daily cost of living incredibly low compared to central Bangkok."
+          "For ฿15,000 to ฿20,000, you can rent a large, brand-new 2-bedroom condo with sky facilities, or a townhouse in a quiet residential muban. Food, transport, and local markets are also priced for locals, making the daily cost of living incredibly low compared to central Bangkok.",
+          "Local fresh markets (such as Nonthaburi Market near the clock tower) offer raw groceries, meat, and vegetables at roughly 40% cheaper rates than Sukhumvit supermarkets. A family of three can easily buy a week's supply of fresh vegetables for ฿300."
         ]
       },
       {
-        heading: "Who is Nonthaburi For?",
+        heading: "4. Who is Nonthaburi For?",
         body: [
           "Nonthaburi is perfect for retirees who want a quiet, riverside lifestyle, remote workers who don't need to commute daily, and expats working at international schools in the northern districts. It offers a genuine Thai living experience with all the modern comforts and transit options you need."
         ]

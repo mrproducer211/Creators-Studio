@@ -190,37 +190,45 @@ export const EXPAT_LIFE: BlogPost[] = [
     metaDesc: "A realistic breakdown of the cost of living in Bangkok. Rent, utility bills, food, transport, and entertainment budgets for different lifestyles.",
     excerpt: "Can you live in Bangkok on ฿35,000 a month? What about ฿100,000? We break down the real costs of rent, utilities, food, and transport in 2026.",
     image: "/images/blog/cost-of-living-bangkok-2026.webp",
-    readTime: "7 min read",
+    readTime: "12 min read",
     publishedAt: "2026-07-22",
     author: "NHP Bangkok Team",
     keywords: ["cost of living Bangkok", "Bangkok expat budget", "rent prices Bangkok", "utilities cost Bangkok"],
     intro: "Bangkok is famous for offering a high quality of life at a fraction of the cost of Western cities. You can eat a spectacular meal of garlic pork and rice for ฿50 on the street, then walk across the road and buy a ฿200 craft beer at a design bar. It is a city of contrasts, and your monthly cost of living depends entirely on your lifestyle choices. Whether you are a digital nomad on a budget, an expat teacher, or a corporate executive, here is a realistic monthly budget breakdown for 2026.",
     sections: [
       {
-        heading: "1. Housing & Utility Bills",
+        heading: "1. Housing & Rental Costs: Studio vs. Luxury Condo",
         body: [
-          "Housing is the largest monthly expense. A modern 1-bedroom condo close to a BTS station ranges from ฿15,000 (On Nut/Lat Phrao) to ฿40,000 (Thong Lo/Phrom Phong) per month.",
-          "Utilities are affordable. High-speed fiber internet costs around ฿500 to ฿700 per month. Water is negligible (around ฿100/month). Electricity is the variable factor: if you run the air conditioning 24/7, expect a monthly bill of ฿3,000 to ฿5,000. If you use it only at night, it will be closer to ฿1,200."
+          "Housing is your largest monthly expense. Rent in Bangkok varies significantly depending on the district, proximity to mass transit (BTS Skytrain/MRT Subway), and the age of the building. In 2026, a modern, fully furnished 30-square-meter studio condo in an expat hub like On Nut or Lat Phrao ranges from ฿12,000 to ฿16,000 per month. If you move closer to the prime commercial districts like Phrom Phong, Thong Lo, or Asok, the same space will cost between ฿22,000 and ฿35,000.",
+          "For those relocating as a family, a spacious 2-bedroom or 3-bedroom apartment (roughly 80–120 sqm) in family-friendly zones like Ekkamai, Phrom Phong, or Sathorn ranges from ฿45,000 to ฿85,000 per month. Renting a standalone house or townhouse in gated suburban estates (like Nichada Thani in Pak Kret) begins around ฿60,000 and can easily reach ฿150,000+ for large villas near international schools.",
+          "Most rental agreements require a minimum 12-month contract, a 2-month security deposit, and the first month's rent paid in advance. Condos always come fully furnished, including a TV, refrigerator, microwave, and air-conditioning units."
         ]
       },
       {
-        heading: "2. Food: Street vs Western Dining",
+        heading: "2. Utility Bills: The Air-Con Factor",
         body: [
-          "If you eat like a local, you can live on a very small food budget. Street food and local shophouse dining cost ฿50 to ฿80 per meal, meaning you can eat well for ฿6,000/month.",
-          "If you prefer Western food, international dining, and imported groceries, your budget will increase. A mid-range Western meal costs ฿300 to ฿600, and gourmet groceries at Villa Market or Foodland are priced similarly to Western countries, easily pushing your monthly food budget to ฿15,000+."
+          "Utilities in Bangkok are cheap, except for electricity. High-speed home fiber internet (1 Gbps speed) is extremely reliable and costs around ฿599 to ฿799 per month, which includes a basic TV router package. Water bills are negligible—typically ฿100 to ฿200 per month for a single occupant or couple, calculated based on flat building rates (usually ฿18 to ฿22 per unit).",
+          "Electricity is the ultimate wildcard, managed by the Metropolitan Electricity Authority (MEA). The standard government rate is roughly ฿4.2 to ฿4.7 per kilowatt-hour (kWh). If you work from home and run multiple inverter air-conditioners 24/7, expect a monthly electricity bill of ฿3,500 to ฿6,000. However, if you only run the air-con in the evenings while you sleep, your bill will stay between ฿1,200 and ฿1,800 per month. In older buildings, check if they charge direct MEA rates or if the landlord adds a surcharge (some serviced apartments charge ฿7 to ฿9 per unit, which can double your bill)."
         ]
       },
       {
-        heading: "3. Transport & Entertainment",
+        heading: "3. Food & Groceries: Local Street Food vs. Imported Goods",
+        body: [
+          "If you eat like a local, you can live on a very small food budget. Street food and local shophouse dining cost ฿50 to ฿80 per meal, meaning you can eat well for ฿6,000/month. A simple dish of Pad Kra Prow (basil chicken) with a fried egg is ฿60. Fresh fruit from street carts (mango, pineapple, papaya) is ฿20 to ฿30 per bag.",
+          "If you prefer Western food, international dining, and imported groceries, your budget will increase. A mid-range Western meal costs ฿300 to ฿600, and gourmet groceries at Villa Market or Foodland are priced similarly to Western countries, easily pushing your monthly food budget to ฿15,000+. Imported cheese, butter, beef, and foreign cereals carry heavy import duties, sometimes costing double their price in the US or Europe."
+        ]
+      },
+      {
+        heading: "4. Commuting & Transport",
         body: [
           "Transport is cheap. Commuting by BTS Skytrain or MRT Subway costs ฿15 to ฿59 per trip, typically averaging ฿2,000/month for daily commuters. Motorcycle taxis (Win) cost ฿20 to ฿50 for quick trips down the sois.",
-          "Entertainment budget varies. A cinema ticket costs ฿240, a gym membership ranges from ฿1,500 to ฿3,000/month, and draft beers start around ฿100 at local bars and ฿220 at hotel bars. On average, a comfortable budget for transport and fun runs ฿5,000 to ฿10,000/month."
+          "Taxis are metered, starting at ฿35. A 10-kilometer ride across town during non-peak hours costs about ฿120 to ฿150. Ride-hailing apps like Grab and Bolt are widely used, but during peak hour traffic jams, the BTS or MRT is much faster."
         ]
       },
       {
-        heading: "4. The Lifestyle Budgets: Summary",
+        heading: "5. Lifestyle Budgets: Standard vs. Premium Monthly Expenses",
         body: [
-          "The Budget Nomad (฿35,000/month / ~$1,000 USD): Rent in On Nut (฿12,000), local street food, public transport, and casual nights out. Comfortable, local, and highly active.",
+          "The Budget Nomad (฿35,000/month / ~$1,000 USD): Rent in On Nut or Udom Suk (฿12,000), local street food, public transport, and casual nights out. Comfortable, local, and highly active.",
           "The Mid-Range Expat (฿75,000/month / ~$2,100 USD): Rent a modern 1-bed in Ari or Phrom Phong (฿25,000), mix of street food and Western dining, gym membership, weekend trips, and air-con at night.",
           "The Premium Expat (฿150,000+/month / ~$4,200 USD): Luxury high-rise condo in Thong Lo (฿50,000), fine dining, taxi transport, premium health insurance, and frequent travel. Offers a world-class lifestyle."
         ]

@@ -10,7 +10,7 @@ export const NOMAD_FAMILY: BlogPost[] = [
     metaDesc: "A complete step-by-step guide to the Thailand Long-Term Resident (LTR) visa for remote workers. Requirements, income criteria, tax benefits, and how to apply.",
     excerpt: "Want a 10-year residency visa and a flat 17% income tax rate? Here is the step-by-step guide to the LTR visa for remote workers.",
     image: "/images/blog/thailand-ltr-visa-remote-workers.webp",
-    readTime: "6 min read",
+    readTime: "11 min read",
     publishedAt: "2026-08-10",
     author: "NHP Bangkok Team",
     keywords: ["LTR visa Thailand foreigner", "remote work visa Thailand", "long term resident visa requirements", "Thai BOI visa"],
@@ -20,21 +20,24 @@ export const NOMAD_FAMILY: BlogPost[] = [
         heading: "1. The Qualifications: Who is Eligible?",
         body: [
           "To qualify under the 'Work-from-Thailand Professional' category, you must meet the following criteria: an annual personal income of at least USD $80,000 for the past two years (or USD $40,000 if you hold a Master's degree or have secured intellectual property).",
-          "You must also have at least 5 years of work experience in your field over the last 10 years, and be employed by a company that is publicly listed on a stock exchange, or a private company that has been active for at least 3 years with a total revenue of at least USD $150 million over the past 3 years."
+          "You must also have at least 5 years of work experience in your field over the last 10 years, and be employed by a company that is publicly listed on a stock exchange, or a private company that has been active for at least 3 years with a total revenue of at least USD $150 million over the past 3 years.",
+          "Health insurance is also a mandatory requirement: you must hold a health insurance policy with minimum coverage of USD $50,000 for medical treatment in Thailand, or keep a cash deposit of at least USD $100,000 in a local or foreign bank account for the past 12 months."
         ]
       },
       {
-        heading: "2. The Key Benefits",
+        heading: "2. The Key Benefits: Why Apply?",
         body: [
           "The LTR visa is one of the most generous visas in Asia: it grants a 10-year multi-entry residency permit, exempts you from the standard 4-to-1 ratio (4 Thai employees for every 1 foreigner) for hiring foreign staff, and caps your personal income tax rate at a flat 17% (compared to the standard top rate of 35% in Thailand).",
-          "You also get access to the Fast-Track lanes at major airports, saving you hours of waiting in immigration lines, and the standard 90-day address reporting is extended to once a year."
+          "You also get access to the Fast-Track lanes at major airports, saving you hours of waiting in immigration lines, and the standard 90-day address reporting is extended to once a year.",
+          "Additionally, your spouse and children (up to 4 dependants under the age of 20) qualify for the same visa benefits under the dependant category, making it an exceptional option for families relocating together."
         ]
       },
       {
         heading: "3. How to Apply: The Step-by-Step Process",
         body: [
           "Step 1: Submit your application and supporting documents online through the Board of Investment (BOI) portal. The BOI will review your documents and issue an endorsement letter (typically within 20 days).",
-          "Step 2: Take the endorsement letter to a Royal Thai Embassy in your home country, or to the One Start One Stop Investment Center (OSOS) inside the Chamchuri Square building in Bangkok, to have the LLT visa stamped into your passport."
+          "Step 2: Take the endorsement letter to a Royal Thai Embassy in your home country, or to the One Start One Stop Investment Center (OSOS) inside the Chamchuri Square building in Bangkok, to have the LTR visa stamped into your passport.",
+          "You will also need to submit employment verification letters, tax return statements for the past two years, company balance sheets, and passport copies."
         ]
       }
     ],
