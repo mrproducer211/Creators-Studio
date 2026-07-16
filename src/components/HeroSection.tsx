@@ -487,14 +487,10 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
   const featuredVal = featured || FEATURED_FALLBACK;
 
   const handleSearch = () => {
-    if (activeTab === 2) {
-      window.location.href = `/explore/smart?q=${encodeURIComponent(query)}`;
-    } else {
-      const map: Record<number, string> = { 0: "sale", 1: "rent" };
-      const params = new URLSearchParams({ type: map[activeTab] });
-      if (query) params.set("search", query);
-      window.location.href = `/explore?${params.toString()}`;
-    }
+    const map: Record<number, string> = { 0: "sale", 1: "rent", 2: "short_stay" };
+    const params = new URLSearchParams({ type: map[activeTab] });
+    if (query) params.set("search", query);
+    window.location.href = `/explore?${params.toString()}`;
   };
 
   return (

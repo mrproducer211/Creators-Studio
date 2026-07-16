@@ -26,7 +26,7 @@ const en = {
     sub:         "Discover neighborhoods that match your lifestyle, goals, and budget — before you find your home.",
     tabBuy:      "Buy",
     tabRent:     "Rent",
-    tabShort:    "Smart Search",
+    tabShort:    "Short Stay",
     placeholder: "Area, district or property name…",
     search:      "Search",
     listings:    "Listings",

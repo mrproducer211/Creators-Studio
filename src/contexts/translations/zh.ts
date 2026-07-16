@@ -28,7 +28,7 @@ const zh: Translations = {
     sub:         "发现与您的生活方式、目标和预算相匹配的社区 — 在找到家之前。",
     tabBuy:      "购房",
     tabRent:     "租赁",
-    tabShort:    "智能搜索",
+    tabShort:    "短租",
     placeholder: "区域、地区或房产名称…",
     search:      "搜索",
     listings:    "房源",

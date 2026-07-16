@@ -971,7 +971,7 @@ export default function DashboardClient({ allProperties, session }: DashboardCli
 
                         {/* Execute */}
                         <button
-                          onClick={() => router.push(`/explore/smart?q=${encodeURIComponent(s.query)}`)}
+                          onClick={() => router.push(`/explore?search=${encodeURIComponent(s.query)}`)}
                           className="px-3.5 py-1.5 rounded-lg text-[11px] font-bold text-white border-none cursor-pointer hover:opacity-90"
                           style={{ background: "#C9A84C" }}
                         >
