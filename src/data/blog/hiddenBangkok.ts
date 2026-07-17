@@ -11,7 +11,7 @@ export const HIDDEN_BANGKOK: BlogPost[] = [
     excerpt: "Forget the Michelin guides. These 10 hidden local restaurants serve the best food in the city from unmarked shophouses and quiet back alleys.",
     image: "/images/blog/hidden-gem-restaurants-bangkok.webp",
     readTime: "11 min read",
-    publishedAt: "2026-06-28",
+    publishedAt: "2026-06-22",
     author: "NHP Bangkok Team",
     keywords: ["hidden restaurants Bangkok", "secret food spots Bangkok", "local dining Bangkok", "best street food Bangkok"],
     intro: "Bangkok is famous for its food, but the best meals aren't found in malls or on trendy rooftops. They are served in unmarked shophouses, down narrow residential alleys, and on wooden decks over green canals. After years of exploring the city's food lanes, we've compiled our list of the 10 absolute best hidden restaurants in Bangkok. These are spots where English menus are rare, the recipes have been passed down for generations, and the tables are filled with local foodies. Here is where you should eat next.",
