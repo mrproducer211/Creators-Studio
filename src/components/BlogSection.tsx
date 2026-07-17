@@ -101,11 +101,13 @@ export default function BlogSection({ posts }: BlogSectionProps) {
 
       {/* 4-col grid — 1 col mobile → 2 col tablet → 4 col desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {displayPosts.map((post) => (
+        {displayPosts.map((post, idx) => (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className="group no-underline flex flex-col rounded-2xl overflow-hidden transition-shadow duration-200 hover:shadow-lg"
+            className={`group no-underline flex flex-col rounded-2xl overflow-hidden transition-shadow duration-200 hover:shadow-lg ${
+              idx >= 3 ? "hidden sm:flex" : "flex"
+            }`}
             style={{ background: "#F7F3EC", border: "1px solid #E5E0D8" }}
           >
             {/* Cover image */}
