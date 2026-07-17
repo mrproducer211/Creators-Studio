@@ -5,6 +5,7 @@ import { getPropertyById, deleteProperty, updateProperty } from "@/lib/store/pro
 import { db, isDbConfigured } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { revalidateProperty } from "@/lib/revalidate";
 
 export async function PATCH(
   req: NextRequest,
@@ -108,6 +109,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Failed to update property status." }, { status: 500 });
     }
 
+    revalidateProperty(updated.slug, updated.area);
     return NextResponse.json({ success: true, property: updated });
   } catch (err) {
     console.error("Failed to update property status:", err);
@@ -177,6 +179,9 @@ export async function DELETE(
       return NextResponse.json({ error: "Failed to delete property." }, { status: 500 });
     }
 
+    if (prop) {
+      revalidateProperty(prop.slug, prop.area);
+    }
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("Failed to delete property:", err);

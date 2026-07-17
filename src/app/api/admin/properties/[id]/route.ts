@@ -8,6 +8,7 @@ import { PropertyCard } from "@/types/property";
 import { properties as propertiesTable } from "@/lib/db/schema";
 import { eq, and, ne } from "drizzle-orm";
 import { createAuditLog } from "@/lib/db/dbLoader";
+import { revalidateProperty } from "@/lib/revalidate";
 
 interface Ctx { params: Promise<{ id: string }> }
 
@@ -138,6 +139,7 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
           "edit_property",
           `Updated listing #${id} ("${val.name}") in database`
         );
+        revalidateProperty(updated.slug, updated.area);
         return NextResponse.json({
           property: {
             ...updated,
@@ -164,6 +166,7 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
     "edit_property",
     `Updated listing #${id} ("${val.name}") in local JSON store`
   );
+  revalidateProperty(updated.slug, updated.area);
   return NextResponse.json({ property: updated });
 }
 
@@ -222,6 +225,7 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
           "edit_property",
           `Patched listing #${id} in database`
         );
+        revalidateProperty(updated.slug, updated.area);
         return NextResponse.json({
           property: {
             ...updated,
@@ -251,6 +255,7 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
     "edit_property",
     `Patched listing #${id} in local JSON store`
   );
+  revalidateProperty(updated.slug, updated.area);
 
   return NextResponse.json({ property: updated });
 }
@@ -263,9 +268,13 @@ export async function DELETE(_req: NextRequest, ctx: Ctx) {
   const id = await parseId(ctx.params);
   if (id == null) return NextResponse.json({ error: "Invalid id." }, { status: 400 });
 
-  // DB logic
+  // Get property first for revalidation before deletion
   const dbUrl = process.env.DATABASE_URL || "";
-  if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
+  const isDbValid = dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://");
+  const prop = isDbValid ? null : await getPropertyById(id);
+
+  // DB logic
+  if (isDbValid) {
     try {
       const [deleted] = await db
         .delete(propertiesTable)
@@ -278,6 +287,7 @@ export async function DELETE(_req: NextRequest, ctx: Ctx) {
           "delete_property",
           `Deleted listing #${id} ("${deleted.name}") from database`
         );
+        revalidateProperty(deleted.slug, deleted.area);
         return NextResponse.json({ success: true });
       }
     } catch (err) {
@@ -292,5 +302,8 @@ export async function DELETE(_req: NextRequest, ctx: Ctx) {
     "delete_property",
     `Deleted listing #${id} from local JSON store`
   );
+  if (prop) {
+    revalidateProperty(prop.slug, prop.area);
+  }
   return NextResponse.json({ success: true });
 }

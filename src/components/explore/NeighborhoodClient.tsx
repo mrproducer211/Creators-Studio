@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
+import { getCanonicalArea } from "@/lib/area";
 function VibeCard({ card }: { card: { title: string; subtitle: string; image: string } }) {
   const [src, setSrc] = useState(card.image);
   return (
@@ -656,7 +657,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
   // Featured Properties — real database listings for this neighbourhood only
   const displayProperties = useMemo(() => {
     return initialProperties.filter(
-      (p) => p.area.toLowerCase() === neighborhood.name.toLowerCase()
+      (p) => getCanonicalArea(p.area) === neighborhood.name && p.status !== "draft" && p.status !== "unlisted"
     );
   }, [initialProperties, neighborhood]);
 

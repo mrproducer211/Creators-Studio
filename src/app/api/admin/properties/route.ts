@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { submitToGoogleIndexing } from "@/lib/google-indexing";
+import { revalidateProperty } from "@/lib/revalidate";
 
 export async function GET() {
   const guard = await requireAdminApi();
@@ -107,6 +108,7 @@ export async function POST(req: NextRequest) {
         console.warn("Google Indexing ping failed:", err)
       );
 
+      revalidateProperty(created.slug, created.area);
       return NextResponse.json({ property: created }, { status: 201 });
     } catch (dbErr) {
       console.warn("DB insert failed, falling back to local fileStore:", dbErr);
@@ -132,5 +134,6 @@ export async function POST(req: NextRequest) {
     console.warn("Google Indexing ping failed:", err)
   );
 
+  revalidateProperty(created.slug, created.area);
   return NextResponse.json({ property: created }, { status: 201 });
 }
