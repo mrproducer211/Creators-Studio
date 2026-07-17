@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PropertyCard } from "@/types/property";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { Sparkles } from "lucide-react";
+
 
 const FEATURED_FALLBACK = undefined;
 
@@ -125,7 +125,6 @@ function DesktopHero({
                 if (activeTab !== i) (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.38)";
               }}
             >
-              {i === 2 && <Sparkles size={13} className="text-[#C9A84C]" />}
               {tab}
             </button>
           ))}
@@ -141,7 +140,7 @@ function DesktopHero({
             padding: "6px 6px 6px 22px",
             boxShadow: "0 8px 40px rgba(0,0,0,0.28), 0 1px 4px rgba(0,0,0,0.08)",
             maxWidth: 480,
-            marginBottom: activeTab === 2 ? 14 : 22,
+            marginBottom: 22,
           }}
         >
           <input
@@ -149,7 +148,7 @@ function DesktopHero({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder={activeTab === 2 ? "I'm looking for a pet-friendly condo in On Nut near BTS under 35,000 baht." : t.hero.placeholder}
+            placeholder={t.hero.placeholder}
             style={{
               flex: 1,
               border: "none",
@@ -204,49 +203,6 @@ function DesktopHero({
             {t.hero.search.toUpperCase()}
           </button>
         </div>
-
-        {/* Suggested Searches chips */}
-        {activeTab === 2 && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", maxWidth: "480px", marginBottom: "20px" }}>
-            <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", width: "100%", marginBottom: "4px" }}>
-              Suggested Searches:
-            </span>
-            {[
-              "Pet-friendly condo near BTS under 35k",
-              "2-bedroom condo in Thonglor with pool",
-              "Family home near schools in Bang Na",
-              "Luxury condo in Phrom Phong",
-              "Studio in Ari under 20k",
-              "Remote-work friendly condo with cafes nearby"
-            ].map((chip) => (
-              <button
-                key={chip}
-                onClick={() => setQuery(chip)}
-                style={{
-                  background: "rgba(255, 255, 255, 0.08)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  borderRadius: "100px",
-                  padding: "5px 12px",
-                  fontSize: "11px",
-                  color: "#E2C97E",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  transition: "background 0.2s, border-color 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)";
-                  e.currentTarget.style.borderColor = "#E2C97E";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)";
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
-                }}
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
-        )}
 
         {/* Stats row — left-aligned, pulled close to search bar */}
         <div style={{ display: "flex", gap: 32, paddingTop: 4 }}>
@@ -549,7 +505,6 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
                   className="flex-1 text-center py-[7px] px-1 rounded-lg text-xs font-medium cursor-pointer transition-all duration-150 border-none flex items-center justify-center gap-1"
                   style={activeTab === i ? { background: "#1C3A2F", color: "#FFFFFF" } : { background: "transparent", color: "#555" }}
                 >
-                  {i === 2 && <Sparkles size={11} className={activeTab === 2 ? "text-[#E2C97E]" : "text-[#C9A84C]"} />}
                   {tab}
                 </button>
               ))}
@@ -557,7 +512,7 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
             <div className="flex items-center gap-1.5 px-1 pb-1">
               <input
                 type="text"
-                placeholder={activeTab === 2 ? "I'm looking for a pet-friendly condo in On Nut near BTS under 35,000 baht." : t.hero.placeholder}
+                placeholder={t.hero.placeholder}
                 className="flex-1 border-none outline-none text-[16px] bg-transparent px-1.5 py-1"
                 style={{ color: "#1A1A1A", fontFamily: "inherit" }}
                 value={query}
@@ -573,34 +528,6 @@ export default function HeroSection({ featured }: { featured?: PropertyCard }) {
                 {t.hero.search}
               </button>
             </div>
-
-            {/* Suggested Searches chips on mobile */}
-            {activeTab === 2 && (
-              <div className="mt-3 px-1 pb-2">
-                <span className="text-[10px] uppercase tracking-wider text-black opacity-40 block mb-2 font-semibold">
-                  Suggested Searches
-                </span>
-                <div className="flex flex-wrap gap-1.5 animate-fadeIn">
-                  {[
-                    "Pet-friendly condo near BTS under 35k",
-                    "2-bedroom condo in Thonglor with pool",
-                    "Family home near schools in Bang Na",
-                    "Luxury condo in Phrom Phong",
-                    "Studio in Ari under 20k",
-                    "Remote-work friendly condo with cafes nearby"
-                  ].map((chip) => (
-                    <button
-                      key={chip}
-                      onClick={() => setQuery(chip)}
-                      className="text-[11px] px-2.5 py-1 rounded-full border border-gray-300 text-[#1C3A2F] cursor-pointer font-medium"
-                      style={{ background: "#F7F3EC" }}
-                    >
-                      {chip}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           <div className="flex mb-3">
