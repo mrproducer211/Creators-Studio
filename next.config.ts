@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
   images: {
+    unoptimized: true,
     // Serve AVIF first, then WebP — browsers pick the best they support
     formats: ["image/avif", "image/webp"],
     // Cover all common screen breakpoints + retina
