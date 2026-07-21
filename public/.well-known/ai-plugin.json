@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "New Homes Property Bangkok",
+  "name_for_model": "new_homes_property_bangkok",
+  "description_for_human": "Search and explore condos, apartments, and real estate for rent and sale in Bangkok, Thailand.",
+  "description_for_model": "Plugin for searching real estate properties, condos, and rental listings in Bangkok by neighborhood (Sukhumvit, Sathorn, Thong Lo, Ari, Silom, Asok, On Nut), price range, bedrooms, transit proximity, and property type.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://newhomesproperty.com/api/public/properties"
+  },
+  "logo_url": "https://newhomesproperty.com/images/nhp-logo.webp",
+  "contact_email": "support@newhomesproperty.com",
+  "legal_info_url": "https://newhomesproperty.com/privacy"
+}

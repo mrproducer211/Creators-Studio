@@ -32,7 +32,19 @@ export async function generateMetadata({ params }: Props) {
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
     || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
-  const canonicalUrl = `${baseUrl}/property/${p.slug}`;
+  
+  // Canonical normalization: if property is a short_stay variation and a primary rent/sale listing exists, point canonical to primary
+  let canonicalSlug = p.slug;
+  if (p.slug.endsWith("-short_stay")) {
+    const primaryRentSlug = p.slug.replace(/-short_stay$/, "-rent");
+    const primarySaleSlug = p.slug.replace(/-short_stay$/, "-sale");
+    if (all.some((x) => x.slug === primaryRentSlug)) {
+      canonicalSlug = primaryRentSlug;
+    } else if (all.some((x) => x.slug === primarySaleSlug)) {
+      canonicalSlug = primarySaleSlug;
+    }
+  }
+  const canonicalUrl = `${baseUrl}/property/${canonicalSlug}`;
   
   let imageUrl = p.coverImage || "/images/homepage_hero_v2.webp";
   if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {

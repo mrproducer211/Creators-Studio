@@ -8,6 +8,7 @@ import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
 import ShareButtons from "@/components/blog/ShareButtons";
 import AuthorBio from "@/components/blog/AuthorBio";
 import NewsletterCapture from "@/components/blog/NewsletterCapture";
+import { NEIGHBORHOODS } from "@/data/neighborhoods";
 
 const NEIGHBOURHOOD_MAP: Record<string, string> = {
   "ari": "Ari",
@@ -44,10 +45,15 @@ function renderParagraphWithLinks(text: string) {
   return parts.map((part, idx) => {
     const dbArea = NEIGHBOURHOOD_MAP[part.toLowerCase()];
     if (dbArea) {
+      const areaLower = dbArea.toLowerCase().trim();
+      const n = NEIGHBORHOODS.find(
+        (item) => item.slug.toLowerCase() === areaLower || item.name.toLowerCase() === areaLower || item.aliases?.some((a) => a.toLowerCase() === areaLower)
+      );
+      const targetHref = n ? `/neighborhood/${n.slug.toLowerCase()}` : `/neighborhood/${areaLower.replace(/\s+/g, "-")}`;
       return (
         <Link
           key={idx}
-          href={`/explore?area=${encodeURIComponent(dbArea)}`}
+          href={targetHref}
           className="font-bold underline hover:text-[#C9A84C] transition-colors"
           style={{ color: "#1C3A2F" }}
         >

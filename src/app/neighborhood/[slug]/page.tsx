@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
 import { NEIGHBORHOOD_GUIDES } from "@/data/neighborhoodGuides";
@@ -15,7 +15,7 @@ interface Props {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const n = NEIGHBORHOODS.find((item) => item.slug.toLowerCase() === slug.toLowerCase());
-  if (!n) return {};
+  if (!n) return { title: "Explore Bangkok Properties — NHP" };
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
     || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
@@ -68,7 +68,7 @@ export default async function NeighborhoodPage({ params }: Props) {
   );
 
   if (!neighborhood) {
-    notFound();
+    redirect("/explore");
   }
 
   const allProperties = await getDbProperties();

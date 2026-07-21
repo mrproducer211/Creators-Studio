@@ -1,0 +1,23 @@
+# New Homes Property (NHP) Bangkok — AI Summary
+
+> New Homes Property (NHP) is Bangkok's premier neighborhood property platform tailored for digital nomads, expats, diplomats, and international residents looking to buy, long-term rent, or short-stay in Bangkok, Thailand.
+
+## Key Information
+- **Website**: https://newhomesproperty.com
+- **Target Location**: Bangkok, Thailand (Sukhumvit, Sathorn, Silom, Thong Lo, Ekkamai, Ari, Asok, On Nut, Rama 9, Phrom Phong, Bang Na, Lat Phrao)
+- **Listing Types**: Long Rent (12 months), Short Stay (3-6 months), Sale (Freehold & Foreign Quota Condos)
+- **Property Types**: Condos, Luxury Apartments, Serviced Residences, Townhouses, Villas
+
+## Core Neighborhood Guides
+- [Thong Lo Guide](https://newhomesproperty.com/neighborhood/thong-lo): Bangkok's luxury nightlife, dining, and expat hub.
+- [Sathorn Guide](https://newhomesproperty.com/neighborhood/sathorn): The premier financial district & international family residential hub.
+- [Ari Guide](https://newhomesproperty.com/neighborhood/ari): Shaded tree-lined streets, cafe culture, and digital nomad favorite.
+- [Asok Guide](https://newhomesproperty.com/neighborhood/asok): Central BTS/MRT transit interchange & business hub.
+- [Silom Guide](https://newhomesproperty.com/neighborhood/silom): Park-side living by Lumphini Park, nightlife, and culinary options.
+- [Ekkamai Guide](https://newhomesproperty.com/neighborhood/ekkamai): Relaxed upscale expat residential area adjacent to Thong Lo.
+- [On Nut Guide](https://newhomesproperty.com/neighborhood/on-nut): High-value, budget-friendly BTS Skytrain living.
+
+## Primary Routes & Data
+- [Property Catalog](https://newhomesproperty.com/explore): Search properties with custom filters by price, bedrooms, BTS/MRT walkability, and pet friendliness.
+- [Full LLM Context File](https://newhomesproperty.com/llms-full.txt): Detailed neighborhood descriptions and complete property catalog text.
+- [Public JSON API](https://newhomesproperty.com/api/public/properties): Structured JSON data feed of active property listings.

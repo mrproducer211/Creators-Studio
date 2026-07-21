@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1.0 : 0.8,
   }));
 
-  // 2. Dynamic Properties
+  // 2. Dynamic Properties (exclude unlisted & duplicate variation slugs)
   let properties: any[] = [];
   try {
     properties = await getDbProperties({ includeUnlisted: false });
@@ -23,7 +23,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap generator failed to load DB properties:", err);
   }
 
-  const propertyUrls = properties.map((p) => ({
+  const primaryProperties = properties.filter((p) => {
+    if (p.slug.endsWith("-short_stay")) {
+      const rentSlug = p.slug.replace(/-short_stay$/, "-rent");
+      const saleSlug = p.slug.replace(/-short_stay$/, "-sale");
+      if (properties.some((other) => other.slug === rentSlug || other.slug === saleSlug)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  const propertyUrls = primaryProperties.map((p) => ({
     url: `${baseUrl}/property/${p.slug}`,
     lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(p.createdAt),
     changeFrequency: "weekly" as const,

@@ -47,6 +47,21 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // 301 Redirects for legacy/malformed URLs flagged in Search Console
+  async redirects() {
+    return [
+      {
+        source: "/month",
+        destination: "/explore",
+        permanent: true,
+      },
+      {
+        source: "/blog/phaya-thai-complete-review",
+        destination: "/blog",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

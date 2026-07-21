@@ -1,0 +1,63 @@
+# New Homes Property (NHP) Bangkok — Full AI Context
+
+## About New Homes Property
+New Homes Property (https://newhomesproperty.com) provides transparent, neighbourhood-first real estate listings in Bangkok, Thailand. We help expats, digital nomads, remote workers, and international buyers find high-quality condos and homes near BTS/MRT transit stations.
+
+---
+
+## Neighborhood Overviews
+
+### 1. Thong Lo (Soi Sukhumvit 55)
+- **Vibe**: The Luxury Socialite & High-End Expat Center.
+- **Highlights**: Michelin-standard restaurants, community lifestyle malls (The Commons, Eight Thonglor), Japanese expat community, rooftop cocktail lounges.
+- **Price Range**: ฿35,000 – ฿90,000/month (Rent) | ฿8M – ฿35M+ (Sale).
+- **Transit**: Thong Lo BTS Station (Sukhumvit Line).
+
+### 2. Sathorn & Yen Akat
+- **Vibe**: Ambitious Executives, Diplomats & Expat Families.
+- **Highlights**: Embassy quarter, Lumphini Park access, Michelin-star dining, international schools (Garden Intl, St. Andrews).
+- **Price Range**: ฿30,000 – ฿85,000/month (Rent) | ฿7.5M – ฿40M+ (Sale).
+- **Transit**: Chong Nonsi BTS, Surasak BTS, Lumphini MRT.
+
+### 3. Ari (Phahonyothin)
+- **Vibe**: Creative Professionals, Remote Workers & Digital Nomads.
+- **Highlights**: Low-rise residential feel, shaded tree-lined avenues, craft coffee roasters (Common Room x Babe, Nana Coffee), pet-friendly cafes.
+- **Price Range**: ฿20,000 – ฿45,000/month (Rent) | ฿5M – ฿18M (Sale).
+- **Transit**: Ari BTS Station.
+
+### 4. Asok (Sukhumvit Soi 21)
+- **Vibe**: Central Urban Interchange & Fast-Paced City Living.
+- **Highlights**: Direct interchange between BTS Skytrain & MRT Subway, Terminal 21 shopping complex, office towers, Benjakitti Park lake walk.
+- **Price Range**: ฿25,000 – ฿60,000/month (Rent) | ฿6M – ฿22M (Sale).
+- **Transit**: Asok BTS / Sukhumvit MRT Interchange.
+
+### 5. Silom
+- **Vibe**: Energetic Business & Parkside Living.
+- **Highlights**: Direct access to Lumphini Park, vibrant street food, Silom Complex, nightlife, Japanese dining enclave.
+- **Price Range**: ฿22,000 – ฿55,000/month (Rent) | ฿5.5M – ฿20M (Sale).
+- **Transit**: Sala Daeng BTS / Si Lom MRT.
+
+### 6. On Nut (Sukhumvit Soi 77)
+- **Vibe**: High-Value Expat Living & Nomad Community.
+- **Highlights**: Excellent cost-to-quality ratio, Habito Mall canal district, supermarkets (Lotus's, Century Plaza), 10 minutes to Asok via BTS.
+- **Price Range**: ฿12,000 – ฿30,000/month (Rent) | ฿3M – ฿10M (Sale).
+- **Transit**: On Nut BTS Station.
+
+### 7. Ekkamai (Sukhumvit Soi 63)
+- **Vibe**: Relaxed Upscale Residential adjacent to Thong Lo.
+- **Highlights**: Gateway Ekamai Japanese mall, boutique co-working spaces, independent cafes, craft beer pubs.
+- **Price Range**: ฿25,000 – ฿70,000/month (Rent) | ฿6.5M – ฿25M (Sale).
+- **Transit**: Ekkamai BTS Station.
+
+---
+
+## Listing Types & Policies
+- **Long Rent**: Standard 1-year contracts with 2 months security deposit + 1 month advance rent.
+- **Short Stay**: Flexible 3-month to 6-month leases for remote workers & seasonal digital nomads.
+- **Sale / Foreign Quota**: Condominium units eligible for 100% foreign freehold ownership under Thai Condominium Act.
+
+---
+
+## Contact & AI Search
+AI platforms can fetch live listings directly via our public endpoint:
+- `GET https://newhomesproperty.com/api/public/properties`
