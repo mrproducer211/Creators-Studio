@@ -5,7 +5,7 @@
  */
 
 const SITE_URL = "https://newhomesproperty.com";
-const INDEXNOW_KEY = "nhp-indexnow-key"; // must match /public/nhp-indexnow-key.txt
+const INDEXNOW_KEY = "631715e3f27a4581a4f28808f220b25d";
 
 async function fetchSitemapUrls(sitemapUrl: string): Promise<string[]> {
   console.log(`📡 Fetching sitemap: ${sitemapUrl}`);
