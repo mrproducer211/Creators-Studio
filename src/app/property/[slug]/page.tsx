@@ -5,8 +5,21 @@ import PropertyDetail from "@/components/property/PropertyDetail";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
 
+import { generateCleanSeoSlug } from "@/lib/seoEnricher";
+
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+function findPropertyBySlug(all: any[], slug: string) {
+  return all.find((p) => {
+    if (p.slug === slug) return true;
+    const clean = generateCleanSeoSlug(p);
+    if (clean === slug) return true;
+    const legacyClean = p.slug ? p.slug.toLowerCase().replace(/-tg-\d+$/, "") : "";
+    if (legacyClean && slug.toLowerCase().includes(legacyClean)) return true;
+    return false;
+  });
 }
 
 export async function generateStaticParams() {
@@ -17,18 +30,19 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const all = await getDbProperties({ includeUnlisted: true });
-  const p = all.find((x) => x.slug === slug);
+  const p = findPropertyBySlug(all, slug);
   if (!p) return { title: "Property Not Found — NHP" };
 
-  const roomType = p.bedrooms === 0 ? "Studio" : `${p.bedrooms} Bed`;
+  const roomType = p.bedrooms === 0 ? "Studio" : `${p.bedrooms} Bedroom`;
   const propType = p.propertyType ? p.propertyType.charAt(0).toUpperCase() + p.propertyType.slice(1) : "Condo";
-  const action = p.listingType === "sale" ? "Sale" : "Rent";
+  const action = p.listingType === "sale" ? "Sale" : p.listingType === "short_stay" ? "Short-Term Rent" : "Rent";
   const priceVal = Number(p.priceTHB || 0);
   const priceStr = priceVal > 0 ? `฿${priceVal.toLocaleString()}` : "";
-  const label = p.priceLabel || (p.listingType === "rent" ? "/mo" : "");
+  const label = p.priceLabel || (p.listingType === "sale" ? "" : "/mo");
   
-  const title = `${roomType} ${propType} for ${action} in ${p.area} | ${priceStr}${label} — NHP`;
-  const description = p.description.slice(0, 160);
+  const seoTitle = `${roomType} ${propType} for ${action} in ${p.name}`;
+  const title = `${seoTitle}, ${p.area} Bangkok | NHP`;
+  const description = `Spacious ${seoTitle} at ${p.area}, Bangkok. ${p.sqm ? `${p.sqm} sqm layout. ` : ""}${priceStr ? `Offered at ${priceStr}${label}. ` : ""}View photos & details at New Homes Property.`;
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
     || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
@@ -108,7 +122,7 @@ function buildingHint(p: { projectName?: string; name: string }): string {
 export default async function PropertyPage({ params }: Props) {
   const { slug } = await params;
   const all          = await getDbProperties({ includeUnlisted: true });
-  const property = all.find((p) => p.slug === slug);
+  const property = findPropertyBySlug(all, slug);
   if (!property) notFound();
 
   const bHint = buildingHint(property);
@@ -173,7 +187,7 @@ export default async function PropertyPage({ params }: Props) {
   if (property.images && Array.isArray(property.images) && property.images.length > 0) {
     const allImageObjects = [
       coverImageObject,
-      ...property.images.map((imgUrl, index) => ({
+      ...property.images.map((imgUrl: string, index: number) => ({
         "@type": "ImageObject",
         "url": resolveAbsoluteUrl(imgUrl),
         "caption": `${imageCaption} - Image ${index + 1}`

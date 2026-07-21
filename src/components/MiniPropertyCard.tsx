@@ -6,6 +6,8 @@ import { PropertyCard } from "@/types/property";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+import { generatePropertyAltTag } from "@/lib/seoEnricher";
+
 export default function MiniPropertyCard({ property }: { property: PropertyCard }) {
   const router = useRouter();
   const { isSaved, toggle } = useSaved();
@@ -14,6 +16,7 @@ export default function MiniPropertyCard({ property }: { property: PropertyCard 
 
   const priceFormatted = formatPrice(Number(property.priceTHB));
   const specsLabel = `${property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`} · ${property.sqm} sqm · ${property.area}`;
+  const imageAlt = generatePropertyAltTag(property);
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -64,7 +67,7 @@ export default function MiniPropertyCard({ property }: { property: PropertyCard 
         {property.coverImage ? (
           <Image
             src={property.coverImage}
-            alt={property.name}
+            alt={imageAlt}
             fill
             sizes="(max-width: 768px) 100vw, 200px"
             className="object-cover group-hover:scale-105 transition-transform duration-500"

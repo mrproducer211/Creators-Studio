@@ -14,6 +14,8 @@ import {
   Maximize2
 } from "lucide-react";
 
+import { generatePropertyAltTag } from "@/lib/seoEnricher";
+
 function badgeStyle(t: string) {
   if (t === "sale") return { background: "#1C3A2F", color: "#E2C97E" };
   if (t === "rent") return { background: "#C9A84C", color: "#1C3A2F" };
@@ -58,7 +60,7 @@ function MagCard({
       {property.coverImage && !imgErr ? (
         <Image
           src={property.coverImage}
-          alt={stripEmojis(property.name)}
+          alt={generatePropertyAltTag(property)}
           fill
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           quality={65}

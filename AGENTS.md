@@ -7,6 +7,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 # NHP Real Estate — Executive Visibility & SEO Strategy Memory
 
 ## Key Directives & Business Goals
+- **CRITICAL USER APPROVAL RULE**: You MUST ALWAYS propose plans, outline exact changes, and wait for explicit user approval BEFORE making any code edits, running terminal commands, or making commits.
 - **Domain**: `https://newhomesproperty.com` (Canonical non-www domain)
 - **Target Audience**: Expats, Digital Nomads, Remote Workers, Diplomats, Foreign Buyers in Bangkok.
 - **Traffic Goal**: 1,000 organic monthly visitors through High-Intent SEO, AI Search Integration (Perplexity, ChatGPT, Claude), and Expat Community Distribution.

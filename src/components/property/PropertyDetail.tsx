@@ -14,6 +14,8 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import dynamic from "next/dynamic";
 import { StoredCommuteHub } from "@/lib/store/commuteHubs";
 import { stripEmojis } from "@/lib/emoji";
+import { getCanonicalArea } from "@/lib/area";
+import { enrichPropertyDescription, generatePropertyAltTag, getStructuredSeoDescription } from "@/lib/seoEnricher";
 import { useSession } from "next-auth/react";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
 import { T_PROPERTY } from "@/data/propertyTranslations";
@@ -1501,6 +1503,49 @@ function RecentlyViewedStrip({ currentId }: { currentId: number }) {
 /* ─────────────────────────────────────────────
    NEARBY PLACES HELPERS
    ───────────────────────────────────────────── */
+function formatLocationDisplay(district?: string, area?: string, lang: string = "en") {
+  const cleanDistrict = district ? district.trim() : "";
+  const cleanArea = area ? area.trim() : "";
+  const bkk = lang === "en" ? "Bangkok" : lang === "th" ? "กรุงเทพฯ" : "曼谷";
+
+  if (!cleanDistrict || cleanDistrict.toLowerCase() === cleanArea.toLowerCase()) {
+    return `${cleanArea || "Bangkok"}, ${bkk}`;
+  }
+  return `${cleanDistrict}, ${cleanArea}, ${bkk}`;
+}
+
+function renderSeoDescription(property: PropertyCard) {
+  const s = getStructuredSeoDescription(property);
+
+  const sections = [
+    { icon: "🏢", title: "Unit Overview & Highlights", text: s.overview },
+    { icon: "🛋️", title: "Interior Specs & Furnishings", text: s.interior },
+    { icon: "📍", title: "Location, BTS Transit & Neighborhood", text: s.location },
+    { icon: "🏊", title: "Building Facilities & Security", text: s.facilities },
+    { icon: "📋", title: "Lease & Move-In Terms", text: s.lease },
+  ];
+
+  if (s.additional) {
+    sections.push({ icon: "📝", title: "Property Details", text: s.additional });
+  }
+
+  return (
+    <div className="space-y-6">
+      {sections.map((sec, idx) => (
+        <div key={idx} className="border-b border-gray-100/80 pb-4 last:border-none last:pb-0">
+          <h4 className="text-[15px] sm:text-[16px] font-bold mb-2 flex items-center gap-2 font-outfit" style={{ color: "#1C3A2F" }}>
+            <span className="text-[18px]">{sec.icon}</span>
+            <span>{sec.title}</span>
+          </h4>
+          <p className="text-[14px] sm:text-[14.5px] leading-[1.8] font-normal text-gray-700 m-0">
+            {sec.text}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function getDirectionsUrl(property: PropertyCard, placeName: string) {
   const origin = property.latitude && property.longitude
     ? `${property.latitude},${property.longitude}`
@@ -1538,7 +1583,29 @@ export default function PropertyDetail({
     ...rawProperty,
     name: stripEmojis(rawProperty.name),
     area: stripEmojis(rawProperty.area),
-    description: stripEmojis(rawProperty.description),
+    description: stripEmojis(
+      enrichPropertyDescription({
+        name: rawProperty.name,
+        description: rawProperty.description,
+        bedrooms: rawProperty.bedrooms,
+        bathrooms: rawProperty.bathrooms,
+        sqm: rawProperty.sqm,
+        floor: rawProperty.floor,
+        area: rawProperty.area,
+        district: rawProperty.district,
+        listingType: rawProperty.listingType,
+        propertyType: rawProperty.propertyType,
+        priceTHB: rawProperty.priceTHB,
+        priceLabel: rawProperty.priceLabel,
+        btsStation: rawProperty.btsStation,
+        btsWalkMin: rawProperty.btsWalkMin,
+        mrtStation: rawProperty.mrtStation,
+        mrtWalkMin: rawProperty.mrtWalkMin,
+        petFriendly: rawProperty.petFriendly,
+        foreignQuota: rawProperty.foreignQuota,
+        amenities: rawProperty.amenities,
+      })
+    ),
     district: stripEmojis(rawProperty.district),
   };
   const [activeCategory, setActiveCategory] = useState<string>("All");
@@ -1797,8 +1864,13 @@ export default function PropertyDetail({
                 )}
               </div>
 
+              {/* Subtitle Badge */}
+              <div className="text-[11px] font-bold tracking-[1px] uppercase mb-1 font-outfit" style={{ color: "#C9A84C" }}>
+                {property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`} {property.propertyType ? property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1) : "Condo"} for {property.listingType === "sale" ? "Sale" : property.listingType === "short_stay" ? "Short-Term Rent" : "Rent"}
+              </div>
+
               {/* Title */}
-              <h1 className="text-[22px] font-bold mb-1.5 leading-tight" style={{ color: "#1A1A1A", letterSpacing: "-0.4px" }}>
+              <h1 className="text-[22px] font-bold mb-1.5 leading-tight font-outfit" style={{ color: "#1A1A1A", letterSpacing: "-0.4px" }}>
                 {property.name}
               </h1>
 
@@ -1808,11 +1880,11 @@ export default function PropertyDetail({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-[12px] no-underline transition-opacity hover:opacity-70"
-                style={{ color: "#999" }}
+                style={{ color: "#888" }}
               >
                 <span style={{ color: "#1C3A2F" }}><Icon.pin /></span>
                 <span style={{ borderBottom: "1px solid #ccc" }}>
-                  {property.district ? `${property.district}, ` : ""}{translateArea(property.area, lang)}, {lang === "en" ? "Bangkok" : lang === "th" ? "กรุงเทพฯ" : "曼谷"}
+                  {formatLocationDisplay(property.district, translateArea(property.area, lang), lang)}
                 </span>
               </a>
 
@@ -1972,18 +2044,18 @@ export default function PropertyDetail({
               
               {/* Column 1: ABOUT THIS PROPERTY */}
               <div className="rounded-2xl p-6 transition-all duration-300 flex flex-col lg:h-0 lg:min-h-full overflow-hidden" style={{ background: "#ffffff", border: "none", boxShadow: "none" }}>
-                <h3 className="text-[12px] font-bold uppercase tracking-[1.5px] mb-5 font-outfit" style={{ color: "#C9A84C" }}>
+                <h3 className="text-[12px] font-bold uppercase tracking-[1.5px] mb-4 font-outfit" style={{ color: "#C9A84C" }}>
                   {t.aboutProperty}
                 </h3>
-                <div className="flex-1 min-h-0 overflow-y-auto pr-2 text-[13px] leading-[1.65] font-light text-gray-600 mb-6 custom-scrollbar">
-                  {property.description}
+                <div className="flex-1 min-h-[340px] max-h-[450px] overflow-y-auto pr-3 mb-4 custom-scrollbar">
+                  {renderSeoDescription(rawProperty)}
                 </div>
                 
-                <div className="mt-auto pt-4 border-t border-gray-100">
-                  <h4 className="text-[13px] font-bold mb-3 font-outfit" style={{ color: "#1C3A2F" }}>
+                <div className="mt-auto pt-4 border-t border-gray-100 flex-shrink-0">
+                  <h4 className="text-[12px] font-bold uppercase tracking-[1px] mb-3 font-outfit" style={{ color: "#1C3A2F" }}>
                     {t.highlights}
                   </h4>
-                  <ul className="list-none p-0 m-0 space-y-2.5">
+                  <ul className="list-none p-0 m-0 grid grid-cols-2 gap-y-2 gap-x-4">
                     {(property.features && property.features.length > 0
                       ? property.features
                       : [
@@ -1994,9 +2066,9 @@ export default function PropertyDetail({
                           lang === "en" ? "Modern kitchen" : lang === "th" ? "ห้องครัวทันสมัย" : "现代厨房"
                         ]
                     ).map((hl, i) => (
-                      <li key={i} className="flex items-start text-[13px] text-gray-500 font-light">
-                        <span className="text-[#C9A84C] font-bold mr-2.5 flex-shrink-0 text-[13px]">✓</span>
-                        <span>{hl}</span>
+                      <li key={i} className="flex items-center text-[12.5px] text-gray-600 font-light truncate">
+                        <span className="text-[#C9A84C] font-bold mr-2 flex-shrink-0 text-[13px]">✓</span>
+                        <span className="truncate">{hl}</span>
                       </li>
                     ))}
                   </ul>
@@ -2474,8 +2546,13 @@ export default function PropertyDetail({
                   )}
                 </div>
 
+                {/* Subtitle Badge */}
+                <div className="text-[12px] font-bold tracking-[1px] uppercase mb-1 font-outfit" style={{ color: "#C9A84C" }}>
+                  {property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`} {property.propertyType ? property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1) : "Condo"} for {property.listingType === "sale" ? "Sale" : property.listingType === "short_stay" ? "Short-Term Rent" : "Rent"}
+                </div>
+
                 {/* Property Name Title */}
-                <h1 className="text-[22px] font-bold mb-1.5 leading-tight" style={{ color: "#1A1A1A", letterSpacing: "-0.4px" }}>
+                <h1 className="text-[26px] font-bold mb-1.5 leading-tight font-outfit" style={{ color: "#1A1A1A", letterSpacing: "-0.5px" }}>
                   {property.name}
                 </h1>
 
@@ -2484,12 +2561,12 @@ export default function PropertyDetail({
                   href={`https://www.google.com/maps/search/${encodeURIComponent(property.name + " " + (property.district ?? "") + " " + property.area + " Bangkok")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[12px] mb-2 no-underline transition-opacity hover:opacity-70"
-                  style={{ color: "#999" }}
+                  className="inline-flex items-center gap-1.5 text-[12px] mb-2.5 no-underline transition-opacity hover:opacity-70"
+                  style={{ color: "#888" }}
                 >
                   <span style={{ color: "#1C3A2F" }}><Icon.pin /></span>
                   <span style={{ borderBottom: "1px solid #ccc" }}>
-                    {property.district ? `${property.district}, ` : ""}{translateArea(property.area, lang)}, {lang === "en" ? "Bangkok" : lang === "th" ? "กรุงเทพฯ" : "曼谷"}
+                    {formatLocationDisplay(property.district, translateArea(property.area, lang), lang)}
                   </span>
                 </a>
 

@@ -13,11 +13,7 @@ import { getSystemSettings } from "@/lib/store/settings";
 import { PropertyCard } from "@/types/property";
 import { writeJson } from "@/lib/store/fileStore";
 import { getCanonicalArea } from "@/lib/area";
-
-/**
- * Safely fetches property listings from the live database.
- * Falls back to local static mock properties if the DB is empty or fails.
- */
+import { enrichPropertyDescription, generateCleanSeoSlug } from "@/lib/seoEnricher";
 import { getAllProperties, getPropertyById, updateProperty } from "@/lib/store/properties";
 
 let lastExpiryCheck = 0;
@@ -121,17 +117,54 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
     
     // Map Drizzle output model to PropertyCard shape
     if (list && list.length > 0) {
+      const seenSlugs = new Set<string>();
       const mapped = list.map((p) => {
         const priceTHB = Number(p.priceTHB);
         const priceUSD = p.priceUSD ? Number(p.priceUSD) : undefined;
         const priceLabel = p.priceLabel || undefined;
+        const areaCanonical = getCanonicalArea(p.area);
+
+        const enrichedDesc = enrichPropertyDescription({
+          name: p.name,
+          description: p.description || "",
+          bedrooms: p.bedrooms,
+          bathrooms: p.bathrooms,
+          sqm: p.sqm || undefined,
+          floor: p.floor || undefined,
+          area: areaCanonical,
+          district: p.district || undefined,
+          listingType: p.listingType,
+          propertyType: p.propertyType,
+          priceTHB,
+          priceLabel,
+          btsStation: p.btsStation || undefined,
+          btsWalkMin: p.btsWalkMin || undefined,
+          mrtStation: p.mrtStation || undefined,
+          mrtWalkMin: p.mrtWalkMin || undefined,
+          petFriendly: p.petFriendly ?? false,
+          foreignQuota: p.foreignQuota ?? false,
+          amenities: p.amenities || [],
+        });
+
+        const cleanSeoSlug = generateCleanSeoSlug(
+          {
+            bedrooms: p.bedrooms,
+            propertyType: p.propertyType,
+            listingType: p.listingType,
+            name: p.name,
+            id: p.id,
+          },
+          seenSlugs
+        );
+        const finalSlug = (p.slug && p.slug.includes("-tg-")) ? cleanSeoSlug : (p.slug || cleanSeoSlug);
+        seenSlugs.add(finalSlug);
 
         return {
           id: p.id,
-          slug: p.slug,
+          slug: finalSlug,
           name: p.name,
           projectName: p.projectName || undefined,
-          description: p.description || "",
+          description: enrichedDesc,
           listingType: p.listingType,
           propertyType: p.propertyType,
           priceTHB,

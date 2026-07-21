@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
 import { NEIGHBORHOOD_GUIDES } from "@/data/neighborhoodGuides";
@@ -131,8 +131,28 @@ export default async function NeighborhoodPage({ params }: Props) {
     }))
   } : null;
 
+  const realEstateAgentSchema = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": "New Homes Property Bangkok",
+    "image": `${baseUrl}/images/homepage_hero_v2.webp`,
+    "url": baseUrl,
+    "priceRange": "฿15,000 - ฿500,000",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": neighborhood.name,
+      "addressRegion": "Bangkok",
+      "addressCountry": "TH"
+    },
+    "areaServed": NEIGHBORHOODS.map(n => n.name)
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateAgentSchema) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
