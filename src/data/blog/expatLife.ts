@@ -398,5 +398,94 @@ export const EXPAT_LIFE: BlogPost[] = [
       href: "/explore",
       label: "Start Your Search"
     }
+  },
+  /* ─────────────────────────────── DAY 2 HIGH-INTENT GUIDES ─────────────────────────────── */
+  {
+    slug: "pet-friendly-condos-bangkok-guide",
+    category: "Expat Tips",
+    tags: ["Pet Friendly", "Thong Lo", "Sathorn", "Ekkamai", "Renting"],
+    title: "Pet-Friendly Condos in Bangkok: Top Buildings in Thong Lo, Sathorn & Ekkamai (2026)",
+    metaTitle: "Pet-Friendly Condos in Bangkok 2026: Thong Lo, Sathorn & Ekkamai Guide | NHP",
+    metaDesc: "Looking for a pet-friendly condo in Bangkok? Read our guide on pet-friendly high-rises, deposit policies, dog parks, and vet access in Thong Lo, Sathorn, and Ekkamai.",
+    excerpt: "Moving to Bangkok with a dog or cat? Finding a pet-friendly high-rise can be tricky. Here is our complete 2026 expat guide to pet-friendly buildings, deposit terms, and neighborhood dog parks.",
+    image: "/images/blog/thong-lo-vs-on-nut.webp",
+    readTime: "10 min read",
+    publishedAt: "2026-07-20",
+    author: "NHP Bangkok Team",
+    keywords: ["pet friendly condo rent bangkok", "pet friendly condo thong lo", "pet friendly apartments sathorn", "bangkok pet friendly condos 2026"],
+    intro: "Finding a high-quality condominium in Bangkok that permits pets is one of the most common challenges expat pet owners face. While many building management committees strictly forbid dogs and cats under building bylaws, a growing number of luxury and mid-tier developments in top expat neighborhoods actively welcome four-legged residents. In this guide, we break down the best pet-friendly condos in Thong Lo, Sathorn, and Ekkamai, along with key lease clauses to watch out for.",
+    sections: [
+      {
+        heading: "1. Thong Lo & Ekkamai: The Pet-Friendly Hub of Sukhumvit",
+        body: [
+          "Thong Lo (Sukhumvit Soi 55) and Ekkamai (Sukhumvit Soi 63) are undisputed leaders in pet-friendly living. The area is filled with grooming salons, veterinary clinics, and pet-welcoming lifestyle spaces like The Commons Thonglor and Trail 8 Dog Park.",
+          "Notable pet-friendly developments include M Thonglor 10, Monument Thong Lo (which features dedicated dog runs), and Ashton Residence 41. When renting in these buildings, pet owners enjoy access to designated pet elevators, rooftop green zones, and nearby animal care facilities."
+        ]
+      },
+      {
+        heading: "2. Sathorn & Yen Akat: Leafy Enclaves for Dog Owners",
+        body: [
+          "Sathorn offers quiet residential sub-sois, leafy streets, and proximity to Benjakitti Forest Park's dedicated Dog Park. Areas like Yen Akat and Soi Suan Phlu are ideal for long daily walks with larger dogs.",
+          "Key developments such as Met Sathorn and M Silom accommodate pets under specific weight guidelines (typically under 15kg for dogs). Property owners in Sathorn often request a small additional pet security deposit."
+        ]
+      },
+      {
+        heading: "3. Essential Lease Terms & Pet Deposit Guidance",
+        body: [
+          "Before signing a lease, ensure your contract explicitly lists your pet's breed, weight, and vaccination status. Most landlords require proof of rabies vaccination and a pet registration certificate with the building juristic office.",
+          "Standard security deposits for pet-friendly rentals are usually 2 months of rent plus a refundable pet damage fee of ฿5,000 to ฿10,000. Working with an experienced agent ensures your lease agreement protects your deposit."
+        ]
+      }
+    ],
+    cta: {
+      heading: "Searching for a pet-friendly condo in Bangkok?",
+      body: "Browse our verified pet-friendly property listings in Thong Lo, Sathorn, and Ari today.",
+      href: "/explore",
+      label: "View Pet Friendly Condos"
+    }
+  },
+  {
+    slug: "bangkok-short-term-condo-rentals",
+    category: "Expat Tips",
+    tags: ["Short Stay", "Digital Nomad", "Renting", "Expat Tips"],
+    title: "How to Rent a 3 to 6 Month Short-Stay Condo in Bangkok (Digital Nomad Guide)",
+    metaTitle: "Bangkok 3 to 6 Month Short-Stay Condo Rentals (2026 Guide) | NHP",
+    metaDesc: "Need a short-term condo rental in Bangkok? A complete guide to 3-month and 6-month rental agreements, deposit rules, utility setup, and top BTS-connected neighborhoods.",
+    excerpt: "Visiting Bangkok for a few months on a Destination Thailand Visa (DTV) or remote work stint? Learn how 3 to 6 month short-stay leases work, deposit rules, and top digital nomad neighborhoods.",
+    image: "/images/blog/thailand-visa-guide-2026.webp",
+    readTime: "9 min read",
+    publishedAt: "2026-07-20",
+    author: "NHP Bangkok Team",
+    keywords: ["bangkok 3 month short stay condo rent", "short term condo rental bangkok", "bangkok 6 month rental lease", "digital nomad short stay bangkok"],
+    intro: "With the surge of remote workers, freelancers, and Destination Thailand Visa (DTV) holders arriving in 2026, the demand for flexible 3-month and 6-month condo leases in Bangkok has hit an all-time high. Standard Thai rental contracts traditionally require a 12-month commitment. However, specialized short-stay properties offer seamless 3 to 6 month contracts without excessive premiums.",
+    sections: [
+      {
+        heading: "1. How Short-Stay Contracts Work vs. 12-Month Leases",
+        body: [
+          "Traditional long-term leases demand 12 months with 2 months security deposit. Short-stay leases (3 to 6 months) provide legal flexibility for nomads who aren't ready to commit to a full year.",
+          "Pricing for 3 to 6 month contracts is typically 10% to 15% higher than a 1-year rate, but you avoid forfeiture penalties if your plans change. Deposit requirements are usually 1 month of rent upfront."
+        ]
+      },
+      {
+        heading: "2. Top Neighborhoods for 3-Month Nomad Stays",
+        body: [
+          "On Nut and Phra Khanong offer the best combination of low rental rates, co-working space access (Habito Hub, Summer Hill), and direct 10-minute BTS access to Asok and Siam.",
+          "Ari is ideal for quiet focus and specialty coffee lovers, featuring tree-lined sois and modern low-rise condos within short walking distance of Ari BTS Station."
+        ]
+      },
+      {
+        heading: "3. Wi-Fi, Utilities, and Move-In Requirements",
+        body: [
+          "Short-stay units listed on NHP come fully furnished with high-speed fiber internet (typically 500/500 Mbps), smart TVs, washing machines, and equipped kitchens.",
+          "Utilities (electricity & water) are billed monthly at official government rates (approx. ฿5-6 per kWh for electricity). Move-in requires just passport identification and the initial deposit."
+        ]
+      }
+    ],
+    cta: {
+      heading: "Explore Flexible 3 to 6 Month Rentals",
+      body: "Discover curated short-stay condos near BTS Skytrain stations across Bangkok.",
+      href: "/explore",
+      label: "Browse Short Stay Condos"
+    }
   }
 ];
