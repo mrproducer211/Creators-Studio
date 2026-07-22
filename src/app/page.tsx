@@ -30,6 +30,10 @@ const BlogSection = nextDynamic(() => import("@/components/BlogSection"), {
 const TalkToUs = nextDynamic(() => import("@/components/TalkToUs"), {
   loading: () => <TalkSkeleton />,
 });
+const HomepageFaqBlock = nextDynamic(
+  () => import("@/components/HomepageFaqBlock"),
+  { loading: () => <div style={{ height: "240px" }} /> }
+);
 const TrustBadges = nextDynamic(() => import("@/components/TrustBadges"), {
   loading: () => <TrustSkeleton />,
 });
@@ -91,6 +95,7 @@ export default async function Home() {
         <LatestProperties properties={latestFive} allProperties={allProperties} />
         <BlogSection posts={allPosts.slice(0, 4)} />
         <TalkToUs />
+        <HomepageFaqBlock />
       </main>
       <TrustBadges />
       <Footer />

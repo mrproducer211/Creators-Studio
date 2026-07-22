@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { PropertyCard } from "@/types/property";
 import { useEnquiry } from "@/hooks/useEnquiry";
+import ListingFaqBlock from "@/components/ListingFaqBlock";
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext";
 import { useSaved } from "@/contexts/SavedContext";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
@@ -2748,6 +2749,9 @@ export default function PropertyDetail({
                     {t.sendEnquiry}
                   </button>
                 </div>
+
+                {/* FAQ block — removes final hesitation before enquiry */}
+                <ListingFaqBlock property={property} />
 
               </div>
 
