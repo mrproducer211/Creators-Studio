@@ -2040,6 +2040,11 @@ export default function PropertyDetail({
               )}
             </div>
 
+            {/* FAQ block — mobile only, removes hesitation before sticky CTA */}
+            <div className="md:hidden mt-3">
+              <ListingFaqBlock property={property} />
+            </div>
+
             {/* ── 2-Column Content Block (About on left, Amenities & Location stacked on right) ── */}
             <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-4 mt-3.5 lg:mt-6 items-stretch">
               
