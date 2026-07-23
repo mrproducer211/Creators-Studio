@@ -843,7 +843,7 @@ function Gallery({
                 }}
               >
                 <Image
-                  src={!imgErrors[i] && src ? src : (rawImages[0] || "/images/homepage_hero_v2.webp")}
+                  src={!imgErrors[i] && src ? src : "/images/homepage_hero_v2.webp"}
                   alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: i })}
                   fill
                   sizes="(max-width: 768px) 20vw, 80px"
