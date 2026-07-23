@@ -241,6 +241,9 @@ export default function BuildingsDirectoryClient({ buildingProjects }: Props) {
                     alt={b.name}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = "/images/homepage_hero_v2.webp";
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1C3A2F]/80 via-transparent to-transparent" />
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, MessageSquarePlus, UserCheck, Calendar, Sparkles, Building2, ThumbsUp } from "lucide-react";
+import { Star, MessageSquarePlus, UserCheck, Calendar, Sparkles, Building2, ThumbsUp, ShieldCheck, TrainFront, Volume2 } from "lucide-react";
 import ReviewForm from "./ReviewForm";
 import { ReviewRecord } from "@/lib/store/reviews";
 
@@ -46,28 +46,13 @@ export default function Reviews({ propertyId, propertyName, projectName }: Props
   return (
     <section className="w-full text-left">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <span className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C9A84C] flex items-center gap-1.5 mb-0.5">
-            <Sparkles size={12} /> Verified Tenant & Expat Feedback
-          </span>
-          <h3 className="text-xl sm:text-2xl font-bold text-[#1C3A2F]">
-            Reviews & Ratings
-          </h3>
-        </div>
-
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs border transition-all shadow-xs cursor-pointer self-start sm:self-auto"
-          style={{
-            background: showForm ? "#FAF8F3" : "#1C3A2F",
-            color: showForm ? "#1C3A2F" : "#FFFFFF",
-            borderColor: "#1C3A2F",
-          }}
-        >
-          <MessageSquarePlus size={15} className={showForm ? "text-[#1C3A2F]" : "text-[#C9A84C]"} />
-          <span>{showForm ? "Close Review Form" : "Write a Review"}</span>
-        </button>
+      <div className="mb-6">
+        <span className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C9A84C] flex items-center gap-1.5 mb-0.5">
+          <Sparkles size={12} /> Verified Tenant & Expat Feedback
+        </span>
+        <h3 className="text-xl sm:text-2xl font-bold text-[#1C3A2F]">
+          Reviews & Ratings
+        </h3>
       </div>
 
       {/* Slide-Down Review Submission Form */}
@@ -117,20 +102,35 @@ export default function Reviews({ propertyId, propertyName, projectName }: Props
               </div>
             </div>
 
-            {/* Sub-Ratings Chips */}
-            <div className="grid grid-cols-3 gap-3 w-full md:w-auto text-center pt-4 md:pt-0 border-t md:border-t-0 border-[#EDE8DF]">
-              <div className="p-2.5 rounded-xl bg-white border border-[#EDE8DF]">
-                <span className="text-[10px] text-gray-400 uppercase font-bold block">Facilities</span>
-                <span className="text-xs font-bold text-[#1C3A2F]">5.0 ⭐</span>
+            {/* Sub-Ratings Chips & Write Review Action */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-[#EDE8DF]">
+              <div className="grid grid-cols-3 gap-3 w-full sm:w-auto text-center">
+                <div className="p-2.5 rounded-xl bg-white border border-[#EDE8DF]">
+                  <span className="text-[10px] text-gray-400 uppercase font-bold block">Facilities</span>
+                  <span className="text-xs font-bold text-[#1C3A2F]">5.0 ⭐</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white border border-[#EDE8DF]">
+                  <span className="text-[10px] text-gray-400 uppercase font-bold block">Location</span>
+                  <span className="text-xs font-bold text-[#1C3A2F]">4.9 ⭐</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white border border-[#EDE8DF]">
+                  <span className="text-[10px] text-gray-400 uppercase font-bold block">Security</span>
+                  <span className="text-xs font-bold text-[#1C3A2F]">5.0 ⭐</span>
+                </div>
               </div>
-              <div className="p-2.5 rounded-xl bg-white border border-[#EDE8DF]">
-                <span className="text-[10px] text-gray-400 uppercase font-bold block">Location</span>
-                <span className="text-xs font-bold text-[#1C3A2F]">4.9 ⭐</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-white border border-[#EDE8DF]">
-                <span className="text-[10px] text-gray-400 uppercase font-bold block">Security</span>
-                <span className="text-xs font-bold text-[#1C3A2F]">5.0 ⭐</span>
-              </div>
+
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className="px-4 py-2.5 rounded-xl font-bold text-xs border transition-all shadow-xs cursor-pointer w-full sm:w-auto text-center flex items-center justify-center gap-2 whitespace-nowrap"
+                style={{
+                  background: showForm ? "#FAF8F3" : "#1C3A2F",
+                  color: showForm ? "#1C3A2F" : "#FFFFFF",
+                  borderColor: "#1C3A2F",
+                }}
+              >
+                <MessageSquarePlus size={15} className={showForm ? "text-[#1C3A2F]" : "text-[#C9A84C]"} />
+                <span>{showForm ? "Close Review Form" : "Write a Review"}</span>
+              </button>
             </div>
           </div>
 
@@ -212,25 +212,25 @@ export default function Reviews({ propertyId, propertyName, projectName }: Props
             Have you lived in or visited {displayName}? Share your genuine feedback about the building facilities, security, noise levels, and location.
           </p>
 
-          {/* Quick Review Topics */}
+          {/* Quick Review Topics (With Lucide Icons) */}
           <div className="flex flex-wrap items-center justify-center gap-1.5 mb-5">
-            <span className="text-[10px] font-medium text-gray-600 bg-white px-2.5 py-0.5 rounded-full border border-[#EDE8DF]">
-              🏊 Pool & Facilities
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-gray-700 bg-white px-2.5 py-1 rounded-full border border-[#EDE8DF]">
+              <Sparkles size={11} className="text-[#C9A84C]" /> Pool & Facilities
             </span>
-            <span className="text-[10px] font-medium text-gray-600 bg-white px-2.5 py-0.5 rounded-full border border-[#EDE8DF]">
-              🛡️ Security & Management
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-gray-700 bg-white px-2.5 py-1 rounded-full border border-[#EDE8DF]">
+              <ShieldCheck size={11} className="text-[#1C3A2F]" /> Security & Management
             </span>
-            <span className="text-[10px] font-medium text-gray-600 bg-white px-2.5 py-0.5 rounded-full border border-[#EDE8DF]">
-              🚆 BTS Access & Location
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-gray-700 bg-white px-2.5 py-1 rounded-full border border-[#EDE8DF]">
+              <TrainFront size={11} className="text-[#1C3A2F]" /> BTS Access & Location
             </span>
-            <span className="text-[10px] font-medium text-gray-600 bg-white px-2.5 py-0.5 rounded-full border border-[#EDE8DF]">
-              🤫 Noise & Vibe
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-gray-700 bg-white px-2.5 py-1 rounded-full border border-[#EDE8DF]">
+              <Volume2 size={11} className="text-[#C9A84C]" /> Noise & Vibe
             </span>
           </div>
 
           <button
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-white transition-opacity hover:opacity-90 cursor-pointer border-none"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-white transition-opacity hover:opacity-90 cursor-pointer border-none shadow-xs"
             style={{ background: "#1C3A2F" }}
           >
             <Star size={13} className="fill-[#C9A84C] text-[#C9A84C]" />
