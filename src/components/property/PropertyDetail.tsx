@@ -842,16 +842,14 @@ function Gallery({
                   background: "#1C3A2F",
                 }}
               >
-                {!imgErrors[i] && (
-                  <Image
-                    src={src}
-                    alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: i })}
-                    fill
-                    sizes="(max-width: 768px) 20vw, 80px"
-                    className="object-cover"
-                    onError={() => setImgErrors((e) => ({ ...e, [i]: true }))}
-                  />
-                )}
+                <Image
+                  src={!imgErrors[i] && src ? src : (rawImages[0] || "/images/homepage_hero_v2.webp")}
+                  alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: i })}
+                  fill
+                  sizes="(max-width: 768px) 20vw, 80px"
+                  className="object-cover"
+                  onError={() => setImgErrors((e) => ({ ...e, [i]: true }))}
+                />
                 {/* Last thumb + extra count overlay */}
                 {isLastWithExtra && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "rgba(28,58,47,0.75)" }}>
@@ -1926,25 +1924,41 @@ export default function PropertyDetail({
                 </div>
               )}
 
-              {/* Condo Building Profile CTA — Mobile Header */}
+              {/* Condo Building Profile CTA — Mobile View Luxury Pill */}
               {buildingSlug && (
                 <div className="mt-3">
                   <Link
                     href={`/building/${buildingSlug}`}
-                    className="flex items-center justify-between p-2.5 px-3.5 rounded-xl no-underline transition-all group border shadow-xs"
-                    style={{ background: "#1C3A2F", borderColor: "#1C3A2F" }}
+                    className="group flex items-center justify-between px-3.5 py-2.5 rounded-2xl no-underline transition-all border shadow-xs"
+                    style={{
+                      background: "#FAF8F3",
+                      borderColor: "#EDE8DF",
+                    }}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-black/40 flex items-center justify-center text-[#C9A84C] border border-[#C9A84C]/30 flex-shrink-0">
-                        <Building2 size={14} />
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div
+                        className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
+                        style={{ background: "#1C3A2F", color: "#C9A84C" }}
+                      >
+                        <Building2 size={15} />
                       </div>
-                      <div className="text-left min-w-0">
-                        <span className="text-[9px] uppercase font-bold text-[#C9A84C] tracking-wider block leading-none">Condo Building Profile</span>
-                        <span className="text-[12px] font-bold text-white group-hover:text-[#C9A84C] transition-colors truncate block mt-0.5">{buildingName}</span>
+                      <div className="text-left truncate">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9px] uppercase font-bold tracking-wider text-[#C9A84C]">
+                            Official Building Profile
+                          </span>
+                          <span className="text-[9px] font-semibold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-full">
+                            Verified
+                          </span>
+                        </div>
+                        <span className="text-[12.5px] font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors truncate block">
+                          {buildingName}
+                        </span>
                       </div>
                     </div>
-                    <span className="text-[11px] font-bold text-[#C9A84C] flex items-center gap-1 group-hover:translate-x-1 transition-transform whitespace-nowrap ml-2">
-                      View Building →
+
+                    <span className="text-[11px] font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] inline-flex items-center gap-0.5 group-hover:translate-x-1 transition-all whitespace-nowrap ml-2">
+                      Explore <ChevronRight size={13} className="text-[#C9A84C]" />
                     </span>
                   </Link>
                 </div>
@@ -2572,19 +2586,19 @@ export default function PropertyDetail({
               {/* Sidebar Combined Container: Name, Price, Details, Tour and Enquiry */}
               <div className="rounded-2xl p-6" style={{ background: "#FFFFFF", border: "1px solid #E5E0D8" }}>
                 
-                {/* Trust Badge Chips Row (views, verified, posted) at the top of the container */}
-                <div className="flex items-center gap-2 flex-wrap mb-4">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#FAF8F3", color: "#1C3A2F", border: "1px solid #EDE8DF" }}>
+                {/* Trust Badge Chips Row (views, verified, posted) side-by-side on desktop */}
+                <div className="flex items-center gap-1.5 flex-nowrap whitespace-nowrap overflow-x-auto no-scrollbar mb-4">
+                  <span className="inline-flex items-center gap-1 text-[9.5px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "#FAF8F3", color: "#1C3A2F", border: "1px solid #EDE8DF" }}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     {views.toLocaleString()} {t.views}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(74,222,128,0.12)", color: "#2E7D4F", border: "1px solid rgba(74,222,128,0.3)" }}>
+                  <span className="inline-flex items-center gap-1 text-[9.5px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "rgba(74,222,128,0.12)", color: "#2E7D4F", border: "1px solid rgba(74,222,128,0.3)" }}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                     {lastVerifiedLabel(property, lang)}
                   </span>
                   {posted && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#FAF8F3", color: "#999", border: "1px solid #EDE8DF" }}>
-                      <span className="text-[10px]"><Icon.calendar /></span>
+                    <span className="inline-flex items-center gap-1 text-[9.5px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "#FAF8F3", color: "#999", border: "1px solid #EDE8DF" }}>
+                      <span className="text-[9.5px]"><Icon.calendar /></span>
                       {posted}
                     </span>
                   )}
