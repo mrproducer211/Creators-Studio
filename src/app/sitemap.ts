@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
   // 1. Static Pages
-  const routes = ["", "/about", "/privacy", "/explore", "/faq"].map((route) => ({
+  const routes = ["", "/about-us", "/privacy", "/explore", "/buildings", "/for-sale", "/for-rent", "/short-stay", "/blog", "/frequent-asked-question-faq"].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
@@ -49,7 +49,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // 4. Dynamic Blog Guides
+  // 4. Dynamic Building Pillar Pages
+  const buildingSlugs = Array.from(
+    new Set(
+      properties
+        .map((p) => {
+          const name = p.projectName || p.name;
+          return name ? name.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_]+/g, "-") : null;
+        })
+        .filter(Boolean)
+    )
+  );
+
+  const buildingUrls = buildingSlugs.map((slug) => ({
+    url: `${baseUrl}/building/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // 5. Dynamic Blog Guides
   let blogPosts: any[] = [];
   try {
     blogPosts = await getAllPosts();
@@ -64,5 +83,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...routes, ...propertyUrls, ...areaUrls, ...blogUrls];
+  return [...routes, ...propertyUrls, ...areaUrls, ...buildingUrls, ...blogUrls];
 }

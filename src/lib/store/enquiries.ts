@@ -61,3 +61,11 @@ export async function setEnquiryStatus(id: string, status: StoredEnquiry["status
   await persist(next);
   return updated;
 }
+
+export async function deleteEnquiry(id: string): Promise<boolean> {
+  const all = await load();
+  const next = all.filter((e) => e.id !== id);
+  if (next.length === all.length) return false;
+  await persist(next);
+  return true;
+}

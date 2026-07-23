@@ -34,18 +34,23 @@ const TrustBadges = nextDynamic(() => import("@/components/TrustBadges"), {
   loading: () => <TrustSkeleton />,
 });
 
-export const dynamic = "force-dynamic";
+// ISR: homepage is cached and regenerated every 30 minutes instead of
+// hitting the DB on every request. Big TTFB win for the primary SEO landing page.
+export const revalidate = 1800;
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
+  || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
 export const metadata = {
   title: "Bangkok Condos, Apartments & Luxury Properties | New Homes Property",
   description: "Discover neighbourhood properties for rent and sale in Bangkok's best neighborhoods, including Thong Lo, Sathorn, Ari, and Asok. Your trusted Bangkok expat real estate platform.",
   alternates: {
-    canonical: "/",
+    canonical: `${baseUrl}/`,
   },
   openGraph: {
     title: "Bangkok Condos, Apartments & Luxury Properties | New Homes Property",
     description: "Discover neighbourhood properties for rent and sale in Bangkok's best neighborhoods, including Thong Lo, Sathorn, Ari, and Asok. Your trusted Bangkok expat real estate platform.",
-    url: "https://newhomesproperty.com",
+    url: `${baseUrl}/`,
     siteName: "New Homes Property",
     images: [
       {

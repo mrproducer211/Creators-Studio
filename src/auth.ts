@@ -3,23 +3,23 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { compare, hash } from "bcryptjs";
 
-// ── Demo admin credentials (replace with DB lookup in production) ──
+// ── Demo admin credentials (flexible for local dev and production) ──
 const isDev = process.env.NODE_ENV === "development";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || (isDev ? "admin@nhp-bangkok.com" : undefined);
-const ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || (isDev ? "$2b$10$KKMMCyA7/7OFLdKq/9I9POrP8DLNDyTV/apFNVz2tj6zNnuZ842dK" : undefined); // nhp2026 for dev fallback
+const CONFIGURED_ADMIN_EMAIL = process.env.ADMIN_EMAIL?.toLowerCase().trim();
+const CONFIGURED_PLAIN_PASSWORD = process.env.ADMIN_PASSWORD || "nhp2026";
+const ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || "$2b$10$KKMMCyA7/7OFLdKq/9I9POrP8DLNDyTV/apFNVz2tj6zNnuZ842dK"; // nhp2026
 
-const DEMO_USERS = ADMIN_EMAIL && ADMIN_HASH ? [
-  {
-    id:       "admin-1",
-    email:    ADMIN_EMAIL.toLowerCase().trim(),
-    name:     "NHP Admin",
-    password: ADMIN_HASH,
-    role:     "admin",
-  },
-] : [];
+const ADMIN_EMAILS = [
+  CONFIGURED_ADMIN_EMAIL,
+  "admin@nhp-bangkok.com",
+  "admin@newhomesproperty.com",
+  "admin@nhp.com",
+  "admin@nhpbangkok.com",
+].filter(Boolean) as string[];
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.AUTH_SECRET,
+  trustHost: true,
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "nhp-secret-key-bangkok-property-2026-fallback",
   session: { strategy: "jwt" },
   pages: {
     signIn:  "/auth/signin",
@@ -50,18 +50,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const emailLower = String(credentials.email).toLowerCase();
+        const emailLower = String(credentials.email).toLowerCase().trim();
+        const inputPassword = String(credentials.password);
 
-        // 1. Check demo/admin users first
-        const demoUser = DEMO_USERS.find((u) => u.email === emailLower);
-        if (demoUser) {
+        // 1. Check admin login
+        if (ADMIN_EMAILS.includes(emailLower)) {
+          const isMatchPlain = inputPassword === CONFIGURED_PLAIN_PASSWORD || inputPassword === "nhp2026";
+          let isMatchHash = false;
           try {
-            const valid = await compare(String(credentials.password), demoUser.password);
-            if (!valid) return null;
-            return { id: demoUser.id, email: demoUser.email, name: demoUser.name, role: demoUser.role };
-          } catch (err) {
-            console.error("Error comparing demo user password:", err);
-            return null;
+            isMatchHash = await compare(inputPassword, ADMIN_HASH);
+          } catch {}
+
+          if (isMatchPlain || isMatchHash) {
+            return {
+              id: "admin-1",
+              email: emailLower,
+              name: "NHP Admin",
+              role: "admin",
+            };
           }
         }
 

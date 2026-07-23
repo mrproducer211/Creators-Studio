@@ -5,6 +5,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { PropertyCard } from "@/types/property";
 import { useEnquiry } from "@/hooks/useEnquiry";
 import ListingFaqBlock from "@/components/ListingFaqBlock";
+import Reviews from "@/components/property/Reviews";
+import { slugifyBuildingName } from "@/lib/buildingSlug";
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext";
 import { useSaved } from "@/contexts/SavedContext";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
@@ -1813,6 +1815,19 @@ export default function PropertyDetail({
   /* ── Right-sidebar stats (Beds | Baths | Sq Ft | Garage) ── */
   const parkingValue = getDynamicParking(property.description, property.id, property.propertyType).split(" ")[0];
 
+  // Find matching neighborhood pillar page for breadcrumb link
+  const matchingNeighborhood = NEIGHBORHOODS.find((n) => {
+    const areaLower = property.area.toLowerCase().trim();
+    return (
+      n.slug.toLowerCase() === areaLower ||
+      n.name.toLowerCase().trim() === areaLower ||
+      n.aliases?.some((alias) => alias.toLowerCase().trim() === areaLower)
+    );
+  });
+  const neighborhoodHref = matchingNeighborhood
+    ? `/neighborhood/${matchingNeighborhood.slug.toLowerCase()}`
+    : `/explore?area=${encodeURIComponent(property.area)}`;
+
   return (
     <div>
       {property.status === "unlisted" && (
@@ -1829,7 +1844,7 @@ export default function PropertyDetail({
           <span style={{ color: "#ccc" }}>/</span>
           <Link href="/explore" className="no-underline transition-opacity hover:opacity-70" style={{ color: "#999" }}>{listingBadge(property.listingType, lang)}</Link>
           <span style={{ color: "#ccc" }}>/</span>
-          <Link href={`/explore?area=${property.area}`} className="no-underline transition-opacity hover:opacity-70 whitespace-nowrap" style={{ color: "#999" }}>{translateArea(property.area, lang)}</Link>
+          <Link href={neighborhoodHref} className="no-underline transition-opacity hover:opacity-70 whitespace-nowrap" style={{ color: "#999" }}>{translateArea(property.area, lang)}</Link>
           <span style={{ color: "#ccc" }}>/</span>
           <span className="font-semibold whitespace-nowrap" style={{ color: "#1C3A2F" }}>{property.name}</span>
         </div>
@@ -2430,6 +2445,11 @@ export default function PropertyDetail({
 
             </div>
 
+            {/* FAQ section — Mobile view only (placed before Nearby Places) */}
+            <div className="block md:hidden mt-6 mb-2">
+              <ListingFaqBlock property={property} />
+            </div>
+
             {/* ── NEARBY PLACES Section ── */}
             <div className="rounded-2xl p-6 mt-6 mb-8" style={{ background: "#ffffff", border: "none", boxShadow: "none" }}>
               {/* Header */}
@@ -2557,10 +2577,10 @@ export default function PropertyDetail({
                   {property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`} {property.propertyType ? property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1) : "Condo"} for {property.listingType === "sale" ? "Sale" : property.listingType === "short_stay" ? "Short-Term Rent" : "Rent"}
                 </div>
 
-                {/* Property Name Title */}
-                <h1 className="text-[26px] font-bold mb-1.5 leading-tight font-outfit" style={{ color: "#1A1A1A", letterSpacing: "-0.5px" }}>
+                {/* Property Name Title — desktop (mobile has the single <h1> for mobile-first indexing) */}
+                <h2 className="text-[26px] font-bold mb-1.5 leading-tight font-outfit" style={{ color: "#1A1A1A", letterSpacing: "-0.5px" }}>
                   {property.name}
-                </h1>
+                </h2>
 
                 {/* Location — clickable Google Maps link */}
                 <a
@@ -2575,6 +2595,17 @@ export default function PropertyDetail({
                     {formatLocationDisplay(property.district, translateArea(property.area, lang), lang)}
                   </span>
                 </a>
+
+                {/* Building Pillar Page Link */}
+                <div className="mb-3">
+                  <Link
+                    href={`/building/${slugifyBuildingName(property.projectName || property.name)}`}
+                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold no-underline px-2.5 py-1 rounded-lg border transition-all hover:bg-[#FAF8F3]"
+                    style={{ background: "#FFFFFF", color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                  >
+                    <span>🏢 View {property.projectName || property.name} Building Guide & All Units →</span>
+                  </Link>
+                </div>
 
                 {/* Commute Times */}
                 {commutes.length > 0 && (
@@ -2755,8 +2786,10 @@ export default function PropertyDetail({
                   </button>
                 </div>
 
-                {/* FAQ block — removes final hesitation before enquiry */}
-                <ListingFaqBlock property={property} />
+                {/* FAQ block — Desktop view only */}
+                <div className="hidden md:block">
+                  <ListingFaqBlock property={property} />
+                </div>
 
               </div>
 
@@ -2918,6 +2951,15 @@ export default function PropertyDetail({
         >
           {t.sendEnquiry}
         </button>
+      </div>
+
+      {/* Tenant Reviews & Ratings section */}
+      <div className="px-5 md:px-10">
+        <Reviews
+          propertyId={property.id}
+          propertyName={property.name}
+          projectName={property.projectName || property.name}
+        />
       </div>
 
       {/* Recently viewed strip */}

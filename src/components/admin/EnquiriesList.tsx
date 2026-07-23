@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar } from "lucide-react";
+import { Calendar, Trash2 } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
 import type { StoredEnquiry } from "@/lib/store/enquiries";
 import type { LeadUser } from "@/lib/store/leads";
@@ -45,6 +45,19 @@ export default function EnquiriesList({ enquiries, leads }: { enquiries: Extende
         method:  "PATCH",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ status }),
+      });
+      if (res.ok) router.refresh();
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const deleteEnquiryItem = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this enquiry permanently?")) return;
+    setBusyId(id);
+    try {
+      const res = await fetch(`/api/admin/enquiries/${id}`, {
+        method: "DELETE",
       });
       if (res.ok) router.refresh();
     } finally {
@@ -178,6 +191,12 @@ export default function EnquiriesList({ enquiries, leads }: { enquiries: Extende
                     Mark as new
                   </button>
                 )}
+                <button onClick={() => deleteEnquiryItem(e.id)} disabled={busyId === e.id}
+                  className="text-[11px] font-medium cursor-pointer px-2.5 py-1.5 rounded-lg border-none disabled:opacity-50 flex items-center gap-1 text-rose-700 bg-rose-50 hover:bg-rose-100"
+                  style={{ fontFamily: "inherit" }}
+                  title="Delete Enquiry">
+                  <Trash2 size={13} /> Delete
+                </button>
                 <a href={e.method === "Line" ? `https://line.me/ti/p/~${e.contact}` : `https://wa.me/${e.contact.replace(/[^0-9]/g, "")}`}
                   target="_blank" rel="noopener noreferrer"
                   className="text-[11px] font-medium no-underline px-3 py-1.5 rounded-lg ml-auto"

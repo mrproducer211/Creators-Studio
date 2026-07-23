@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
   images: {
-    unoptimized: true,
+    unoptimized: false,
     // Serve AVIF first, then WebP — browsers pick the best they support
     formats: ["image/avif", "image/webp"],
     // Cover all common screen breakpoints + retina
@@ -32,9 +32,35 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**" },
     ],
   },
-  // Add caching headers for public static image assets
+  // Add security headers and caching headers
   async headers() {
     return [
+      {
+        // Global security headers for all routes
+        source: "/:path*",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
       {
         // Cache public images (logos, neighborhood photos) for 7 days
         source: "/images/:path*",
@@ -58,6 +84,26 @@ const nextConfig: NextConfig = {
       {
         source: "/blog/phaya-thai-complete-review",
         destination: "/blog",
+        permanent: true,
+      },
+      // Migrate robots-disallowed /explore?type= filter URLs to crawlable hubs.
+      // Matches /explore?type=sale (and any extra query params, which are dropped).
+      {
+        source: "/explore",
+        has: [{ type: "query", key: "type", value: "sale" }],
+        destination: "/for-sale",
+        permanent: true,
+      },
+      {
+        source: "/explore",
+        has: [{ type: "query", key: "type", value: "rent" }],
+        destination: "/for-rent",
+        permanent: true,
+      },
+      {
+        source: "/explore",
+        has: [{ type: "query", key: "type", value: "short_stay" }],
+        destination: "/short-stay",
         permanent: true,
       },
     ];

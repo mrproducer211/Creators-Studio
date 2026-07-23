@@ -5,18 +5,21 @@ import BlogIndexClient from "@/components/blog/BlogIndexClient";
 import NewsletterCapture from "@/components/blog/NewsletterCapture";
 import { Suspense } from "react";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
+  || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
 export const metadata = {
   title: "Bangkok Property Guides & Expat Tips — NHP Blog",
   description: "Expert guides on living in Bangkok — neighbourhood comparisons, rental prices, digital nomad tips and family relocation advice from the NHP team.",
   alternates: {
-    canonical: "/blog",
+    canonical: `${baseUrl}/blog`,
   },
   openGraph: {
     title: "Bangkok Property Guides & Expat Tips — NHP Blog",
     description: "Expert guides on living in Bangkok — neighbourhood comparisons, rental prices, digital nomad tips and family relocation advice from the NHP team.",
-    url: "https://newhomesproperty.com/blog",
+    url: `${baseUrl}/blog`,
     siteName: "New Homes Property",
     images: [
       {
@@ -38,8 +41,34 @@ export const metadata = {
 
 export default async function BlogPage() {
   const POSTS = await getAllPosts();
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": `${baseUrl}/blog`
+      }
+    ]
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Navbar />
       <main style={{ paddingTop: 56, background: "#F7F3EC", minHeight: "100vh" }}>
         {/* Header */}

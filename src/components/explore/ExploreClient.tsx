@@ -155,17 +155,41 @@ function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] 
   return result;
 }
 
-export default function ExploreClient({ properties }: { properties: PropertyCard[] }) {
+export default function ExploreClient({
+  properties,
+  listingType: initialListingType,
+  heading,
+}: {
+  properties: PropertyCard[];
+  /** Hub pages (e.g. /for-sale) seed the initial filter. URL `?type=` wins if present. */
+  listingType?: ListingType;
+  /** Hub pages pass a custom H1 / eyebrow for SEO. Falls back to dynamic title. */
+  heading?: { eyebrow?: string; title?: string };
+}) {
   const { t, lang } = useLanguage();
   const searchParams = useSearchParams();
-  const [filters, setFilters] = useState<ExploreFilters>(() => filtersFromParams(searchParams));
+  const [filters, setFilters] = useState<ExploreFilters>(() => {
+    const fromParams = filtersFromParams(searchParams);
+    // Seed from the hub's listing type only if no type was provided in the URL.
+    if (initialListingType && fromParams.listingType === "all") {
+      return { ...fromParams, listingType: initialListingType };
+    }
+    return fromParams;
+  });
 
   // Re-sync if URL params change (clicking Buy → Rent in nav)
   useEffect(() => {
     Promise.resolve().then(() => {
-      setFilters((prev) => ({ ...prev, ...filtersFromParams(searchParams) }));
+      setFilters((prev) => {
+        const next = filtersFromParams(searchParams);
+        // Hub's listing type acts as the default when the URL has no type param.
+        if (initialListingType && next.listingType === "all") {
+          next.listingType = initialListingType;
+        }
+        return { ...prev, ...next };
+      });
     });
-  }, [searchParams]);
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = useMemo(() => applyFilters(properties, filters), [properties, filters]);
   const update = (patch: Partial<ExploreFilters>) => setFilters((p) => ({ ...p, ...patch }));
@@ -231,13 +255,13 @@ export default function ExploreClient({ properties }: { properties: PropertyCard
           className="text-[11px] font-semibold uppercase tracking-[1.5px] mb-2"
           style={{ color: "#C9A84C" }}
         >
-          {t.explore.allProperties}
+          {heading?.eyebrow ?? t.explore.allProperties}
         </div>
         <h1
           className="text-[26px] font-bold leading-[1.25] mb-2"
           style={{ color: "#FFFFFF", letterSpacing: "-0.5px" }}
         >
-          {dynamicTitle}
+          {heading?.title ?? dynamicTitle}
         </h1>
         <p className="text-[13px] font-light" style={{ color: "rgba(255,255,255,0.6)" }}>
           {filtered.length} {t.explore.subtitle}

@@ -14,6 +14,7 @@ import {
 export const listingTypeEnum = pgEnum("listing_type", ["sale", "rent", "short_stay"]);
 export const propertyTypeEnum = pgEnum("property_type", ["condo", "house", "villa", "townhouse", "apartment"]);
 export const statusEnum = pgEnum("status", ["active", "sold", "rented", "draft"]);
+export const reviewStatusEnum = pgEnum("review_status", ["pending", "published", "rejected"]);
 
 export const properties = pgTable("properties", {
   id:           serial("id").primaryKey(),
@@ -212,6 +213,28 @@ export const systemSettings = pgTable("system_settings", {
   updatedAt:           timestamp("updated_at").notNull().defaultNow(),
 });
 
+/**
+ * Property reviews — backs the `aggregateRating` JSON-LD (Google star rich results).
+ * Submitted by logged-in users (status starts as "pending"), moderated by admin.
+ * One review per user per property (unique index). Never fabricated —
+ * aggregateRating only renders when reviewCount >= 1.
+ */
+export const reviews = pgTable("reviews", {
+  id:          serial("id").primaryKey(),
+  propertyId:  integer("property_id").references(() => properties.id, { onDelete: "cascade" }).notNull(),
+  userId:      varchar("user_id", { length: 100 }),         // leads.id (nullable for deleted users)
+  authorName:  varchar("author_name", { length: 200 }).notNull(),
+  authorEmail: varchar("author_email", { length: 255 }),
+  rating:      integer("rating").notNull(),                 // 1-5
+  title:       varchar("title", { length: 200 }),
+  body:        text("body"),
+  status:      reviewStatusEnum("status").notNull().default("pending"),
+  createdAt:   timestamp("created_at").notNull().defaultNow(),
+  updatedAt:   timestamp("updated_at").notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex("review_user_property_uniq_idx").on(t.userId, t.propertyId),
+]);
+
 export type Property  = typeof properties.$inferSelect;
 export type NewProperty = typeof properties.$inferInsert;
 export type Enquiry   = typeof enquiries.$inferSelect;
@@ -236,5 +259,7 @@ export type ShortlistComment = typeof shortlistComments.$inferSelect;
 export type NewShortlistComment = typeof shortlistComments.$inferInsert;
 export type LeadUserTable = typeof leads.$inferSelect;
 export type NewLeadUserTable = typeof leads.$inferInsert;
+export type Review = typeof reviews.$inferSelect;
+export type NewReview = typeof reviews.$inferInsert;
 
 

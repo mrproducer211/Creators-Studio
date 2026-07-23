@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyDetail from "@/components/property/PropertyDetail";
 import { getDbProperties } from "@/lib/db/dbLoader";
+import { getAggregateRatingForProperty } from "@/lib/store/reviews";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
 
 import { generateCleanSeoSlug } from "@/lib/seoEnricher";
@@ -206,34 +207,61 @@ export default async function PropertyPage({ params }: Props) {
     }
   }
 
-  const unitType = (property.propertyType === "condo" || property.propertyType === "apartment") ? "Apartment" : "Residence";
+  const unitType = (property.propertyType === "condo" || property.propertyType === "apartment") ? "Apartment" : "House";
 
-  // Structured Data (JSON-LD) for RealEstateListing
-  const jsonLd = {
+  // Offer availability derived from listing status
+  const availability = property.status === "sold" || property.status === "rented"
+    ? "https://schema.org/OutOfStock"
+    : "https://schema.org/InStock";
+
+  // Business function: sale vs rent/lease
+  const businessFunction = property.listingType === "sale"
+    ? "https://schema.org/Sell"
+    : "https://schema.org/RentOut";
+
+  const aggregate = await getAggregateRatingForProperty(property.id, property.projectName || property.name);
+
+  // Structured Data (JSON-LD): Product + Apartment/House with Offer.
+  // `Product` enables Google price/review rich results; `Apartment`/`House`
+  // adds real-estate semantics and carries the `address` property.
+  // (Replaces the pending `RealEstateListing` type Google's validator rejects.)
+  const jsonLd: Record<string, any> = {
     "@context": "https://schema.org",
-    "@type": "RealEstateListing",
+    "@type": ["Product", unitType],
     "name": property.name,
     "description": property.description,
     "url": `${baseUrl}/property/${property.slug}`,
     "image": schemaImages,
-    "about": {
-      "@type": unitType,
-      "name": property.name,
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": property.district || property.area,
-        "addressRegion": "Bangkok",
-        "addressCountry": "TH",
-      },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": property.district || property.area,
+      "addressRegion": "Bangkok",
+      "addressCountry": "TH",
     },
     "offers": {
       "@type": "Offer",
       "priceCurrency": "THB",
       "price": property.priceTHB,
       "url": `${baseUrl}/property/${property.slug}`,
+      "availability": availability,
+      "businessFunction": businessFunction,
       "category": property.listingType === "sale" ? "sale" : "rent",
+      "itemOffered": {
+        "@type": unitType,
+        "name": property.name,
+      },
     },
   };
+
+  if (aggregate.reviewCount > 0) {
+    jsonLd.aggregateRating = {
+      "@type": "AggregateRating",
+      "ratingValue": aggregate.ratingValue,
+      "reviewCount": aggregate.reviewCount,
+      "bestRating": "5",
+      "worstRating": "1",
+    };
+  }
 
   // Find matching neighborhood to link to /neighborhood/[slug] instead of /explore?area={area}
   const matchingNeighborhood = NEIGHBORHOODS.find((n) => {

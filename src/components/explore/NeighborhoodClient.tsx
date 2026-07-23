@@ -3,15 +3,17 @@
 import { useState, useMemo } from "react";
 import { PropertyCard } from "@/types/property";
 import { Neighborhood, NEIGHBORHOODS } from "@/data/neighborhoods";
+import { BlogPost } from "@/data/blogPosts";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSaved } from "@/contexts/SavedContext";
 import { T_NEIGHBORHOOD } from "@/data/neighborhoodTranslations";
 import Link from "next/link";
 import Image from "next/image";
-import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home } from "lucide-react";
+import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home, BookOpen } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
 import { getCanonicalArea } from "@/lib/area";
+
 function VibeCard({ card }: { card: { title: string; subtitle: string; image: string } }) {
   const [src, setSrc] = useState(card.image);
   return (
@@ -41,6 +43,7 @@ function VibeCard({ card }: { card: { title: string; subtitle: string; image: st
 interface Props {
   neighborhood: Neighborhood;
   initialProperties: PropertyCard[];
+  relatedPosts?: BlogPost[];
 }
 
 const NEIGHBORHOOD_METADATA: Record<string, {
@@ -561,7 +564,7 @@ const DEFAULT_METADATA = {
   lifestyleDesc: "A perfect blend of lifestyle and local culture. The neighborhood is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok."
 };
 
-export default function NeighborhoodClient({ neighborhood, initialProperties }: Props) {
+export default function NeighborhoodClient({ neighborhood, initialProperties, relatedPosts = [] }: Props) {
   const { t, lang } = useLanguage();
   const { formatPrice } = useCurrency();
   const { isSaved: isPropertySaved, toggle: togglePropertySave } = useSaved();
@@ -1083,52 +1086,61 @@ export default function NeighborhoodClient({ neighborhood, initialProperties }: 
         </section>
       )}
 
-
-
-      {nearbyNeighborhoods.length > 0 && (
-        <section className="w-full px-4 md:px-8 mt-6 text-left mb-8">
+      {/* ── RELATED BLOG POSTS SECTION ── */}
+      {relatedPosts.length > 0 && (
+        <section className="w-full px-4 md:px-8 mt-12 text-left">
           <div className="w-full max-w-[1440px] mx-auto flex flex-col gap-6">
-            <div className="border-b border-[#EDE8DF] pb-3">
-              <span className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">
-                {trans.exploreBangkok}
-              </span>
-              <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
-                {trans.nearbyNeighborhoods}
-              </h2>
+            <div className="flex items-end justify-between border-b border-[#EDE8DF] pb-3">
+              <div>
+                <span className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">
+                  Expat Living Advice
+                </span>
+                <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
+                  Guides & Expat Tips for {nName}
+                </h2>
+              </div>
+              <Link
+                href="/blog"
+                className="text-[12px] font-semibold no-underline pb-px transition-colors duration-150 flex items-center gap-1 hover:text-[#C9A84C]"
+                style={{ color: "#1C3A2F" }}
+              >
+                View All Guides <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {nearbyNeighborhoods.map((n) => {
-                const nTrans = trans.neighborhoods[n.slug.toLowerCase() as keyof typeof trans.neighborhoods];
-                return (
-                  <Link
-                    key={n.slug}
-                    href={`/neighborhood/${n.slug}`}
-                    className="flex flex-col rounded-2xl overflow-hidden shadow-sm border border-[#EDE8DF] group hover:shadow-md transition-shadow no-underline text-left bg-white"
-                  >
-                    <div className="w-full aspect-[16/9] overflow-hidden bg-gray-100 relative">
-                      <Image
-                        src={n.heroImage}
-                        alt={nTrans?.name || n.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 360px"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="flex flex-col rounded-2xl overflow-hidden shadow-sm border border-[#EDE8DF] group hover:shadow-md transition-shadow no-underline text-left bg-white"
+                >
+                  <div className="w-full aspect-[16/9] overflow-hidden bg-gray-100 relative">
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 360px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute top-3 left-3 bg-[#1C3A2F] text-[#C9A84C] text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
+                      {post.category}
                     </div>
-                    <div className="p-4 flex flex-col gap-1 flex-grow">
-                      <h4 className="text-sm font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors">
-                        {nTrans?.name || n.name}
-                      </h4>
-                      <p className="text-xs text-[#C9A84C] italic mb-1">
-                        {nTrans?.personality || n.personality}
-                      </p>
-                      <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">
-                        {nTrans?.description || n.description}
-                      </p>
+                  </div>
+                  <div className="p-5 flex flex-col gap-2 flex-grow">
+                    <h4 className="text-sm md:text-base font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors leading-snug line-clamp-2">
+                      {post.title}
+                    </h4>
+                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                      {post.excerpt || post.metaDesc}
+                    </p>
+                    <div className="mt-auto pt-3 flex items-center justify-between text-[11px] text-gray-400 border-t border-gray-100">
+                      <span className="flex items-center gap-1"><BookOpen className="w-3 h-3 text-[#C9A84C]" /> {post.readTime}</span>
+                      <span className="font-semibold text-[#1C3A2F] group-hover:text-[#C9A84C]">Read Guide →</span>
                     </div>
-                  </Link>
-                );
-              })}
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

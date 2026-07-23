@@ -189,6 +189,87 @@ export default function AboutClient() {
             </div>
           </div>
 
+          {/* Quick Internal Links Grid */}
+          <div
+            className="rounded-2xl p-6 md:p-8 border"
+            style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}
+          >
+            <h2
+              className="text-[20px] md:text-[24px] font-bold mb-1.5"
+              style={{ color: "#1C3A2F" }}
+            >
+              Explore Bangkok Real Estate &amp; Guides
+            </h2>
+            <p className="text-[13px] text-gray-500 mb-5 font-light">
+              Direct links to search listings, explore neighbourhoods, or read expat living guides.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <Link
+                href="/explore?type=rent"
+                className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
+              >
+                <span>Long-Term Rentals</span>
+                <span className="text-[#C9A84C]">→</span>
+              </Link>
+              <Link
+                href="/explore?type=sale"
+                className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
+              >
+                <span>Properties for Sale</span>
+                <span className="text-[#C9A84C]">→</span>
+              </Link>
+              <Link
+                href="/swipe"
+                className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
+              >
+                <span>Neighbourhood Match</span>
+                <span className="text-[#C9A84C]">→</span>
+              </Link>
+              <Link
+                href="/explore?area=Sukhumvit"
+                className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
+              >
+                <span>Sukhumvit Condos</span>
+                <span className="text-[#C9A84C]">→</span>
+              </Link>
+              <Link
+                href="/explore?area=Thong%20Lo"
+                className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
+              >
+                <span>Thong Lo &amp; Ekkamai</span>
+                <span className="text-[#C9A84C]">→</span>
+              </Link>
+              <Link
+                href="/explore?area=Sathorn"
+                className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
+              >
+                <span>Silom &amp; Sathorn</span>
+                <span className="text-[#C9A84C]">→</span>
+              </Link>
+              <Link
+                href="/blog"
+                className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
+              >
+                <span>Bangkok Expat Blog</span>
+                <span className="text-[#C9A84C]">→</span>
+              </Link>
+              <Link
+                href="/frequent-asked-question-faq"
+                className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
+              >
+                <span>FAQ &amp; Help Center</span>
+                <span className="text-[#C9A84C]">→</span>
+              </Link>
+              <Link
+                href="/agent/register"
+                className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
+              >
+                <span>List Your Property</span>
+                <span className="text-[#C9A84C]">→</span>
+              </Link>
+            </div>
+          </div>
+
           {/* CTA */}
           <div
             className="rounded-2xl p-8 text-center"

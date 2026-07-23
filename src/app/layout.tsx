@@ -16,14 +16,42 @@ const inter = Inter({
   preload: true,
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
   || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
+
+// ── Business NAP (Name, Address, Phone) ──────────────────────────────────────
+// Single source of truth for contact details used in schema + footer.
+// UPDATE THESE with your real details. streetAddress/postalCode/geo power
+// local SEO (LocalBusiness schema, map pin, Google Business Profile alignment).
+// TODO(owner): replace placeholders marked PLACEHOLDER with your condo address.
+const BUSINESS_ADDRESS = {
+  streetAddress: "[YOUR STREET ADDRESS — e.g. 123 Sukhumvit Soi 11]", // PLACEHOLDER
+  addressLocality: "Bangkok",
+  addressRegion: "Bangkok",
+  postalCode: "[YOUR POSTAL CODE — e.g. 10110]", // PLACEHOLDER
+  addressCountry: "TH",
+};
+const BUSINESS_PHONE = "+66818794182";
+const BUSINESS_EMAIL = "admin@nhpbangkok.com";
+// Lat/lng of the address — fill in from Google Maps (right-click → coords)
+// or leave PLACEHOLDER and update after geocoding. Used for geo + hasMap.
+const BUSINESS_GEO = { latitude: "13.7563", longitude: "100.5018" }; // PLACEHOLDER (Bangkok centroid)
+const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${BUSINESS_GEO.latitude},${BUSINESS_GEO.longitude}`;
+
+// Bing Webmaster Tools verification code (claim at bing.com/webmasters).
+// TODO(owner): paste your msvalidate.01 value here; leave empty to omit the tag.
+const BING_VERIFICATION = ""; // e.g. "ABC123..."
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: "New Homes Property — Live. Belong. Bangkok.",
   description:
     "Bangkok's neighbourhood property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
+  verification: {
+    // Google is verified via the HTML file in /public; this is a backup tag.
+    google: "",
+    other: BING_VERIFICATION ? { "msvalidate.01": BING_VERIFICATION } : {},
+  },
   openGraph: {
     siteName: "New Homes Property",
     images: [
@@ -42,16 +70,40 @@ export const metadata: Metadata = {
   }
 };
 
-// Site-wide structured data — injected once in the root layout
+// Site-wide structured data — injected once in the root layout.
+// RealEstateAgent (niche) + LocalBusiness (Google local-pack eligibility).
 const orgJsonLd = {
   "@context": "https://schema.org",
-  "@type": "RealEstateAgent",
+  "@type": ["RealEstateAgent", "LocalBusiness"],
   name: "New Homes Property",
   alternateName: ["NHP Bangkok", "NHP"],
   url: baseUrl,
   logo: `${baseUrl}/images/nhp-logo.webp`,
+  image: `${baseUrl}/images/nhp-logo.webp`,
   description:
     "Bangkok's neighbourhood property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
+  telephone: BUSINESS_PHONE,
+  email: BUSINESS_EMAIL,
+  priceRange: "฿฿฿",
+  currenciesAccepted: "THB, USD, EUR, CNY",
+  address: {
+    "@type": "PostalAddress",
+    ...BUSINESS_ADDRESS,
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: BUSINESS_GEO.latitude,
+    longitude: BUSINESS_GEO.longitude,
+  },
+  hasMap: MAPS_URL,
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      opens: "09:00",
+      closes: "20:00",
+    },
+  ],
   areaServed: {
     "@type": "City",
     name: "Bangkok",
@@ -63,6 +115,8 @@ const orgJsonLd = {
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "customer support",
+    telephone: BUSINESS_PHONE,
+    email: BUSINESS_EMAIL,
     areaServed: "TH",
     availableLanguage: ["English", "Thai"],
   },

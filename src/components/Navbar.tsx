@@ -80,6 +80,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-5 text-[13px] font-medium">
           <Link href="/"                      className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.home}</Link>
           <Link href="/explore"               className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.explore}</Link>
+          <Link href="/buildings"             className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>Buildings</Link>
           <Link href="/swipe"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.swipe}</Link>
           <Link href="/explore/match"         className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium flex items-center gap-1" style={{ color: "#1C3A2F", fontWeight: "bold" }}>
             <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" />

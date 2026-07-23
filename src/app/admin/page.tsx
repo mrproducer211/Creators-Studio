@@ -4,13 +4,14 @@ import { getDbProperties, getDbEnquiries, getDbAppointments, get24HourTraffic, g
 import { getAllPosts } from "@/lib/store/blog";
 import { requireAdmin } from "@/lib/auth-helpers";
 import { getAllAgents } from "@/lib/store/leads";
+import { getSubscribers } from "@/lib/store/newsletter";
 
 export default async function AdminDashboard() {
   // Guard the page to allow admin access only
   await requireAdmin();
 
   // Load live DB stats with fallback
-  const [properties, enquiries, posts, appointments, pageViews, auditLogs, agents] = await Promise.all([
+  const [properties, enquiries, posts, appointments, pageViews, auditLogs, agents, subscribers] = await Promise.all([
     getDbProperties(),
     getDbEnquiries(),
     getAllPosts(),
@@ -18,7 +19,10 @@ export default async function AdminDashboard() {
     get24HourTraffic(),
     getDbAuditLogs(),
     getAllAgents(),
+    getSubscribers(),
   ]);
+
+  const totalSubscribers = subscribers.length;
 
   const totalAgents = agents.length;
   const pendingAgents = agents.filter((a) => (a.agentStatus || "pending") === "pending").length;
@@ -117,8 +121,9 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <StatCard label="Total Enquiries" value={totalEnq} hint={`${unreadEnq} unread leads`} />
+        <StatCard label="Newsletter Subscribers" value={totalSubscribers} hint="Active subscribers" />
         <StatCard label="Blog Articles" value={posts.length} />
         <StatCard label="Neighborhoods" value={new Set(properties.map((p) => p.area)).size} />
         <StatCard label="Pending Agents" value={pendingAgents} hint={`${totalAgents} total agents`} />

@@ -1,12 +1,13 @@
 import { redirect } from "next/navigation";
 import { getDbProperties } from "@/lib/db/dbLoader";
+import { getAllPosts } from "@/lib/store/blog";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
 import { NEIGHBORHOOD_GUIDES } from "@/data/neighborhoodGuides";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NeighborhoodClient from "@/components/explore/NeighborhoodClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -72,7 +73,28 @@ export default async function NeighborhoodPage({ params }: Props) {
   }
 
   const allProperties = await getDbProperties();
+  const allPosts = await getAllPosts();
   const guide = NEIGHBORHOOD_GUIDES[slug.toLowerCase()];
+
+  // Query top 3 related blog posts for this neighborhood
+  const nNameLower = neighborhood.name.toLowerCase();
+  const nSlugLower = neighborhood.slug.toLowerCase();
+  let relatedPosts = allPosts.filter((post) => {
+    const title = post.title.toLowerCase();
+    const desc = (post.excerpt || post.metaDesc || "").toLowerCase();
+    const keywords = post.keywords ? post.keywords.map((k) => k.toLowerCase()) : [];
+    return (
+      title.includes(nNameLower) ||
+      desc.includes(nNameLower) ||
+      keywords.some((k) => k.includes(nNameLower) || k.includes(nSlugLower))
+    );
+  });
+  if (relatedPosts.length < 3) {
+    const otherPosts = allPosts.filter((p) => !relatedPosts.some((r) => r.slug === p.slug));
+    relatedPosts = [...relatedPosts, ...otherPosts].slice(0, 3);
+  } else {
+    relatedPosts = relatedPosts.slice(0, 3);
+  }
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
     || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
@@ -171,7 +193,7 @@ export default async function NeighborhoodPage({ params }: Props) {
       )}
       <Navbar />
       <main className="min-h-screen" style={{ background: "#FAF8F3", paddingTop: "56px" }}>
-        <NeighborhoodClient neighborhood={neighborhood} initialProperties={allProperties} />
+        <NeighborhoodClient key={neighborhood.slug} neighborhood={neighborhood} initialProperties={allProperties} relatedPosts={relatedPosts} />
       </main>
       <Footer />
     </>

@@ -34,14 +34,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  // Validate required fields
-  const { propertySlug, propertyName, name, contact, method, source } = body;
+  // Validate and sanitize required fields
+  const propertySlug = String(body.propertySlug || "").trim();
+  const propertyName = String(body.propertyName || "").trim();
+  const name = String(body.name || "").trim();
+  const contact = String(body.contact || "").trim();
+  const method = String(body.method || "").trim();
+  const source = String(body.source || "").trim();
+  const message = body.message ? String(body.message).trim().slice(0, 2000) : undefined;
+
   if (!propertySlug || !propertyName || !name || !contact || !method || !source) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
   }
   if (name.length > 200 || contact.length > 200) {
     return NextResponse.json({ error: "Input too long." }, { status: 400 });
   }
+
+  // Update body with sanitized fields
+  body.propertySlug = propertySlug;
+  body.propertyName = propertyName;
+  body.name = name;
+  body.contact = contact;
+  body.method = method as any;
+  body.source = source as any;
+  body.message = message;
 
   // Fetch session to check role
   const session = await auth();
