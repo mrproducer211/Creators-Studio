@@ -33,7 +33,9 @@ import {
   Calendar,
   Footprints,
   Car,
-  TrainFront
+  TrainFront,
+  Building2,
+  ChevronRight,
 } from "lucide-react";
 
 const CommuteMap = dynamic(() => import("./CommuteMap"), { ssr: false });
@@ -880,21 +882,15 @@ function Gallery({
         >
           {(rawImages.length > 0 ? rawImages : [""]).map((src, idx) => (
             <div key={idx} className="w-full h-full flex-shrink-0 relative">
-              {src && !imgErrors[idx] ? (
-                <Image
-                  src={src}
-                  alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: idx })}
-                  fill
-                  priority={idx === 0}
-                  sizes="(max-width: 768px) 100vw, 800px"
-                  className="object-cover"
-                  onError={() => setImgErrors((e) => ({ ...e, [idx]: true }))}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-[#1C3A2F]">
-                  <span className="text-8xl font-black" style={{ color: "rgba(255,255,255,0.06)", letterSpacing: "-8px" }}>NHP</span>
-                </div>
-              )}
+              <Image
+                src={!imgErrors[idx] && src ? src : "/images/homepage_hero_v2.webp"}
+                alt={getDescriptiveAltText({ bedrooms, propertyType, listingType, area, index: idx })}
+                fill
+                priority={idx === 0}
+                sizes="(max-width: 768px) 100vw, 800px"
+                className="object-cover"
+                onError={() => setImgErrors((e) => ({ ...e, [idx]: true }))}
+              />
             </div>
           ))}
         </div>
@@ -1615,6 +1611,9 @@ export default function PropertyDetail({
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [rawHubs, setRawHubs] = useState<StoredCommuteHub[]>([]);
 
+  const buildingName = property.projectName || property.name;
+  const buildingSlug = slugifyBuildingName(buildingName);
+
   // Custom commute calculator states
   const [customLocationName, setCustomLocationName] = useState("");
   const [customMode, setCustomMode] = useState<"transit" | "driving" | "walking">("transit");
@@ -1924,6 +1923,30 @@ export default function PropertyDetail({
                       <span>{c.minutes}{lang === "en" ? "m" : lang === "th" ? " นาที" : "分钟"} {lang === "en" ? "to" : lang === "th" ? "ไปยัง" : "至"} {c.name}</span>
                     </span>
                   ))}
+                </div>
+              )}
+
+              {/* Condo Building Profile CTA — Mobile Header */}
+              {buildingSlug && (
+                <div className="mt-3">
+                  <Link
+                    href={`/building/${buildingSlug}`}
+                    className="flex items-center justify-between p-2.5 px-3.5 rounded-xl no-underline transition-all group border shadow-xs"
+                    style={{ background: "#1C3A2F", borderColor: "#1C3A2F" }}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-black/40 flex items-center justify-center text-[#C9A84C] border border-[#C9A84C]/30 flex-shrink-0">
+                        <Building2 size={14} />
+                      </div>
+                      <div className="text-left min-w-0">
+                        <span className="text-[9px] uppercase font-bold text-[#C9A84C] tracking-wider block leading-none">Condo Building Profile</span>
+                        <span className="text-[12px] font-bold text-white group-hover:text-[#C9A84C] transition-colors truncate block mt-0.5">{buildingName}</span>
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-bold text-[#C9A84C] flex items-center gap-1 group-hover:translate-x-1 transition-transform whitespace-nowrap ml-2">
+                      View Building →
+                    </span>
+                  </Link>
                 </div>
               )}
             </div>

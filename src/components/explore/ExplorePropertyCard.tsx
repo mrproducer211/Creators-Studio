@@ -135,20 +135,14 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
     >
       {/* Image */}
       <div className="relative h-[190px] overflow-hidden flex-shrink-0">
-        {property.coverImage && !imgErr ? (
-          <Image
-            src={property.coverImage}
-            alt={stripEmojis(property.name)}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            onError={() => setImgErr(true)}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center" style={{ background: fallback }}>
-            <span className="text-[48px] font-black select-none" style={{ color: "rgba(255,255,255,0.07)", letterSpacing: "-3px" }}>NHP</span>
-          </div>
-        )}
+        <Image
+          src={!imgErr && property.coverImage ? property.coverImage : "/images/homepage_hero_v2.webp"}
+          alt={stripEmojis(property.name)}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          onError={() => setImgErr(true)}
+        />
 
         {/* Badges */}
         <span className="absolute top-3 left-3 px-2.5 py-[3px] rounded-full text-[10px] font-semibold uppercase tracking-[0.5px]" style={badgeStyle(property.listingType)}>

@@ -58,7 +58,7 @@ export default function Reviews({ propertyId, propertyName, projectName }: Props
 
         <button
           onClick={() => setShowForm(!showForm)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs border transition-all shadow-xs cursor-pointer self-start sm:self-auto"
+          className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs border transition-all shadow-xs cursor-pointer self-start sm:self-auto"
           style={{
             background: showForm ? "#FAF8F3" : "#1C3A2F",
             color: showForm ? "#1C3A2F" : "#FFFFFF",
