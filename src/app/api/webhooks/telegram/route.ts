@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
 import { db, isDbConfigured } from "@/lib/db";
 import { properties as propertiesTable } from "@/lib/db/schema";
@@ -1036,14 +1037,33 @@ async function publishDraftListing(
       
       updatedProperty = updated;
     }
+
+    // Trigger instant Next.js cache revalidation so new Telegram posts reflect immediately
+    try {
+      revalidatePath("/property/[slug]", "page");
+      revalidatePath("/explore");
+      revalidatePath("/for-rent");
+      revalidatePath("/for-sale");
+      revalidatePath("/short-stay");
+      revalidatePath("/condos");
+      revalidatePath("/apartments");
+      revalidatePath("/villas");
+      revalidatePath("/buildings");
+      revalidatePath("/");
+    } catch (e) {
+      console.error("Revalidation error after Telegram post:", e);
+    }
   }
+
+  const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXTAUTH_URL || "https://newhomesproperty.com";
+  const baseUrl = rawSiteUrl.replace(/\/$/, "").replace("http://localhost:3000", "https://newhomesproperty.com");
 
   if (chatId) {
     const types = propertyData.listingTypes || [propertyData.listingType];
     if (types.length > 1) {
       let successText = `<b>✅ Multiple Listings Posted Successfully!</b>\n\n🏠 <b>Property:</b> ${propertyData.name}\n📍 <b>Area:</b> ${propertyData.area}\n\n`;
       for (const t of types) {
-        const typeUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/property/${propertyData.slug}-${t}`;
+        const typeUrl = `${baseUrl}/property/${propertyData.slug}-${t}`;
         const price = t === "sale" ? propertyData.salePrice : (t === "rent" ? propertyData.rentPrice : propertyData.shortStayPrice);
         const priceStr = Number(price).toLocaleString();
         const label = t === "sale" ? "For Sale" : (t === "rent" ? "For Rent" : "Short Stay");
@@ -1053,7 +1073,7 @@ async function publishDraftListing(
       }
       await sendTelegramResponse(botToken, chatId, successText.trim(), messageId);
     } else {
-      const propertyUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/property/${propertyData.slug}`;
+      const propertyUrl = `${baseUrl}/property/${propertyData.slug}`;
       const propName = propertyData.name;
       const propPrice = Number(propertyData.priceTHB).toLocaleString();
       const propArea = propertyData.area;
