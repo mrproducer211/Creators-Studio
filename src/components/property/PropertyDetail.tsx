@@ -1370,29 +1370,103 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
 
   const step: "pick" | "done" = status === "done" ? "done" : "pick";
 
-  /* ── Calendar logic ── */
-  const today        = new Date();
-  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const year         = today.getFullYear();
-  const month        = today.getMonth();
-  const monthLabel   = today.toLocaleDateString(lang === "en" ? "en-GB" : lang === "th" ? "th-TH" : "zh-CN", { month: "long", year: "numeric" });
-  const daysInMonth  = new Date(year, month + 1, 0).getDate();
-  const firstWeekday = new Date(year, month, 1).getDay(); // 0=Sun..6=Sat
+  /* ── Dropdown Date Picker Logic ── */
+  const MONTHS = useMemo(() => [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ], []);
 
-  // Selectable window: today + next 7 days, BUT only if within current month
-  const maxDate = new Date(year, month, today.getDate() + 7);
-  const isSelectable = (day: number) => {
-    const d = new Date(year, month, day);
-    return d >= todayMidnight && d <= maxDate;
+  const today = useMemo(() => new Date(), []);
+  const currentYear = today.getFullYear();
+
+  const [selMonth, setSelMonth] = useState<string>("");
+  const [selDay, setSelDay]   = useState<string>("");
+  const [selYear, setSelYear]  = useState<string>("");
+  const [agentMsg, setAgentMsg] = useState<string>("");
+
+  function daysInMonth(m: number, y: number) {
+    if (!m) return 31;
+    const yr = y || currentYear;
+    return new Date(yr, m, 0).getDate();
+  }
+
+  // Pre-fill date to tomorrow on mount
+  useEffect(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    const m = String(tomorrow.getMonth() + 1);
+    const d = String(tomorrow.getDate());
+    const y = String(tomorrow.getFullYear());
+    setSelMonth(m);
+    setSelDay(d);
+    setSelYear(y);
+    const formattedM = m.padStart(2, "0");
+    const formattedD = d.padStart(2, "0");
+    setDate(`${y}-${formattedM}-${formattedD}`);
+  }, [today]);
+
+  const years = useMemo(
+    () => [currentYear, currentYear + 1],
+    [currentYear]
+  );
+
+  const maxDay = daysInMonth(Number(selMonth), Number(selYear));
+  const days = useMemo(
+    () => Array.from({ length: maxDay }, (_, i) => i + 1),
+    [maxDay]
+  );
+
+  const handleDayChange = (v: string) => {
+    setSelDay(v);
+    updateIso(v, selMonth, selYear);
   };
 
+  const handleMonthChange = (v: string) => {
+    setSelMonth(v);
+    let newDay = selDay;
+    if (selDay && Number(selDay) > daysInMonth(Number(v), Number(selYear))) {
+      newDay = "";
+      setSelDay("");
+    }
+    updateIso(newDay, v, selYear);
+  };
+
+  const handleYearChange = (v: string) => {
+    setSelYear(v);
+    let newDay = selDay;
+    if (selDay && Number(selDay) > daysInMonth(Number(selMonth), Number(v))) {
+      newDay = "";
+      setSelDay("");
+    }
+    updateIso(newDay, selMonth, v);
+  };
+
+  const updateIso = (d: string, m: string, y: string) => {
+    if (d && m && y) {
+      const formattedM = m.padStart(2, "0");
+      const formattedD = d.padStart(2, "0");
+      setDate(`${y}-${formattedM}-${formattedD}`);
+    } else {
+      setDate(null);
+    }
+  };
+
+  const isDateComplete = Boolean(selDay && selMonth && selYear);
+  const formattedDateString = isDateComplete
+    ? `${selDay} ${MONTHS[Number(selMonth) - 1]} ${selYear}`
+    : null;
+
   const times = ["09:00", "10:30", "12:00", "13:30", "15:00", "16:30", "18:00"];
-  const weekdays = lang === "en" ? ["S", "M", "T", "W", "T", "F", "S"] : lang === "th" ? ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"] : ["日", "一", "二", "三", "四", "五", "六"];
 
   const { formatPrice: formatPriceFn } = useCurrency();
 
   const submit = async () => {
     if (!selDate || !selTime || !name || !contact) return;
+    const tourDetails = `Tour requested for ${formattedDateString || selDate} at ${selTime}`;
+    const fullMessage = agentMsg.trim()
+      ? `${tourDetails}\n\nMessage to Agent: ${agentMsg.trim()}`
+      : tourDetails;
+
     await sendEnquiry({
       propertySlug: property.slug,
       propertyName: property.name,
@@ -1402,25 +1476,12 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
       name,
       contact,
       method,
-      message:      lang === "en" 
-        ? `Tour requested for ${selDate} at ${selTime}` 
-        : lang === "th" 
-        ? `ขอนัดเข้าชมวันที่ ${selDate} เวลา ${selTime}` 
-        : `申请看房时间为 ${selDate} ${selTime}`,
+      message:      fullMessage,
       source:       "tour",
       tourDate:     selDate,
       tourTime:     selTime,
     });
   };
-
-  // Build the calendar grid: empty cells for days before month start + each day
-  const totalCells = firstWeekday + daysInMonth;
-  const rows = Math.ceil(totalCells / 7);
-  const cells: (number | null)[] = [];
-  for (let i = 0; i < rows * 7; i++) {
-    const day = i - firstWeekday + 1;
-    cells.push(day >= 1 && day <= daysInMonth ? day : null);
-  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4" onClick={onClose}>
@@ -1432,7 +1493,7 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
               <Calendar className="w-12 h-12 text-[#C9A84C] mx-auto mb-3" />
               <p className="text-[18px] font-bold mb-2" style={{ color: "#1C3A2F" }}>{t.tourRequested}</p>
               <p className="text-[13px] font-light mb-1" style={{ color: "#555" }}>
-                {selDate} at {selTime}
+                {formattedDateString || selDate} at {selTime}
               </p>
               <p className="text-[12px] font-light mb-5" style={{ color: "#999" }}>
                 {lang === "en" 
@@ -1455,57 +1516,89 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
                 <button onClick={onClose} className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer border-none text-base" style={{ background: "#EDE8DF", color: "#555", fontFamily: "inherit" }}>✕</button>
               </div>
 
-              {/* ── Calendar ── */}
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-[11px] uppercase tracking-[1px] font-semibold" style={{ color: "#999" }}>{t.pickDate}</p>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FAF8F3] border border-[#EDE8DF]">
-                  <Calendar size={13} className="text-[#C9A84C]" />
-                  <span className="text-[13px] font-bold text-[#1C3A2F]">{monthLabel}</span>
+              {/* ── Date Picker Dropdowns (Month, Day, Year) ── */}
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[11px] uppercase tracking-[1px] font-semibold" style={{ color: "#999" }}>
+                  {t.pickDate || "Pick a Date"}
+                </p>
+                <div className="flex items-center gap-1 text-[11px] font-bold text-[#C9A84C]">
+                  <Calendar size={13} />
+                  <span>Tour Date</span>
                 </div>
               </div>
 
-              <div className="rounded-2xl p-3.5 mb-1" style={{ background: "#FAF8F3", border: "1px solid #EDE8DF" }}>
-                {/* Weekday header */}
-                <div className="grid grid-cols-7 gap-1.5 mb-2.5">
-                  {weekdays.map((w, i) => (
-                    <div key={i} className="text-center text-[10px] font-bold uppercase tracking-[0.5px]" style={{ color: "#999" }}>
-                      {w}
-                    </div>
-                  ))}
+              <div className="grid grid-cols-3 gap-2 mb-2">
+                {/* Month */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.5px] mb-1" style={{ color: "#777" }}>
+                    Month
+                  </label>
+                  <select
+                    value={selMonth}
+                    onChange={(e) => handleMonthChange(e.target.value)}
+                    className="w-full bg-[#F7F3EC] border border-[#E5E0D8] rounded-xl px-2 py-2.5 text-[13px] font-medium outline-none cursor-pointer focus:border-[#1C3A2F]"
+                    style={{ color: "#1C3A2F", fontFamily: "inherit" }}
+                  >
+                    <option value="">Month</option>
+                    {MONTHS.map((m, i) => (
+                      <option key={m} value={i + 1}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                {/* Day grid */}
-                <div className="grid grid-cols-7 gap-1.5">
-                  {cells.map((day, i) => {
-                    if (day == null) return <div key={i} />;
-                    const iso = new Date(year, month, day).toISOString().split("T")[0];
-                    const enabled = isSelectable(day);
-                    const isSel   = selDate === iso;
-                    const isToday = day === today.getDate();
-                    return (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => enabled && setDate(iso)}
-                        disabled={!enabled}
-                        className="aspect-square rounded-xl text-[13px] font-bold cursor-pointer border-none transition-all relative flex items-center justify-center shadow-2xs"
-                        style={{
-                          background: isSel ? "#1C3A2F" : enabled ? "#FFFFFF" : "transparent",
-                          color:      isSel ? "#C9A84C" : enabled ? "#1C3A2F" : "#CCC",
-                          opacity:    enabled ? 1 : 0.35,
-                          cursor:     enabled ? "pointer" : "not-allowed",
-                          fontFamily: "inherit",
-                          border:     isToday && !isSel ? "1.5px solid #C9A84C" : isSel ? "1.5px solid #1C3A2F" : "1px solid #EDE8DF",
-                        }}
-                      >
-                        {day}
-                      </button>
-                    );
-                  })}
+
+                {/* Day */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.5px] mb-1" style={{ color: "#777" }}>
+                    Day
+                  </label>
+                  <select
+                    value={selDay}
+                    onChange={(e) => handleDayChange(e.target.value)}
+                    className="w-full bg-[#F7F3EC] border border-[#E5E0D8] rounded-xl px-2 py-2.5 text-[13px] font-medium outline-none cursor-pointer focus:border-[#1C3A2F]"
+                    style={{ color: "#1C3A2F", fontFamily: "inherit" }}
+                  >
+                    <option value="">Day</option>
+                    {days.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Year */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.5px] mb-1" style={{ color: "#777" }}>
+                    Year
+                  </label>
+                  <select
+                    value={selYear}
+                    onChange={(e) => handleYearChange(e.target.value)}
+                    className="w-full bg-[#F7F3EC] border border-[#E5E0D8] rounded-xl px-2 py-2.5 text-[13px] font-medium outline-none cursor-pointer focus:border-[#1C3A2F]"
+                    style={{ color: "#1C3A2F", fontFamily: "inherit" }}
+                  >
+                    <option value="">Year</option>
+                    {years.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
-              <p className="text-[10px] mb-5 font-medium" style={{ color: "#888" }}>
-                {t.selectDate7Days || "Select a date within the next 7 days."}
-              </p>
+
+              {/* Selection Result Badge */}
+              <div
+                className={`mb-5 rounded-xl px-3.5 py-2 text-[12px] font-semibold text-center transition-all duration-200 ${
+                  isDateComplete
+                    ? "bg-[#1C3A2F]/10 text-[#1C3A2F] border border-[#1C3A2F]/20"
+                    : "bg-[#FAF8F3] text-gray-400 border border-[#EDE8DF]"
+                }`}
+              >
+                {formattedDateString ? `Selected Date: ${formattedDateString}` : "Select Month, Day, and Year"}
+              </div>
 
               {/* ── Time ── */}
               <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2.5" style={{ color: "#999" }}>{t.pickTime}</p>
@@ -1566,6 +1659,25 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
                   style={{ border: "1.5px solid #E5E0D8", background: "#F7F3EC", color: "#1A1A1A", fontFamily: "inherit" }}
                 />
               </div>
+
+              {/* ── Message to Agent ── */}
+              <p className="text-[11px] uppercase tracking-[1px] font-semibold mb-2" style={{ color: "#999" }}>
+                Message to Agent
+              </p>
+              <textarea
+                value={agentMsg}
+                onChange={(e) => setAgentMsg(e.target.value)}
+                placeholder={
+                  lang === "en"
+                    ? "Add any notes or special questions for the agent..."
+                    : lang === "th"
+                    ? "ข้อความถึงเอเจนต์..."
+                    : "给中介的留言..."
+                }
+                rows={2}
+                className="w-full rounded-xl px-4 py-2.5 text-[13px] outline-none resize-none mb-4 font-medium"
+                style={{ border: "1.5px solid #E5E0D8", background: "#F7F3EC", color: "#1A1A1A", fontFamily: "inherit" }}
+              />
 
               {errorMsg && (
                 <p className="text-[12px] mb-3 px-1 flex items-center gap-1" style={{ color: "#E05252" }}>
