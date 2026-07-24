@@ -1013,7 +1013,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties, re
       </section>
 
       {/* ── ONE-DAY LIFE PREVIEW SECTION ── */}
-      {neighborhood.dayItinerary && neighborhood.dayItinerary.length > 0 && (
+      {false && (
         <section className="px-4 md:px-8 mt-8">
           <div className="w-full max-w-[1440px] mx-auto bg-[#FFFFFF] p-6 md:p-8 rounded-3xl border border-[#EDE8DF] shadow-sm text-left">
             <h3 className="text-sm font-bold uppercase tracking-wider text-[#1C3A2F] mb-6 pb-2 border-b border-[#EDE8DF] flex items-center gap-2 font-outfit">
