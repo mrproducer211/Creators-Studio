@@ -17,7 +17,7 @@ const BUSINESS_NAP = {
 };
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { lang, setLang, t } = useLanguage();
   const { currency, setCurrency } = useCurrency();
   const [contacts, setContacts] = useState({
     adminWhatsApp: BUSINESS_NAP.phoneHref,
@@ -50,34 +50,34 @@ export default function Footer() {
       ],
     },
     {
-      heading: "Prime Areas",
+      heading: t.footer.primeAreas,
       items: [
-        { label: "Sukhumvit", href: "/neighborhood/sukhumvit" },
-        { label: "Thong Lo & Ekkamai", href: "/neighborhood/thong-lo" },
-        { label: "Asok & Phrom Phong", href: "/neighborhood/asok" },
-        { label: "Silom & Sathorn", href: "/neighborhood/sathorn" },
-        { label: "On Nut & Phra Khanong", href: "/neighborhood/on-nut" },
+        { label: t.footer.sukhumvit, href: "/neighborhood/sukhumvit" },
+        { label: t.footer.thongLoEkkamai, href: "/neighborhood/thong-lo" },
+        { label: t.footer.asokPhromPhong, href: "/neighborhood/asok" },
+        { label: t.footer.silomSathorn, href: "/neighborhood/sathorn" },
+        { label: t.footer.onNutPhraKhanong, href: "/neighborhood/on-nut" },
       ],
     },
     {
-      heading: "More Neighborhoods",
+      heading: t.footer.moreNeighborhoods,
       items: [
-        { label: "Ari & Phaya Thai", href: "/neighborhood/ari" },
-        { label: "Rama 9 & Ratchada", href: "/neighborhood/rama-9" },
-        { label: "Riverside & Charoenkrung", href: "/neighborhood/charoenkrung" },
-        { label: "Bang Na & Udom Suk", href: "/neighborhood/bang-na" },
-        { label: "Huai Khwang & Chatuchak", href: "/neighborhood/huai-khwang" },
+        { label: t.footer.ariPhayaThai, href: "/neighborhood/ari" },
+        { label: t.footer.rama9Ratchada, href: "/neighborhood/rama-9" },
+        { label: t.footer.riversideCharoenkrung, href: "/neighborhood/charoenkrung" },
+        { label: t.footer.bangNaUdomSuk, href: "/neighborhood/bang-na" },
+        { label: t.footer.huaiKhwangChatuchak, href: "/neighborhood/huai-khwang" },
       ],
     },
     {
       heading: t.footer.contact,
       items: [
-        { label: "WhatsApp Support", href: `https://wa.me/${contacts.adminWhatsApp.replace(/[^0-9]/g, "")}` },
-        { label: "LINE Official", href: `https://line.me/ti/p/~${contacts.adminLine}` },
+        { label: t.footer.whatsAppSupport, href: `https://wa.me/${contacts.adminWhatsApp.replace(/[^0-9]/g, "")}` },
+        { label: t.footer.lineOfficial, href: `https://line.me/ti/p/~${contacts.adminLine}` },
         { label: t.footer.aboutNhp, href: "/about-us" },
-        { label: "FAQ & Help Center", href: "/frequent-asked-question-faq" },
+        { label: t.footer.faqHelpCenter, href: "/faq" },
         { label: t.footer.privacyPolicy, href: "/privacy" },
-        { label: "Join as Agent", href: "/agent/register" },
+        { label: t.footer.joinAsAgent, href: "/agent/register" },
       ],
     },
   ];
@@ -99,8 +99,6 @@ export default function Footer() {
           >
             {t.footer.tagline}
           </p>
-          {/* NAP — visible business address + phone for local SEO consistency.
-              Mirrors the LocalBusiness schema in layout.tsx. */}
           <address
             className="text-xs leading-relaxed font-light max-w-sm mt-3 not-italic"
             style={{ color: "rgba(255,255,255,0.5)" }}
@@ -159,22 +157,44 @@ export default function Footer() {
           }}
         >
           <span>{t.footer.copy}</span>
-          <div className="flex gap-2 flex-wrap items-center">
-            <span className="text-[10px] text-white/40 font-medium mr-1">Currency:</span>
-            {(["THB", "USD", "EUR", "CNY"] as const).map((curr) => (
-              <button
-                key={curr}
-                onClick={() => setCurrency(curr)}
-                className="cursor-pointer border-none text-[10px] font-bold px-2.5 py-1 rounded transition-all"
-                style={{
-                  background: currency === curr ? "#C9A233" : "rgba(255,255,255,0.08)",
-                  color: currency === curr ? "#0F2A20" : "rgba(255,255,255,0.6)",
-                  fontFamily: "inherit",
-                }}
-              >
-                {curr === "THB" ? "฿ THB" : curr === "USD" ? "$ USD" : curr === "EUR" ? "€ EUR" : "¥ CNY"}
-              </button>
-            ))}
+          <div className="flex gap-4 flex-wrap items-center">
+            {/* Language Switcher */}
+            <div className="flex gap-1.5 items-center">
+              <span className="text-[10px] text-white/40 font-medium mr-1">🌐 Language</span>
+              {(["en", "th", "zh"] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className="cursor-pointer border-none text-[10px] font-bold px-2 py-1 rounded transition-all"
+                  style={{
+                    background: lang === l ? "#C9A233" : "rgba(255,255,255,0.08)",
+                    color: lang === l ? "#0F2A20" : "rgba(255,255,255,0.6)",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  {l === "en" ? "EN" : l === "th" ? "TH" : "中文"}
+                </button>
+              ))}
+            </div>
+
+            {/* Currency Switcher */}
+            <div className="flex gap-1.5 items-center">
+              <span className="text-[10px] text-white/40 font-medium mr-1">{t.footer.currency}</span>
+              {(["THB", "USD", "EUR", "CNY"] as const).map((curr) => (
+                <button
+                  key={curr}
+                  onClick={() => setCurrency(curr)}
+                  className="cursor-pointer border-none text-[10px] font-bold px-2 py-1 rounded transition-all"
+                  style={{
+                    background: currency === curr ? "#C9A233" : "rgba(255,255,255,0.08)",
+                    color: currency === curr ? "#0F2A20" : "rgba(255,255,255,0.6)",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  {curr === "THB" ? "฿ THB" : curr === "USD" ? "$ USD" : curr === "EUR" ? "€ EUR" : "¥ CNY"}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

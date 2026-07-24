@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { BlogPost } from "@/data/blogPosts";
 import Link from "next/link";
 import Image from "next/image";
+import { getLocalizedPost } from "@/data/blogTranslations";
 
 const POSTS = [
   {
@@ -101,7 +102,9 @@ export default function BlogSection({ posts }: BlogSectionProps) {
 
       {/* 4-col grid — 1 col mobile → 2 col tablet → 4 col desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {displayPosts.map((post, idx) => (
+        {displayPosts.map((rawPost, idx) => {
+          const post = getLocalizedPost(rawPost, lang);
+          return (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
@@ -159,7 +162,8 @@ export default function BlogSection({ posts }: BlogSectionProps) {
               </div>
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
 
       <div className="sm:hidden mt-5">

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { PropertyCard, ExploreFilters, ListingType } from "@/types/property";
+import { PropertyCard, ExploreFilters, ListingType, PropertyType } from "@/types/property";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Home } from "lucide-react";
 import ExploreFiltersBar from "./ExploreFilters";
@@ -158,11 +158,14 @@ function applyFilters(props: PropertyCard[], f: ExploreFilters): PropertyCard[] 
 export default function ExploreClient({
   properties,
   listingType: initialListingType,
+  propertyType: initialPropertyType,
   heading,
 }: {
   properties: PropertyCard[];
   /** Hub pages (e.g. /for-sale) seed the initial filter. URL `?type=` wins if present. */
   listingType?: ListingType;
+  /** Hub pages (e.g. /condos) seed the initial property type. URL `?propertyType=` wins if present. */
+  propertyType?: PropertyType;
   /** Hub pages pass a custom H1 / eyebrow for SEO. Falls back to dynamic title. */
   heading?: { eyebrow?: string; title?: string };
 }) {
@@ -170,11 +173,15 @@ export default function ExploreClient({
   const searchParams = useSearchParams();
   const [filters, setFilters] = useState<ExploreFilters>(() => {
     const fromParams = filtersFromParams(searchParams);
+    const updated = { ...fromParams };
     // Seed from the hub's listing type only if no type was provided in the URL.
     if (initialListingType && fromParams.listingType === "all") {
-      return { ...fromParams, listingType: initialListingType };
+      updated.listingType = initialListingType;
     }
-    return fromParams;
+    if (initialPropertyType && fromParams.propertyType === "all") {
+      updated.propertyType = initialPropertyType;
+    }
+    return updated;
   });
 
   // Re-sync if URL params change (clicking Buy → Rent in nav)
@@ -247,6 +254,46 @@ export default function ExploreClient({
     return t.explore.title;
   }, [filters, lang, t]);
 
+  const localizedHeading = useMemo(() => {
+    if (filters.listingType === "sale") {
+      return {
+        eyebrow: lang === "th" ? "ซื้ออสังหาฯ ในกรุงเทพฯ" : lang === "zh" ? "曼谷买房" : "Buy in Bangkok",
+        title: lang === "th" ? "อสังหาริมทรัพย์สำหรับขายในกรุงเทพฯ" : lang === "zh" ? "曼谷出售房产" : "Property For Sale in Bangkok"
+      };
+    }
+    if (filters.listingType === "rent") {
+      return {
+        eyebrow: lang === "th" ? "เช่าอสังหาฯ ในกรุงเทพฯ" : lang === "zh" ? "曼谷长租" : "Rent in Bangkok",
+        title: lang === "th" ? "อสังหาริมทรัพย์สำหรับเช่าในกรุงเทพฯ" : lang === "zh" ? "曼谷出租房产" : "Property For Rent in Bangkok"
+      };
+    }
+    if (filters.listingType === "short_stay") {
+      return {
+        eyebrow: lang === "th" ? "เช่าระยะสั้นในกรุงเทพฯ" : lang === "zh" ? "曼谷短租" : "Short Stay in Bangkok",
+        title: lang === "th" ? "อสังหาริมทรัพย์สำหรับเช่าระยะสั้นในกรุงเทพฯ" : lang === "zh" ? "曼谷短租房产" : "Short-Stay Property in Bangkok"
+      };
+    }
+    if (filters.propertyType === "condo") {
+      return {
+        eyebrow: lang === "th" ? "คอนโดในกรุงเทพฯ" : lang === "zh" ? "曼谷公寓" : "Condos in Bangkok",
+        title: lang === "th" ? "คอนโดสำหรับขายและเช่าในกรุงเทพฯ" : lang === "zh" ? "曼谷精选公寓" : "Condos For Sale & Rent in Bangkok"
+      };
+    }
+    if (filters.propertyType === "apartment") {
+      return {
+        eyebrow: lang === "th" ? "อพาร์ทเม้นท์ในกรุงเทพฯ" : lang === "zh" ? "曼谷出租公寓" : "Apartments in Bangkok",
+        title: lang === "th" ? "อพาร์ทเม้นท์สำหรับขายและเช่าในกรุงเทพฯ" : lang === "zh" ? "曼谷精选公寓/套房" : "Apartments For Sale & Rent in Bangkok"
+      };
+    }
+    if (filters.propertyType === "villa" || filters.propertyType === "house") {
+      return {
+        eyebrow: lang === "th" ? "วิลล่าและบ้านในกรุงเทพฯ" : lang === "zh" ? "曼谷别墅与独栋" : "Villas in Bangkok",
+        title: lang === "th" ? "วิลล่าและบ้านสำหรับขายและเช่าในกรุงเทพฯ" : lang === "zh" ? "曼谷精选别墅与豪宅" : "Villas & Houses For Sale & Rent in Bangkok"
+      };
+    }
+    return null;
+  }, [filters.listingType, filters.propertyType, lang]);
+
   return (
     <>
       {/* Forest header — moved from server layout to client component for instant translation */}
@@ -255,13 +302,13 @@ export default function ExploreClient({
           className="text-[11px] font-semibold uppercase tracking-[1.5px] mb-2"
           style={{ color: "#C9A84C" }}
         >
-          {heading?.eyebrow ?? t.explore.allProperties}
+          {localizedHeading?.eyebrow ?? (lang === "en" ? heading?.eyebrow : undefined) ?? t.explore.allProperties}
         </div>
         <h1
           className="text-[26px] font-bold leading-[1.25] mb-2"
           style={{ color: "#FFFFFF", letterSpacing: "-0.5px" }}
         >
-          {heading?.title ?? dynamicTitle}
+          {localizedHeading?.title ?? (lang === "en" ? heading?.title : undefined) ?? dynamicTitle}
         </h1>
         <p className="text-[13px] font-light" style={{ color: "rgba(255,255,255,0.6)" }}>
           {filtered.length} {t.explore.subtitle}

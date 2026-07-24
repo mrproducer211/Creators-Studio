@@ -15,6 +15,20 @@ export interface BlogTranslations {
   }>;
 }
 
+export function getLocalizedBlog<T extends { slug: string; title: string; excerpt: string; category?: string }>(article: T, lang: "en" | "th" | "zh"): T {
+  if (lang === "en" || !article) return article;
+  const loc = T_BLOG[lang]?.posts?.[article.slug];
+  if (loc) {
+    return {
+      ...article,
+      title: loc.title || article.title,
+      excerpt: loc.excerpt || article.excerpt,
+      category: loc.category || article.category,
+    };
+  }
+  return article;
+}
+
 export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
   en: {
     localGuides: "Local Guides",
@@ -155,6 +169,96 @@ export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
         title: "โรงเรียนนานาชาติชั้นนำใกล้ทำเลยอดฮิตของชาวต่างชาติในกรุงเทพฯ",
         excerpt: "ย้ายที่อยู่พร้อมลูกๆ? เราเปิดแผนที่เทียบโรงเรียนนานาชาติที่ดีที่สุดกับย่านพักอาศัยที่เหมาะสมที่สุด เพื่อลดเวลาการเดินทางของครอบครัวคุณให้สั้นที่สุด",
         category: "ครอบครัวและการใช้ชีวิต"
+      },
+      "retiring-bangkok-vs-chiang-mai-vs-hua-hin": {
+        title: "เกษียณที่กรุงเทพฯ เชียงใหม่ หรือหัวหิน: เปรียบเทียบสำหรับชาวต่างชาติที่มองหาที่พักตากอากาศ",
+        excerpt: "กำลังมองหาที่เกษียณในไทย? เราเปรียบเทียบกรุงเทพฯ เชียงใหม่ และหัวหิน ด้านค่าใช้จ่าย การรักษาพยาบาล ไลฟ์สไตล์ และชุมชน เพื่อช่วยให้คุณตัดสินใจได้",
+        category: "การเกษียณอายุ"
+      },
+      "thailand-retirement-visa-guide-2026": {
+        title: "วีซ่าเกษียณอายุไทย (Non-OA): ข้อมูลครบที่คุณต้องรู้ในปี 2026",
+        excerpt: "วางแผนเกษียณในไทย? นี่คือคู่มือทีละขั้นตอนที่ชัดเจนสำหรับวีซ่า Non-O และ Non-OA พร้อมกฎด้านการเงินและประกันสุขภาพ",
+        category: "การเกษียณอายุ"
+      },
+      "best-bangkok-neighbourhoods-retirees": {
+        title: "ย่านที่ดีที่สุดในกรุงเทพฯ สำหรับผู้เกษียณ: เงียบสงบ เดินสะดวก และใกล้สถานพยาบาล",
+        excerpt: "ไม่ใช่ทุกย่านในกรุงเทพฯ ที่จะวุ่นวายและเสียงดัง ย่านเหล่านี้ 3 แห่งมอบที่พักอาศัยที่เงียบสงบสำหรับผู้เกษียณ ใกล้โรงพยาบาลเอกชนที่ดีที่สุดของเมือง",
+        category: "การเกษียณอายุ"
+      },
+      "healthcare-costs-thailand-retirees": {
+        title: "ค่ารักษาพยาบาลในไทยสำหรับผู้เกษียณ: สิ่งที่คุณคาดหวังได้และวิธีวางแผน",
+        excerpt: "ค่าหมอในกรุงเทพฯ แพงแค่ไหน? แล้วผ่าตัดหรือรักษาฟัน? เราสรุปค่ารักษาพยาบาลจริงและแผนประกันสุขภาพสำหรับผู้เกษียณในปี 2026",
+        category: "การเกษียณอายุ"
+      },
+      "live-comfortably-bangkok-2000-budget": {
+        title: "คุณสามารถใช้ชีวิตสบายในกรุงเทพฯ ด้วยบำนาญ 2,000 เหรียญ/เดือนได้ไหม?",
+        excerpt: "ด้วยอัตราแลกเปลี่ยนปัจจุบัน 2,000 ดอลลาร์สหรัฐเท่ากับประมาณ 70,000 บาท เราแสดงให้เห็นว่างบนี้จะใช้ชีวิตเกษียณได้อย่างไรในกรุงเทพฯ",
+        category: "การเกษียณอายุ"
+      },
+      "thailand-ltr-visa-remote-workers": {
+        title: "วีซ่า LTR ของไทยสำหรับ Remote Worker: วิธีสมัครและใครมีสิทธิ์บ้าง",
+        excerpt: "ต้องการวีซ่าพำนัก 10 ปีและภาษีเงินได้อัตราพิเศษ 17%? นี่คือคู่มือทีละขั้นตอนสำหรับวีซ่า LTR สำหรับ Remote Worker",
+        category: "ดิจิทัลโนแมด"
+      },
+      "safest-bangkok-neighbourhoods-families": {
+        title: "ย่านที่ปลอดภัยที่สุดในกรุงเทพฯ สำหรับครอบครัว: สิ่งที่พ่อแม่ชาวต่างชาติแนะนำจริงๆ",
+        excerpt: "ความปลอดภัยคือสิ่งสำคัญสูงสุดสำหรับพ่อแม่ชาวต่างชาติ เราแนะนำย่านที่ปลอดภัยและเป็นมิตรกับเด็กมากที่สุดในกรุงเทพฯ จากคำแนะนำของพ่อแม่จริงๆ",
+        category: "ย้ายมาอยู่กรุงเทพฯ"
+      },
+      "phrom-phong-vs-ekkamai-sukhumvit": {
+        title: "พร้อมพงษ์ ปะทะ เอกมัย: ย่านสุขุมวิทกลางแห่งใดเหมาะกับคุณ?",
+        excerpt: "สองสถานีบีทีเอสเท่านั้นที่คั่นกลาง แต่ไลฟ์สไตล์ที่มอบให้ต่างกันโดยสิ้นเชิง ย่านหนึ่งเน้นห้างหรูและคอนโดระดับพรีเมียม อีกย่านเต็มไปด้วยคาเฟ่วินเทจและเสน่ห์ท้องถิ่น",
+        category: "ย้ายมาอยู่กรุงเทพฯ"
+      },
+      "silom-after-dark-expat-guide": {
+        title: "สีลมยามค่ำคืน: คู่มือท้องถิ่นสู่บาร์ดีที่สุด รูฟท็อป และอาหารริมถนน",
+        excerpt: "กลางวันสีลมคือย่านธุรกิจของกรุงเทพฯ แต่หลังเวลาทำการ ย่านนี้กลายเป็นสวรรค์ของอาหารริมทางและบาร์ยามค่ำ",
+        category: "การใช้ชีวิตในกรุงเทพฯ"
+      },
+      "living-in-nonthaburi-guide": {
+        title: "ใช้ชีวิตในนนทบุรี: หลีกหนีจากความวุ่นวายของกรุงเทพฯ พร้อมการเข้าถึงเมืองที่สะดวก",
+        excerpt: "อยากหลีกหนีจากป่าคอนกรีต? นนทบุรีมอบที่พักอาศัยเงียบสงบ สวนริมแม่น้ำ และตลาดแบบดั้งเดิม เชื่อมต่อด้วยรถไฟฟ้าสายสีม่วง",
+        category: "การใช้ชีวิตในกรุงเทพฯ"
+      },
+      "thailand-visa-guide-2026": {
+        title: "คู่มือวีซ่าไทยปี 2026: ท่องเที่ยว LTR Elite และเกษียณ อธิบายครบ",
+        excerpt: "การทำความเข้าใจวีซ่าไทยอาจเป็นเรื่องปวดหัว นี่คือคู่มือที่ชัดเจนและง่ายสำหรับตัวเลือกวีซ่าของคุณในปี 2026 ตั้งแต่การทำงานระยะไกลไปจนถึงการเกษียณ",
+        category: "ย้ายมาอยู่กรุงเทพฯ"
+      },
+      "open-bank-account-thailand-foreigner": {
+        title: "วิธีเปิดบัญชีธนาคารในไทยในฐานะชาวต่างชาติ",
+        excerpt: "การเปิดบัญชีธนาคารในไทยอาจยุ่งยากโดยไม่มีใบอนุญาตทำงาน นี่คือคู่มือทีละขั้นตอนพร้อมเอกสารที่ต้องใช้และธนาคารที่ดีที่สุด",
+        category: "ย้ายมาอยู่กรุงเทพฯ"
+      },
+      "bangkok-healthcare-guide-expats": {
+        title: "การดูแลสุขภาพในกรุงเทพฯ: โรงพยาบาล คลินิก และประกันที่ดีที่สุดสำหรับชาวต่างชาติ",
+        excerpt: "กรุงเทพฯ มีโรงพยาบาลเอกชนที่ดีที่สุดแห่งหนึ่งในโลก นี่คือคู่มือค่าใช้จ่าย ประกันสุขภาพ และสถานพยาบาลที่ดีที่สุดสำหรับชาวต่างชาติ",
+        category: "ย้ายมาอยู่กรุงเทพฯ"
+      },
+      "first-week-bangkok-survival-guide": {
+        title: "สัปดาห์แรกในกรุงเทพฯ: ซิมการ์ด ธนาคาร และการลงทะเบียนที่อยู่",
+        excerpt: "มาถึงกรุงเทพฯ แล้ว? นี่คือรายการตรวจสอบทีละขั้นตอนสำหรับการเชื่อมต่อ จัดการเรื่องราว และลงทะเบียนตามกฎหมายในสัปดาห์แรก",
+        category: "ย้ายมาอยู่กรุงเทพฯ"
+      },
+      "things-not-to-do-in-thailand": {
+        title: "10 สิ่งที่คุณห้ามทำในไทยเด็ดขาด: คู่มือสำหรับชาวต่างชาติเรื่องวัฒนธรรมและกฎหมาย",
+        excerpt: "ไทยคือ 'ดินแดนแห่งรอยยิ้ม' แต่ความเข้าใจผิดเล็กๆ น้อยๆ ทางวัฒนธรรมอาจนำไปสู่การสร้างความไม่พอใจอย่างรุนแรงหรือแม้แต่การจับกุม นี่คือ 10 สิ่งที่คุณต้องไม่ทำ",
+        category: "กิจกรรมน่าสนใจ"
+      },
+      "pet-friendly-condos-bangkok-guide": {
+        title: "คอนโดที่อนุญาตให้เลี้ยงสัตว์ในกรุงเทพฯ: อาคารชั้นนำในทองหล่อ สาทร และเอกมัย (2026)",
+        excerpt: "ย้ายมากรุงเทพฯ พร้อมสุนัขหรือแมว? การหาตึกสูงที่ยอมรับสัตว์เลี้ยงอาจยุ่งยาก นี่คือคู่มือฉบับสมบูรณ์ปี 2026 สำหรับอาคารที่เป็นมิตรกับสัตว์เลี้ยง",
+        category: "ย้ายมาอยู่กรุงเทพฯ"
+      },
+      "bangkok-short-term-condo-rentals": {
+        title: "วิธีเช่าคอนโดระยะสั้น 3-6 เดือนในกรุงเทพฯ (คู่มือ Digital Nomad)",
+        excerpt: "มาเยือนกรุงเทพฯ สองสามเดือนด้วยวีซ่า DTV หรืองาน Remote? เรียนรู้วิธีเช่าระยะ 3-6 เดือน กฎเกี่ยวกับเงินมัดจำ และย่านยอดนิยมสำหรับ Digital Nomad",
+        category: "ดิจิทัลโนแมด"
+      },
+      "hidden-gem-restaurants-bangkok": {
+        title: "ร้านอาหารซ่อนเร้นในกรุงเทพฯ ที่คนท้องถิ่นรู้จัก",
+        excerpt: "มองหาร้านอาหารที่แท้จริงของกรุงเทพฯ ที่ไม่อยู่ในคู่มือท่องเที่ยว? นี่คือร้านโปรดของ NHP ที่คนท้องถิ่นแนะนำ",
+        category: "กิจกรรมน่าสนใจ"
       }
     }
   },
@@ -226,7 +330,130 @@ export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
         title: "曼谷优质国际学校分布及周边低通勤核心社区推荐",
         excerpt: "携子女移居曼谷？我们为您梳理出优质国际学校与高宜居住宅小区的最佳地理位置配对，让孩子的每日上学路不再漫长。",
         category: "家庭生活"
+      },
+      "retiring-bangkok-vs-chiang-mai-vs-hua-hin": {
+        title: "在曼谷、清迈还是华欣退休？为外籍人士全面比较三座城市",
+        excerpt: "打算在泰国养老？我们从生活成本、医疗条件、生活方式与社区氛围四个维度，帮您逐一比较曼谷、清迈与华欣，让您做出最适合自己的选择。",
+        category: "养老退休"
+      },
+      "thailand-retirement-visa-guide-2026": {
+        title: "泰国退休签证（Non-OA）：2026年您需要了解的全部内容",
+        excerpt: "计划在泰国养老？这是一份关于Non-O和Non-OA退休签证的清晰分步指南，涵盖财务要求和保险规定。",
+        category: "养老退休"
+      },
+      "best-bangkok-neighbourhoods-retirees": {
+        title: "最适合退休人士的曼谷社区：安静、宜步行且紧邻优质医疗资源",
+        excerpt: "并非整个曼谷都嘈杂喧闹。这3个安静宜居的社区为退休人士提供了紧邻全市最佳私立医院的平和居住环境。",
+        category: "养老退休"
+      },
+      "healthcare-costs-thailand-retirees": {
+        title: "泰国退休人士医疗费用全解析：该预期什么与如何规划",
+        excerpt: "在曼谷看一次门诊要多少钱？手术或牙科治疗呢？我们详细拆解了退休人士在2026年的真实医疗成本与保险方案。",
+        category: "养老退休"
+      },
+      "live-comfortably-bangkok-2000-budget": {
+        title: "每月2000美元养老金能在曼谷过上舒适生活吗？",
+        excerpt: "按当前汇率，2000美元约合70000泰铢。我们为您详细演示这笔预算如何支撑一个体面的曼谷退休生活。",
+        category: "养老退休"
+      },
+      "thailand-ltr-visa-remote-workers": {
+        title: "泰国LTR签证远程工作者指南：如何申请及谁有资格",
+        excerpt: "想要10年居留签证和17%优惠所得税率？这里是远程工作者申请LTR签证的完整步骤指南。",
+        category: "数字游民"
+      },
+      "safest-bangkok-neighbourhoods-families": {
+        title: "曼谷最适合家庭居住的安全社区：来自外籍家长的真实推荐",
+        excerpt: "安全是外籍家长的头等大事。我们根据真实家长反馈，列出曼谷最安全、最适合儿童生活的社区。",
+        category: "移居曼谷"
+      },
+      "phrom-phong-vs-ekkamai-sukhumvit": {
+        title: "澎蓬 vs 伊卡迈：中素坤逸哪个社区更适合您？",
+        excerpt: "两个BTS站相隔仅两站，但生活方式却截然不同。一个是高端零售和豪华公寓；另一个是文艺咖啡馆和浓郁本地风情。",
+        category: "移居曼谷"
+      },
+      "silom-after-dark-expat-guide": {
+        title: "夜幕下的是隆：本地达人推荐的最佳酒吧、天台餐厅与街头美食",
+        excerpt: "白天的是隆是曼谷的金融中心。但当写字楼的灯光熄灭，这里便化身为美食与夜生活的天堂。",
+        category: "曼谷生活"
+      },
+      "living-in-nonthaburi-guide": {
+        title: "定居暖武里：从曼谷喧嚣中寻得一处宁静，同时轻松入城",
+        excerpt: "想逃离混凝土丛林？暖武里提供宁静的住宅环境、临河公园和传统市集，且通过MRT紫线便捷连接市中心。",
+        category: "曼谷生活"
+      },
+      "thailand-visa-guide-2026": {
+        title: "2026年泰国签证完整指南：旅游、LTR、精英与退休签证全解析",
+        excerpt: "泰国签证系统可能令人头疼。这是一份针对2026年各类签证选项的清晰简洁指南，从远程办公到退休养老一网打尽。",
+        category: "移居曼谷"
+      },
+      "open-bank-account-thailand-foreigner": {
+        title: "外国人在泰国开设银行账户的完整流程",
+        excerpt: "没有工作许可证，在泰国开户可能颇为棘手。这是一份关于所需材料和最佳开户银行的分步指南。",
+        category: "移居曼谷"
+      },
+      "bangkok-healthcare-guide-expats": {
+        title: "曼谷医疗指南：最适合外籍人士的医院、诊所与保险推荐",
+        excerpt: "曼谷拥有全球顶尖的私立医院之一。这是我们关于就医费用、保险方案及最佳医疗机构的外籍人士专属指南。",
+        category: "移居曼谷"
+      },
+      "first-week-bangkok-survival-guide": {
+        title: "抵达曼谷第一周：SIM卡、银行开户与地址注册攻略",
+        excerpt: "刚落地曼谷？这是您在第一周内完成联网、事务处理和合法注册的逐步清单。",
+        category: "移居曼谷"
+      },
+      "things-not-to-do-in-thailand": {
+        title: "在泰国绝对不能做的10件事：外国人必知的文化禁忌与法律红线",
+        excerpt: `泰国是"微笑之国"，但细微的文化误解可能导致严重冒犯甚至被捕。以下是10件您绝对不能做的事。`,
+        category: "玩乐指南"
+      },
+      "pet-friendly-condos-bangkok-guide": {
+        title: "曼谷可携带宠物的公寓指南：通罗、沙吞和伊卡迈顶级楼盘推荐（2026）",
+        excerpt: "带着狗或猫搬来曼谷？在高层公寓中寻找允许宠物入住的房源颇具挑战。这是2026年外籍人士宠物友好楼盘完整指南。",
+        category: "移居曼谷"
+      },
+      "bangkok-short-term-condo-rentals": {
+        title: "曼谷3至6个月短租公寓攻略（数字游民指南）",
+        excerpt: "持DTV签证或远程工作来曼谷住几个月？了解3至6个月短租合同的运作方式、押金规则及数字游民热门社区。",
+        category: "数字游民"
+      },
+      "hidden-gem-restaurants-bangkok": {
+        title: "曼谷本地人才知道的隐藏宝藏餐厅",
+        excerpt: "寻找不在旅游攻略上的正宗曼谷美食？这是NHP本地团队亲测推荐的心头好餐厅名单。",
+        category: "玩乐指南"
       }
     }
   }
 };
+
+export function getLocalizedPost<T extends { slug: string; title: string; excerpt: string; category: string; readTime: string }>(
+  post: T,
+  lang: "en" | "th" | "zh"
+): T {
+  if (!post) return post;
+  if (lang === "en") return post;
+
+  const translation = T_BLOG[lang]?.posts?.[post.slug];
+  const readTimeNum = post.readTime ? post.readTime.replace(/[^0-9]/g, "") : "";
+  const localizedReadTime = readTimeNum
+    ? lang === "th"
+      ? `อ่าน ${readTimeNum} นาที`
+      : lang === "zh"
+      ? `${readTimeNum} 分钟阅读`
+      : post.readTime
+    : post.readTime;
+
+  if (!translation) {
+    return {
+      ...post,
+      readTime: localizedReadTime,
+    };
+  }
+
+  return {
+    ...post,
+    title: translation.title || post.title,
+    excerpt: translation.excerpt || post.excerpt,
+    category: translation.category || post.category,
+    readTime: localizedReadTime,
+  };
+}

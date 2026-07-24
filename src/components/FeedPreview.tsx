@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { useSaved } from "@/contexts/SavedContext";
 import Image from "next/image";
 import { stripEmojis } from "@/lib/emoji";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getLocalizedPropertySummary } from "@/lib/seoEnricher";
 import { PropertyCard as PropertyType } from "@/types/property";
 
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -35,6 +37,7 @@ const badgeLabel = (type: string) => {
 };
 
 function PropertyCard({ property }: { property: PropertyType }) {
+  const { lang } = useLanguage();
   const { data: session } = useSession();
   const { isSaved, toggle } = useSaved();
   const [liked, setLiked] = useState(false);
@@ -164,7 +167,7 @@ function PropertyCard({ property }: { property: PropertyType }) {
             WebkitBoxOrient: "vertical" as const,
           }}
         >
-          {stripEmojis(property.description)}
+          {stripEmojis(getLocalizedPropertySummary(property, lang))}
         </p>
 
         <div className="flex items-center gap-3.5">

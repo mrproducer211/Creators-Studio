@@ -4,7 +4,6 @@ import Credentials from "next-auth/providers/credentials";
 import { compare, hash } from "bcryptjs";
 
 // ── Demo admin credentials (flexible for local dev and production) ──
-const isDev = process.env.NODE_ENV === "development";
 const CONFIGURED_ADMIN_EMAIL = process.env.ADMIN_EMAIL?.toLowerCase().trim();
 const CONFIGURED_PLAIN_PASSWORD = process.env.ADMIN_PASSWORD || "nhp2026";
 const ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || "$2b$10$KKMMCyA7/7OFLdKq/9I9POrP8DLNDyTV/apFNVz2tj6zNnuZ842dK"; // nhp2026

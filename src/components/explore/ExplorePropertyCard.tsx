@@ -9,6 +9,7 @@ import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { stripEmojis } from "@/lib/emoji";
+import { getLocalizedPropertySummary } from "@/lib/seoEnricher";
 import {
   Play,
   Heart,
@@ -20,15 +21,6 @@ import {
   ShowerHead,
   Maximize2
 } from "lucide-react";
-
-const FALLBACK_GRADIENTS = [
-  "linear-gradient(135deg,#254D3E,#1C3A2F)",
-  "linear-gradient(135deg,#8B6914,#C9A84C)",
-  "linear-gradient(135deg,#1A1A1A,#2E6150)",
-  "linear-gradient(135deg,#2E6150,#7A5C12)",
-  "linear-gradient(135deg,#1C3A2F,#111)",
-  "linear-gradient(135deg,#C9A84C,#1C3A2F)",
-];
 
 interface HubData {
   name: string;
@@ -50,17 +42,16 @@ function badgeStyle(t: string) {
   return                   { background: "#FFFFFF", color: "#1C3A2F" };
 }
 
-export default function ExplorePropertyCard({ property, index }: { property: PropertyCard; index: number }) {
+export default function ExplorePropertyCard({ property }: { property: PropertyCard; index?: number }) {
   const router                  = useRouter();
   const { isSaved, toggle }     = useSaved();
-  const { t }                   = useLanguage();
+  const { t, lang }             = useLanguage();
   const formatPrice           = useCurrency().formatPrice;
   const saved                   = isSaved(property.id);
   const [liked, setLiked]       = useState(false);
   const [imgErr, setImgErr]     = useState(false);
   const main                    = formatPrice(Number(property.priceTHB));
   const sub                     = property.listingType === "sale" ? "" : (property.priceLabel ?? "");
-  const fallback                = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length];
   const href                    = `/property/${property.slug}`;
   const [commutes, setCommutes] = useState<CommuteData[]>([]);
 
@@ -202,7 +193,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
                 ) : (
                   <TrainFront className="w-3.5 h-3.5" />
                 )}
-                {c.minutes}m to {c.name}
+                {c.minutes}{lang === "th" ? " นาทีไปยัง " : lang === "zh" ? " 分钟至 " : "m to "}{c.name}
               </span>
             ))}
           </div>
@@ -224,7 +215,7 @@ export default function ExplorePropertyCard({ property, index }: { property: Pro
         </div>
 
         <p className="text-[12px] leading-[1.55] font-light line-clamp-2 mb-3" style={{ color: "#777" }}>
-          {stripEmojis(property.description)}
+          {stripEmojis(getLocalizedPropertySummary(property, lang))}
         </p>
 
         {/* Actions */}

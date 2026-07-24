@@ -17,7 +17,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
   images: {
-    unoptimized: true,
     // Serve AVIF first, then WebP — browsers pick the best they support
     formats: ["image/avif", "image/webp"],
     // Cover all common screen breakpoints + retina
@@ -28,8 +27,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "res.cloudinary.com" },
-      // Allow any https host for property images uploaded via the admin panel
-      { protocol: "https", hostname: "**" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "maps.googleapis.com" },
+      { protocol: "https", hostname: "newhomesproperty.com" },
+      { protocol: "https", hostname: "www.newhomesproperty.com" },
     ],
   },
   // Add security headers and caching headers
@@ -84,6 +85,12 @@ const nextConfig: NextConfig = {
       {
         source: "/blog/phaya-thai-complete-review",
         destination: "/blog",
+        permanent: true,
+      },
+      // Legacy long FAQ slug → clean /faq canonical (was the original FAQ route).
+      {
+        source: "/frequent-asked-question-faq",
+        destination: "/faq",
         permanent: true,
       },
       // Migrate robots-disallowed /explore?type= filter URLs to crawlable hubs.

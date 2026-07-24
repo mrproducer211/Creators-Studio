@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useSession, signOut } from "next-auth/react";
 import { useSaved } from "@/contexts/SavedContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 import Image from "next/image";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { LayoutDashboard, Heart, Settings, LogOut, Sparkles } from "lucide-react";
+import { LayoutDashboard, Heart, Settings, LogOut, Sparkles, Globe } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
@@ -24,6 +25,22 @@ export default function Navbar() {
   const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const [mobileCurrencyOpen, setMobileCurrencyOpen] = useState(false);
 
+  // Refs for portal dropdown positioning
+  const langBtnRef  = useRef<HTMLButtonElement>(null);
+  const userBtnRef  = useRef<HTMLButtonElement>(null);
+  const [langBtnRect,  setLangBtnRect]  = useState<DOMRect | null>(null);
+  const [userBtnRect,  setUserBtnRect]  = useState<DOMRect | null>(null);
+
+  const openLangMenu = useCallback(() => {
+    if (langBtnRef.current) setLangBtnRect(langBtnRef.current.getBoundingClientRect());
+    setLangMenuOpen((v) => !v);
+  }, []);
+
+  const openUserMenu = useCallback(() => {
+    if (userBtnRef.current) setUserBtnRect(userBtnRef.current.getBoundingClientRect());
+    setUserMenu((v) => !v);
+  }, []);
+
   useEffect(() => {
     if (!menuOpen) {
       setTimeout(() => {
@@ -35,28 +52,36 @@ export default function Navbar() {
     }
   }, [menuOpen]);
 
+  // Close dropdowns on scroll/resize so they don't drift
+  useEffect(() => {
+    const close = () => { setLangMenuOpen(false); setUserMenu(false); };
+    window.addEventListener("scroll", close, { passive: true });
+    window.addEventListener("resize", close);
+    return () => { window.removeEventListener("scroll", close); window.removeEventListener("resize", close); };
+  }, []);
+
   const user      = session?.user;
   const initials  = user?.name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() ?? "U";
 
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14"
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 sm:px-4 h-14"
         style={{ background: "rgba(247,243,236,0.97)", backdropFilter: "blur(16px)", borderBottom: "1px solid #E5E0D8" }}
       >
         {/* Mobile Logo: Logo Image + Name */}
-        <Link href="/" className="flex md:hidden items-center gap-2 no-underline">
+        <Link href="/" className="flex md:hidden items-center gap-1.5 no-underline">
           <Image
             src="/images/nhp-logo.webp"
             alt="NHP Logo"
-            width={30}
-            height={30}
+            width={28}
+            height={28}
             priority
             className="object-contain rounded-[6px]"
           />
           <div className="flex flex-col leading-none">
-            <span className="text-[16px] font-extrabold tracking-[-0.5px]" style={{ color: "#1C3A2F" }}>New Home Property</span>
-            <span className="text-[11px] font-bold tracking-[0.3px] mt-0.5" style={{ color: "#806414" }}>Live. Belong. Bangkok.</span>
+            <span className="text-[14px] sm:text-[16px] font-extrabold tracking-[-0.5px]" style={{ color: "#1C3A2F" }}>NHP</span>
+            <span className="text-[9.5px] font-bold tracking-[0.3px] mt-0.5" style={{ color: "#806414" }}>Bangkok</span>
           </div>
         </Link>
 
@@ -77,82 +102,83 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden md:flex items-center gap-5 text-[13px] font-medium">
+        <div className="hidden lg:flex items-center gap-5 text-[13px] font-medium">
           <Link href="/"                      className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.home}</Link>
           <Link href="/explore"               className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.explore}</Link>
-          <Link href="/buildings"             className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>Buildings</Link>
+          <Link href="/buildings"             className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.buildings}</Link>
           <Link href="/swipe"                 className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.swipe}</Link>
           <Link href="/explore/match"         className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium flex items-center gap-1" style={{ color: "#1C3A2F", fontWeight: "bold" }}>
             <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" />
-            <span>Neighborhood Match</span>
+            <span>{t.nav.neighborhoodMatch}</span>
           </Link>
           <Link href="/explore?type=sale"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.buy}</Link>
           <Link href="/explore?type=rent"     className="no-underline transition-opacity hover:opacity-60 text-[13px] font-medium" style={{ color: "#1C3A2F" }}>{t.nav.rent}</Link>
+        </div>
 
-          {/* Language toggle dropdown */}
+        {/* Right actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+
+          {/* Always Visible Language Toggle Dropdown (Mobile + Desktop) */}
           <div className="relative">
             <button
-              onClick={() => setLangMenuOpen(!langMenuOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[12px] font-bold cursor-pointer transition-all hover:bg-white/80 bg-transparent"
+              ref={langBtnRef}
+              onClick={openLangMenu}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-[12px] font-bold cursor-pointer transition-all hover:bg-white/80 bg-white/60 shadow-xs"
               style={{ borderColor: "#E5E0D8", color: "#1C3A2F", fontFamily: "inherit" }}
+              aria-label="Select Language"
             >
+              <Globe size={14} className="text-[#C9A84C] shrink-0" />
               <span>{lang === "en" ? "EN" : lang === "th" ? "TH" : "中文"}</span>
               <svg className={`w-3 h-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
               </svg>
             </button>
-            
-            {langMenuOpen && (
-              <>
-                {/* Click-outside backdrop */}
-                <div 
-                  className="fixed inset-0 z-40 cursor-default" 
-                  onClick={() => setLangMenuOpen(false)} 
-                />
-                <div 
-                  className="absolute right-0 mt-1.5 w-32 rounded-xl border p-1 shadow-lg z-50 animate-in fade-in slide-in-from-top-1 duration-150"
-                  style={{ background: "#FFFFFF", borderColor: "#E5E0D8" }}
-                >
-                  {(["en", "th", "zh"] as const).map((l) => (
-                    <button
-                      key={l}
-                      onClick={() => {
-                        setLang(l);
-                        setLangMenuOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-lg cursor-pointer text-[12px] font-semibold transition-colors hover:bg-[#F7F3EC] border-none"
-                      style={{ 
-                        background: lang === l ? "#1C3A2F" : "transparent", 
-                        color: lang === l ? "#F7F3EC" : "#1C3A2F",
-                        fontFamily: "inherit"
-                      }}
-                    >
-                      {l === "en" ? "English" : l === "th" ? "ไทย (Thai)" : "中文 (Chinese)"}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
           </div>
-        </div>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-2">
+          {/* Language dropdown rendered via portal on document.body */}
+          {langMenuOpen && langBtnRect && createPortal(
+            <>
+              <div className="fixed inset-0 z-[999998]" style={{ cursor: "default" }} onClick={() => setLangMenuOpen(false)} />
+              <div
+                className="fixed w-44 rounded-2xl border p-1.5 shadow-2xl bg-white"
+                style={{
+                  zIndex: 999999,
+                  top: langBtnRect.bottom + 6,
+                  right: window.innerWidth - langBtnRect.right,
+                  borderColor: "#E5E0D8",
+                }}
+              >
+                {(["en", "th", "zh"] as const).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => { setLang(l); setLangMenuOpen(false); }}
+                    className="w-full text-left px-3 py-2.5 rounded-xl cursor-pointer text-[12.5px] font-semibold transition-colors flex items-center justify-between border-none my-0.5"
+                    style={{
+                      background: lang === l ? "#1C3A2F" : "transparent",
+                      color: lang === l ? "#F7F3EC" : "#1C3A2F",
+                      fontFamily: "inherit"
+                    }}
+                  >
+                    <span>{l === "en" ? "English" : l === "th" ? "ไทย (Thai)" : "中文 (Chinese)"}</span>
+                    {lang === l && <span className="text-[11px] font-bold">✓</span>}
+                  </button>
+                ))}
+              </div>
+            </>,
+            document.body
+          )}
 
-          {/* Mobile Right Icons (Heart & Chat) */}
+          {/* Mobile Right Icons (Heart) */}
           <div className="flex md:hidden items-center gap-4 mr-1">
-            {/* Heart Icon */}
             <Link href="/saved" className="text-gray-700 hover:text-black transition-colors" aria-label="Saved properties">
               <svg className="w-[22px] h-[22px]" fill="none" stroke="#1C3A2F" strokeWidth="1.8" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
               </svg>
             </Link>
-            {/* Chat Icon removed */}
           </div>
 
           {/* Desktop Right Actions (Saved badge & Auth state) */}
           <div className="hidden md:flex items-center gap-2">
-            {/* Saved badge */}
             <Link
               href="/saved"
               className="relative flex items-center gap-1.5 px-3 py-2 rounded-full no-underline transition-all"
@@ -179,7 +205,8 @@ export default function Navbar() {
               /* User avatar + dropdown */
               <div className="relative">
                 <button
-                  onClick={() => setUserMenu((v) => !v)}
+                  ref={userBtnRef}
+                  onClick={openUserMenu}
                   className="flex items-center gap-2 cursor-pointer border-none bg-transparent p-0"
                 >
                   {user.image ? (
@@ -194,51 +221,61 @@ export default function Navbar() {
                   </span>
                 </button>
 
-                {userMenu && (
-                  <div
-                    className="absolute right-0 top-10 rounded-2xl shadow-xl overflow-hidden"
-                    style={{ width: 200, background: "#FFFFFF", border: "1px solid #E5E0D8", zIndex: 60 }}
-                    onMouseLeave={() => setUserMenu(false)}
-                  >
-                    <div className="px-4 py-3" style={{ borderBottom: "1px solid #EDE8DF" }}>
-                      <p className="text-[13px] font-semibold" style={{ color: "#1A1A1A" }}>{user.name}</p>
-                      <p className="text-[11px]" style={{ color: "#999" }}>{user.email}</p>
-                    </div>
-                    {(session.user as { role?: string }).role === "agent" ? (
-                      <Link href="/agent/dashboard" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                        <LayoutDashboard size={14} className="text-[#C9A84C]" />
-                        Agent Dashboard
-                      </Link>
-                    ) : (
-                      <Link href="/dashboard" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                        <LayoutDashboard size={14} className="text-[#C9A84C]" />
-                        My Dashboard
-                      </Link>
-                    )}
-                    <Link href="/dashboard?tab=saved" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                      <Heart size={14} className="text-[#C9A84C]" />
-                      Saved Properties
-                      {count > 0 && <span className="ml-auto text-xs font-semibold px-1.5 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
-                    </Link>
-                    <Link href="/dashboard?tab=settings" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                      <Settings size={14} className="text-[#C9A84C]" />
-                      Settings
-                    </Link>
-                    {(session.user as { role?: string }).role === "admin" && (
-                      <Link href="/admin" className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
-                        <Settings size={14} className="text-[#1C3A2F]" />
-                        {t.nav.adminDashboard}
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="w-full flex items-center gap-2.5 px-4 py-3 text-[13px] cursor-pointer border-none bg-transparent text-left transition-colors hover:bg-gray-50"
-                      style={{ color: "#E05252", fontFamily: "inherit", borderTop: "1px solid #EDE8DF" }}
+                {/* User menu dropdown rendered via portal on document.body */}
+                {userMenu && userBtnRect && createPortal(
+                  <>
+                    <div className="fixed inset-0 z-[999998]" style={{ cursor: "default" }} onClick={() => setUserMenu(false)} />
+                    <div
+                      className="fixed rounded-2xl shadow-2xl overflow-hidden bg-white"
+                      style={{
+                        zIndex: 999999,
+                        top: userBtnRect.bottom + 6,
+                        right: window.innerWidth - userBtnRect.right,
+                        width: 200,
+                        border: "1px solid #E5E0D8"
+                      }}
                     >
-                      <LogOut size={14} className="text-[#E05252]" />
-                      {t.nav.signOut}
-                    </button>
-                  </div>
+                      <div className="px-4 py-3" style={{ borderBottom: "1px solid #EDE8DF" }}>
+                        <p className="text-[13px] font-semibold" style={{ color: "#1A1A1A" }}>{user.name}</p>
+                        <p className="text-[11px]" style={{ color: "#999" }}>{user.email}</p>
+                      </div>
+                      {(session.user as { role?: string }).role === "agent" ? (
+                        <Link href="/agent/dashboard" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                          <LayoutDashboard size={14} className="text-[#C9A84C]" />
+                          Agent Dashboard
+                        </Link>
+                      ) : (
+                        <Link href="/dashboard" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                          <LayoutDashboard size={14} className="text-[#C9A84C]" />
+                          My Dashboard
+                        </Link>
+                      )}
+                      <Link href="/dashboard?tab=saved" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                        <Heart size={14} className="text-[#C9A84C]" />
+                        Saved Properties
+                        {count > 0 && <span className="ml-auto text-xs font-semibold px-1.5 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>{count}</span>}
+                      </Link>
+                      <Link href="/dashboard?tab=settings" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                        <Settings size={14} className="text-[#C9A84C]" />
+                        Settings
+                      </Link>
+                      {(session.user as { role?: string }).role === "admin" && (
+                        <Link href="/admin" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-3 no-underline transition-colors hover:bg-gray-50 text-[13px]" style={{ color: "#1A1A1A" }}>
+                          <Settings size={14} className="text-[#1C3A2F]" />
+                          {t.nav.adminDashboard}
+                        </Link>
+                      )}
+                      <button
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="w-full flex items-center gap-2.5 px-4 py-3 text-[13px] cursor-pointer border-none bg-transparent text-left transition-colors hover:bg-gray-50"
+                        style={{ color: "#E05252", fontFamily: "inherit", borderTop: "1px solid #EDE8DF" }}
+                      >
+                        <LogOut size={14} className="text-[#E05252]" />
+                        {t.nav.signOut}
+                      </button>
+                    </div>
+                  </>,
+                  document.body
                 )}
               </div>
             ) : (
@@ -444,7 +481,7 @@ export default function Navbar() {
                 >
                   <span className="flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-[#C9A84C]" />
-                    <span>Neighborhood Match</span>
+                    <span>{t.nav.neighborhoodMatch}</span>
                   </span>
                   <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>AI</span>
                 </Link>

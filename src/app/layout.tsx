@@ -19,24 +19,18 @@ const inter = Inter({
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
   || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
-// ── Business NAP (Name, Address, Phone) ──────────────────────────────────────
+// ── Business contact + service area ──────────────────────────────────────────
 // Single source of truth for contact details used in schema + footer.
-// UPDATE THESE with your real details. streetAddress/postalCode/geo power
-// local SEO (LocalBusiness schema, map pin, Google Business Profile alignment).
-// TODO(owner): replace placeholders marked PLACEHOLDER with your condo address.
+// NHP operates as a service-area business: agents meet clients at properties
+// across Bangkok rather than from a walk-in office. So we publish only
+// truthful city-level address data plus areaServed, not a fake street/geo.
 const BUSINESS_ADDRESS = {
-  streetAddress: "[YOUR STREET ADDRESS — e.g. 123 Sukhumvit Soi 11]", // PLACEHOLDER
   addressLocality: "Bangkok",
   addressRegion: "Bangkok",
-  postalCode: "[YOUR POSTAL CODE — e.g. 10110]", // PLACEHOLDER
   addressCountry: "TH",
 };
 const BUSINESS_PHONE = "+66818794182";
 const BUSINESS_EMAIL = "admin@nhpbangkok.com";
-// Lat/lng of the address — fill in from Google Maps (right-click → coords)
-// or leave PLACEHOLDER and update after geocoding. Used for geo + hasMap.
-const BUSINESS_GEO = { latitude: "13.7563", longitude: "100.5018" }; // PLACEHOLDER (Bangkok centroid)
-const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${BUSINESS_GEO.latitude},${BUSINESS_GEO.longitude}`;
 
 // Bing Webmaster Tools verification code (claim at bing.com/webmasters).
 // TODO(owner): paste your msvalidate.01 value here; leave empty to omit the tag.
@@ -90,12 +84,8 @@ const orgJsonLd = {
     "@type": "PostalAddress",
     ...BUSINESS_ADDRESS,
   },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: BUSINESS_GEO.latitude,
-    longitude: BUSINESS_GEO.longitude,
-  },
-  hasMap: MAPS_URL,
+  // No geo/hasMap: service-area business with no public office (avoids
+  // publishing a misleading point location to local search).
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
@@ -150,7 +140,35 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
-        {/* Preconnect to Google Fonts CDN for faster font delivery */}
+        {/* Suppress unhandled errors from browser extensions like MetaMask */}
+        <Script
+          id="suppress-extension-errors"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                window.addEventListener('unhandledrejection', function(e) {
+                  var msg = (e && e.reason && e.reason.message) || '';
+                  var stack = (e && e.reason && e.reason.stack) || '';
+                  if (msg.includes('MetaMask') || msg.includes('ethereum') || stack.includes('chrome-extension://')) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                  }
+                });
+                window.addEventListener('error', function(e) {
+                  var filename = (e && e.filename) || '';
+                  var msg = (e && e.message) || '';
+                  if (filename.includes('chrome-extension://') || msg.includes('MetaMask')) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                  }
+                }, true);
+              })();
+            `,
+          }}
+        />
+        {/* Preconnect to key CDNs for faster asset delivery */}
+        <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>

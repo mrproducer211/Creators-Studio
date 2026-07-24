@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllReviews, updateReviewStatus, deleteReview } from "@/lib/store/reviews";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const reviews = await getAllReviews();
     return NextResponse.json({ success: true, reviews });

@@ -4,7 +4,20 @@ import { addReview, getAllReviews } from "@/lib/store/reviews";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { propertyId, projectName, authorName, authorEmail, rating, title, body: reviewBody, userId } = body;
+    const {
+      propertyId,
+      projectName,
+      authorName,
+      authorEmail,
+      rating,
+      ratingLocation,
+      ratingFacilities,
+      ratingManagement,
+      ratingValue,
+      title,
+      body: reviewBody,
+      userId,
+    } = body;
 
     if (!propertyId || !authorName || !rating) {
       return NextResponse.json({ error: "Missing required fields: propertyId, authorName, rating" }, { status: 400 });
@@ -42,6 +55,10 @@ export async function POST(req: NextRequest) {
       authorName: sanitize(authorName, 80) || "Anonymous",
       authorEmail: authorEmail ? String(authorEmail).trim().toLowerCase().substring(0, 100) : undefined,
       rating: Math.round(numericRating),
+      ratingLocation: ratingLocation ? Number(ratingLocation) : undefined,
+      ratingFacilities: ratingFacilities ? Number(ratingFacilities) : undefined,
+      ratingManagement: ratingManagement ? Number(ratingManagement) : undefined,
+      ratingValue: ratingValue ? Number(ratingValue) : undefined,
       title: sanitize(title, 150),
       body: sanitize(reviewBody, 1500),
       userId: userId ? String(userId).substring(0, 80) : undefined,

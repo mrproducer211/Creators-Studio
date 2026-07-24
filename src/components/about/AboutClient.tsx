@@ -254,7 +254,7 @@ export default function AboutClient() {
                 <span className="text-[#C9A84C]">→</span>
               </Link>
               <Link
-                href="/frequent-asked-question-faq"
+                href="/faq"
                 className="p-3 rounded-xl border border-[#EDE8DF] bg-[#FAFAF8] text-xs font-semibold text-[#1C3A2F] no-underline hover:border-[#C9A84C] hover:bg-[#FBF3DC] transition-all flex items-center justify-between"
               >
                 <span>FAQ &amp; Help Center</span>

@@ -43,6 +43,8 @@ import {
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { T_MATCH } from "@/data/matchTranslations";
+import { getLocalizedDayItinerary } from "@/data/neighborhoodTranslations/itineraries";
+import { stripEmojis } from "@/lib/emoji";
 import Footer from "@/components/Footer";
 
 const MapComponent = dynamic(() => import("./MapComponent"), { ssr: false });
@@ -1532,75 +1534,140 @@ export default function MatchExplorer({ properties }: Props) {
 
             {/* Step 13: One-Day Life Preview */}
             {selectedNeighborhood.dayItinerary && selectedNeighborhood.dayItinerary.length > 0 && (
-              <div className="bg-[#FFFFFF] p-5 rounded-3xl border border-[#E5E0D8] mb-6">
-                <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <Calendar size={15} className="text-[#C9A84C]" /> A Day in {selectedNeighborhood.name}
+              <div className="bg-[#FFFFFF] p-5 rounded-3xl border border-[#E5E0D8] mb-6 shadow-sm">
+                <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4 pb-2.5 border-b border-[#EDE8DF] flex items-center gap-2 font-outfit">
+                  <Calendar size={16} className="text-[#C9A84C]" />
+                  <span>{lang === "th" ? `หนึ่งวันในย่าน ${selectedNeighborhood.name}` : lang === "zh" ? `ใน ${selectedNeighborhood.name} 的一天` : `A Day in ${selectedNeighborhood.name}`}</span>
                 </h3>
-                <div className="flex flex-col gap-4">
-                  {selectedNeighborhood.dayItinerary.map((item, idx) => (
-                    <div key={idx} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] font-bold uppercase bg-[#EDE8DF] px-2 py-0.5 rounded text-[#1C3A2F] tracking-wide whitespace-nowrap">
-                          {item.time}
-                        </span>
-                        {idx < selectedNeighborhood.dayItinerary.length - 1 && (
-                          <div className="w-[1.5px] flex-1 bg-[#E5E0D8] my-1" style={{ minHeight: "20px" }} />
-                        )}
+                <div className="flex flex-col gap-3.5">
+                  {getLocalizedDayItinerary(selectedNeighborhood, lang).map((item, idx) => {
+                    let IconComp = Coffee;
+                    const lowerT = item.title.toLowerCase();
+                    if (lowerT.includes("lunch") || lowerT.includes("dinner") || lowerT.includes("food") || lowerT.includes("eat")) {
+                      IconComp = Utensils;
+                    } else if (lowerT.includes("stroll") || lowerT.includes("walk") || lowerT.includes("park")) {
+                      IconComp = Footprints;
+                    } else if (lowerT.includes("focus") || lowerT.includes("work") || lowerT.includes("laptop") || lowerT.includes("co-working")) {
+                      IconComp = Laptop;
+                    } else if (lowerT.includes("drink") || lowerT.includes("bar") || lowerT.includes("night")) {
+                      IconComp = Wine;
+                    }
+                    return (
+                      <div key={idx} className="flex gap-4 items-start group">
+                        <div className="flex flex-col items-center">
+                          <span className="text-[10px] font-bold uppercase bg-[#1C3A2F] text-[#C9A84C] px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap font-mono shadow-xs">
+                            {item.time}
+                          </span>
+                          {idx < selectedNeighborhood.dayItinerary.length - 1 && (
+                            <div className="w-[1.5px] flex-1 bg-[#E5E0D8] my-1.5" style={{ minHeight: "24px" }} />
+                          )}
+                        </div>
+                        <div className="flex-1 bg-[#FAF8F3] p-3.5 rounded-2xl border border-[#EDE8DF] transition-all group-hover:border-[#C9A84C]/50 group-hover:shadow-xs">
+                          <h4 className="text-[13px] font-bold text-[#1C3A2F] mb-1 flex items-center gap-1.5 font-outfit">
+                            <IconComp size={13} className="text-[#C9A84C] shrink-0" />
+                            <span>{stripEmojis(item.title)}</span>
+                          </h4>
+                          <p className="text-[12px] text-[#555] font-light leading-relaxed m-0">{stripEmojis(item.activity)}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="text-[12.5px] font-bold text-[#1C3A2F] mb-0.5">{item.title}</h4>
-                        <p className="text-[12px] text-[#666] font-light leading-relaxed">{item.activity}</p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
 
-            {/* Demographics & Demands */}
+            {/* Demographics & Stat Cards */}
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-[#FFFFFF] p-4 rounded-2xl border border-[#E5E0D8]">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#888] block mb-1">Avg Rent</span>
-                <span className="text-[14px] font-bold text-[#C9A84C]">
+              <div className="bg-[#FFFFFF] p-4.5 rounded-2xl border border-[#E5E0D8] shadow-xs relative overflow-hidden">
+                <div className="w-1 h-full bg-[#C9A84C] absolute top-0 left-0" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#888] flex items-center gap-1.5 mb-1.5 font-outfit">
+                  <Coins size={13} className="text-[#C9A84C]" />
+                  <span>{stripEmojis(tm.avgRent)}</span>
+                </span>
+                <span className="text-[15px] font-extrabold text-[#C9A84C] block font-outfit">
                   {formatPrice(selectedNeighborhood.averageRentMin)} - {formatPrice(selectedNeighborhood.averageRentMax)}
                 </span>
               </div>
-              <div className="bg-[#FFFFFF] p-4 rounded-2xl border border-[#E5E0D8]">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#888] block mb-1">Transit station</span>
-                <span className="text-[14px] font-bold text-[#1C3A2F] truncate block">
-                  {selectedNeighborhood.nearestTransit}
+              <div className="bg-[#FFFFFF] p-4.5 rounded-2xl border border-[#E5E0D8] shadow-xs relative overflow-hidden">
+                <div className="w-1 h-full bg-[#1C3A2F] absolute top-0 left-0" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#888] flex items-center gap-1.5 mb-1.5 font-outfit">
+                  <TrainFront size={13} className="text-[#C9A84C]" />
+                  <span>{stripEmojis(tm.transitStation)}</span>
+                </span>
+                <span className="text-[15px] font-extrabold text-[#1C3A2F] truncate block font-outfit">
+                  {stripEmojis(selectedNeighborhood.nearestTransit)}
                 </span>
               </div>
             </div>
 
-            {/* Neighborhood Highlights lists */}
-            <div className="flex flex-col gap-5 bg-[#FFFFFF] p-5 rounded-3xl border border-[#E5E0D8] mb-6">
-              <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] pb-2 border-b border-gray-100">
-                ✨ Local Area Highlights
+            {/* Neighborhood Highlights section */}
+            <div className="flex flex-col gap-5 bg-[#FFFFFF] p-5.5 rounded-3xl border border-[#E5E0D8] mb-6 shadow-sm">
+              <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] pb-2.5 border-b border-[#EDE8DF] flex items-center gap-2 font-outfit">
+                <Sparkles size={16} className="text-[#C9A84C]" />
+                <span>{stripEmojis(tm.topHighlights) || (lang === "th" ? "จุดเด่นประจำย่าน" : lang === "zh" ? "本地区域亮点" : "Neighborhood Highlights")}</span>
               </h3>
               
               {selectedNeighborhood.cafes.length > 0 && (
-                <div>
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#C9A84C] mb-1.5">☕ Recommended Cafes</h4>
-                  <p className="text-[12px] text-[#555] font-light leading-relaxed">{selectedNeighborhood.cafes.join(" • ")}</p>
+                <div className="flex flex-col gap-2">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#C9A84C] flex items-center gap-1.5 font-outfit">
+                    <Coffee size={14} className="text-[#C9A84C]" />
+                    <span>{lang === "th" ? "คาเฟ่แนะนำ" : lang === "zh" ? "推荐咖啡馆" : "Recommended Cafes"}</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedNeighborhood.cafes.map((item, i) => (
+                      <span key={i} className="text-[11.5px] font-medium text-[#1C3A2F] bg-[#FAF8F3] px-3 py-1.5 rounded-xl border border-[#EDE8DF]">
+                        {stripEmojis(item)}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
+
               {selectedNeighborhood.coworkingSpaces.length > 0 && (
-                <div>
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#C9A84C] mb-1.5">💻 Coworking & Workspots</h4>
-                  <p className="text-[12px] text-[#555] font-light leading-relaxed">{selectedNeighborhood.coworkingSpaces.join(" • ")}</p>
+                <div className="flex flex-col gap-2">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#C9A84C] flex items-center gap-1.5 font-outfit">
+                    <Laptop size={14} className="text-[#C9A84C]" />
+                    <span>{lang === "th" ? "โคเวิร์กกิ้งสเปซ" : lang === "zh" ? "共享办公空间" : "Coworking & Workspots"}</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedNeighborhood.coworkingSpaces.map((item, i) => (
+                      <span key={i} className="text-[11.5px] font-medium text-[#1C3A2F] bg-[#FAF8F3] px-3 py-1.5 rounded-xl border border-[#EDE8DF]">
+                        {stripEmojis(item)}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
+
               {selectedNeighborhood.malls.length > 0 && (
-                <div>
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#C9A84C] mb-1.5">🛍️ Retail & Lifestyle Malls</h4>
-                  <p className="text-[12px] text-[#555] font-light leading-relaxed">{selectedNeighborhood.malls.join(" • ")}</p>
+                <div className="flex flex-col gap-2">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#C9A84C] flex items-center gap-1.5 font-outfit">
+                    <ShoppingBag size={14} className="text-[#C9A84C]" />
+                    <span>{lang === "th" ? "ห้างสรรพสินค้า & ไลฟ์สไตล์" : lang === "zh" ? "购物中心与生活馆" : "Retail & Lifestyle Malls"}</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedNeighborhood.malls.map((item, i) => (
+                      <span key={i} className="text-[11.5px] font-medium text-[#1C3A2F] bg-[#FAF8F3] px-3 py-1.5 rounded-xl border border-[#EDE8DF]">
+                        {stripEmojis(item)}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
+
               {selectedNeighborhood.parks.length > 0 && (
-                <div>
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#C9A84C] mb-1.5">🌳 Green Space & Parks</h4>
-                  <p className="text-[12px] text-[#555] font-light leading-relaxed">{selectedNeighborhood.parks.join(" • ")}</p>
+                <div className="flex flex-col gap-2">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#C9A84C] flex items-center gap-1.5 font-outfit">
+                    <Trees size={14} className="text-[#C9A84C]" />
+                    <span>{lang === "th" ? "สวนสาธารณะ & พื้นที่สีเขียว" : lang === "zh" ? "公园与绿化空间" : "Green Space & Parks"}</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedNeighborhood.parks.map((item, i) => (
+                      <span key={i} className="text-[11.5px] font-medium text-[#1C3A2F] bg-[#FAF8F3] px-3 py-1.5 rounded-xl border border-[#EDE8DF]">
+                        {stripEmojis(item)}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Link2, Check } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   url: string;
@@ -9,7 +10,11 @@ interface Props {
 }
 
 export default function ShareButtons({ url, title }: Props) {
+  const { lang } = useLanguage();
   const [copied, setCopied] = useState(false);
+
+  const shareText = lang === "th" ? "แชร์คู่มือนี้:" : lang === "zh" ? "分享本指南：" : "Share this guide:";
+  const copiedText = lang === "th" ? "คัดลอกลิงก์เรียบร้อยแล้ว!" : lang === "zh" ? "链接已复制到剪贴板！" : "Copied link to clipboard!";
 
   const handleCopy = async () => {
     try {
@@ -27,7 +32,7 @@ export default function ShareButtons({ url, title }: Props) {
   return (
     <div className="flex items-center gap-3 py-4 border-t border-b border-[#EDE8DF] my-8">
       <span className="text-[12px] font-bold uppercase tracking-wider text-gray-400 mr-2">
-        Share this guide:
+        {shareText}
       </span>
 
       {/* WhatsApp */}
@@ -70,7 +75,7 @@ export default function ShareButtons({ url, title }: Props) {
 
       {copied && (
         <span className="text-[11px] font-bold text-[#C9A84C] animate-fade-in">
-          Copied link to clipboard!
+          {copiedText}
         </span>
       )}
     </div>

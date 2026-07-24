@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Star, CheckCircle2, AlertCircle, Sparkles, Send } from "lucide-react";
+import { Star, CheckCircle2, AlertCircle, Sparkles, Send, MapPin, ShieldCheck, CircleDollarSign } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Props {
   propertyId: number;
@@ -13,7 +14,13 @@ interface Props {
 
 export default function ReviewForm({ propertyId, propertyName, projectName, onSuccess }: Props) {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [rating, setRating] = useState<number>(5);
+  const [ratingLocation, setRatingLocation] = useState<number>(5);
+  const [ratingFacilities, setRatingFacilities] = useState<number>(5);
+  const [ratingManagement, setRatingManagement] = useState<number>(5);
+  const [ratingValue, setRatingValue] = useState<number>(5);
+
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [authorName, setAuthorName] = useState(session?.user?.name || "");
   const [authorEmail, setAuthorEmail] = useState(session?.user?.email || "");
@@ -45,6 +52,10 @@ export default function ReviewForm({ propertyId, propertyName, projectName, onSu
           authorName: authorName.trim(),
           authorEmail: authorEmail.trim() || undefined,
           rating,
+          ratingLocation,
+          ratingFacilities,
+          ratingManagement,
+          ratingValue,
           title: title.trim() || undefined,
           body: body.trim() || undefined,
         }),
@@ -68,9 +79,9 @@ export default function ReviewForm({ propertyId, propertyName, projectName, onSu
     return (
       <div className="p-6 rounded-2xl border border-emerald-200 bg-emerald-50 text-emerald-900 flex flex-col items-center justify-center text-center my-4 animate-fadeIn">
         <CheckCircle2 className="w-10 h-10 text-emerald-600 mb-2" />
-        <h4 className="text-base font-bold mb-1">Thank You for Your Review!</h4>
+        <h4 className="text-base font-bold mb-1">{t.reviews.thankYouTitle}</h4>
         <p className="text-xs text-emerald-700 max-w-sm">
-          Your feedback for <strong>{displayName}</strong> has been submitted and is pending quick admin approval.
+          {t.reviews.thankYouSub}
         </p>
       </div>
     );
@@ -85,45 +96,138 @@ export default function ReviewForm({ propertyId, propertyName, projectName, onSu
         <div>
           <h4 className="text-base font-bold text-[#1C3A2F] flex items-center gap-1.5">
             <Sparkles size={16} className="text-[#C9A84C]" />
-            Write a Review for {displayName}
+            {t.reviews.writeReview} — {displayName}
           </h4>
           <p className="text-xs text-gray-500 mt-0.5">
-            Share your experience living at or visiting this condo project.
+            {t.reviews.beFirstSub}
           </p>
         </div>
       </div>
 
-      {/* Interactive 5-Star Rating Picker */}
-      <div className="bg-[#FAF8F3] p-4 rounded-xl border border-[#EDE8DF] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div>
-          <label className="block text-xs font-bold text-[#1C3A2F]">Overall Rating Score</label>
-          <span className="text-[11px] text-gray-500">Hover and click to rate 1 to 5 stars</span>
+      {/* Interactive Multi-Category Star Rating Pickers */}
+      <div className="bg-[#FAF8F3] p-4 rounded-xl border border-[#EDE8DF] space-y-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 border-b border-[#EDE8DF]">
+          <div>
+            <label className="block text-xs font-bold text-[#1C3A2F]">{t.reviews.overallScore}</label>
+            <span className="text-[10px] text-gray-500">{t.reviews.overallSub}</span>
+          </div>
+          <div className="flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-[#EDE8DF]">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                type="button"
+                key={star}
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHoverRating(star)}
+                onMouseLeave={() => setHoverRating(0)}
+                className="p-0.5 transition-transform hover:scale-110 focus:outline-none cursor-pointer"
+              >
+                <Star
+                  size={18}
+                  className={(hoverRating || rating) >= star ? "fill-[#C9A84C] text-[#C9A84C]" : "text-gray-300"}
+                />
+              </button>
+            ))}
+            <span className="ml-1.5 text-xs font-extrabold text-[#C9A84C]">
+              {hoverRating || rating}.0
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-[#EDE8DF]">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              type="button"
-              key={star}
-              onClick={() => setRating(star)}
-              onMouseEnter={() => setHoverRating(star)}
-              onMouseLeave={() => setHoverRating(0)}
-              className="p-1 transition-transform hover:scale-115 focus:outline-none cursor-pointer"
-            >
-              <Star
-                size={22}
-                className={(hoverRating || rating) >= star ? "fill-[#C9A84C] text-[#C9A84C]" : "text-gray-300"}
-              />
-            </button>
-          ))}
-          <span className="ml-2 text-xs font-extrabold text-[#C9A84C]">
-            {hoverRating || rating}.0 / 5.0
-          </span>
+
+        {/* Sub-Category Ratings Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          {/* Location Rating */}
+          <div className="flex items-center justify-between bg-white px-3 py-2 rounded-lg border border-[#EDE8DF]">
+            <span className="text-xs font-semibold text-gray-700 flex items-center gap-1.5">
+              <MapPin size={13} className="text-[#C9A84C]" /> {t.reviews.locationTransit}
+            </span>
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  type="button"
+                  key={star}
+                  onClick={() => setRatingLocation(star)}
+                  className="p-0.5 focus:outline-none cursor-pointer"
+                >
+                  <Star
+                    size={14}
+                    className={ratingLocation >= star ? "fill-[#C9A84C] text-[#C9A84C]" : "text-gray-300"}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Facilities Rating */}
+          <div className="flex items-center justify-between bg-white px-3 py-2 rounded-lg border border-[#EDE8DF]">
+            <span className="text-xs font-semibold text-gray-700 flex items-center gap-1.5">
+              <Sparkles size={13} className="text-[#1C3A2F]" /> {t.reviews.facilitiesAmenities}
+            </span>
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  type="button"
+                  key={star}
+                  onClick={() => setRatingFacilities(star)}
+                  className="p-0.5 focus:outline-none cursor-pointer"
+                >
+                  <Star
+                    size={14}
+                    className={ratingFacilities >= star ? "fill-[#C9A84C] text-[#C9A84C]" : "text-gray-300"}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Management Rating */}
+          <div className="flex items-center justify-between bg-white px-3 py-2 rounded-lg border border-[#EDE8DF]">
+            <span className="text-xs font-semibold text-gray-700 flex items-center gap-1.5">
+              <ShieldCheck size={13} className="text-emerald-700" /> {t.reviews.managementSecurity}
+            </span>
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  type="button"
+                  key={star}
+                  onClick={() => setRatingManagement(star)}
+                  className="p-0.5 focus:outline-none cursor-pointer"
+                >
+                  <Star
+                    size={14}
+                    className={ratingManagement >= star ? "fill-[#C9A84C] text-[#C9A84C]" : "text-gray-300"}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Value Rating */}
+          <div className="flex items-center justify-between bg-white px-3 py-2 rounded-lg border border-[#EDE8DF]">
+            <span className="text-xs font-semibold text-gray-700 flex items-center gap-1.5">
+              <CircleDollarSign size={13} className="text-[#C9A84C]" /> {t.reviews.valueForMoney}
+            </span>
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  type="button"
+                  key={star}
+                  onClick={() => setRatingValue(star)}
+                  className="p-0.5 focus:outline-none cursor-pointer"
+                >
+                  <Star
+                    size={14}
+                    className={ratingValue >= star ? "fill-[#C9A84C] text-[#C9A84C]" : "text-gray-300"}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-semibold text-[#1C3A2F] mb-1">Your Name *</label>
+          <label className="block text-xs font-semibold text-[#1C3A2F] mb-1">{t.reviews.yourName}</label>
           <input
             type="text"
             required
@@ -134,7 +238,7 @@ export default function ReviewForm({ propertyId, propertyName, projectName, onSu
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-[#1C3A2F] mb-1">Email (Optional)</label>
+          <label className="block text-xs font-semibold text-[#1C3A2F] mb-1">{t.reviews.emailOptional}</label>
           <input
             type="email"
             value={authorEmail}
@@ -146,23 +250,23 @@ export default function ReviewForm({ propertyId, propertyName, projectName, onSu
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#1C3A2F] mb-1">Review Headline</label>
+        <label className="block text-xs font-semibold text-[#1C3A2F] mb-1">{t.reviews.reviewHeadline}</label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. Peaceful condo near BTS with great gym & pool"
+          placeholder={t.reviews.headlinePlaceholder}
           className="w-full px-3.5 py-2.5 rounded-xl border border-[#EDE8DF] bg-[#FAF8F3] text-xs text-[#1C3A2F] outline-none focus:border-[#C9A84C]"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#1C3A2F] mb-1">Your Detailed Experience</label>
+        <label className="block text-xs font-semibold text-[#1C3A2F] mb-1">{t.reviews.detailedExperience}</label>
         <textarea
           rows={3}
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder="How are the facilities, security, noise levels, and location?"
+          placeholder={t.reviews.bodyPlaceholder}
           className="w-full px-3.5 py-2.5 rounded-xl border border-[#EDE8DF] bg-[#FAF8F3] text-xs text-[#1C3A2F] outline-none resize-none focus:border-[#C9A84C]"
         />
       </div>
@@ -181,7 +285,7 @@ export default function ReviewForm({ propertyId, propertyName, projectName, onSu
         style={{ background: "#1C3A2F" }}
       >
         <Send size={14} className="text-[#C9A84C]" />
-        <span>{submitting ? "Submitting Review..." : "Submit Review for Approval"}</span>
+        <span>{submitting ? "Submitting..." : t.reviews.submitReview}</span>
       </button>
     </form>
   );

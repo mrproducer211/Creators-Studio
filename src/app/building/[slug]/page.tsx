@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BuildingClient from "@/components/building/BuildingClient";
 import { getDbProperties } from "@/lib/db/dbLoader";
-import { getAggregateRatingForProperty } from "@/lib/store/reviews";
+import { getAggregateRatingForProperty, getAllReviews } from "@/lib/store/reviews";
 import { slugifyBuildingName } from "@/lib/buildingSlug";
 import { getCanonicalArea } from "@/lib/area";
 
@@ -81,10 +81,12 @@ export default async function BuildingPage({ params }: Props) {
   const area = sample.area;
   const aggregate = await getAggregateRatingForProperty(sample.id, buildingName);
 
+  const reviews = await getAllReviews();
+  const publishedReviews = reviews.filter((r) => r.status === "published");
   const targetCanonicalArea = getCanonicalArea(area);
 
   // Group other building projects strictly in the same canonical area or adjacent BTS corridor
-  const buildingMap = new Map<string, { slug: string; name: string; area: string; coverImage?: string; minPrice: number; unitCount: number }>();
+  const buildingMap = new Map<string, { slug: string; name: string; area: string; coverImage?: string; minPrice: number; unitCount: number; ratingValue?: number; reviewCount?: number; propertyIds: Set<number> }>();
 
   allProperties.forEach((p) => {
     const bName = p.projectName || p.name;
@@ -99,6 +101,7 @@ export default async function BuildingPage({ params }: Props) {
       const priceNum = Number(p.priceTHB) || 0;
       if (existing) {
         existing.unitCount += 1;
+        existing.propertyIds.add(p.id);
         if (priceNum > 0 && (existing.minPrice === 0 || priceNum < existing.minPrice)) {
           existing.minPrice = priceNum;
         }
@@ -110,12 +113,31 @@ export default async function BuildingPage({ params }: Props) {
           coverImage: p.coverImage,
           minPrice: priceNum,
           unitCount: 1,
+          ratingValue: 0,
+          reviewCount: 0,
+          propertyIds: new Set([p.id]),
         });
       }
     }
   });
 
-  const nearbyBuildings = Array.from(buildingMap.values()).slice(0, 4);
+  // Calculate review ratings for each nearby building project
+  buildingMap.forEach((b, bSlug) => {
+    const bRevs = publishedReviews.filter((r) => {
+      if (r.propertyId && b.propertyIds.has(Number(r.propertyId))) return true;
+      const rSlug = r.projectSlug || slugifyBuildingName(r.projectName);
+      return rSlug && rSlug === bSlug;
+    });
+
+    if (bRevs.length > 0) {
+      const sum = bRevs.reduce((acc, r) => acc + r.rating, 0);
+      b.reviewCount = bRevs.length;
+      b.ratingValue = Number((sum / bRevs.length).toFixed(1));
+    }
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const nearbyBuildings = Array.from(buildingMap.values()).map(({ propertyIds, ...b }) => b).slice(0, 4);
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",

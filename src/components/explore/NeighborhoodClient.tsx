@@ -8,9 +8,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSaved } from "@/contexts/SavedContext";
 import { T_NEIGHBORHOOD } from "@/data/neighborhoodTranslations";
+import { getLocalizedBlog } from "@/data/blogTranslations";
+import { getLocalizedDayItinerary } from "@/data/neighborhoodTranslations/itineraries";
 import Link from "next/link";
 import Image from "next/image";
-import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home, BookOpen } from "lucide-react";
+import { Building2, Train, Plane, Sparkles, ThumbsUp, Coffee, Footprints, Heart, Check, ArrowUpRight, Bed, ShowerHead, Maximize2, TrainFront, Home, BookOpen, Calendar } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
 import { getCanonicalArea } from "@/lib/area";
 
@@ -564,6 +566,56 @@ const DEFAULT_METADATA = {
   lifestyleDesc: "A perfect blend of lifestyle and local culture. The neighborhood is known for its tree-lined alleys, artisanal community spaces, independent shops, and some of the best specialty cafe options in Bangkok."
 };
 
+const BLOG_TRANSLATIONS: Record<string, {
+  thTitle?: string; thExcerpt?: string; thCategory?: string; thReadTime?: string;
+  zhTitle?: string; zhExcerpt?: string; zhCategory?: string; zhReadTime?: string;
+}> = {
+  "thong-lo-vs-on-nut": {
+    thTitle: "ทองหล่อ VS อ่อนนุช: ย่านไหนในกรุงเทพฯ ที่เหมาะกับคุณ?",
+    thExcerpt: "ทั้งสองย่านเชื่อมต่อ BTS เดินทางสะดวก อาหารอร่อยครบครัน — แต่อัตราค่าครองชีพและไลฟ์สไตล์ต่างกันอย่างสิ้นเชิง มาดูวิธีเลือกย่านที่ใช่สำหรับคุณ",
+    thCategory: "คู่มือย่านน่าอยู่",
+    thReadTime: "อ่าน 11 นาที",
+    zhTitle: "通罗 VS 安努：哪一个曼谷社区更适合您？",
+    zhExcerpt: "两地均紧邻 BTS 轻轨，生活便利且美食云集 — 但生活节奏、租金预算与氛围截然不同。本文将助您轻松选出理想居所。",
+    zhCategory: "社区生活指南",
+    zhReadTime: "阅读需 11 分钟",
+  },
+  "phrom-phong-vs-ekkamai": {
+    thTitle: "พร้อมพงษ์ VS เอกมัย: ย่านสุขุมวิทตอนกลาง ย่านไหนเหมาะกับคุณ?",
+    thExcerpt: "ห่างกันเพียง 2 สถานี BTS แต่ไลฟ์สไตล์แตกต่างกันชัดเจน พร้อมพงษ์เน้นห้างหรูและคอนโดไฮเอนด์ ส่วนเอกมัยเป็นศูนย์รวมคาเฟ่ชิคๆ...",
+    thCategory: "คู่มือย่านน่าอยู่",
+    thReadTime: "อ่าน 11 นาที",
+    zhTitle: "澎蓬 VS 伊卡迈：中段素坤逸哪个社区更适合您？",
+    zhExcerpt: "仅相隔两站轻轨，但生活方式迥然不同。一边是高端奢华商圈，另一边是文青咖啡馆与慢生活...",
+    zhCategory: "社区生活指南",
+    zhReadTime: "阅读需 11 分钟",
+  },
+  "silom-after-dark": {
+    thTitle: "สีลมยามค่ำคืน: คู่มือเที่ยวบาร์ดาดฟ้าและสตรีทฟู้ดเด็ด",
+    thExcerpt: "ตอนกลางวันสีลมคือศูนย์กลางการเงินระดับประเทศ แต่พอตกดึก ย่านนี้จะเปลี่ยนเป็นสวรรค์ของนักชิมและสถานบันเทิงยามค่ำคืน",
+    thCategory: "คู่มือย่านน่าอยู่",
+    thReadTime: "อ่าน 11 นาที",
+    zhTitle: "夜幕下的席隆：高空屋顶酒吧与绝美夜市街头美食指南",
+    zhExcerpt: "白天是繁忙的华尔街，夜晚则蜕变为美食与夜生活的多元乐园。带您探索席隆最地道夜生活。",
+    zhCategory: "社区生活指南",
+    zhReadTime: "阅读需 11 分钟",
+  },
+};
+
+function translateBlogPost(post: BlogPost, lang: string = "en") {
+  const loc = getLocalizedBlog(post, lang as "en" | "th" | "zh");
+  const matched = BLOG_TRANSLATIONS[post.slug];
+  const defaultCategory = lang === "th" ? "คู่มือย่านน่าอยู่" : lang === "zh" ? "社区生活指南" : "NEIGHBOURHOOD GUIDE";
+  const defaultReadTime = lang === "th" ? "อ่าน 11 นาที" : lang === "zh" ? "阅读需 11 分钟" : "11 min read";
+  
+  return {
+    title: loc.title || matched?.thTitle || post.title,
+    excerpt: loc.excerpt || matched?.thExcerpt || post.excerpt || post.metaDesc,
+    category: loc.category || matched?.thCategory || defaultCategory,
+    readTime: matched?.thReadTime || post.readTime || defaultReadTime,
+  };
+}
+
 export default function NeighborhoodClient({ neighborhood, initialProperties, relatedPosts = [] }: Props) {
   const { t, lang } = useLanguage();
   const { formatPrice } = useCurrency();
@@ -960,6 +1012,31 @@ export default function NeighborhoodClient({ neighborhood, initialProperties, re
         </div>
       </section>
 
+      {/* ── ONE-DAY LIFE PREVIEW SECTION ── */}
+      {neighborhood.dayItinerary && neighborhood.dayItinerary.length > 0 && (
+        <section className="px-4 md:px-8 mt-8">
+          <div className="w-full max-w-[1440px] mx-auto bg-[#FFFFFF] p-6 md:p-8 rounded-3xl border border-[#EDE8DF] shadow-sm text-left">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[#1C3A2F] mb-6 pb-2 border-b border-[#EDE8DF] flex items-center gap-2 font-outfit">
+              <Calendar size={16} className="text-[#C9A84C]" />
+              <span>{lang === "th" ? `หนึ่งวันในย่าน ${nName}` : lang === "zh" ? `在 ${nName} 的一天` : `A Day in ${nName}`}</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {getLocalizedDayItinerary(neighborhood, lang).map((item, idx) => (
+                <div key={idx} className="p-4 rounded-2xl bg-[#FAF8F3] border border-[#EDE8DF] flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase bg-[#1C3A2F] text-[#C9A84C] px-2 py-0.5 rounded tracking-wide inline-block mb-2">
+                      {item.time}
+                    </span>
+                    <h4 className="text-xs font-bold text-[#1C3A2F] mb-1">{item.title}</h4>
+                    <p className="text-[11.5px] text-[#666] font-light leading-relaxed m-0">{item.activity}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
 
 
       {/* ── FEATURED PROPERTIES ROW ── */}
@@ -1093,10 +1170,14 @@ export default function NeighborhoodClient({ neighborhood, initialProperties, re
             <div className="flex items-end justify-between border-b border-[#EDE8DF] pb-3">
               <div>
                 <span className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">
-                  Expat Living Advice
+                  {lang === "th" ? "คำแนะนำการอยู่อาศัย" : lang === "zh" ? "外籍人士生活指南" : "Expat Living Advice"}
                 </span>
                 <h2 className="text-xl md:text-2xl font-bold leading-tight mt-0.5 section-heading" style={{ color: "#1C3A2F" }}>
-                  Guides & Expat Tips for {nName}
+                  {lang === "th"
+                    ? `คู่มือและคำแนะนำสำหรับ ${nName}`
+                    : lang === "zh"
+                    ? `${nName} 生活指南与实用建议`
+                    : `Guides & Expat Tips for ${nName}`}
                 </h2>
               </div>
               <Link
@@ -1104,43 +1185,107 @@ export default function NeighborhoodClient({ neighborhood, initialProperties, re
                 className="text-[12px] font-semibold no-underline pb-px transition-colors duration-150 flex items-center gap-1 hover:text-[#C9A84C]"
                 style={{ color: "#1C3A2F" }}
               >
-                View All Guides <ArrowUpRight className="w-3.5 h-3.5" />
+                {lang === "th" ? "ดูคู่มือทั้งหมด" : lang === "zh" ? "查看所有指南" : "View All Guides"} <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {relatedPosts.map((post) => (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="flex flex-col rounded-2xl overflow-hidden shadow-sm border border-[#EDE8DF] group hover:shadow-md transition-shadow no-underline text-left bg-white"
-                >
-                  <div className="w-full aspect-[16/9] overflow-hidden bg-gray-100 relative">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 360px"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute top-3 left-3 bg-[#1C3A2F] text-[#C9A84C] text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
-                      {post.category}
+              {relatedPosts.map((post) => {
+                const { title: postTitle, excerpt: postExcerpt, category: postCategory, readTime: postReadTime } = translateBlogPost(post, lang);
+
+                return (
+                  <Link
+                    key={post.slug}
+                    href={`/blog/${post.slug}`}
+                    className="flex flex-col rounded-2xl overflow-hidden shadow-sm border border-[#EDE8DF] group hover:shadow-md transition-shadow no-underline text-left bg-white"
+                  >
+                    <div className="w-full aspect-[16/9] overflow-hidden bg-gray-100 relative">
+                      <Image
+                        src={post.image}
+                        alt={postTitle}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 360px"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute top-3 left-3 bg-[#1C3A2F] text-[#C9A84C] text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
+                        {postCategory}
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-5 flex flex-col gap-2 flex-grow">
-                    <h4 className="text-sm md:text-base font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors leading-snug line-clamp-2">
-                      {post.title}
-                    </h4>
-                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
-                      {post.excerpt || post.metaDesc}
-                    </p>
-                    <div className="mt-auto pt-3 flex items-center justify-between text-[11px] text-gray-400 border-t border-gray-100">
-                      <span className="flex items-center gap-1"><BookOpen className="w-3 h-3 text-[#C9A84C]" /> {post.readTime}</span>
-                      <span className="font-semibold text-[#1C3A2F] group-hover:text-[#C9A84C]">Read Guide →</span>
+                    <div className="p-5 flex flex-col gap-2 flex-grow">
+                      <h4 className="text-sm md:text-base font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors leading-snug line-clamp-2">
+                        {postTitle}
+                      </h4>
+                      <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                        {postExcerpt}
+                      </p>
+                      <div className="mt-auto pt-3 flex items-center justify-between text-[11px] text-gray-400 border-t border-gray-100">
+                        <span className="flex items-center gap-1"><BookOpen className="w-3 h-3 text-[#C9A84C]" /> {postReadTime}</span>
+                        <span className="font-semibold text-[#1C3A2F] group-hover:text-[#C9A84C]">
+                          {lang === "th" ? "อ่านคู่มือ →" : lang === "zh" ? "阅读指南 →" : "Read Guide →"}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Nearby Neighborhoods Section ── */}
+      {nearbyNeighborhoods.length > 0 && (
+        <section className="px-4 md:px-8 py-8 md:py-12 bg-white border-t border-[#E7E5DF]">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[1.5px] text-[#C9A84C]">
+                  {trans?.nearbyNeighborhoods || "Explore Nearby"}
+                </p>
+                <h2 className="text-[20px] md:text-[26px] font-bold text-[#1C3A2F] leading-tight">
+                  {lang === "th" ? `ย่านใกล้เคียง ${neighborhood.name}` : lang === "zh" ? `${neighborhood.name} 附近社区` : `Neighborhoods near ${neighborhood.name}`}
+                </h2>
+              </div>
+              <Link href="/explore" className="text-xs font-semibold text-[#1C3A2F] hover:text-[#C9A84C] flex items-center gap-1">
+                {lang === "th" ? "ดูทั้งหมด →" : lang === "zh" ? "查看全部 →" : "View all →"}
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {nearbyNeighborhoods.map((n) => {
+                const meta = NEIGHBORHOOD_METADATA[n.slug.toLowerCase()];
+                return (
+                  <Link
+                    key={n.slug}
+                    href={`/neighborhoods/${n.slug}`}
+                    className="group flex flex-col bg-[#FAF9F6] border border-[#E7E5DF] rounded-xl overflow-hidden hover:shadow-md transition-all duration-200"
+                  >
+                    <div className="relative h-32 w-full overflow-hidden bg-[#1C3A2F]">
+                      <Image
+                        src={n.heroImage || "/images/homepage_hero_v2.webp"}
+                        alt={n.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <div className="absolute bottom-2.5 left-3 right-3 text-white">
+                        <span className="text-[10px] uppercase font-semibold text-[#C9A84C] block">
+                          {meta?.district || "Bangkok"}
+                        </span>
+                        <h3 className="text-base font-bold leading-tight">{n.name}</h3>
+                      </div>
+                    </div>
+                    <div className="p-3.5 flex flex-col justify-between flex-1">
+                      <p className="text-xs text-gray-600 line-clamp-2 mb-2 leading-relaxed">
+                        {n.personality || n.description}
+                      </p>
+                      <div className="text-[11px] font-semibold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors flex items-center justify-end">
+                        {lang === "th" ? "สำรวจย่าน →" : lang === "zh" ? "探索社区 →" : "Explore area →"}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>

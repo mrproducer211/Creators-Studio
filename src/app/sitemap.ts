@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
   // 1. Static Pages
-  const routes = ["", "/about-us", "/privacy", "/explore", "/buildings", "/for-sale", "/for-rent", "/short-stay", "/blog", "/frequent-asked-question-faq"].map((route) => ({
+  const routes = ["", "/about-us", "/privacy", "/explore", "/buildings", "/for-sale", "/for-rent", "/short-stay", "/blog", "/faq"].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,

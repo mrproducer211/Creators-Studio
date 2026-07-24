@@ -64,11 +64,34 @@ export default async function ExplorePage() {
     ]
   };
 
+  const collectionPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Bangkok Properties & Condos for Rent & Sale",
+    description: "Explore neighbourhood properties for rent and sale in Bangkok.",
+    url: `${baseUrl}/explore`,
+    numberOfItems: properties.length,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: properties.length,
+      itemListElement: properties.slice(0, 30).map((p, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: p.name,
+        url: `${baseUrl}/property/${p.slug}`,
+      })),
+    },
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }}
       />
       <Navbar />
       <main className="min-h-screen" style={{ background: "#F7F3EC", paddingTop: "56px" }}>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Sparkles, LayoutGrid, ArrowRightLeft } from "lucide-react";
+import { Sparkles, LayoutGrid, Building2 } from "lucide-react";
 
 export default function BrowseModes() {
   const { t } = useLanguage();
@@ -22,11 +22,11 @@ export default function BrowseModes() {
       href: "/explore",
     },
     {
-      icon: <ArrowRightLeft className="w-6 h-6 text-[#1C3A2F]" />,
+      icon: <Building2 className="w-6 h-6 text-[#1C3A2F]" />,
       name: t.browse.reelName,
       desc: t.browse.reelDesc,
       featured: false,
-      href: "/swipe",
+      href: "/buildings",
     },
   ];
 

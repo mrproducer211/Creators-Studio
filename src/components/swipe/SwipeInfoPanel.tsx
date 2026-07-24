@@ -6,6 +6,8 @@ import { useEnquiry } from "@/hooks/useEnquiry";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { Heart, MapPin, Bed, ShowerHead, Maximize2, Mail, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { stripEmojis } from "@/lib/emoji";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getLocalizedPropertySummary } from "@/lib/seoEnricher";
 
 function formatPrice(p: PropertyCard, formatPriceFn: (n: number) => string) {
   if (p.listingType === "sale") return formatPriceFn(Number(p.priceTHB));
@@ -20,6 +22,7 @@ interface Props {
 }
 
 export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Props) {
+  const { lang }                = useLanguage();
   const [showForm, setShowForm] = useState(false);
   const [name, setName]         = useState("");
   const [contact, setContact]   = useState("");
@@ -91,7 +94,7 @@ export default function SwipeInfoPanel({ property, onClose, onSave, onSkip }: Pr
                 ))}
               </div>
 
-              <p className="text-[14px] leading-[1.7] font-light mb-5" style={{ color: "#555" }}>{stripEmojis(property.description)}</p>
+              <p className="text-[14px] leading-[1.7] font-light mb-5" style={{ color: "#555" }}>{stripEmojis(getLocalizedPropertySummary(property, lang))}</p>
 
               <div className="flex gap-3 mb-3">
                 <button onClick={onSkip} className="flex-1 py-3.5 rounded-2xl text-sm font-semibold cursor-pointer border-2" style={{ borderColor: "#E5E0D8", background: "transparent", color: "#555", fontFamily: "inherit" }}>

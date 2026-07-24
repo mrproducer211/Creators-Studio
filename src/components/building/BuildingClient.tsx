@@ -16,11 +16,13 @@ import {
   ChevronRight,
   Share2,
   Check,
+  Star,
 } from "lucide-react";
 import ExplorePropertyCard from "@/components/explore/ExplorePropertyCard";
 import Reviews from "@/components/property/Reviews";
 import { PropertyCard } from "@/types/property";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface NearbyBuildingInfo {
   slug: string;
@@ -29,22 +31,26 @@ export interface NearbyBuildingInfo {
   coverImage?: string;
   minPrice: number;
   unitCount: number;
+  ratingValue?: number;
+  reviewCount?: number;
 }
 
 interface Props {
-  buildingSlug: string;
+  buildingSlug?: string;
   buildingName: string;
   properties: PropertyCard[];
   nearbyBuildings?: NearbyBuildingInfo[];
 }
 
 export default function BuildingClient({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   buildingSlug,
   buildingName,
   properties,
   nearbyBuildings = [],
 }: Props) {
   const { formatPrice } = useCurrency();
+  const { t } = useLanguage();
   const [filterType, setFilterType] = useState<"all" | "rent" | "sale" | "short_stay">("all");
   const [buildingPhoto, setBuildingPhoto] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -202,13 +208,13 @@ export default function BuildingClient({
           <div className="p-3 rounded-xl bg-[#FAF8F3] border border-[#EDE8DF] flex flex-col justify-between">
             <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">
               <Layers size={13} className="text-[#1C3A2F]" />
-              <span>Active Units</span>
+              <span>{t.buildings.activeUnits}</span>
             </div>
             <div className="text-xs sm:text-sm font-bold text-[#1C3A2F] mt-1 leading-tight">
-              {properties.length} Listing{properties.length === 1 ? "" : "s"}
+              {properties.length} {properties.length === 1 ? t.buildings.unit : t.buildings.units}
             </div>
             <div className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">
-              {rentCount} Rent · {saleCount} Sale
+              {rentCount} {t.buildings.rentUnits} · {saleCount} {t.buildings.saleUnits}
             </div>
           </div>
 
@@ -216,10 +222,10 @@ export default function BuildingClient({
           <div className="p-3 rounded-xl bg-[#FAF8F3] border border-[#EDE8DF] flex flex-col justify-between">
             <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">
               <Dog size={13} className="text-[#1C3A2F]" />
-              <span>Pet Policy</span>
+              <span>{t.buildings.petPolicy}</span>
             </div>
             <div className="text-xs sm:text-sm font-bold text-[#1C3A2F] mt-1 leading-tight">
-              {isPetFriendly ? "Pet Allowed" : "Subject to Unit"}
+              {isPetFriendly ? t.buildings.petAllowed : t.buildings.subjectToUnit}
             </div>
             <div className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">Cats & Dogs</div>
           </div>
@@ -228,13 +234,13 @@ export default function BuildingClient({
           <div className="p-3 rounded-xl bg-[#FAF8F3] border border-[#EDE8DF] flex flex-col justify-between">
             <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">
               <Sparkles size={13} className="text-[#1C3A2F]" />
-              <span>Facilities</span>
+              <span>{t.buildings.facilities}</span>
             </div>
             <div className="text-xs sm:text-sm font-bold text-[#1C3A2F] mt-1 leading-tight">
-              Pool, Gym & Security
+              {t.buildings.facilitiesDesc}
             </div>
             <div className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 flex items-center gap-1">
-              <ShieldCheck size={10} className="text-emerald-600" /> 24/7 Access
+              <ShieldCheck size={10} className="text-emerald-600" /> {t.buildings.access247}
             </div>
           </div>
         </div>
@@ -246,10 +252,10 @@ export default function BuildingClient({
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-5 sm:mb-6">
           <div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[#1C3A2F] font-outfit">
-              Available Units in {buildingName}
+              {t.buildings.availableUnitsIn} {buildingName}
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              Browse verified condos available for rent, short stay, or purchase.
+              {t.buildings.browseUnitsSub}
             </p>
           </div>
 
@@ -257,10 +263,10 @@ export default function BuildingClient({
           <div className="w-full md:w-auto overflow-x-auto no-scrollbar py-1">
             <div className="inline-flex p-1 bg-[#EBE5DA] rounded-2xl gap-1 border border-[#DDD5C7] w-full md:w-auto justify-between sm:justify-start">
               {[
-                { id: "all", label: `All (${properties.length})` },
-                { id: "rent", label: `Rent (${rentCount})` },
-                { id: "sale", label: `Sale (${saleCount})` },
-                { id: "short_stay", label: `Short Stay (${shortStayCount})` },
+                { id: "all", label: `${t.buildings.allUnits} (${properties.length})` },
+                { id: "rent", label: `${t.buildings.rentUnits} (${rentCount})` },
+                { id: "sale", label: `${t.buildings.saleUnits} (${saleCount})` },
+                { id: "short_stay", label: `${t.buildings.shortStayUnits} (${shortStayCount})` },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -303,20 +309,20 @@ export default function BuildingClient({
         {/* ── EXPLORE NEARBY BUILDINGS SECTION ── */}
         {nearbyBuildings.length > 0 && (
           <div className="mt-6 sm:mt-8 pt-6 border-t border-[#EDE8DF]">
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 sm:mb-5">
               <div>
                 <span className="text-[10px] font-bold tracking-[1.5px] uppercase text-[#C9A84C]">
-                  Neighborhood Comparison
+                  {t.buildings.neighborhoodComparison}
                 </span>
                 <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#1C3A2F] mt-0.5 font-outfit">
-                  Explore Nearby Condo Buildings in {area}
+                  {t.buildings.exploreNearby} {area}
                 </h3>
               </div>
               <Link
                 href={`/buildings?area=${encodeURIComponent(area.toLowerCase().trim())}`}
-                className="text-xs font-bold text-[#C9A84C] hover:underline hidden sm:inline-flex items-center gap-1"
+                className="text-xs font-bold text-[#C9A84C] hover:underline inline-flex items-center gap-1 self-start sm:self-auto whitespace-nowrap"
               >
-                All {area} Buildings <ChevronRight size={14} />
+                {t.buildings.allLocationBuildings.replace("{area}", area)} <ChevronRight size={14} />
               </Link>
             </div>
 
@@ -325,7 +331,7 @@ export default function BuildingClient({
                 <Link
                   key={b.slug}
                   href={`/building/${b.slug}`}
-                  className="group block bg-white rounded-2xl border border-[#EDE8DF] overflow-hidden no-underline transition-all hover:-translate-y-1 hover:shadow-md"
+                  className="group block bg-white rounded-2xl border border-[#EDE8DF] overflow-hidden no-underline transition-all hover:-translate-y-1 hover:shadow-md flex flex-col justify-between"
                 >
                   <div className="relative h-36 sm:h-40 w-full bg-[#1C3A2F] overflow-hidden">
                     <Image
@@ -333,25 +339,46 @@ export default function BuildingClient({
                       alt={b.name}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = "/images/homepage_hero_v2.webp";
+                      }}
                     />
                     <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/60 backdrop-blur-md text-white border border-white/20">
-                      {b.unitCount} {b.unitCount === 1 ? "Unit" : "Units"}
+                      {b.unitCount} {b.unitCount === 1 ? t.buildings.unit : t.buildings.units}
                     </div>
                   </div>
 
-                  <div className="p-4 text-left">
-                    <h4 className="text-sm font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors truncate font-outfit">
-                      {b.name}
-                    </h4>
-                    <p className="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1">
-                      <MapPin size={11} className="text-[#C9A84C]" /> {b.area}, Bangkok
-                    </p>
+                  <div className="p-4 text-left flex-1 flex flex-col justify-between">
+                    <div>
+                      <h4 className="text-sm font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors truncate font-outfit">
+                        {b.name}
+                      </h4>
+                      <p className="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1">
+                        <MapPin size={11} className="text-[#C9A84C]" /> {b.area}, Bangkok
+                      </p>
+
+                      {/* Review Rating Badge (Right-aligned) */}
+                      <div className="mt-2 flex items-center justify-end">
+                        {b.reviewCount && b.reviewCount > 0 ? (
+                          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold">
+                            <Star size={11} className="fill-emerald-600 text-emerald-600" />
+                            <span>{b.ratingValue}</span>
+                            <span className="text-[9px] text-emerald-700 font-normal">({b.reviewCount} {b.reviewCount === 1 ? t.buildings.review : t.buildings.reviews})</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 bg-emerald-50/80 text-emerald-700 border border-emerald-200/80 px-2 py-0.5 rounded text-[10px] font-semibold">
+                            <Star size={10} className="text-emerald-500" />
+                            <span>{t.buildings.noReviewsYet}</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
                     {b.minPrice > 0 && (
                       <div className="mt-3 pt-2.5 border-t border-[#F5F0E6] flex items-center justify-between text-xs font-bold text-[#C9A84C]">
-                        <span>From {formatPrice(b.minPrice)}</span>
+                        <span>{t.buildings.from} {formatPrice(b.minPrice)}</span>
                         <span className="text-[10px] text-gray-400 group-hover:translate-x-1 transition-transform">
-                          View Building →
+                          {t.buildings.viewBuilding} →
                         </span>
                       </div>
                     )}

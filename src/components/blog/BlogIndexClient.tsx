@@ -7,6 +7,8 @@ import { Search, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { BlogPost } from "@/data/blogPosts";
 import BlogFeaturedHero from "./BlogFeaturedHero";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getLocalizedPost, T_BLOG } from "@/data/blogTranslations";
 
 export function getJourneyCategory(post: BlogPost): string {
   const slug = post.slug;
@@ -64,11 +66,34 @@ export function getJourneyCategory(post: BlogPost): string {
   return "Moving to Bangkok";
 }
 
+export function translateJourneyCategory(cat: string, lang: "en" | "th" | "zh"): string {
+  if (lang === "th") {
+    if (cat === "All") return "ทั้งหมด";
+    if (cat === "Moving to Bangkok") return "ย้ายมาอยู่กรุงเทพฯ";
+    if (cat === "Living in Bangkok") return "การใช้ชีวิตในกรุงเทพฯ";
+    if (cat === "Things to Do") return "กิจกรรมน่าสนใจ";
+    if (cat === "Digital Nomad") return "ดิจิทัลโนแมด";
+    if (cat === "Retirement") return "การเกษียณอายุ";
+    return cat;
+  }
+  if (lang === "zh") {
+    if (cat === "All") return "全部";
+    if (cat === "Moving to Bangkok") return "移居曼谷";
+    if (cat === "Living in Bangkok") return "曼谷生活";
+    if (cat === "Things to Do") return "玩乐指南";
+    if (cat === "Digital Nomad") return "数字游民";
+    if (cat === "Retirement") return "养老退休";
+    return cat;
+  }
+  return cat;
+}
+
 interface Props {
   initialPosts: BlogPost[];
 }
 
 export default function BlogIndexClient({ initialPosts }: Props) {
+  const { lang, t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const searchParams = useSearchParams();
@@ -114,8 +139,32 @@ export default function BlogIndexClient({ initialPosts }: Props) {
   // The remaining posts go into the grid
   const gridPosts = filteredPosts.slice(1);
 
+  const searchPlaceholder = lang === "th"
+    ? "ค้นหาคู่มือและบทความ..."
+    : lang === "zh"
+    ? "搜索指南与文章..."
+    : "Search guides & articles...";
+
+  const blogHeader = T_BLOG[lang] ?? T_BLOG["en"];
+
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-8 py-5 md:py-8 flex flex-col gap-5 md:gap-8">
+    <>
+      {/* Translated Header */}
+      <div className="px-4 md:px-8 py-8 md:py-12" style={{ background: "#1C3A2F" }}>
+        <div className="max-w-4xl mx-auto">
+          <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[1.5px] mb-1.5" style={{ color: "#C9A84C" }}>
+            {blogHeader.localGuides}
+          </p>
+          <h1 className="text-[24px] sm:text-[28px] md:text-[36px] font-bold mb-2 md:mb-3 leading-[1.2] md:leading-[1.15]" style={{ color: "#FFFFFF", letterSpacing: "-0.5px" }}>
+            {blogHeader.knowBangkok}
+          </h1>
+          <p className="text-[13px] md:text-[14px] font-light max-w-lg leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
+            {blogHeader.sub}
+          </p>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 md:px-8 py-5 md:py-8 flex flex-col gap-5 md:gap-8">
       {/* Search & Filter Row */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EDE8DF] pb-4 md:pb-6">
         {/* Category Pills (Scrollable) */}
@@ -133,7 +182,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
                   color: isActive ? "#FFFFFF" : "#555555",
                 }}
               >
-                {cat}
+                {translateJourneyCategory(cat, lang)}
               </button>
             );
           })}
@@ -143,7 +192,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
         <div className="relative w-full md:w-72 flex-shrink-0">
           <input
             type="text"
-            placeholder="Search guides & articles..."
+            placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-8 py-2 rounded-xl text-[13px] outline-none border transition-all"
@@ -168,13 +217,22 @@ export default function BlogIndexClient({ initialPosts }: Props) {
 
       {/* Featured Post Card */}
       {featuredPost ? (
-        <BlogFeaturedHero post={featuredPost} displayCategory={getJourneyCategory(featuredPost)} />
+        <BlogFeaturedHero
+          post={featuredPost}
+          displayCategory={translateJourneyCategory(getJourneyCategory(featuredPost), lang)}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="text-gray-300 mb-3">🔍</div>
-          <h3 className="text-base font-bold text-[#1C3A2F] mb-1">No articles found</h3>
+          <h3 className="text-base font-bold text-[#1C3A2F] mb-1">
+            {lang === "th" ? "ไม่พบบทความ" : lang === "zh" ? "未找到相关文章" : "No articles found"}
+          </h3>
           <p className="text-xs text-gray-500 max-w-xs">
-            We couldn&apos;t find any articles matching your search. Try adjusting your filters or keywords.
+            {lang === "th"
+              ? "ไม่พบบทความที่ตรงกับการค้นหาของคุณ ลองปรับเปลี่ยนตัวกรองหรือคำค้นหา"
+              : lang === "zh"
+              ? "未能找到匹配您搜索条件的文章，请尝试调整关键字或筛选条件。"
+              : "We couldn't find any articles matching your search. Try adjusting your filters or keywords."}
           </p>
         </div>
       )}
@@ -182,12 +240,16 @@ export default function BlogIndexClient({ initialPosts }: Props) {
       {/* Regular Posts Grid */}
       {gridPosts.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {gridPosts.map((post) => {
-            const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            });
+          {gridPosts.map((rawPost) => {
+            const post = getLocalizedPost(rawPost, lang);
+            const formattedDate = new Date(post.publishedAt).toLocaleDateString(
+              lang === "th" ? "th-TH" : lang === "zh" ? "zh-CN" : "en-GB",
+              {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }
+            );
 
             return (
               <Link
@@ -210,7 +272,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
                       className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
                       style={{ background: "#C9A84C", color: "#1C3A2F" }}
                     >
-                      {getJourneyCategory(post)}
+                      {translateJourneyCategory(getJourneyCategory(rawPost), lang)}
                     </span>
                     {post.trending && (
                       <span
@@ -249,7 +311,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
                       By {post.author.replace(" NHP Bangkok Team", "NHP")}
                     </span>
                     <span className="text-[12px] font-bold" style={{ color: "#1C3A2F" }}>
-                      Read more →
+                      {t.blog.read} →
                     </span>
                   </div>
                 </div>
@@ -258,6 +320,7 @@ export default function BlogIndexClient({ initialPosts }: Props) {
           })}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

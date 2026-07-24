@@ -1,18 +1,31 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { BlogPost } from "@/data/blogPosts";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getLocalizedPost } from "@/data/blogTranslations";
 
 interface Props {
   post: BlogPost;
   displayCategory?: string;
 }
 
-export default function BlogFeaturedHero({ post, displayCategory }: Props) {
-  const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+export default function BlogFeaturedHero({ post: rawPost, displayCategory }: Props) {
+  const { lang } = useLanguage();
+  const post = getLocalizedPost(rawPost, lang);
+
+  const formattedDate = new Date(post.publishedAt).toLocaleDateString(
+    lang === "th" ? "th-TH" : lang === "zh" ? "zh-CN" : "en-GB",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  );
+
+  const featuredText = lang === "th" ? "แนะนำ" : lang === "zh" ? "精选" : "Featured";
+  const readArticleText = lang === "th" ? "อ่านบทความ →" : lang === "zh" ? "阅读文章 →" : "Read Article →";
 
   return (
     <Link
@@ -39,7 +52,7 @@ export default function BlogFeaturedHero({ post, displayCategory }: Props) {
             className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
             style={{ background: "#C9A84C", color: "#1C3A2F" }}
           >
-            Featured · {displayCategory || post.category}
+            {featuredText} · {displayCategory || post.category}
           </span>
           {post.trending && (
             <span
@@ -61,7 +74,7 @@ export default function BlogFeaturedHero({ post, displayCategory }: Props) {
               className="px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider"
               style={{ background: "#C9A84C", color: "#1C3A2F" }}
             >
-              Featured
+              {featuredText}
             </span>
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#C9A84C]">
               {displayCategory || post.category}
@@ -94,7 +107,7 @@ export default function BlogFeaturedHero({ post, displayCategory }: Props) {
             className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-[12px] font-bold text-white transition-opacity group-hover:opacity-90"
             style={{ background: "#1C3A2F" }}
           >
-            Read Article →
+            {readArticleText}
           </span>
         </div>
       </div>

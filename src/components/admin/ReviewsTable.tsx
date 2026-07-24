@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Star, CheckCircle, XCircle, Trash2, Search, Filter } from "lucide-react";
 import { ReviewRecord } from "@/lib/store/reviews";
 
@@ -11,22 +11,23 @@ export default function ReviewsTable() {
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "published" | "rejected">("all");
   const [actionLoading, setActionLoading] = useState<number | null>(null);
 
-  const fetchReviews = () => {
-    setLoading(true);
-    fetch("/api/admin/reviews")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setReviews(data.reviews || []);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  };
+  const fetchReviews = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/reviews");
+      const data = await res.json();
+      if (data.success) {
+        setReviews(data.reviews || []);
+      }
+    } catch {
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     fetchReviews();
-  }, []);
+  }, [fetchReviews]);
 
   const handleUpdateStatus = async (id: number, status: "published" | "rejected") => {
     setActionLoading(id);

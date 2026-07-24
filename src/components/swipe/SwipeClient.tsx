@@ -6,6 +6,7 @@ import { SlidersHorizontal, X, Heart, MapPin, Undo2, PartyPopper, Bed, ShowerHea
 import Link from "next/link";
 import Image from "next/image";
 import { stripEmojis } from "@/lib/emoji";
+import { getLocalizedPropertySummary } from "@/lib/seoEnricher";
 import SwipeCard from "./SwipeCard";
 import SavedPanel from "./SavedPanel";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -405,7 +406,7 @@ export default function SwipeClient({ properties }: { properties: PropertyCard[]
             <span className="flex items-center gap-1"><ShowerHead size={14} className="shrink-0" /> {current.bathrooms}Ba</span>
             {current.sqm && <span className="flex items-center gap-1"><Maximize2 size={14} className="shrink-0" /> {current.sqm}m²</span>}
           </div>
-          <p className="text-[12px] leading-[1.6] font-light mb-5 line-clamp-4" style={{ color: "rgba(255,255,255,0.4)" }}>{stripEmojis(current.description)}</p>
+          <p className="text-[12px] leading-[1.6] font-light mb-5 line-clamp-4" style={{ color: "rgba(255,255,255,0.4)" }}>{stripEmojis(getLocalizedPropertySummary(current, lang))}</p>
           <a href={`/property/${current.slug}`} className="text-center py-2.5 rounded-xl text-[12px] font-semibold no-underline" style={{ background: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid rgba(201,168,76,0.3)" }}>
             {ts.viewDetails} →
           </a>

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BuildingsDirectoryClient, { BuildingProjectInfo } from "@/components/buildings/BuildingsDirectoryClient";
+import { NEIGHBORHOODS } from "@/data/neighborhoods";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAllReviews } from "@/lib/store/reviews";
 import { slugifyBuildingName } from "@/lib/buildingSlug";
@@ -57,6 +58,25 @@ export default async function BuildingsDirectoryPage() {
     const priceNum = Number(p.priceTHB) || 0;
     const existing = projectMap.get(slug);
 
+    const matchingNeighborhood = NEIGHBORHOODS.find((n) => {
+      const areaLower = p.area.toLowerCase().trim();
+      return (
+        n.slug.toLowerCase() === areaLower ||
+        n.name.toLowerCase().trim() === areaLower ||
+        n.aliases?.some((alias) => alias.toLowerCase().trim() === areaLower)
+      );
+    });
+
+    const bts = p.btsStation || undefined;
+    const mrt = p.mrtStation || undefined;
+    const transit = bts
+      ? `${bts} BTS`
+      : mrt
+      ? `${mrt} MRT`
+      : (p.transit && p.transit.length > 0)
+      ? p.transit[0]
+      : matchingNeighborhood?.nearestTransit;
+
     if (existing) {
       existing.unitCount += 1;
       existing.propertyIds.add(p.id);
@@ -64,11 +84,21 @@ export default async function BuildingsDirectoryPage() {
       if (p.listingType === "sale") existing.saleCount += 1;
       if (p.listingType === "short_stay") existing.shortStayCount += 1;
       if (p.petFriendly) existing.petFriendly = true;
+      if (p.nearBts) existing.nearBts = true;
+      if (!existing.btsStation && bts) existing.btsStation = bts;
+      if (!existing.mrtStation && mrt) existing.mrtStation = mrt;
+      if (!existing.nearestTransit && transit) existing.nearestTransit = transit;
 
-      if (priceNum > 0 && (existing.minPrice === 0 || priceNum < existing.minPrice)) {
-        existing.minPrice = priceNum;
+      if (priceNum > 0) {
+        if (p.listingType === "rent" || p.listingType === "short_stay") {
+          (existing as any).minRentPrice = (existing as any).minRentPrice > 0 ? Math.min((existing as any).minRentPrice, priceNum) : priceNum;
+        } else if (p.listingType === "sale") {
+          (existing as any).minSalePrice = (existing as any).minSalePrice > 0 ? Math.min((existing as any).minSalePrice, priceNum) : priceNum;
+        }
       }
     } else {
+      const isRentOrShort = p.listingType === "rent" || p.listingType === "short_stay";
+      const isSale = p.listingType === "sale";
       projectMap.set(slug, {
         slug,
         name,
@@ -81,10 +111,26 @@ export default async function BuildingsDirectoryPage() {
         saleCount: p.listingType === "sale" ? 1 : 0,
         shortStayCount: p.listingType === "short_stay" ? 1 : 0,
         petFriendly: Boolean(p.petFriendly),
+        nearBts: Boolean(p.nearBts || bts || mrt || (transit && transit.toLowerCase().includes("bts"))),
+        nearestTransit: transit || undefined,
+        btsStation: bts,
+        mrtStation: mrt,
         ratingValue: 0,
         reviewCount: 0,
         propertyIds: new Set([p.id]),
+        ...( { minRentPrice: isRentOrShort && priceNum > 0 ? priceNum : 0, minSalePrice: isSale && priceNum > 0 ? priceNum : 0 } as any ),
       });
+    }
+  });
+
+  // Finalize minPrice to be the cheapest room price (preferring lowest rental/short-stay room, or lowest sale room)
+  projectMap.forEach((b: any) => {
+    if (b.minRentPrice > 0 && b.minSalePrice > 0) {
+      b.minPrice = Math.min(b.minRentPrice, b.minSalePrice);
+    } else if (b.minRentPrice > 0) {
+      b.minPrice = b.minRentPrice;
+    } else if (b.minSalePrice > 0) {
+      b.minPrice = b.minSalePrice;
     }
   });
 
@@ -106,6 +152,7 @@ export default async function BuildingsDirectoryPage() {
     }
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const buildingProjects = Array.from(projectMap.values()).map(({ propertyIds, ...b }) => b);
 
   const breadcrumbJsonLd = {

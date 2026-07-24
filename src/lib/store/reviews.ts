@@ -11,7 +11,11 @@ export interface ReviewRecord {
   userId?: string;
   authorName: string;
   authorEmail?: string;
-  rating: number; // 1-5
+  rating: number; // 1-5 overall
+  ratingLocation?: number;    // 1-5
+  ratingFacilities?: number;  // 1-5
+  ratingManagement?: number;  // 1-5
+  ratingValue?: number;       // 1-5
   title?: string;
   body?: string;
   status: "pending" | "published" | "rejected";
@@ -49,11 +53,35 @@ export async function getAggregateRatingForProperty(propertyId: number, projectN
   const published = await getPublishedReviewsForProperty(propertyId, projectName);
   const count = published.length;
   if (count === 0) {
-    return { ratingValue: 0, reviewCount: 0 };
+    return {
+      ratingValue: 0,
+      reviewCount: 0,
+      ratingLocation: 0,
+      ratingFacilities: 0,
+      ratingManagement: 0,
+      ratingValueForMoney: 0,
+    };
   }
-  const sum = published.reduce((acc, r) => acc + r.rating, 0);
-  const average = Number((sum / count).toFixed(1));
-  return { ratingValue: average, reviewCount: count };
+  const sumOverall = published.reduce((acc, r) => acc + r.rating, 0);
+
+  const locs = published.filter((r) => r.ratingLocation);
+  const facs = published.filter((r) => r.ratingFacilities);
+  const mngs = published.filter((r) => r.ratingManagement);
+  const vals = published.filter((r) => r.ratingValue);
+
+  const avgLoc = locs.length > 0 ? Number((locs.reduce((a, b) => a + (b.ratingLocation || 0), 0) / locs.length).toFixed(1)) : Number((sumOverall / count).toFixed(1));
+  const avgFac = facs.length > 0 ? Number((facs.reduce((a, b) => a + (b.ratingFacilities || 0), 0) / facs.length).toFixed(1)) : Number((sumOverall / count).toFixed(1));
+  const avgMng = mngs.length > 0 ? Number((mngs.reduce((a, b) => a + (b.ratingManagement || 0), 0) / mngs.length).toFixed(1)) : Number((sumOverall / count).toFixed(1));
+  const avgVal = vals.length > 0 ? Number((vals.reduce((a, b) => a + (b.ratingValue || 0), 0) / vals.length).toFixed(1)) : Number((sumOverall / count).toFixed(1));
+
+  return {
+    ratingValue: Number((sumOverall / count).toFixed(1)),
+    reviewCount: count,
+    ratingLocation: avgLoc,
+    ratingFacilities: avgFac,
+    ratingManagement: avgMng,
+    ratingValueForMoney: avgVal,
+  };
 }
 
 export async function addReview(input: Omit<ReviewRecord, "id" | "status" | "createdAt" | "updatedAt">): Promise<ReviewRecord> {

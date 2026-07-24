@@ -17,8 +17,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import dynamic from "next/dynamic";
 import { StoredCommuteHub } from "@/lib/store/commuteHubs";
 import { stripEmojis } from "@/lib/emoji";
-import { getCanonicalArea } from "@/lib/area";
-import { enrichPropertyDescription, generatePropertyAltTag, getStructuredSeoDescription } from "@/lib/seoEnricher";
+import { enrichPropertyDescription, getStructuredSeoDescription } from "@/lib/seoEnricher";
 import { useSession } from "next-auth/react";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
 import { T_PROPERTY } from "@/data/propertyTranslations";
@@ -106,25 +105,136 @@ function translatePropertyType(type: string, lang: Lang = "en"): string {
 function formatPrice(p: PropertyCard, formatPriceFn: (n: number) => string, lang: Lang = "en") {
   const label = p.listingType === "sale" ? "" : (lang === "en" ? "/month" : lang === "th" ? "/เดือน" : "/月");
   if (p.listingType === "sale") return formatPriceFn(Number(p.priceTHB));
-  return `${formatPriceFn(Number(p.priceTHB))}${p.priceLabel || label}`;
+  let priceLbl = p.priceLabel || label;
+  if (priceLbl.toLowerCase().includes("month") || priceLbl.toLowerCase().includes("/mo")) {
+    priceLbl = label;
+  }
+  return `${formatPriceFn(Number(p.priceTHB))}${priceLbl}`;
 }
 
-function translateDistance(distance: string, lang: Lang): string {
-  const matchWalk = distance.match(/^(\d+)\s*min\s+walk$/i);
-  if (matchWalk) {
-    const mins = matchWalk[1];
-    if (lang === "th") return `เดิน ${mins} นาที`;
-    if (lang === "zh") return `步行 ${mins} 分钟`;
-    return `${mins} min walk`;
+function translateAmenity(amenity: string, lang: Lang = "en"): string {
+  if (lang === "en") return amenity;
+  const aLower = amenity.toLowerCase().trim();
+
+  if (lang === "th") {
+    if (aLower.includes("pet")) return "อนุญาตให้เลี้ยงสัตว์";
+    if (aLower.includes("pool") || aLower.includes("swimming")) return "สระว่ายน้ำ";
+    if (aLower.includes("gym") || aLower.includes("fitness")) return "ห้องฟิตเนส / ออกกำลังกาย";
+    if (aLower.includes("security") || aLower.includes("guard") || aLower.includes("cctv") || aLower.includes("24h")) return "ระบบรักษาความปลอดภัย 24 ชม.";
+    if (aLower.includes("garden") || aLower.includes("park")) return "สวนส่วนกลาง";
+    if (aLower.includes("parking") || aLower.includes("garage")) return "ที่จอดรถ";
+    if (aLower.includes("coworking") || aLower.includes("co-working") || aLower.includes("workspace") || aLower.includes("lounge")) return "โคเวิร์กกิ้งสเปซ";
+    if (aLower.includes("sauna") || aLower.includes("steam")) return "ซาวน่า / สตรีม";
+    if (aLower.includes("playground") || aLower.includes("kid")) return "สนามเด็กเล่น";
+    if (aLower.includes("bbq")) return "พื้นที่บาร์บีคิว";
+    if (aLower.includes("ev") || aLower.includes("charging")) return "จุดชาร์จ EV";
+    if (aLower.includes("keycard") || aLower.includes("access")) return "คีย์การ์ดเข้า-ออก";
+    return amenity;
   }
-  const matchDrive = distance.match(/^(\d+)\s*min\s+drive$/i);
-  if (matchDrive) {
-    const mins = matchDrive[1];
-    if (lang === "th") return `ขับรถ ${mins} นาที`;
-    if (lang === "zh") return `驾车 ${mins} 分钟`;
-    return `${mins} min drive`;
+
+  if (lang === "zh") {
+    if (aLower.includes("pet")) return "允许携带宠物";
+    if (aLower.includes("pool") || aLower.includes("swimming")) return "游泳池";
+    if (aLower.includes("gym") || aLower.includes("fitness")) return "健身房";
+    if (aLower.includes("security") || aLower.includes("guard") || aLower.includes("cctv") || aLower.includes("24h")) return "24小时安保";
+    if (aLower.includes("garden") || aLower.includes("park")) return "花园景观区";
+    if (aLower.includes("parking") || aLower.includes("garage")) return "停车场";
+    if (aLower.includes("coworking") || aLower.includes("co-working") || aLower.includes("workspace") || aLower.includes("lounge")) return "共享办公休息室";
+    if (aLower.includes("sauna") || aLower.includes("steam")) return "桑拿蒸气室";
+    if (aLower.includes("playground") || aLower.includes("kid")) return "儿童游乐场";
+    if (aLower.includes("bbq")) return "烧烤区";
+    if (aLower.includes("ev") || aLower.includes("charging")) return "电动车充电桩";
+    if (aLower.includes("keycard") || aLower.includes("access")) return "门禁卡系统";
+    return amenity;
   }
-  return distance;
+
+  return amenity;
+}
+
+function translateFeature(feature: string, lang: Lang = "en"): string {
+  if (lang === "en") return feature;
+  const fLower = feature.toLowerCase().trim();
+
+  if (lang === "th") {
+    if (fLower.includes("pet")) return "อนุญาตให้เลี้ยงสัตว์";
+    if (fLower.includes("fully furnished") || fLower === "furnished") return "ตกแต่งครบครันพร้อมเข้าอยู่";
+    if (fLower.includes("fitted kitchen") || fLower.includes("kitchen")) return "ห้องครัวบิวต์อินพร้อมใช้งาน";
+    if (fLower.includes("skyline") || fLower.includes("city view")) return "วิวเมืองและทิวทัศน์ขอบฟ้า";
+    if (fLower.includes("television") || fLower.includes("tv")) return "โทรทัศน์ / ทีวี";
+    if (fLower.includes("air conditioning") || fLower.includes("aircon") || fLower.includes("ac")) return "เครื่องปรับอากาศ";
+    if (fLower.includes("washing machine") || fLower.includes("washer")) return "เครื่องซักผ้า";
+    if (fLower.includes("refrigerator") || fLower.includes("fridge")) return "ตู้เย็น";
+    if (fLower.includes("microwave")) return "ไมโครเวฟ";
+    if (fLower.includes("bts") || fLower.includes("mrt") || fLower.includes("transit")) return "ใกล้รถไฟฟ้า BTS/MRT";
+    if (fLower.includes("sofa")) return "โซฟา";
+    if (fLower.includes("balcony")) return "ระเบียงรับลมส่วนตัว";
+    if (fLower.includes("bathtub")) return "อ่างอาบน้ำ";
+    if (fLower.includes("water heater")) return "เครื่องทำน้ำอุ่น";
+    if (fLower.includes("wifi") || fLower.includes("internet")) return "อินเทอร์เน็ตความเร็วสูง";
+    return feature;
+  }
+
+  if (lang === "zh") {
+    if (fLower.includes("pet")) return "允许携带宠物";
+    if (fLower.includes("fully furnished") || fLower === "furnished") return "全套精装修拎包入住";
+    if (fLower.includes("fitted kitchen") || fLower.includes("kitchen")) return "欧式全配套定制厨房";
+    if (fLower.includes("skyline") || fLower.includes("city view")) return "城市天际线精美景观";
+    if (fLower.includes("television") || fLower.includes("tv")) return "智能液晶电视";
+    if (fLower.includes("air conditioning") || fLower.includes("aircon") || fLower.includes("ac")) return "全室冷暖空调";
+    if (fLower.includes("washing machine") || fLower.includes("washer")) return "全自动洗衣机";
+    if (fLower.includes("refrigerator") || fLower.includes("fridge")) return "双门电冰箱";
+    if (fLower.includes("microwave")) return "微波炉";
+    if (fLower.includes("bts") || fLower.includes("mrt") || fLower.includes("transit")) return "紧邻 BTS/MRT 轨道交通";
+    if (fLower.includes("sofa")) return "舒适沙发";
+    if (fLower.includes("balcony")) return "观景阳台";
+    if (fLower.includes("bathtub")) return "独立浴缸";
+    if (fLower.includes("water heater")) return "热水器";
+    if (fLower.includes("wifi") || fLower.includes("internet")) return "预装高速光纤网络";
+    return feature;
+  }
+
+  return feature;
+}
+
+function formatSubtitleBadge(p: PropertyCard, lang: Lang = "en"): string {
+  const bedText = p.bedrooms === 0 
+    ? (lang === "th" ? "ห้องสตูดิโอ" : lang === "zh" ? "单间 Studio" : "Studio")
+    : (lang === "th" ? `${p.bedrooms} ห้องนอน` : lang === "zh" ? `${p.bedrooms} 居室` : `${p.bedrooms} Bed`);
+
+  const propType = translatePropertyType(p.propertyType || "Condo", lang);
+
+  const typeText = p.listingType === "sale"
+    ? (lang === "th" ? "สำหรับขาย" : lang === "zh" ? "出售" : "for Sale")
+    : p.listingType === "short_stay"
+    ? (lang === "th" ? "สำหรับเช่าระยะสั้น" : lang === "zh" ? "短租" : "for Short-Term Rent")
+    : (lang === "th" ? "สำหรับเช่า" : lang === "zh" ? "出租" : "for Rent");
+
+  if (lang === "th") {
+    return `${propType}${bedText} ${typeText}`;
+  }
+  if (lang === "zh") {
+    return `${bedText} ${propType}${typeText}`;
+  }
+  return `${bedText} ${propType} ${typeText}`;
+}
+
+function translateDistance(distance: string, lang: Lang = "en"): string {
+  if (!distance) return "";
+  const minsMatch = distance.match(/(\d+)/);
+  const mins = minsMatch ? minsMatch[1] : "";
+  const isDrive = /drive|ขับรถ|驾车/i.test(distance);
+
+  if (lang === "th") {
+    if (!mins) return distance;
+    return isDrive ? `ขับรถ ${mins} นาที` : `เดิน ${mins} นาที`;
+  }
+  if (lang === "zh") {
+    if (!mins) return distance;
+    return isDrive ? `驾车 ${mins} 分钟` : `步行 ${mins} 分钟`;
+  }
+
+  if (!mins) return distance;
+  return isDrive ? `${mins} min drive` : `${mins} min walk`;
 }
 
 /* Relative date string e.g. "Posted 3 days ago" */
@@ -1511,19 +1621,28 @@ function formatLocationDisplay(district?: string, area?: string, lang: string = 
   return `${cleanDistrict}, ${cleanArea}, ${bkk}`;
 }
 
-function renderSeoDescription(property: PropertyCard) {
-  const s = getStructuredSeoDescription(property);
+function renderSeoDescription(property: PropertyCard, lang: Lang = "en") {
+  const s = getStructuredSeoDescription(property, lang);
+
+  const titles = {
+    overview: lang === "th" ? "ภาพรวมและจุดเด่นยูนิต" : lang === "zh" ? "房源概览与核心亮点" : "Unit Overview & Highlights",
+    interior: lang === "th" ? "สเปคและการตกแต่งภายใน" : lang === "zh" ? "室内配置与家具家电" : "Interior Specs & Furnishings",
+    location: lang === "th" ? "ทำเล การเดินทาง BTS & สภาพแวดล้อม" : lang === "zh" ? "位置、轻轨交通与周边环境" : "Location, BTS Transit & Neighborhood",
+    facilities: lang === "th" ? "สิ่งอำนวยความสะดวกและระบบรักษาความปลอดภัย" : lang === "zh" ? "大楼配套设施与安保" : "Building Facilities & Security",
+    lease: lang === "th" ? "เงื่อนไขสัญญาเช่าและการย้ายเข้า" : lang === "zh" ? "租约与入住条款" : "Lease & Move-In Terms",
+    additional: lang === "th" ? "รายละเอียดเพิ่มเติม" : lang === "zh" ? "其他房源细节" : "Property Details",
+  };
 
   const sections = [
-    { icon: "🏢", title: "Unit Overview & Highlights", text: s.overview },
-    { icon: "🛋️", title: "Interior Specs & Furnishings", text: s.interior },
-    { icon: "📍", title: "Location, BTS Transit & Neighborhood", text: s.location },
-    { icon: "🏊", title: "Building Facilities & Security", text: s.facilities },
-    { icon: "📋", title: "Lease & Move-In Terms", text: s.lease },
+    { icon: "🏢", title: titles.overview, text: s.overview },
+    { icon: "🛋️", title: titles.interior, text: s.interior },
+    { icon: "📍", title: titles.location, text: s.location },
+    { icon: "🏊", title: titles.facilities, text: s.facilities },
+    { icon: "📋", title: titles.lease, text: s.lease },
   ];
 
   if (s.additional) {
-    sections.push({ icon: "📝", title: "Property Details", text: s.additional });
+    sections.push({ icon: "📝", title: titles.additional, text: s.additional });
   }
 
   return (
@@ -1879,7 +1998,7 @@ export default function PropertyDetail({
 
               {/* Subtitle Badge */}
               <div className="text-[11px] font-bold tracking-[1px] uppercase mb-1 font-outfit" style={{ color: "#C9A84C" }}>
-                {property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`} {property.propertyType ? property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1) : "Condo"} for {property.listingType === "sale" ? "Sale" : property.listingType === "short_stay" ? "Short-Term Rent" : "Rent"}
+                {formatSubtitleBadge(property, lang)}
               </div>
 
               {/* Title */}
@@ -2101,7 +2220,7 @@ export default function PropertyDetail({
                   {t.aboutProperty}
                 </h3>
                 <div className="flex-1 min-h-[340px] max-h-[450px] overflow-y-auto pr-3 mb-4 custom-scrollbar">
-                  {renderSeoDescription(rawProperty)}
+                  {renderSeoDescription(rawProperty, lang)}
                 </div>
                 
                 <div className="mt-auto pt-4 border-t border-gray-100 flex-shrink-0">
@@ -2112,16 +2231,16 @@ export default function PropertyDetail({
                     {(property.features && property.features.length > 0
                       ? property.features
                       : [
-                          lang === "en" ? "Fully furnished" : lang === "th" ? "ตกแต่งครบครัน" : "精装修",
-                          lang === "en" ? "Air conditioning" : lang === "th" ? "เครื่องปรับอากาศ" : "空调",
-                          lang === "en" ? "Television" : lang === "th" ? "โทรทัศน์" : "电视",
-                          lang === "en" ? "Sofa" : lang === "th" ? "โซฟา" : "沙发",
-                          lang === "en" ? "Modern kitchen" : lang === "th" ? "ห้องครัวทันสมัย" : "现代厨房"
+                          "Fully furnished",
+                          "Air conditioning",
+                          "Television",
+                          "Sofa",
+                          "Modern kitchen"
                         ]
                     ).map((hl, i) => (
                       <li key={i} className="flex items-center text-[12.5px] text-gray-600 font-light truncate">
                         <span className="text-[#C9A84C] font-bold mr-2 flex-shrink-0 text-[13px]">✓</span>
-                        <span className="truncate">{hl}</span>
+                        <span className="truncate">{translateFeature(hl, lang)}</span>
                       </li>
                     ))}
                   </ul>
@@ -2165,15 +2284,15 @@ export default function PropertyDetail({
                     {(property.amenities && property.amenities.length > 0
                       ? property.amenities
                       : [
-                          lang === "en" ? "Swimming Pool" : lang === "th" ? "สระว่ายน้ำ" : "游泳池",
-                          lang === "en" ? "Fitness Center" : lang === "th" ? "ห้องฟิตเนส" : "健身中心",
-                          lang === "en" ? "24h Security" : lang === "th" ? "ระบบรักษาความปลอดภัย 24 ชม." : "24小时保安",
-                          lang === "en" ? "Parking" : lang === "th" ? "ที่จอดรถ" : "停车场"
+                          "Swimming Pool",
+                          "Fitness Center",
+                          "24h Security",
+                          "Parking"
                         ]
                     ).map((amenity, idx) => (
                       <div key={idx} className="flex items-center gap-2.5 text-[13px] text-gray-600 font-light">
                         <span className="text-[#1C3A2F] flex-shrink-0">{getAmenityIcon(amenity)}</span>
-                        <span className="truncate">{amenity}</span>
+                        <span className="truncate">{translateAmenity(amenity, lang)}</span>
                       </div>
                     ))}
                   </div>
@@ -2606,7 +2725,7 @@ export default function PropertyDetail({
 
                 {/* Subtitle Badge */}
                 <div className="text-[12px] font-bold tracking-[1px] uppercase mb-1 font-outfit" style={{ color: "#C9A84C" }}>
-                  {property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bed`} {property.propertyType ? property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1) : "Condo"} for {property.listingType === "sale" ? "Sale" : property.listingType === "short_stay" ? "Short-Term Rent" : "Rent"}
+                  {formatSubtitleBadge(property, lang)}
                 </div>
 
                 {/* Property Name Title — desktop (mobile has the single <h1> for mobile-first indexing) */}
@@ -2635,7 +2754,13 @@ export default function PropertyDetail({
                     className="inline-flex items-center gap-1.5 text-[11px] font-semibold no-underline px-2.5 py-1 rounded-lg border transition-all hover:bg-[#FAF8F3]"
                     style={{ background: "#FFFFFF", color: "#1C3A2F", borderColor: "#EDE8DF" }}
                   >
-                    <span>🏢 View {property.projectName || property.name} Building Guide & All Units →</span>
+                    <span>
+                      {lang === "th"
+                        ? `🏢 ดูคู่มือโครงการและยูนิตทั้งหมดของ ${property.projectName || property.name} →`
+                        : lang === "zh"
+                        ? `🏢 查看 ${property.projectName || property.name} 项目指南与所有房源 →`
+                        : `🏢 View ${property.projectName || property.name} Building Guide & All Units →`}
+                    </span>
                   </Link>
                 </div>
 
@@ -2667,7 +2792,11 @@ export default function PropertyDetail({
                   {formatPriceFn(Number(property.priceTHB))}
                   {property.listingType !== "sale" && (
                     <span className="text-[14px] font-normal ml-1" style={{ color: "#555" }}>
-                      {property.priceLabel ?? t.month}
+                      {(() => {
+                        const lbl = property.priceLabel || t.month;
+                        if (lbl.toLowerCase().includes("month") || lbl.toLowerCase().includes("mo")) return t.month;
+                        return lbl;
+                      })()}
                     </span>
                   )}
                 </div>

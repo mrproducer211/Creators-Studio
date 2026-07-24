@@ -11,117 +11,36 @@ interface MatchResult {
 
 export async function POST(req: NextRequest) {
   try {
-    const { reason, preferences, avoidances, budget, stayDuration, workplace } = await req.json();
+    const { reason, preferences, criticalPreferences, avoidances, budget, workplace } = await req.json();
 
     const cleanReason = reason || "Just Exploring Bangkok";
     const selectedPrefs = Array.isArray(preferences)
       ? preferences.map((p: string) => p.replace(/^[^a-zA-Z0-9\s]+/, "").trim())
       : [];
+    const selectedCriticals = Array.isArray(criticalPreferences)
+      ? criticalPreferences.map((p: string) => p.replace(/^[^a-zA-Z0-9\s]+/, "").trim())
+      : [];
     const selectedAvoidances = Array.isArray(avoidances) ? avoidances : [];
     const maxBudget = Number(budget) || 50000;
-    const cleanDuration = stayDuration || "6-12 Months";
     const cleanWorkplace = (workplace || "").trim();
 
-    // Calculate matches locally
+    // Calculate matches locally and deterministically
     const rankedNeighborhoods = calculateRelocationMatches(
       cleanReason,
       selectedPrefs,
+      selectedCriticals,
       selectedAvoidances,
       maxBudget,
       cleanWorkplace
     );
 
-    const topMatches = rankedNeighborhoods.slice(0, 3);
-    const apiKey = process.env.GEMINI_API_KEY;
-
-    let matches: MatchResult[] = [];
-
-    if (apiKey) {
-      try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-        const systemPrompt = `
-You are a premium, seasoned expat relocation consultant in Bangkok. 
-Given the user's details and our calculated top 3 neighborhood matches, write a personalized, highly professional relocation consultant explanation and 5 specific bullet points explaining "Why We Chose" this neighborhood.
-
-User Inputs:
-- Reason for coming: "${cleanReason}"
-- Preferences (What they want): ${JSON.stringify(selectedPrefs)}
-- Avoidances (What they want to AVOID): ${JSON.stringify(selectedAvoidances)}
-- Monthly Budget: ${maxBudget} THB
-- Length of Stay: "${cleanDuration}"
-- Workplace/Destination: "${cleanWorkplace || "None specified"}"
-
-Your Top 3 Matched Neighborhoods (with calculated match percentages and fit labels):
-${JSON.stringify(
-  topMatches.map((t) => ({
-    name: t.name,
-    slug: t.slug,
-    matchPercentage: t.matchPercentage,
-    fitLabel: t.fitLabel,
-    description: t.description,
-    personality: t.personality,
-    scores: t.scores,
-  })),
-  null,
-  2
-)}
-
-Return a JSON object matching this exact schema:
-{
-  "matches": [
-    {
-      "slug": "neighborhood-slug", // e.g. "ari"
-      "explanation": "A beautiful 2-3 sentence personalized paragraph written in the warm, authoritative voice of a relocation advisor explaining how this area fits their duration, purpose, and lifestyle, and avoids their dislikes.",
-      "whyWeChose": [
-        "First short reason (e.g. Excellent cafe culture)",
-        "Second short reason",
-        "Third short reason",
-        "Fourth short reason",
-        "Fifth short reason"
-      ]
-    }
-  ]
-}
-`;
-
-        const response = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: systemPrompt }] }],
-            generationConfig: {
-              responseMimeType: "application/json",
-            },
-          }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (textResponse) {
-            const parsed = JSON.parse(textResponse);
-            if (parsed.matches && Array.isArray(parsed.matches)) {
-              matches = topMatches.map((m) => {
-                const apiMatch = parsed.matches.find((item: { slug: string; explanation?: string; whyWeChose?: string[] }) => item.slug === m.slug);
-                return {
-                  slug: m.slug,
-                  matchPercentage: m.matchPercentage,
-                  fitLabel: m.fitLabel,
-                  explanation: apiMatch?.explanation || m.explanation,
-                  whyWeChose: apiMatch?.whyWeChose || m.whyWeChose,
-                };
-              });
-            }
-          }
-        }
-      } catch (err) {
-        console.warn("Gemini matchmaker generation failed, using local templates:", err);
-      }
-    }
-
-    if (matches.length === 0) {
-      matches = topMatches;
-    }
+    const matches: MatchResult[] = rankedNeighborhoods.map((n) => ({
+      slug: n.slug,
+      matchPercentage: n.matchPercentage,
+      fitLabel: n.fitLabel,
+      explanation: n.explanation,
+      whyWeChose: n.whyWeChose,
+    }));
 
     return NextResponse.json({ success: true, matches });
   } catch (err) {
@@ -178,11 +97,15 @@ interface InternalRanked extends Neighborhood {
 function calculateRelocationMatches(
   reason: string,
   preferences: string[],
+  criticalPreferences: string[] = [],
   avoidances: string[],
   budget: number,
   workplace: string
 ): InternalRanked[] {
   const hasWorkplace = !!workplace;
+  const isPetRequired = reason === "Pet-Friendly Lifestyle" || 
+                        preferences.some(p => p.toLowerCase().includes("pet")) ||
+                        criticalPreferences.some(p => p.toLowerCase().includes("pet"));
 
   // Weights
   const wLifestyle = hasWorkplace ? 0.40 : 0.60;
@@ -190,12 +113,26 @@ function calculateRelocationMatches(
   const wCommute   = hasWorkplace ? 0.20 : 0.00;
   const wCommunity = 0.15;
 
-  return NEIGHBORHOODS.map((n) => {
+  return NEIGHBORHOODS.map((n): InternalRanked => {
+    // Hard Binary Filter 1: Pet-Friendly
+    if (isPetRequired && n.scores.petFriendly < 5) {
+      return {
+        ...n,
+        matchPercentage: 35,
+        fitLabel: "Good Alternative" as const,
+        explanation: `${n.name} is a vibrant district, but has very limited pet-friendly condo options and green spaces.`,
+        whyWeChose: ["Central location", "Good transport access"],
+      };
+    }
+
     // 1. Lifestyle Compatibility (40% or 60%)
     let lifestyleScore = 70;
     if (preferences.length > 0) {
       let totalMatch = 0;
+      let totalWeight = 0;
       preferences.forEach((pref) => {
+        const isCritical = criticalPreferences.includes(pref);
+        const weight = isCritical ? 2.0 : 1.0;
         let scoreVal = 7;
         switch (pref) {
           case "Cafe Culture":
@@ -247,9 +184,10 @@ function calculateRelocationMatches(
             scoreVal = n.scores.luxury;
             break;
         }
-        totalMatch += scoreVal * 10;
+        totalMatch += scoreVal * 10 * weight;
+        totalWeight += weight;
       });
-      lifestyleScore = totalMatch / preferences.length;
+      lifestyleScore = totalWeight > 0 ? totalMatch / totalWeight : 70;
     }
 
     // 2. Budget Compatibility (25%)

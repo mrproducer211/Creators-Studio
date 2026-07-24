@@ -27,8 +27,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (l === "en") {
       setTranslations(en);
     } else {
-      const mod = await import(`./translations/${l}`);
-      setTranslations(mod.default);
+      try {
+        const mod = await import(`./translations/${l}`);
+        setTranslations(mod.default);
+      } catch (err) {
+        console.error(`Failed to load translations for ${l}:`, err);
+        setTranslations(en);
+      }
     }
   };
 

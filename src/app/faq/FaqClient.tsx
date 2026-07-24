@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Search,
   X,
@@ -253,6 +254,7 @@ function renderFormattedTextWithInternalLinks(text: string) {
 }
 
 export default function FaqClient() {
+  const { t } = useLanguage();
   const [audience, setAudience] = useState<"renters" | "landlords">("renters");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -361,11 +363,6 @@ export default function FaqClient() {
 
   return (
     <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
@@ -394,7 +391,7 @@ export default function FaqClient() {
                 }`}
               >
                 <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
-                <span>For Renters &amp; Expats</span>
+                <span>{t.faq.renterTab}</span>
               </button>
               <button
                 type="button"
@@ -409,16 +406,16 @@ export default function FaqClient() {
                 }`}
               >
                 <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
-                <span>For Landlords &amp; Owners</span>
+                <span>{t.faq.landlordTab}</span>
               </button>
             </div>
 
             {/* Headline */}
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-3 sm:mb-3.5 tracking-tight leading-tight px-2">
-              How can we help your Bangkok move?
+              {t.faq.heroTitle}
             </h1>
             <p className="text-xs sm:text-sm md:text-base text-white/80 max-w-xl mx-auto mb-6 sm:mb-8 font-normal leading-relaxed px-2">
-              Clear answers on verified listings, deposits, lease contracts, and neighbourhood selection.
+              {t.faq.heroSub}
             </p>
 
             {/* Search Shell */}
@@ -426,7 +423,7 @@ export default function FaqClient() {
               <Search className="w-4 h-4 sm:w-5 sm:h-5 text-[#666666] flex-shrink-0 ml-1" />
               <input
                 type="text"
-                placeholder="Search questions (e.g. deposit, agent fees...)"
+                placeholder={t.faq.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent text-[#1A1A1A] placeholder-[#888888] text-xs sm:text-base focus:outline-none py-0 font-normal border-none"
@@ -479,7 +476,7 @@ export default function FaqClient() {
             }`}
           >
             <Grid className="w-3.5 h-3.5" />
-            <span>All topics ({totalFaqsCount})</span>
+            <span>{t.faq.allTopics} ({totalFaqsCount})</span>
           </button>
 
           {currentCategories.map((cat) => {
