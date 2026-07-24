@@ -1260,11 +1260,11 @@ function EnquiryModal({ property, onClose }: { property: PropertyCard; onClose: 
               </div>
               <form className="flex flex-col gap-3" onSubmit={submit}>
                 <input suppressHydrationWarning className="w-full rounded-xl px-4 py-3 text-[14px] outline-none" style={inputStyle} placeholder={lang === "en" ? "Your name" : lang === "th" ? "ชื่อของคุณ" : "您的姓名"} value={name} onChange={(e) => setName(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} required />
-                <div className="flex gap-2">
-                  <select suppressHydrationWarning value={method} onChange={(e) => setMethod(e.target.value)} className="rounded-xl px-3 py-3 text-[14px] outline-none cursor-pointer" style={inputStyle}>
+                <div className="flex gap-2 w-full min-w-0">
+                  <select suppressHydrationWarning value={method} onChange={(e) => setMethod(e.target.value)} className="shrink-0 rounded-xl px-3 py-3 text-[14px] outline-none cursor-pointer" style={inputStyle}>
                     <option>WhatsApp</option><option>Line</option><option>Telegram</option>
                   </select>
-                  <input suppressHydrationWarning className="flex-1 rounded-xl px-4 py-3 text-[14px] outline-none" style={inputStyle} placeholder={lang === "en" ? "Phone / username" : lang === "th" ? "เบอร์โทรศัพท์ / ชื่อผู้ใช้" : "电话 / 用户名"} value={contact} onChange={(e) => setContact(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} required />
+                  <input suppressHydrationWarning className="flex-1 min-w-0 rounded-xl px-4 py-3 text-[14px] outline-none" style={inputStyle} placeholder={lang === "en" ? "Phone / username" : lang === "th" ? "เบอร์โทรศัพท์ / ชื่อผู้ใช้" : "电话 / 用户名"} value={contact} onChange={(e) => setContact(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} required />
                 </div>
                 <textarea suppressHydrationWarning className="w-full rounded-xl px-4 py-3 text-[14px] outline-none resize-none" style={inputStyle} placeholder={lang === "en" ? `I'm interested in ${property.name}...` : lang === "th" ? `ฉันสนใจใน ${property.name}...` : `我对 ${property.name} 感兴趣...`} rows={3} value={msg} onChange={(e) => setMsg(e.target.value)} onFocus={(e) => (e.target.style.borderColor = "#1C3A2F")} onBlur={(e) => (e.target.style.borderColor = "#E5E0D8")} />
                 {errorMsg && (
@@ -1458,20 +1458,23 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
               {/* ── Calendar ── */}
               <div className="flex items-center justify-between mb-3">
                 <p className="text-[11px] uppercase tracking-[1px] font-semibold" style={{ color: "#999" }}>{t.pickDate}</p>
-                <p className="text-[14px] font-bold" style={{ color: "#1C3A2F" }}>{monthLabel}</p>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FAF8F3] border border-[#EDE8DF]">
+                  <Calendar size={13} className="text-[#C9A84C]" />
+                  <span className="text-[13px] font-bold text-[#1C3A2F]">{monthLabel}</span>
+                </div>
               </div>
 
-              <div className="rounded-xl p-3 mb-1" style={{ background: "#FAF8F3", border: "1px solid #EDE8DF" }}>
+              <div className="rounded-2xl p-3.5 mb-1" style={{ background: "#FAF8F3", border: "1px solid #EDE8DF" }}>
                 {/* Weekday header */}
-                <div className="grid grid-cols-7 gap-1 mb-2">
+                <div className="grid grid-cols-7 gap-1.5 mb-2.5">
                   {weekdays.map((w, i) => (
-                    <div key={i} className="text-center text-[10px] font-semibold uppercase tracking-[0.5px]" style={{ color: "#999" }}>
+                    <div key={i} className="text-center text-[10px] font-bold uppercase tracking-[0.5px]" style={{ color: "#999" }}>
                       {w}
                     </div>
                   ))}
                 </div>
                 {/* Day grid */}
-                <div className="grid grid-cols-7 gap-1">
+                <div className="grid grid-cols-7 gap-1.5">
                   {cells.map((day, i) => {
                     if (day == null) return <div key={i} />;
                     const iso = new Date(year, month, day).toISOString().split("T")[0];
@@ -1481,15 +1484,17 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
                     return (
                       <button
                         key={i}
+                        type="button"
                         onClick={() => enabled && setDate(iso)}
                         disabled={!enabled}
-                        className="aspect-square rounded-lg text-[13px] font-semibold cursor-pointer border-none transition-all relative"
+                        className="aspect-square rounded-xl text-[13px] font-bold cursor-pointer border-none transition-all relative flex items-center justify-center shadow-2xs"
                         style={{
                           background: isSel ? "#1C3A2F" : enabled ? "#FFFFFF" : "transparent",
-                          color:      isSel ? "#FFFFFF" : enabled ? "#1A1A1A" : "#ccc",
+                          color:      isSel ? "#C9A84C" : enabled ? "#1C3A2F" : "#CCC",
+                          opacity:    enabled ? 1 : 0.35,
                           cursor:     enabled ? "pointer" : "not-allowed",
                           fontFamily: "inherit",
-                          border:     isToday && !isSel ? "1.5px solid #C9A84C" : "1.5px solid transparent",
+                          border:     isToday && !isSel ? "1.5px solid #C9A84C" : isSel ? "1.5px solid #1C3A2F" : "1px solid #EDE8DF",
                         }}
                       >
                         {day}
@@ -1498,8 +1503,8 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
                   })}
                 </div>
               </div>
-              <p className="text-[10px] mb-5" style={{ color: "#bbb" }}>
-                {t.selectDate7Days}
+              <p className="text-[10px] mb-5 font-medium" style={{ color: "#888" }}>
+                {t.selectDate7Days || "Select a date within the next 7 days."}
               </p>
 
               {/* ── Time ── */}
@@ -1527,9 +1532,9 @@ function TourCalendar({ property, onClose }: { property: PropertyCard; onClose: 
               />
 
               {/* WhatsApp / Line selector + number */}
-              <div className="flex gap-2 mb-4">
+              <div className="flex gap-2 mb-4 w-full min-w-0">
                 {/* Selector */}
-                <div className="inline-flex rounded-xl overflow-hidden flex-shrink-0" style={{ border: "1.5px solid #E5E0D8" }}>
+                <div className="inline-flex rounded-xl overflow-hidden shrink-0" style={{ border: "1.5px solid #E5E0D8" }}>
                   {(["WhatsApp", "Line"] as const).map((m) => (
                     <button
                       key={m}
