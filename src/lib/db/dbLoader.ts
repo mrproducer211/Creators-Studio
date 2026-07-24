@@ -156,12 +156,13 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
           },
           seenSlugs
         );
-        const finalSlug = (p.slug && p.slug.includes("-tg-")) ? cleanSeoSlug : (p.slug || cleanSeoSlug);
+        const finalSlug = p.slug || cleanSeoSlug;
         seenSlugs.add(finalSlug);
 
         return {
           id: p.id,
           slug: finalSlug,
+          dbSlug: p.slug || undefined,
           name: p.name,
           projectName: p.projectName || undefined,
           description: enrichedDesc,

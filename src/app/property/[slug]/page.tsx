@@ -12,13 +12,27 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+export const dynamicParams = true;
+
 function findPropertyBySlug(all: any[], slug: string) {
+  if (!slug) return undefined;
+  const lower = slug.toLowerCase().trim();
+  const lowerNoTg = lower.replace(/-tg-\d+$/, "");
+
   return all.find((p) => {
-    if (p.slug === slug) return true;
-    const clean = generateCleanSeoSlug(p);
-    if (clean === slug) return true;
-    const legacyClean = p.slug ? p.slug.toLowerCase().replace(/-tg-\d+$/, "") : "";
-    if (legacyClean && slug.toLowerCase().includes(legacyClean)) return true;
+    if (p.slug && p.slug.toLowerCase().trim() === lower) return true;
+    if (p.dbSlug && p.dbSlug.toLowerCase().trim() === lower) return true;
+    
+    // Check clean SEO slug match
+    const clean = generateCleanSeoSlug(p).toLowerCase().trim();
+    if (clean === lower) return true;
+    
+    // Check base name without -tg- suffix match
+    if (p.slug) {
+      const pSlugNoTg = p.slug.toLowerCase().replace(/-tg-\d+$/, "");
+      if (pSlugNoTg === lowerNoTg || pSlugNoTg === lower || clean === lowerNoTg) return true;
+    }
+
     return false;
   });
 }
