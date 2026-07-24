@@ -11,6 +11,7 @@ import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext";
 import { useSaved } from "@/contexts/SavedContext";
 import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
+import { sanitizePropertyItems } from "@/lib/seoEnricher";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -2356,8 +2357,8 @@ export default function PropertyDetail({
                     {t.highlights}
                   </h4>
                   <ul className="list-none p-0 m-0 grid grid-cols-2 gap-y-2 gap-x-4">
-                    {(property.features && property.features.length > 0
-                      ? property.features
+                    {(sanitizePropertyItems(property.features).length > 0
+                      ? sanitizePropertyItems(property.features)
                       : [
                           "Fully furnished",
                           "Air conditioning",
@@ -2409,8 +2410,8 @@ export default function PropertyDetail({
                   </h3>
                   
                   <div className="grid grid-cols-2 gap-y-5 gap-x-3">
-                    {(property.amenities && property.amenities.length > 0
-                      ? property.amenities
+                    {(sanitizePropertyItems(property.amenities).length > 0
+                      ? sanitizePropertyItems(property.amenities)
                       : [
                           "Swimming Pool",
                           "Fitness Center",

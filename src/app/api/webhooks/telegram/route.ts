@@ -526,36 +526,26 @@ function parseTelegramMessage(text: string, messageId: number) {
     }
   }
 
-  // 2. Scan for lists under Amenities: / Facilities: / Features:
-  const facilitiesMatch = text.match(/(?:amenities|facilities|features)[:\s]*\n((?:[•\-\*\s]+[^\n]+\n?)+)/i);
-  if (facilitiesMatch) {
-    const listText = facilitiesMatch[1];
-    const items = listText.split("\n")
+  // 2. Scan for Amenities/Facilities list separately from Features list
+  const amenitiesMatch = text.match(/(?:amenities|facilities)[:\s]*\n((?:[•\-\*\s]+[^\n]+\n?)+)/i);
+  if (amenitiesMatch) {
+    const items = amenitiesMatch[1].split("\n")
       .map(line => line.replace(/^[•\-\*\s]+/, "").trim())
-      .filter(Boolean);
+      .filter(line => line && !/^(features|amenities|facilities|highlights):?$/i.test(line) && line.length < 80);
     for (const item of items) {
       const cleanItem = item.charAt(0).toUpperCase() + item.slice(1);
-      const lItem = item.toLowerCase();
-      const isFeature = lItem.includes("balcony") ||
-                        lItem.includes("bathtub") ||
-                        lItem.includes("view") ||
-                        lItem.includes("fitted") ||
-                        lItem.includes("sofa") ||
-                        /\btv\b/i.test(lItem) ||
-                        lItem.includes("television") ||
-                        lItem.includes("air condition") ||
-                        /\bac\b/i.test(lItem) ||
-                        /\ba\/c\b/i.test(lItem) ||
-                        lItem.includes("fridge") ||
-                        lItem.includes("refrigerator") ||
-                        lItem.includes("washing") ||
-                        lItem.includes("washer") ||
-                        lItem.includes("microwave");
-      if (isFeature) {
-        if (!features.includes(cleanItem)) features.push(cleanItem);
-      } else {
-        if (!amenities.includes(cleanItem)) amenities.push(cleanItem);
-      }
+      if (!amenities.includes(cleanItem)) amenities.push(cleanItem);
+    }
+  }
+
+  const featuresMatch = text.match(/(?:features|highlights)[:\s]*\n((?:[•\-\*\s]+[^\n]+\n?)+)/i);
+  if (featuresMatch) {
+    const items = featuresMatch[1].split("\n")
+      .map(line => line.replace(/^[•\-\*\s]+/, "").trim())
+      .filter(line => line && !/^(features|amenities|facilities|highlights):?$/i.test(line) && line.length < 80);
+    for (const item of items) {
+      const cleanItem = item.charAt(0).toUpperCase() + item.slice(1);
+      if (!features.includes(cleanItem)) features.push(cleanItem);
     }
   }
 

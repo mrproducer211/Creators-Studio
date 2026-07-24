@@ -86,6 +86,23 @@ function cleanRawText(text: string): string {
     .trim();
 }
 
+/**
+ * Filters out section headers (e.g. "Features:"), long text, and marketing paragraphs
+ * from amenities/features arrays.
+ */
+export function sanitizePropertyItems(items?: string[], maxLen = 80): string[] {
+  if (!items || !Array.isArray(items)) return [];
+  return items.filter((item) => {
+    if (!item || typeof item !== "string") return false;
+    const trimmed = item.trim();
+    if (!trimmed) return false;
+    if (/^(features|amenities|facilities|highlights|details|overview):?$/i.test(trimmed)) return false;
+    if (trimmed.length > maxLen) return false;
+    if (/^(looking for|discover|spacious|featured|welcome|offered at)/i.test(trimmed)) return false;
+    return true;
+  });
+}
+
 export interface EnrichedSections {
   overview: string;
   interior: string;
@@ -152,7 +169,8 @@ export function getStructuredSeoDescription(p: {
     const location = `Situated in ${cleanedArea}${cleanedDistrict ? `, ${cleanedDistrict}` : ""}, residents enjoy walking-distance access to specialty cafes, international restaurants, lifestyle shopping malls, and leading international schools. ${petText}`;
 
     const defaultAmenities = ["Infinity Pool", "Fitness Gym", "24/7 Security", "Smart Keycard Access", "Covered Parking"];
-    const amenityListStr = (p.amenities && p.amenities.length > 0 ? p.amenities : defaultAmenities).join(", ");
+    const cleanAmenities = sanitizePropertyItems(p.amenities);
+    const amenityListStr = (cleanAmenities.length > 0 ? cleanAmenities : defaultAmenities).join(", ");
     const ownershipText = p.foreignQuota
       ? "Available under Foreign Freehold Quota for 100% foreign ownership."
       : "Ideal for expats, executives, and digital nomads residing in Bangkok.";
@@ -164,13 +182,28 @@ export function getStructuredSeoDescription(p: {
       ? `Available for direct purchase with clean chanote title deed. Full assistance provided for ownership transfer at the Department of Lands.`
       : `Offered under standard 12-month lease agreements with a 2-month security deposit. Contact our team to schedule an in-person or video tour.`;
 
+    let cleanAdditional = rawDesc;
+    if (cleanAdditional) {
+      cleanAdditional = cleanAdditional
+        .split("\n")
+        .filter(line => {
+          const l = line.trim();
+          if (!l) return false;
+          if (/^(features|amenities|facilities|highlights):?$/i.test(l)) return false;
+          if (l.startsWith("•") || l.startsWith("-")) return false;
+          return true;
+        })
+        .join("\n")
+        .trim();
+    }
+
     return {
       overview,
       interior,
       location,
       facilities,
       lease,
-      additional: rawDesc && rawDesc.length > 30 && !rawDesc.toLowerCase().includes("discover high-rise") ? rawDesc : undefined,
+      additional: cleanAdditional && cleanAdditional.length > 30 && !cleanAdditional.toLowerCase().includes("discover high-rise") ? cleanAdditional : undefined,
     };
   }
 
