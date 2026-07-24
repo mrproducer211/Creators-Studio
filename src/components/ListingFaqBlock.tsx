@@ -153,7 +153,7 @@ function buildListingFaqs(property: PropertyCard, lang: "en" | "th" | "zh" = "en
       ? `กรอกแบบฟอร์มสอบถามในหน้านี้ แล้วเราจะยืนยันวันเวลานัดหมายเข้าชมภายใน 24 ชั่วโมง หรือขอชมวิดีโอผ่าน LINE / WhatsApp`
       : lang === "zh"
       ? `在当前页面填写咨询表单，我们将在工作日 24 小时内与您确认看房时间。也可以通过 LINE 或 WhatsApp 请求视频看房。`
-      : `Fill in the enquiry form on this page and we will confirm a viewing within 24 hours on business days. Prefer a video walkthrough first? Request one via LINE or WhatsApp and we will arrange it with the landlord — perfect if you haven't arrived in Bangkok yet.`,
+      : `Fill in the enquiry form on this page and we will confirm a viewing within 24 hours on business days. Prefer a video walkthrough first? Request one via LINE or WhatsApp and we will arrange it with the landlord.`,
   });
 
   return faqs.slice(0, 4);
