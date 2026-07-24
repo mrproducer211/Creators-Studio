@@ -96,7 +96,22 @@ export default async function ExplorePage() {
       <Navbar />
       <main className="min-h-screen" style={{ background: "#F7F3EC", paddingTop: "56px" }}>
         {/* Full-width client section */}
-        <Suspense fallback={null}>
+        <Suspense fallback={
+          <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+              <div>
+                <div className="h-4 w-32 bg-[#1C3A2F]/10 rounded animate-pulse mb-2" />
+                <div className="h-8 w-64 bg-[#1C3A2F]/10 rounded animate-pulse" />
+              </div>
+              <div className="h-10 w-full md:w-72 bg-[#1C3A2F]/5 rounded-xl animate-pulse" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="h-[340px] rounded-2xl bg-[#1C3A2F]/5 animate-pulse" />
+              ))}
+            </div>
+          </div>
+        }>
           <ExploreClient properties={properties} />
         </Suspense>
       </main>

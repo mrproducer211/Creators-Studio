@@ -56,7 +56,16 @@ export default async function ForRentPage() {
       />
       <Navbar />
       <main className="min-h-screen" style={{ background: "#F7F3EC", paddingTop: "56px" }}>
-        <Suspense fallback={null}>
+        <Suspense fallback={
+          <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-8">
+            <div className="h-8 w-64 bg-[#1C3A2F]/10 rounded animate-pulse mb-6" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="h-[340px] rounded-2xl bg-[#1C3A2F]/5 animate-pulse" />
+              ))}
+            </div>
+          </div>
+        }>
           <ExploreClient
             properties={properties}
             listingType="rent"

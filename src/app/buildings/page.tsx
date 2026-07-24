@@ -172,7 +172,20 @@ export default async function BuildingsDirectoryPage() {
       />
       <Navbar />
       <main className="min-h-screen" style={{ background: "#FAF8F3", paddingTop: "56px" }}>
-        <Suspense fallback={null}>
+        <Suspense fallback={
+          <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-8">
+            <div className="mb-8">
+              <div className="h-4 w-36 bg-[#1C3A2F]/10 rounded animate-pulse mb-2" />
+              <div className="h-8 w-72 bg-[#1C3A2F]/10 rounded animate-pulse mb-3" />
+              <div className="h-4 w-96 max-w-full bg-[#1C3A2F]/5 rounded animate-pulse" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-[280px] rounded-2xl bg-[#1C3A2F]/5 animate-pulse" />
+              ))}
+            </div>
+          </div>
+        }>
           <BuildingsDirectoryClient buildingProjects={buildingProjects} />
         </Suspense>
       </main>

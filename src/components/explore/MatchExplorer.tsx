@@ -1532,49 +1532,7 @@ export default function MatchExplorer({ properties }: Props) {
               </div>
             </div>
 
-            {/* Step 13: One-Day Life Preview */}
-            {selectedNeighborhood.dayItinerary && selectedNeighborhood.dayItinerary.length > 0 && (
-              <div className="bg-[#FFFFFF] p-5 rounded-3xl border border-[#E5E0D8] mb-6 shadow-sm">
-                <h3 className="text-[12px] font-bold uppercase tracking-wider text-[#1C3A2F] mb-4 pb-2.5 border-b border-[#EDE8DF] flex items-center gap-2 font-outfit">
-                  <Calendar size={16} className="text-[#C9A84C]" />
-                  <span>{lang === "th" ? `หนึ่งวันในย่าน ${selectedNeighborhood.name}` : lang === "zh" ? `ใน ${selectedNeighborhood.name} 的一天` : `A Day in ${selectedNeighborhood.name}`}</span>
-                </h3>
-                <div className="flex flex-col gap-3.5">
-                  {getLocalizedDayItinerary(selectedNeighborhood, lang).map((item, idx) => {
-                    let IconComp = Coffee;
-                    const lowerT = item.title.toLowerCase();
-                    if (lowerT.includes("lunch") || lowerT.includes("dinner") || lowerT.includes("food") || lowerT.includes("eat")) {
-                      IconComp = Utensils;
-                    } else if (lowerT.includes("stroll") || lowerT.includes("walk") || lowerT.includes("park")) {
-                      IconComp = Footprints;
-                    } else if (lowerT.includes("focus") || lowerT.includes("work") || lowerT.includes("laptop") || lowerT.includes("co-working")) {
-                      IconComp = Laptop;
-                    } else if (lowerT.includes("drink") || lowerT.includes("bar") || lowerT.includes("night")) {
-                      IconComp = Wine;
-                    }
-                    return (
-                      <div key={idx} className="flex gap-4 items-start group">
-                        <div className="flex flex-col items-center">
-                          <span className="text-[10px] font-bold uppercase bg-[#1C3A2F] text-[#C9A84C] px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap font-mono shadow-xs">
-                            {item.time}
-                          </span>
-                          {idx < selectedNeighborhood.dayItinerary.length - 1 && (
-                            <div className="w-[1.5px] flex-1 bg-[#E5E0D8] my-1.5" style={{ minHeight: "24px" }} />
-                          )}
-                        </div>
-                        <div className="flex-1 bg-[#FAF8F3] p-3.5 rounded-2xl border border-[#EDE8DF] transition-all group-hover:border-[#C9A84C]/50 group-hover:shadow-xs">
-                          <h4 className="text-[13px] font-bold text-[#1C3A2F] mb-1 flex items-center gap-1.5 font-outfit">
-                            <IconComp size={13} className="text-[#C9A84C] shrink-0" />
-                            <span>{stripEmojis(item.title)}</span>
-                          </h4>
-                          <p className="text-[12px] text-[#555] font-light leading-relaxed m-0">{stripEmojis(item.activity)}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+
 
             {/* Demographics & Stat Cards */}
             <div className="grid grid-cols-2 gap-4 mb-6">

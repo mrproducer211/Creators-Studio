@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Sparkles, LayoutGrid, Building2 } from "lucide-react";
 
@@ -50,9 +51,10 @@ export default function BrowseModes() {
       <div className="grid grid-cols-2 gap-2.5">
         {modes.map((m) =>
           m.featured ? (
-            <a
+            <Link
               key={m.name}
               href={m.href}
+              prefetch={true}
               className="col-span-2 flex items-center gap-4 rounded-2xl p-5 cursor-pointer transition-all duration-150 no-underline"
               style={{ background: "#1C3A2F", border: "1.5px solid #1C3A2F" }}
             >
@@ -65,11 +67,12 @@ export default function BrowseModes() {
                   {m.desc}
                 </p>
               </div>
-            </a>
+            </Link>
           ) : (
-            <a
+            <Link
               key={m.name}
               href={m.href}
+              prefetch={true}
               className="no-underline rounded-2xl p-5 cursor-pointer transition-all duration-150 relative overflow-hidden block"
               style={{ background: "#F7F3EC", border: "1.5px solid #E5E0D8" }}
               onMouseEnter={(e) => {
@@ -90,7 +93,7 @@ export default function BrowseModes() {
               <p className="text-xs leading-[1.55] font-normal" style={{ color: "#555" }}>
                 {m.desc}
               </p>
-            </a>
+            </Link>
           )
         )}
       </div>
