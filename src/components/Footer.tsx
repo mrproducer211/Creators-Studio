@@ -91,7 +91,7 @@ export default function Footer() {
             className="block text-lg font-bold mb-2 tracking-tight"
             style={{ color: "#FFFFFF" }}
           >
-            New Home Property
+            New Homes Property
           </strong>
           <p
             className="text-xs leading-relaxed font-light max-w-sm"
@@ -103,7 +103,7 @@ export default function Footer() {
             className="text-xs leading-relaxed font-light max-w-sm mt-3 not-italic"
             style={{ color: "rgba(255,255,255,0.5)" }}
           >
-            {BUSINESS_NAP.streetAddress}, {BUSINESS_NAP.locality} {BUSINESS_NAP.postalCode}, Thailand
+            Bangkok 10110, Thailand
             <br />
             <a
               href={`tel:${BUSINESS_NAP.phoneHref}`}

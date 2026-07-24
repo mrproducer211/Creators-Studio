@@ -13,6 +13,7 @@ import { MOCK_PROPERTIES } from "@/data/mockProperties";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import dynamic from "next/dynamic";
 import { StoredCommuteHub } from "@/lib/store/commuteHubs";
@@ -1724,6 +1725,7 @@ export default function PropertyDetail({
     ),
     district: stripEmojis(rawProperty.district),
   };
+  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [enquiryOpen, setEnquiryOpen] = useState(false);
   const [rawHubs, setRawHubs] = useState<StoredCommuteHub[]>([]);
@@ -2048,21 +2050,30 @@ export default function PropertyDetail({
                 <div className="mt-3">
                   <Link
                     href={`/building/${buildingSlug}`}
-                    className="group flex items-center justify-between px-3.5 py-2.5 rounded-2xl no-underline transition-all border shadow-xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      router.push(`/building/${buildingSlug}`);
+                    }}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      router.push(`/building/${buildingSlug}`);
+                    }}
+                    className="group flex items-center justify-between px-3.5 py-2.5 rounded-2xl no-underline transition-all border shadow-xs active:scale-[0.98] cursor-pointer relative z-10 select-none"
                     style={{
                       background: "#FAF8F3",
                       borderColor: "#EDE8DF",
+                      touchAction: "manipulation",
                     }}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex items-center gap-2.5 min-w-0 pointer-events-none">
                       <div
                         className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
                         style={{ background: "#1C3A2F", color: "#C9A84C" }}
                       >
                         <Building2 size={15} />
                       </div>
-                      <div className="text-left truncate">
-                        <div className="flex items-center gap-1.5">
+                      <div className="text-left truncate pointer-events-none">
+                        <div className="flex items-center gap-1.5 pointer-events-none">
                           <span className="text-[9px] uppercase font-bold tracking-wider text-[#C9A84C]">
                             Official Building Profile
                           </span>
@@ -2070,13 +2081,13 @@ export default function PropertyDetail({
                             Verified
                           </span>
                         </div>
-                        <span className="text-[12.5px] font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors truncate block">
+                        <span className="text-[12.5px] font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors truncate block pointer-events-none">
                           {buildingName}
                         </span>
                       </div>
                     </div>
 
-                    <span className="text-[11px] font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] inline-flex items-center gap-0.5 group-hover:translate-x-1 transition-all whitespace-nowrap ml-2">
+                    <span className="text-[11px] font-bold text-[#1C3A2F] group-hover:text-[#C9A84C] inline-flex items-center gap-0.5 group-hover:translate-x-1 transition-all whitespace-nowrap ml-2 pointer-events-none">
                       Explore <ChevronRight size={13} className="text-[#C9A84C]" />
                     </span>
                   </Link>
@@ -2751,10 +2762,20 @@ export default function PropertyDetail({
                 <div className="mb-3">
                   <Link
                     href={`/building/${slugifyBuildingName(property.projectName || property.name)}`}
-                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold no-underline px-2.5 py-1 rounded-lg border transition-all hover:bg-[#FAF8F3]"
-                    style={{ background: "#FFFFFF", color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const bSlug = slugifyBuildingName(property.projectName || property.name);
+                      if (bSlug) router.push(`/building/${bSlug}`);
+                    }}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      const bSlug = slugifyBuildingName(property.projectName || property.name);
+                      if (bSlug) router.push(`/building/${bSlug}`);
+                    }}
+                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold no-underline px-2.5 py-1 rounded-lg border transition-all hover:bg-[#FAF8F3] active:scale-[0.98] cursor-pointer relative z-10 select-none"
+                    style={{ background: "#FFFFFF", color: "#1C3A2F", borderColor: "#EDE8DF", touchAction: "manipulation" }}
                   >
-                    <span>
+                    <span className="pointer-events-none">
                       {lang === "th"
                         ? `🏢 ดูคู่มือโครงการและยูนิตทั้งหมดของ ${property.projectName || property.name} →`
                         : lang === "zh"

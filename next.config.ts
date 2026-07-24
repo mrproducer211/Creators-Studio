@@ -17,20 +17,14 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
   images: {
-    // Serve AVIF first, then WebP — browsers pick the best they support
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
-    // Cover all common screen breakpoints + retina
     deviceSizes: [360, 414, 768, 1024, 1280, 1440, 1920],
     imageSizes: [64, 128, 256, 384],
-    // Cache optimised images for 30 days
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "https", hostname: "lh3.googleusercontent.com" },
-      { protocol: "https", hostname: "maps.googleapis.com" },
-      { protocol: "https", hostname: "newhomesproperty.com" },
-      { protocol: "https", hostname: "www.newhomesproperty.com" },
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "**" },
     ],
   },
   // Add security headers and caching headers

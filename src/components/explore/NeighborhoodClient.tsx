@@ -1233,63 +1233,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties, re
         </section>
       )}
 
-      {/* ── Nearby Neighborhoods Section ── */}
-      {nearbyNeighborhoods.length > 0 && (
-        <section className="px-4 md:px-8 py-8 md:py-12 bg-white border-t border-[#E7E5DF]">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[1.5px] text-[#C9A84C]">
-                  {trans?.nearbyNeighborhoods || "Explore Nearby"}
-                </p>
-                <h2 className="text-[20px] md:text-[26px] font-bold text-[#1C3A2F] leading-tight">
-                  {lang === "th" ? `ย่านใกล้เคียง ${neighborhood.name}` : lang === "zh" ? `${neighborhood.name} 附近社区` : `Neighborhoods near ${neighborhood.name}`}
-                </h2>
-              </div>
-              <Link href="/explore" className="text-xs font-semibold text-[#1C3A2F] hover:text-[#C9A84C] flex items-center gap-1">
-                {lang === "th" ? "ดูทั้งหมด →" : lang === "zh" ? "查看全部 →" : "View all →"}
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {nearbyNeighborhoods.map((n) => {
-                const meta = NEIGHBORHOOD_METADATA[n.slug.toLowerCase()];
-                return (
-                  <Link
-                    key={n.slug}
-                    href={`/neighborhoods/${n.slug}`}
-                    className="group flex flex-col bg-[#FAF9F6] border border-[#E7E5DF] rounded-xl overflow-hidden hover:shadow-md transition-all duration-200"
-                  >
-                    <div className="relative h-32 w-full overflow-hidden bg-[#1C3A2F]">
-                      <Image
-                        src={n.heroImage || "/images/homepage_hero_v2.webp"}
-                        alt={n.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="absolute bottom-2.5 left-3 right-3 text-white">
-                        <span className="text-[10px] uppercase font-semibold text-[#C9A84C] block">
-                          {meta?.district || "Bangkok"}
-                        </span>
-                        <h3 className="text-base font-bold leading-tight">{n.name}</h3>
-                      </div>
-                    </div>
-                    <div className="p-3.5 flex flex-col justify-between flex-1">
-                      <p className="text-xs text-gray-600 line-clamp-2 mb-2 leading-relaxed">
-                        {n.personality || n.description}
-                      </p>
-                      <div className="text-[11px] font-semibold text-[#1C3A2F] group-hover:text-[#C9A84C] transition-colors flex items-center justify-end">
-                        {lang === "th" ? "สำรวจย่าน →" : lang === "zh" ? "探索社区 →" : "Explore area →"}
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
+
 
       {/* Modal removed as guides now link to real blog posts */}
 

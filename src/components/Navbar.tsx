@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 import Image from "next/image";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { LayoutDashboard, Heart, Settings, LogOut, Sparkles, Globe } from "lucide-react";
+import { LayoutDashboard, Heart, Settings, LogOut, Sparkles, Building2, Globe } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
@@ -69,34 +69,34 @@ export default function Navbar() {
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 sm:px-4 h-14"
         style={{ background: "rgba(247,243,236,0.97)", backdropFilter: "blur(16px)", borderBottom: "1px solid #E5E0D8" }}
       >
-        {/* Mobile Logo: Logo Image + Name */}
-        <Link href="/" className="flex md:hidden items-center gap-1.5 no-underline">
+        {/* Mobile Logo: Logo Image + Name + Tagline */}
+        <Link href="/" className="flex md:hidden items-center gap-2 no-underline flex-shrink-0">
           <Image
             src="/images/nhp-logo.webp"
-            alt="NHP Logo"
-            width={28}
-            height={28}
+            alt="New Homes Property Logo"
+            width={30}
+            height={30}
             priority
             className="object-contain rounded-[6px]"
           />
-          <div className="flex flex-col leading-none">
-            <span className="text-[14px] sm:text-[16px] font-extrabold tracking-[-0.5px]" style={{ color: "#1C3A2F" }}>NHP</span>
-            <span className="text-[9.5px] font-bold tracking-[0.3px] mt-0.5" style={{ color: "#806414" }}>Bangkok</span>
+          <div className="flex flex-col leading-tight">
+            <span className="text-[13px] sm:text-[14px] font-bold tracking-[-0.3px]" style={{ color: "#1C3A2F" }}>New Homes Property</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.3px]" style={{ color: "#806414" }}>Live. Belong. Bangkok.</span>
           </div>
         </Link>
 
-        {/* Desktop Logo: Logo Image + Name */}
+        {/* Desktop Logo: Logo Image + Name + Tagline */}
         <Link href="/" className="hidden md:flex items-center gap-2.5 no-underline flex-shrink-0">
           <Image
             src="/images/nhp-logo.webp"
-            alt="NHP Logo"
+            alt="New Homes Property Logo"
             width={38}
             height={38}
             priority
             className="object-contain rounded-[8px]"
           />
           <div className="flex flex-col leading-tight">
-            <span className="text-[15px] font-bold" style={{ color: "#1C3A2F" }}>New Home Property</span>
+            <span className="text-[15px] font-bold" style={{ color: "#1C3A2F" }}>New Homes Property</span>
             <span className="text-[11.5px] font-semibold uppercase tracking-[0.5px]" style={{ color: "#806414" }}>Live. Belong. Bangkok.</span>
           </div>
         </Link>
@@ -118,8 +118,8 @@ export default function Navbar() {
         {/* Right actions */}
         <div className="flex items-center gap-1.5 sm:gap-2">
 
-          {/* Always Visible Language Toggle Dropdown (Mobile + Desktop) */}
-          <div className="relative">
+          {/* Desktop Only Language Toggle Dropdown */}
+          <div className="hidden md:block relative">
             <button
               ref={langBtnRef}
               onClick={openLangMenu}
@@ -374,6 +374,19 @@ export default function Navbar() {
                   {t.nav.home}
                 </Link>
 
+                {/* Buildings Section */}
+                <Link
+                  href="/buildings"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-5 py-3.5 text-[15px] font-medium no-underline border-b flex items-center justify-between"
+                  style={{ color: "#1C3A2F", borderColor: "#EDE8DF" }}
+                >
+                  <span className="flex items-center gap-2.5">
+                    <Building2 size={18} className="text-[#C9A84C]" />
+                    <span>{t.nav.buildings}</span>
+                  </span>
+                </Link>
+
                 {/* Discover Collapsible Parent */}
                 <div>
                   <button
@@ -483,7 +496,6 @@ export default function Navbar() {
                     <Sparkles className="w-4 h-4 text-[#C9A84C]" />
                     <span>{t.nav.neighborhoodMatch}</span>
                   </span>
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#1C3A2F", color: "#FFFFFF" }}>AI</span>
                 </Link>
 
                 {/* Mobile language toggle (collapsible dropdown) */}
