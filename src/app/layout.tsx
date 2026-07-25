@@ -132,6 +132,49 @@ const websiteJsonLd = {
   },
 };
 
+const sitelinksNavigationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: [
+    {
+      "@type": "SiteNavigationElement",
+      position: 1,
+      name: "Thailand Rentals",
+      url: `${baseUrl}/for-rent`,
+    },
+    {
+      "@type": "SiteNavigationElement",
+      position: 2,
+      name: "Property for Sale in Thailand",
+      url: `${baseUrl}/for-sale`,
+    },
+    {
+      "@type": "SiteNavigationElement",
+      position: 3,
+      name: "Condos",
+      url: `${baseUrl}/condos`,
+    },
+    {
+      "@type": "SiteNavigationElement",
+      position: 4,
+      name: "Villas",
+      url: `${baseUrl}/villas`,
+    },
+    {
+      "@type": "SiteNavigationElement",
+      position: 5,
+      name: "Condo Buildings & Projects",
+      url: `${baseUrl}/buildings`,
+    },
+    {
+      "@type": "SiteNavigationElement",
+      position: 6,
+      name: "Short Stay Apartments",
+      url: `${baseUrl}/short-stay`,
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -196,6 +239,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(sitelinksNavigationJsonLd) }}
         />
         <SessionProvider>
           <LanguageProvider>

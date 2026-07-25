@@ -22,6 +22,7 @@ function findPropertyBySlug(all: any[], slug: string) {
   return all.find((p) => {
     if (p.slug && p.slug.toLowerCase().trim() === lower) return true;
     if (p.dbSlug && p.dbSlug.toLowerCase().trim() === lower) return true;
+    if (p.id && String(p.id) === lower) return true;
     
     // Check clean SEO slug match
     const clean = generateCleanSeoSlug(p).toLowerCase().trim();
@@ -156,14 +157,26 @@ export default async function PropertyPage({ params }: Props) {
     .filter((p) => p.id !== property.id && buildingHint(p) === bHint)
     .slice(0, 4);
 
-  // 2. Nearby properties (excluding current and same building, matching area or adjacent areas)
+  // Set of property IDs to exclude from Nearby properties (current property + any property in "More from this building")
+  const excludedIds = new Set<string | number>([
+    property.id,
+    ...sameBuilding.map((p) => p.id),
+  ]);
+
+  // Set of building hints to exclude from Nearby properties (current property's building + any building in "More from this building")
+  const excludedBuildingHints = new Set<string>(
+    [bHint, ...sameBuilding.map((p) => buildingHint(p))].filter(Boolean)
+  );
+
+  // 2. Nearby properties (excluding current property ID, properties/buildings already in "More from this building", matching area or adjacent areas)
   const nearbyAreas = NEARBY_AREAS[property.area] ?? [];
   const nearby = activeListings
-    .filter((p) => 
-      p.id !== property.id && 
-      buildingHint(p) !== bHint && 
-      (p.area === property.area || nearbyAreas.includes(p.area))
-    )
+    .filter((p) => {
+      if (excludedIds.has(p.id)) return false;
+      const pBHint = buildingHint(p);
+      if (pBHint && excludedBuildingHints.has(pBHint)) return false;
+      return p.area === property.area || nearbyAreas.includes(p.area);
+    })
     .slice(0, 4);
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 

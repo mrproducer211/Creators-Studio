@@ -222,9 +222,25 @@ export async function getDbProperties(options?: { includeUnlisted?: boolean }): 
       return dbList;
     }
   } catch (err) {
-    console.error("DB properties fetch failed:", err);
+    console.error("DB properties fetch failed, falling back to local file store:", err);
   }
-  return [];
+
+  // Robust fallback to local properties file store if database query fails or returns empty
+  const localList = await getAllProperties();
+  const visibleList = includeUnlisted ? localList : localList.filter((p) => p.status !== "unlisted" && p.status !== "draft");
+  return visibleList.map((p) => ({
+    ...p,
+    area: getCanonicalArea(p.area),
+    clicks: p.clicks ?? 0,
+    amenities: p.amenities ?? [],
+    features: p.features ?? [],
+    schools: p.schools ?? [],
+    transit: p.transit ?? [],
+    neighborhood: p.neighborhood ?? "",
+    verificationBadge: p.verificationBadge ?? false,
+    expiryDate: p.expiryDate ?? undefined,
+    updatedAt: p.updatedAt || p.createdAt,
+  }));
 }
 
 /**
