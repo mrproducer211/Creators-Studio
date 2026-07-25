@@ -2435,30 +2435,39 @@ export default function PropertyDetail({
                     </h3>
                     
                     {/* Light Cartographic Map Container */}
-                    {property.latitude && property.longitude ? (
-                      <div className="mb-4" style={{ height: 220 }}>
-                        <CommuteMap
-                          propertyLat={Number(property.latitude)}
-                          propertyLng={Number(property.longitude)}
-                          propertyName={cleanMapLabel(property.name)}
-                          googleMapsApiKey={googleMapsApiKey}
-                          commuteHubs={[
-                            ...rawHubs.map(h => ({
-                              name: h.name,
-                              latitude: h.latitude,
-                              longitude: h.longitude,
-                              transitMode: h.transitMode
-                            })),
-                            ...(customResult ? [{
-                              name: `Custom: ${customResult.name}`,
-                              latitude: customResult.latitude,
-                              longitude: customResult.longitude,
-                              transitMode: customResult.transitMode
-                            }] : [])
-                          ]}
-                        />
-                      </div>
-                    ) : (
+                    {(() => {
+                      const pLat = Number(property.latitude);
+                      const pLng = Number(property.longitude);
+                      const isValidCoords = !isNaN(pLat) && !isNaN(pLng) && isFinite(pLat) && isFinite(pLng) && pLat !== 0 && pLng !== 0;
+
+                      if (isValidCoords) {
+                        return (
+                          <div className="mb-4" style={{ height: 220 }}>
+                            <CommuteMap
+                              propertyLat={pLat}
+                              propertyLng={pLng}
+                              propertyName={cleanMapLabel(property.name)}
+                              googleMapsApiKey={googleMapsApiKey}
+                              commuteHubs={[
+                                ...rawHubs.map(h => ({
+                                  name: h.name,
+                                  latitude: Number(h.latitude),
+                                  longitude: Number(h.longitude),
+                                  transitMode: h.transitMode
+                                })).filter(h => !isNaN(h.latitude) && !isNaN(h.longitude) && isFinite(h.latitude) && isFinite(h.longitude)),
+                                ...(customResult && !isNaN(customResult.latitude) && !isNaN(customResult.longitude) ? [{
+                                  name: `Custom: ${customResult.name}`,
+                                  latitude: customResult.latitude,
+                                  longitude: customResult.longitude,
+                                  transitMode: customResult.transitMode
+                                }] : [])
+                              ]}
+                            />
+                          </div>
+                        );
+                      }
+
+                      return (
                       <div className="rounded-xl overflow-hidden relative mb-4" style={{ height: 150, background: "#F0EBE1", border: "1px solid #E8E2D6" }}>
                         {/* Road grid lines */}
                         <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 300 150">
@@ -2495,7 +2504,8 @@ export default function PropertyDetail({
                           </span>
                         </div>
                       </div>
-                    )}
+                    );
+                  })()}
 
                     {/* Travel facilities list */}
                     <div className="space-y-2.5 mb-4">

@@ -39,6 +39,11 @@ export default function CommuteMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const [useGoogle, setUseGoogle] = useState(false);
 
+  const safeLat = Number(propertyLat);
+  const safeLng = Number(propertyLng);
+  const isValidLat = !isNaN(safeLat) && isFinite(safeLat) && safeLat !== 0;
+  const isValidLng = !isNaN(safeLng) && isFinite(safeLng) && safeLng !== 0;
+
   // Check if we have a valid Google Maps key
   const hasGoogleKey = googleMapsApiKey && !googleMapsApiKey.startsWith("your_");
 
@@ -51,14 +56,14 @@ export default function CommuteMap({
   }, [hasGoogleKey]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !isValidLat || !isValidLng) return;
 
     if (!useGoogle) {
       // ── LEAFLET FALLBACK ──
       containerRef.current.innerHTML = "";
       
       const mapOptions: L.MapOptions & { tap?: boolean } = {
-        center: [propertyLat, propertyLng],
+        center: [safeLat, safeLng],
         zoom: 14,
         zoomControl: true,
         attributionControl: false,
@@ -88,14 +93,14 @@ export default function CommuteMap({
         iconAnchor: [12, 24],
       });
 
-      L.marker([propertyLat, propertyLng], { icon: propertyIcon }).addTo(map);
+      L.marker([safeLat, safeLng], { icon: propertyIcon }).addTo(map);
 
-      const bounds = L.latLngBounds([[propertyLat, propertyLng]]);
+      const bounds = L.latLngBounds([[safeLat, safeLng]]);
 
       commuteHubs.forEach((hub) => {
         const hubLat = Number(hub.latitude);
         const hubLng = Number(hub.longitude);
-        if (isNaN(hubLat) || isNaN(hubLng)) return;
+        if (isNaN(hubLat) || isNaN(hubLng) || !isFinite(hubLat) || !isFinite(hubLng)) return;
 
         bounds.extend([hubLat, hubLng]);
 
@@ -117,7 +122,7 @@ export default function CommuteMap({
 
         L.marker([hubLat, hubLng], { icon: hubIcon }).addTo(map);
 
-        L.polyline([[propertyLat, propertyLng], [hubLat, hubLng]], {
+        L.polyline([[safeLat, safeLng], [hubLat, hubLng]], {
           color: "#1C3A2F",
           weight: 2,
           dashArray: "6, 8",
