@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { PropertyCard, ExploreFilters, ListingType, PropertyType } from "@/types/property";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Home } from "lucide-react";
@@ -42,8 +42,29 @@ function filtersFromParams(params: URLSearchParams): ExploreFilters {
 
   const newHubs = params.get("newHubs");
   if (newHubs === "true") f.newHubs = true;
-  
+
   return f;
+}
+
+/**
+ * Serialise the active filters back into URL search params, emitting only the
+ * values that differ from the defaults. This makes filtered views shareable
+ * (copy-paste URL), restores correctly on back/forward, and keeps the address
+ * bar short. Mirrors the keys read by `filtersFromParams`.
+ */
+function filtersToParams(f: ExploreFilters): URLSearchParams {
+  const params = new URLSearchParams();
+  if (f.listingType !== "all") params.set("type", f.listingType);
+  if (f.propertyType !== "all") params.set("propertyType", f.propertyType);
+  if (f.area) params.set("area", f.area);
+  if (f.search) params.set("search", f.search);
+  if (f.petFriendly) params.set("pets", "true");
+  if (f.nearBts) params.set("bts", "true");
+  if (f.newHubs) params.set("newHubs", "true");
+  if (f.bedrooms !== "any") params.set("beds", String(f.bedrooms));
+  if (f.minPrice > 0) params.set("minPrice", String(f.minPrice));
+  if (f.maxPrice < Infinity) params.set("maxPrice", String(f.maxPrice));
+  return params;
 }
 
 function detectAreaInSearch(query: string): string | null {
@@ -171,6 +192,8 @@ export default function ExploreClient({
 }) {
   const { t, lang } = useLanguage();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const [filters, setFilters] = useState<ExploreFilters>(() => {
     const fromParams = filtersFromParams(searchParams);
     const updated = { ...fromParams };
@@ -197,6 +220,25 @@ export default function ExploreClient({
       });
     });
   }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Write filters back to the URL (two-way sync) ──
+  // Whenever the user changes a filter, reflect it in the address bar via
+  // router.replace (no extra history entries). We skip the very first run so
+  // we don't push a redundant entry matching the entry URL.
+  const didMountSync = useRef(false);
+  useEffect(() => {
+    if (!didMountSync.current) {
+      didMountSync.current = true;
+      return;
+    }
+    const nextParams = filtersToParams(filters);
+    const current = searchParams.toString();
+    // Avoid a no-op replace when the URL already matches (prevents loops with the read effect).
+    if (nextParams.toString() === current) return;
+    router.replace(`${pathname}${nextParams.toString() ? `?${nextParams.toString()}` : ""}`, {
+      scroll: false,
+    });
+  }, [filters, router, pathname, searchParams]);
 
   const filtered = useMemo(() => applyFilters(properties, filters), [properties, filters]);
   const update = (patch: Partial<ExploreFilters>) => setFilters((p) => ({ ...p, ...patch }));

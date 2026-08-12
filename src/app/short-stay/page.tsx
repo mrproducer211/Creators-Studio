@@ -31,10 +31,13 @@ export const metadata = {
     card: "summary_large_image",
     title: "Bangkok Short-Stay & Serviced Apartments | NHP",
     description:
-      "Book short-stay and serviced apartments in Bangkok for days, weeks or months. Flexible furnished rentals across Bangkok's best neighbourhoods.",
+      "Book short-stay and serviced apartments in Bangkok for days, weeks or months. Flexible furnished rentals in Sukhumvit, Thong Lo, Asok, Sathorn and more.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };
+
+import SeoCategoryGuide from "@/components/seo/SeoCategoryGuide";
+import { CATEGORY_SEO_GUIDES } from "@/data/categorySeoGuides";
 
 export default async function ShortStayPage() {
   const properties = await getDbProperties();
@@ -63,6 +66,8 @@ export default async function ShortStayPage() {
             heading={{ eyebrow: "Short Stay in Bangkok", title: "Short-Stay & Serviced Apartments in Bangkok" }}
           />
         </Suspense>
+
+        <SeoCategoryGuide {...CATEGORY_SEO_GUIDES.short_stay} canonicalUrl={`${baseUrl}/short-stay`} />
       </main>
       <Footer />
     </>

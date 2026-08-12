@@ -31,10 +31,13 @@ export const metadata = {
     card: "summary_large_image",
     title: "Bangkok Condos & Apartments For Long-Term Rent | NHP",
     description:
-      "Find long-term rental condos and apartments in Bangkok — Sukhumvit, Thong Lo, Asok, Sathorn, Ari and more.",
+      "Find long-term rental condos and apartments in Bangkok — Sukhumvit, Thong Lo, Asok, Sathorn, Ari and more. Filter by area, budget, bedrooms and BTS/MRT access.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };
+
+import SeoCategoryGuide from "@/components/seo/SeoCategoryGuide";
+import { CATEGORY_SEO_GUIDES } from "@/data/categorySeoGuides";
 
 export default async function ForRentPage() {
   const properties = await getDbProperties();
@@ -72,6 +75,8 @@ export default async function ForRentPage() {
             heading={{ eyebrow: "Rent in Bangkok", title: "Long-Term Rentals in Bangkok" }}
           />
         </Suspense>
+
+        <SeoCategoryGuide {...CATEGORY_SEO_GUIDES.rent} canonicalUrl={`${baseUrl}/for-rent`} />
       </main>
       <Footer />
     </>

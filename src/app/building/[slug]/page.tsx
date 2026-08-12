@@ -1,10 +1,10 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BuildingClient from "@/components/building/BuildingClient";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAggregateRatingForProperty, getAllReviews } from "@/lib/store/reviews";
-import { slugifyBuildingName } from "@/lib/buildingSlug";
+import { cleanBuildingName, slugifyBuildingName, getBuildingSlug } from "@/lib/buildingSlug";
 import { getCanonicalArea } from "@/lib/area";
 
 export const revalidate = 3600;
@@ -30,18 +30,19 @@ export async function generateMetadata({ params }: Props) {
   }
 
   const sample = buildingProps[0];
-  const buildingName = sample.projectName || sample.name;
+  const buildingName = cleanBuildingName(sample.projectName || sample.name);
   const area = sample.area;
+  const description = `Explore ${buildingName} in ${area}, Bangkok. View available rental units, sale prices, building amenities, BTS/MRT access, and verified tenant reviews.`;
 
   return {
     title: `${buildingName} Condos for Rent & Sale in ${area} Bangkok (2026) | NHP`,
-    description: `Explore available condos for rent and sale at ${buildingName} in ${area}, Bangkok. View building amenities, floor plans, verified tenant reviews, and price details.`,
+    description,
     alternates: {
       canonical: `${baseUrl}/building/${slug}`,
     },
     openGraph: {
       title: `${buildingName} Condos for Rent & Sale in ${area} Bangkok (2026) | NHP`,
-      description: `Explore available condos for rent and sale at ${buildingName} in ${area}, Bangkok. View building amenities, floor plans, verified tenant reviews, and price details.`,
+      description,
       url: `${baseUrl}/building/${slug}`,
       siteName: "New Homes Property",
       images: [
@@ -57,7 +58,7 @@ export async function generateMetadata({ params }: Props) {
     twitter: {
       card: "summary_large_image",
       title: `${buildingName} Condos for Rent & Sale in ${area} Bangkok (2026) | NHP`,
-      description: `Explore available condos for rent and sale at ${buildingName} in ${area}, Bangkok. View building amenities, floor plans, verified tenant reviews, and price details.`,
+      description,
       images: [sample.coverImage || "/images/homepage_hero_v2.webp"],
     },
   };
@@ -68,16 +69,18 @@ export default async function BuildingPage({ params }: Props) {
   const allProperties = await getDbProperties();
 
   const buildingProperties = allProperties.filter((p) => {
-    const pSlug = slugifyBuildingName(p.projectName || p.name);
-    return pSlug === slug;
+    const rawName = p.projectName || p.name;
+    const pSlug = getBuildingSlug(rawName);
+    const pDirectSlug = slugifyBuildingName(rawName);
+    return pSlug === slug || pDirectSlug === slug;
   });
 
   if (buildingProperties.length === 0) {
-    notFound();
+    redirect("/buildings");
   }
 
   const sample = buildingProperties[0];
-  const buildingName = sample.projectName || sample.name;
+  const buildingName = cleanBuildingName(sample.projectName || sample.name);
   const area = sample.area;
   const aggregate = await getAggregateRatingForProperty(sample.id, buildingName);
 
@@ -89,7 +92,7 @@ export default async function BuildingPage({ params }: Props) {
   const buildingMap = new Map<string, { slug: string; name: string; area: string; coverImage?: string; minPrice: number; unitCount: number; ratingValue?: number; reviewCount?: number; propertyIds: Set<number> }>();
 
   allProperties.forEach((p) => {
-    const bName = p.projectName || p.name;
+    const bName = cleanBuildingName(p.projectName || p.name);
     const bSlug = slugifyBuildingName(bName);
     if (!bSlug || bSlug === slug) return;
 
@@ -136,8 +139,11 @@ export default async function BuildingPage({ params }: Props) {
     }
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const nearbyBuildings = Array.from(buildingMap.values()).map(({ propertyIds, ...b }) => b).slice(0, 4);
+  const nearbyBuildings = Array.from(buildingMap.values()).map((item) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { propertyIds, ...b } = item;
+    return b;
+  }).slice(0, 4);
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",

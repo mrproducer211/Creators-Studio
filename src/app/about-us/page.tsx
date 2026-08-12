@@ -7,14 +7,14 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
 export const metadata: Metadata = {
   title: "About NHP Bangkok | Bangkok Property Experts for Expats & Nomads",
   description:
-    "NHP Bangkok is a specialist property platform built for expats, digital nomads, and international residents seeking condos, long-term rentals, and short-stay apartments in Bangkok's best neighbourhoods.",
+    "Learn about NHP Bangkok — a property platform built for expats and digital nomads. Discover verified condos, rentals, and expert Bangkok neighborhood advice.",
   alternates: {
     canonical: `${baseUrl}/about-us`,
   },
   openGraph: {
     title: "About NHP Bangkok | Bangkok Property Experts for Expats & Nomads",
     description:
-      "NHP Bangkok is a specialist property platform built for expats, digital nomads, and international residents seeking condos, long-term rentals, and short-stay apartments in Bangkok's best neighbourhoods.",
+      "Learn about NHP Bangkok — a property platform built for expats and digital nomads. Discover verified condos, rentals, and expert Bangkok neighborhood advice.",
     url: `${baseUrl}/about-us`,
     siteName: "New Homes Property",
     images: [
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "About NHP Bangkok | Bangkok Property Experts for Expats & Nomads",
     description:
-      "NHP Bangkok is a specialist property platform built for expats, digital nomads, and international residents seeking condos, long-term rentals, and short-stay apartments in Bangkok's best neighbourhoods.",
+      "Learn about NHP Bangkok — a property platform built for expats and digital nomads. Discover verified condos, rentals, and expert Bangkok neighborhood advice.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };

@@ -32,6 +32,7 @@ export function getJourneyCategory(post: BlogPost): string {
   
   // 3. Things to Do
   if (
+    slug === "things-to-do-in-bangkok" ||
     slug === "hidden-gem-restaurants-bangkok" ||
     slug === "things-not-to-do-in-thailand"
   ) {

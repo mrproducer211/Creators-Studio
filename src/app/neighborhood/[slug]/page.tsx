@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props) {
   }
 
   const title = `${n.name} Condos & Rentals | Properties for Rent in ${n.name} Bangkok — NHP`;
-  const description = `Find the best properties for rent and sale in ${n.name}, Bangkok. Read our detailed expat neighborhood guide covering schools, BTS stations, cafes, and cost of living.`;
+  const description = `Explore properties for rent and sale in ${n.name}, Bangkok. Read our expat neighborhood guide covering schools, BTS stations, cafes, and living costs.`;
 
   return {
     title,

@@ -8,10 +8,18 @@ import { getLocalizedPost } from "@/data/blogTranslations";
 
 const POSTS = [
   {
+    slug:     "things-to-do-in-bangkok",
+    category: "Activities",
+    title:    "12 Unforgettable Things to Do in Bangkok: The Ultimate 2026 Travel Guide",
+    excerpt:  "From ancient sacred temples and sizzling street food markets to floating water tours and luxury riverfront complexes, here is your complete 3,600+ word guide.",
+    image:    "/images/blog/grand-palace-bangkok.webp",
+    readTime: "18 min read",
+  },
+  {
     slug:     "thong-lo-vs-on-nut",
     category: "Neighbourhood Guide",
     title:    "Thong Lo vs On Nut: Which Bangkok Neighbourhood Suits You?",
-    excerpt:  "Both are BTS-connected, expat-friendly and full of great food — but the vibe, price and lifestyle are worlds apart. Here's how to choose.",
+    excerpt:  "Both are BTS-connected, expat-friendly and full of great food, but the vibe, price and lifestyle are worlds apart. Here's how to choose.",
     image:    "/images/blog/thong-lo-vs-on-nut.webp",
     readTime: "11 min read",
   },
@@ -30,18 +38,11 @@ const POSTS = [
     excerpt:  "Thailand is the 'Land of Smiles,' but minor cultural misunderstandings can lead to severe offense or even arrest. Here are 10 things you must never do.",
     image:    "/images/blog/things-not-to-do-in-thailand.webp",
     readTime: "12 min read",
-  },
-  {
-    slug:     "safest-bangkok-neighbourhoods-families",
-    category: "Family Living",
-    title:    "The Safest Bangkok Neighbourhoods for Families: What Expat Parents Actually Recommend",
-    excerpt:  "Safety is the top priority for expat parents. We list the safest, most child-friendly neighbourhoods in Bangkok based on real parent recommendations.",
-    image:    "/images/blog/safest-bangkok-neighbourhoods-families.webp",
-    readTime: "10 min read",
   }
 ];
 
 const categoryKeys: Record<string, string> = {
+  "Activities": "activities",
   "Neighbourhood Guide": "neighbourhood",
   "Expat Tips": "expatTips",
   "Property Insights": "propertyInsights",
@@ -100,7 +101,7 @@ export default function BlogSection({ posts }: BlogSectionProps) {
         </Link>
       </div>
 
-      {/* 4-col grid — 1 col mobile → 2 col tablet → 4 col desktop */}
+      {/* 4-col grid, 1 col mobile → 2 col tablet → 4 col desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {displayPosts.map((rawPost, idx) => {
           const post = getLocalizedPost(rawPost, lang);

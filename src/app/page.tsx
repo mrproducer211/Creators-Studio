@@ -43,13 +43,13 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
 
 export const metadata = {
   title: "Bangkok Condos, Apartments & Luxury Properties | New Homes Property",
-  description: "Discover neighbourhood properties for rent and sale in Bangkok's best neighborhoods, including Thong Lo, Sathorn, Ari, and Asok. Your trusted Bangkok expat real estate platform.",
+  description: "Discover verified condos, apartments, and villas for rent and sale in top Bangkok neighborhoods like Thong Lo, Sathorn & Ari. Your expat real estate guide.",
   alternates: {
     canonical: `${baseUrl}/`,
   },
   openGraph: {
     title: "Bangkok Condos, Apartments & Luxury Properties | New Homes Property",
-    description: "Discover neighbourhood properties for rent and sale in Bangkok's best neighborhoods, including Thong Lo, Sathorn, Ari, and Asok. Your trusted Bangkok expat real estate platform.",
+    description: "Discover verified condos, apartments, and villas for rent and sale in top Bangkok neighborhoods like Thong Lo, Sathorn & Ari. Your expat real estate guide.",
     url: `${baseUrl}/`,
     siteName: "New Homes Property",
     images: [
@@ -65,7 +65,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Bangkok Condos, Apartments & Luxury Properties | New Homes Property",
-    description: "Discover neighbourhood properties for rent and sale in Bangkok's best neighborhoods, including Thong Lo, Sathorn, Ari, and Asok. Your trusted Bangkok expat real estate platform.",
+    description: "Discover verified condos, apartments, and villas for rent and sale in top Bangkok neighborhoods like Thong Lo, Sathorn & Ari. Your expat real estate guide.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };

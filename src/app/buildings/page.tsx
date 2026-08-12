@@ -5,7 +5,7 @@ import BuildingsDirectoryClient, { BuildingProjectInfo } from "@/components/buil
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAllReviews } from "@/lib/store/reviews";
-import { slugifyBuildingName } from "@/lib/buildingSlug";
+import { cleanBuildingName, slugifyBuildingName } from "@/lib/buildingSlug";
 
 export const revalidate = 3600;
 
@@ -14,13 +14,13 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
 
 export const metadata = {
   title: "Bangkok Condo Buildings Directory (2026) | Explore Condo Projects — NHP",
-  description: "Browse top condo buildings and residential projects across Bangkok's prime neighborhoods. Search by area, pet friendliness, and view active units for rent & sale.",
+  description: "Browse top condo buildings and luxury residential projects across Bangkok. Compare amenities, floor plans, verified tenant reviews, and available rental units.",
   alternates: {
     canonical: `${baseUrl}/buildings`,
   },
   openGraph: {
     title: "Bangkok Condo Buildings Directory (2026) | Explore Condo Projects — NHP",
-    description: "Browse top condo buildings and residential projects across Bangkok's prime neighborhoods. Search by area, pet friendliness, and view active units for rent & sale.",
+    description: "Browse top condo buildings and luxury residential projects across Bangkok. Compare amenities, floor plans, verified tenant reviews, and available rental units.",
     url: `${baseUrl}/buildings`,
     siteName: "New Homes Property",
     images: [
@@ -36,7 +36,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Bangkok Condo Buildings Directory (2026) | Explore Condo Projects — NHP",
-    description: "Browse top condo buildings and residential projects across Bangkok's prime neighborhoods. Search by area, pet friendliness, and view active units for rent & sale.",
+    description: "Browse top condo buildings and luxury residential projects across Bangkok. Compare amenities, floor plans, verified tenant reviews, and available rental units.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };
@@ -51,8 +51,9 @@ export default async function BuildingsDirectoryPage() {
   const projectMap = new Map<string, BuildingProjectInfo & { propertyIds: Set<number> }>();
 
   properties.forEach((p) => {
-    const name = p.projectName || p.name;
-    const slug = slugifyBuildingName(name);
+    const rawName = p.projectName || p.name;
+    const cleanName = cleanBuildingName(rawName);
+    const slug = slugifyBuildingName(cleanName);
     if (!slug) return;
 
     const priceNum = Number(p.priceTHB) || 0;
@@ -101,7 +102,7 @@ export default async function BuildingsDirectoryPage() {
       const isSale = p.listingType === "sale";
       projectMap.set(slug, {
         slug,
-        name,
+        name: cleanName,
         area: p.area,
         district: p.district || undefined,
         coverImage: p.coverImage || undefined,
@@ -152,8 +153,11 @@ export default async function BuildingsDirectoryPage() {
     }
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const buildingProjects = Array.from(projectMap.values()).map(({ propertyIds, ...b }) => b);
+  const buildingProjects = Array.from(projectMap.values()).map((item) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { propertyIds, ...b } = item;
+    return b;
+  });
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",

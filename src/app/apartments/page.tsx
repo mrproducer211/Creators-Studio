@@ -12,14 +12,14 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
 export const metadata = {
   title: "Bangkok Apartments for Rent & Sale | NHP Bangkok",
   description:
-    "Discover spacious apartments for rent and sale across prime Bangkok neighborhoods. Ideal for families, digital nomads, and long-term expats.",
+    "Discover spacious apartments for rent and sale across prime Bangkok neighborhoods. Ideal for families, digital nomads, and long-term expats seeking quality.",
   alternates: {
     canonical: `${baseUrl}/apartments`,
   },
   openGraph: {
     title: "Bangkok Apartments for Rent & Sale | NHP Bangkok",
     description:
-      "Discover spacious apartments for rent and sale across prime Bangkok neighborhoods. Ideal for families, digital nomads, and long-term expats.",
+      "Discover spacious apartments for rent and sale across prime Bangkok neighborhoods. Ideal for families, digital nomads, and long-term expats seeking quality.",
     url: `${baseUrl}/apartments`,
     siteName: "New Homes Property",
     images: [{ url: "/images/homepage_hero_v2.webp", width: 1200, height: 630, alt: "Bangkok Apartments" }],
@@ -29,10 +29,13 @@ export const metadata = {
     card: "summary_large_image",
     title: "Bangkok Apartments for Rent & Sale | NHP Bangkok",
     description:
-      "Discover spacious apartments for rent and sale across prime Bangkok neighborhoods.",
+      "Discover spacious apartments for rent and sale across prime Bangkok neighborhoods. Ideal for families, digital nomads, and long-term expats seeking quality.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };
+
+import SeoCategoryGuide from "@/components/seo/SeoCategoryGuide";
+import { CATEGORY_SEO_GUIDES } from "@/data/categorySeoGuides";
 
 export default async function ApartmentsPage() {
   const properties = await getDbProperties();
@@ -61,6 +64,8 @@ export default async function ApartmentsPage() {
             heading={{ eyebrow: "Spacious Living", title: "Apartments for Rent & Sale in Bangkok" }}
           />
         </Suspense>
+
+        <SeoCategoryGuide {...CATEGORY_SEO_GUIDES.apartments} canonicalUrl={`${baseUrl}/apartments`} />
       </main>
       <Footer />
     </>

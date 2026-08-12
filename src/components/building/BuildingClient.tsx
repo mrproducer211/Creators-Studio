@@ -43,8 +43,6 @@ interface Props {
 }
 
 export default function BuildingClient({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  buildingSlug,
   buildingName,
   properties,
   nearbyBuildings = [],
@@ -54,6 +52,13 @@ export default function BuildingClient({
   const [filterType, setFilterType] = useState<"all" | "rent" | "sale" | "short_stay">("all");
   const [buildingPhoto, setBuildingPhoto] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  // Track broken cover images per nearby building so we fall back to the hero image.
+  const [imgErr, setImgErr] = useState<Record<string, boolean>>({});
+
+  // Derived building metadata (declared before handleShare which depends on `area`).
+  const sample = properties[0];
+  const area = sample?.area || "Bangkok";
+  const defaultImage = sample?.coverImage || "/images/homepage_hero_v2.webp";
 
   const handleShare = async () => {
     const shareData = {
@@ -75,10 +80,6 @@ export default function BuildingClient({
       setTimeout(() => setCopied(false), 2500);
     } catch {}
   };
-
-  const sample = properties[0];
-  const area = sample?.area || "Bangkok";
-  const defaultImage = sample?.coverImage || "/images/homepage_hero_v2.webp";
 
   // Dynamically fetch real Google Places building exterior photo
   useEffect(() => {
@@ -110,7 +111,47 @@ export default function BuildingClient({
   const shortStayCount = properties.filter((p) => p.listingType === "short_stay").length;
   const isPetFriendly = properties.some((p) => p.petFriendly);
 
+  // ── Data-derived building metadata (replaces previously hardcoded spec values) ──
   const mapSearchUrl = `https://www.google.com/maps/search/${encodeURIComponent(buildingName + " " + area + " Bangkok")}`;
+
+  // Transit: prefer the most specific data available across this building's units.
+  const btsStation = properties.map((p) => p.btsStation).find(Boolean);
+  const mrtStation = properties.map((p) => p.mrtStation).find(Boolean);
+  const transitText = btsStation
+    ? `BTS ${btsStation}`
+    : mrtStation
+    ? `MRT ${mrtStation}`
+    : properties.map((p) => p.transit?.[0]).find(Boolean) || area;
+  // Shortest documented walk to a station (minutes), if any unit records it.
+  const walkMin = properties
+    .map((p) => (typeof p.btsWalkMin === "number" ? p.btsWalkMin : typeof p.mrtWalkMin === "number" ? p.mrtWalkMin : undefined))
+    .filter((m): m is number => typeof m === "number")
+    .sort((a, b) => a - b)[0];
+
+  // Amenities: union of facility tags across all units (deduped, case-insensitive).
+  const amenities = Array.from(
+    new Set(
+      properties.flatMap((p) => [...(p.amenities ?? []), ...(p.features ?? [])]).map((a) => a.trim()).filter(Boolean)
+    )
+  );
+
+  // Friendly amenity summary for the spec card (clean long names to concise labels)
+  const cleanAmenityName = (name: string): string => {
+    if (/pool/i.test(name)) return "Swimming Pool";
+    if (/gym|fitness/i.test(name)) return "Fitness Center";
+    if (/garden/i.test(name)) return "Sky Garden";
+    if (/co-?working/i.test(name)) return "Co-Working Hub";
+    if (/sauna|steam/i.test(name)) return "Sauna & Spa";
+    if (name.length > 20) {
+      const words = name.split(" ");
+      return words.slice(0, 2).join(" ");
+    }
+    return name;
+  };
+
+  const amenityHighlights = Array.from(
+    new Set(amenities.map(cleanAmenityName))
+  ).slice(0, 2);
 
   return (
     <div className="w-full pb-4 sm:pb-8 bg-[#FAF8F3]">
@@ -121,9 +162,10 @@ export default function BuildingClient({
           alt={`${buildingName} Exterior`}
           fill
           priority
-          className="object-cover opacity-45 transition-opacity duration-700"
+          className="object-cover opacity-90 transition-opacity duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#161B18] via-[#161B18]/50 to-transparent" />
+        {/* Lighter gradient so the fetched building photo stays visible; darkening only at the bottom for text contrast. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#161B18] via-[#161B18]/40 to-[#161B18]/10" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-5 pb-6 sm:pb-8 w-full text-left">
           {/* Mobile-Friendly Badges & Share Row */}
@@ -187,20 +229,21 @@ export default function BuildingClient({
         </div>
       </div>
 
-      {/* ── BUILDING KEY SPECIFICATIONS STRIP (Mobile Optimized) ── */}
+      {/* ── BUILDING KEY SPECIFICATIONS STRIP (data-driven, Mobile Optimized) ── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-5 -mt-5 sm:-mt-6 relative z-20">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-[#EDE8DF] shadow-md">
-          {/* Transit Proximity */}
+          {/* Transit Proximity — derived from btsStation/mrtStation/walkMin */}
           <div className="p-3 rounded-xl bg-[#FAF8F3] border border-[#EDE8DF] flex flex-col justify-between">
             <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">
               <TrainFront size={13} className="text-[#1C3A2F]" />
-              <span>Location & BTS</span>
+              <span>{t.buildings.locationBts}</span>
             </div>
             <div className="text-xs sm:text-sm font-bold text-[#1C3A2F] mt-1 leading-tight">
-              {area} Hub
+              {transitText}
             </div>
             <div className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 flex items-center gap-1">
-              <Footprints size={10} /> Walkable
+              <Footprints size={10} />
+              {walkMin ? t.buildings.walkMin.replace("{n}", String(walkMin)) : t.buildings.walkable}
             </div>
           </div>
 
@@ -221,23 +264,25 @@ export default function BuildingClient({
           {/* Pet Policy */}
           <div className="p-3 rounded-xl bg-[#FAF8F3] border border-[#EDE8DF] flex flex-col justify-between">
             <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">
-              <Dog size={13} className="text-[#1C3A2F]" />
+              <Dog size={13} className={isPetFriendly ? "text-emerald-600" : "text-gray-400"} />
               <span>{t.buildings.petPolicy}</span>
             </div>
-            <div className="text-xs sm:text-sm font-bold text-[#1C3A2F] mt-1 leading-tight">
-              {isPetFriendly ? t.buildings.petAllowed : t.buildings.subjectToUnit}
+            <div className={`text-xs sm:text-sm font-bold mt-1 leading-tight ${isPetFriendly ? "text-emerald-700" : "text-gray-500"}`}>
+              {isPetFriendly ? t.buildings.petAllowed : t.buildings.petsNotAllowed}
             </div>
-            <div className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">Cats & Dogs</div>
+            <div className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">
+              {isPetFriendly ? "Subject to Unit" : "Strictly No Pets"}
+            </div>
           </div>
 
-          {/* Amenities */}
+          {/* Facilities */}
           <div className="p-3 rounded-xl bg-[#FAF8F3] border border-[#EDE8DF] flex flex-col justify-between">
             <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">
               <Sparkles size={13} className="text-[#1C3A2F]" />
               <span>{t.buildings.facilities}</span>
             </div>
-            <div className="text-xs sm:text-sm font-bold text-[#1C3A2F] mt-1 leading-tight">
-              {t.buildings.facilitiesDesc}
+            <div className="text-xs sm:text-sm font-bold text-[#1C3A2F] mt-1 leading-tight truncate">
+              {amenityHighlights.length > 0 ? amenityHighlights.join(" · ") : t.buildings.facilitiesNone}
             </div>
             <div className="text-[9px] sm:text-[10px] text-gray-500 mt-0.5 flex items-center gap-1">
               <ShieldCheck size={10} className="text-emerald-600" /> {t.buildings.access247}
@@ -335,13 +380,12 @@ export default function BuildingClient({
                 >
                   <div className="relative h-36 sm:h-40 w-full bg-[#1C3A2F] overflow-hidden">
                     <Image
-                      src={b.coverImage || "/images/homepage_hero_v2.webp"}
+                      key={imgErr[b.slug] ? "fallback" : "cover"}
+                      src={imgErr[b.slug] || !b.coverImage ? "/images/homepage_hero_v2.webp" : b.coverImage}
                       alt={b.name}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = "/images/homepage_hero_v2.webp";
-                      }}
+                      onError={() => setImgErr((prev) => (prev[b.slug] ? prev : { ...prev, [b.slug]: true }))}
                     />
                     <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/60 backdrop-blur-md text-white border border-white/20">
                       {b.unitCount} {b.unitCount === 1 ? t.buildings.unit : t.buildings.units}

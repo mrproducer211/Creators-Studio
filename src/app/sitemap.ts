@@ -2,6 +2,8 @@ import { MetadataRoute } from "next";
 import { getDbProperties } from "@/lib/db/dbLoader";
 import { getAllPosts } from "@/lib/store/blog";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
+import { isPropertySitemapEligible } from "@/lib/seoCanonical";
+import { getBuildingSlug } from "@/lib/buildingSlug";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
@@ -15,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1.0 : 0.8,
   }));
 
-  // 2. Dynamic Properties (exclude unlisted & duplicate variation slugs)
+  // 2. Dynamic Properties (strictly include only self-canonicalizing indexable pages)
   let properties: any[] = [];
   try {
     properties = await getDbProperties({ includeUnlisted: false });
@@ -23,16 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap generator failed to load DB properties:", err);
   }
 
-  const primaryProperties = properties.filter((p) => {
-    if (p.slug.endsWith("-short_stay")) {
-      const rentSlug = p.slug.replace(/-short_stay$/, "-rent");
-      const saleSlug = p.slug.replace(/-short_stay$/, "-sale");
-      if (properties.some((other) => other.slug === rentSlug || other.slug === saleSlug)) {
-        return false;
-      }
-    }
-    return true;
-  });
+  const primaryProperties = properties.filter((p) => isPropertySitemapEligible(p, properties));
 
   const propertyUrls = primaryProperties.map((p) => ({
     url: `${baseUrl}/property/${p.slug}`,
@@ -53,10 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const buildingSlugs = Array.from(
     new Set(
       properties
-        .map((p) => {
-          const name = p.projectName || p.name;
-          return name ? name.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_]+/g, "-") : null;
-        })
+        .map((p) => getBuildingSlug(p.projectName || p.name))
         .filter(Boolean)
     )
   );

@@ -7,13 +7,13 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Neighborhood Match — Bangkok Neighborhood Lifestyle Finder",
-  description: "Find your ideal Bangkok neighborhood and condos with AI and commute mapping.",
+  description: "Find your ideal Bangkok neighborhood and condo with AI location matching. Map your daily commute, budget preferences, and lifestyle needs to perfect homes.",
   alternates: {
     canonical: "/explore/match",
   },
   openGraph: {
     title: "Neighborhood Match — Bangkok Neighborhood Lifestyle Finder",
-    description: "Find your ideal Bangkok neighborhood and condos with AI and commute mapping.",
+    description: "Find your ideal Bangkok neighborhood and condo with AI location matching. Map your daily commute, budget preferences, and lifestyle needs to perfect homes.",
     url: "/explore/match",
     images: [
       {
@@ -28,7 +28,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Neighborhood Match — Bangkok Neighborhood Lifestyle Finder",
-    description: "Find your ideal Bangkok neighborhood and condos with AI and commute mapping.",
+    description: "Find your ideal Bangkok neighborhood and condo with AI location matching. Map your daily commute, budget preferences, and lifestyle needs to perfect homes.",
     images: ["/images/neighborhood-match-og.webp"],
   },
 };

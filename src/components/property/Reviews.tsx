@@ -67,7 +67,7 @@ function translateReviewContent(title?: string, body?: string, lang: string = "e
 }
 
 export default function Reviews({ propertyId, propertyName, projectName }: Props) {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   const [reviews, setReviews] = useState<ReviewRecord[]>([]);
   const [aggregate, setAggregate] = useState<{
     ratingValue: number;

@@ -168,16 +168,19 @@ export default function BlogPostClient({ post: rawPost, currentUrl, relatedPosts
                 {tocTitle}
               </h4>
               <ul className="list-none p-0 m-0 flex flex-col gap-2">
-                {post.sections.map((section, idx) => (
-                  <li key={idx} className="m-0 text-[13px] font-light">
-                    <a
-                      href={`#section-${idx}`}
-                      className="text-[#C9A84C] hover:underline no-underline font-medium"
-                    >
-                      {idx + 1}. {section.heading}
-                    </a>
-                  </li>
-                ))}
+                {post.sections.map((section, idx) => {
+                  const cleanHeading = section.heading.replace(/^\d+\.\s*/, "");
+                  return (
+                    <li key={idx} className="m-0 text-[13px] font-light">
+                      <a
+                        href={`#section-${idx}`}
+                        className="text-[#C9A84C] hover:underline no-underline font-medium"
+                      >
+                        {idx + 1}. {cleanHeading}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}
@@ -191,6 +194,17 @@ export default function BlogPostClient({ post: rawPost, currentUrl, relatedPosts
               >
                 {section.heading}
               </h2>
+              {section.image && (
+                <div className="relative w-full h-[220px] sm:h-[300px] md:h-[360px] rounded-2xl overflow-hidden mb-5 border border-[#EDE8DF] shadow-xs">
+                  <Image
+                    src={section.image}
+                    alt={section.imageAlt || section.heading}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 700px"
+                  />
+                </div>
+              )}
               {section.body.map((para, j) => (
                 <p
                   key={j}

@@ -33,7 +33,7 @@ export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
   en: {
     localGuides: "Local Guides",
     knowBangkok: "Know Bangkok before you arrive",
-    sub: "Honest neighbourhood guides, rental price breakdowns, expat tips and family relocation advice — written by the NHP team who live here.",
+    sub: "Honest neighbourhood guides, rental price breakdowns, expat tips and family relocation advice, written by the NHP team who live here.",
     readMore: "Read more →",
     minRead: "min read",
     viewAllGuides: "View all guides →",
@@ -81,12 +81,12 @@ export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
       },
       "thong-lo-vs-on-nut": {
         title: "Thong Lo vs On Nut: Which Bangkok Neighbourhood Suits You?",
-        excerpt: "Both are BTS-connected, expat-friendly and full of great food — but the vibe, price and lifestyle are worlds apart. Here's how to choose.",
+        excerpt: "Both are BTS-connected, expat-friendly and full of great food, but the vibe, price and lifestyle are worlds apart. Here's how to choose.",
         category: "Neighbourhood Guide"
       },
       "digital-nomad-guide-sukhumvit": {
         title: "A Digital Nomad's Complete Guide to Living in Sukhumvit, Bangkok",
-        excerpt: "From co-working spaces to SIM cards, health insurance and the best coffee shops with reliable Wi-Fi — everything you need before you land.",
+        excerpt: "From co-working spaces to SIM cards, health insurance and the best coffee shops with reliable Wi-Fi, everything you need before you land.",
         category: "Expat Tips"
       },
       "what-40k-gets-you-bangkok": {
@@ -98,13 +98,18 @@ export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
         title: "Top International Schools Near Bangkok's Expat Neighbourhoods",
         excerpt: "Relocating with children? We map the best international schools against the city's most liveable expat areas so the commute never becomes the sacrifice.",
         category: "Family Living"
+      },
+      "things-to-do-in-bangkok": {
+        title: "12 Unforgettable Things to Do in Bangkok: A Local's 2026 Guide",
+        excerpt: "From ancient sacred temples and sizzling street food markets to floating canal tours and luxury riverfront hubs, here is how to experience Bangkok like a local.",
+        category: "Activities"
       }
     }
   },
   th: {
     localGuides: "คู่มือแนะนำท้องถิ่น",
     knowBangkok: "รู้จักกรุงเทพฯ ก่อนเดินทางมาถึง",
-    sub: "คู่มือแนะนำย่านที่อยู่อาศัยที่ตรงไปตรงมา ข้อมูลค่าเช่า เคล็ดลับสำหรับชาวต่างชาติ และคำแนะนำในการย้ายครอบครัว — เขียนโดยทีมงาน NHP ผู้อาศัยที่นี่",
+    sub: "คู่มือแนะนำย่านที่อยู่อาศัยที่ตรงไปตรงมา ข้อมูลค่าเช่า เคล็ดลับสำหรับชาวต่างชาติ และคำแนะนำในการย้ายครอบครัว, เขียนโดยทีมงาน NHP ผู้อาศัยที่นี่",
     readMore: "อ่านเพิ่มเติม →",
     minRead: "นาที (อ่าน)",
     viewAllGuides: "ดูคู่มือทั้งหมด →",
@@ -157,7 +162,7 @@ export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
       },
       "digital-nomad-guide-sukhumvit": {
         title: "คู่มือฉบับสมบูรณ์สำหรับ Digital Nomad เพื่อการใช้ชีวิตในย่านสุขุมวิท กรุงเทพฯ",
-        excerpt: "ตั้งแต่สถานที่นั่งทำงาน Co-working ซิมการ์ด ประกันสุขภาพ ไปจนถึงคาเฟ่พร้อมอินเทอร์เน็ตความเร็วสูง — ข้อมูลจำเป็นทั้งหมดที่คุณต้องรู้ก่อนเดินทาง",
+        excerpt: "ตั้งแต่สถานที่นั่งทำงาน Co-working ซิมการ์ด ประกันสุขภาพ ไปจนถึงคาเฟ่พร้อมอินเทอร์เน็ตความเร็วสูง, ข้อมูลจำเป็นทั้งหมดที่คุณต้องรู้ก่อนเดินทาง",
         category: "เคล็ดลับสำหรับ Expat"
       },
       "what-40k-gets-you-bangkok": {
@@ -259,13 +264,18 @@ export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
         title: "ร้านอาหารซ่อนเร้นในกรุงเทพฯ ที่คนท้องถิ่นรู้จัก",
         excerpt: "มองหาร้านอาหารที่แท้จริงของกรุงเทพฯ ที่ไม่อยู่ในคู่มือท่องเที่ยว? นี่คือร้านโปรดของ NHP ที่คนท้องถิ่นแนะนำ",
         category: "กิจกรรมน่าสนใจ"
+      },
+      "things-to-do-in-bangkok": {
+        title: "12 กิจกรรมห้ามพลาดในกรุงเทพฯ: คู่มือแนะนำฉบับคนท้องถิ่นปี 2026",
+        excerpt: "ตั้งแต่สัมผัสความสงบในวัดโบราณ ชิม street food ตลาดโต้รุ่ง นั่งเรือหางยาวเที่ยวคลอง ไปจนถึงห้างหรูริมแม่น้ำ นี่คือวิธีเที่ยวกรุงเทพฯ ให้ได้ฟีลแบบคนท้องถิ่น",
+        category: "กิจกรรมน่าสนใจ"
       }
     }
   },
   zh: {
     localGuides: "本地指南",
     knowBangkok: "到达前深度了解曼谷",
-    sub: "真实客观的社区对比、租金水平拆解、外籍人士实用贴士及家庭移居建议 —— 均由生活在此的 NHP 本地团队撰写。",
+    sub: "真实客观的社区对比、租金水平拆解、外籍人士实用贴士及家庭移居建议    均由生活在此的 NHP 本地团队撰写。",
     readMore: "阅读更多 →",
     minRead: "分钟阅读",
     viewAllGuides: "查看所有指南 →",
@@ -318,7 +328,7 @@ export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
       },
       "digital-nomad-guide-sukhumvit": {
         title: "数字游民在曼谷素坤逸生活的全方位生存指南",
-        excerpt: "从共享办公空间分布、电话卡选购、外籍保险推荐到适合办公的千兆网速咖啡馆 —— 助您在着陆前做好完全准备。",
+        excerpt: "从共享办公空间分布、电话卡选购、外籍保险推荐到适合办公的千兆网速咖啡馆    助您在着陆前做好完全准备。",
         category: "外籍人士贴士"
       },
       "what-40k-gets-you-bangkok": {
@@ -419,6 +429,11 @@ export const T_BLOG: Record<"en" | "th" | "zh", BlogTranslations> = {
       "hidden-gem-restaurants-bangkok": {
         title: "曼谷本地人才知道的隐藏宝藏餐厅",
         excerpt: "寻找不在旅游攻略上的正宗曼谷美食？这是NHP本地团队亲测推荐的心头好餐厅名单。",
+        category: "玩乐指南"
+      },
+      "things-to-do-in-bangkok": {
+        title: "12个在曼谷不可错过的绝佳体验：2026年本地达人全景指南",
+        excerpt: "从古老庄严的皇家寺庙、烟火气十足的夜市街头美食，到运河长尾船游览与古色古香的奢华水岸地标，带您像本地人一样玩转曼谷。",
         category: "玩乐指南"
       }
     }

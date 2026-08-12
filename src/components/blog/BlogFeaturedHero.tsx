@@ -102,7 +102,7 @@ export default function BlogFeaturedHero({ post: rawPost, displayCategory }: Pro
           </p>
         </div>
 
-        <div className="hidden md:block">
+        <div className="hidden md:block mt-6 pt-1">
           <span
             className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-[12px] font-bold text-white transition-opacity group-hover:opacity-90"
             style={{ background: "#1C3A2F" }}

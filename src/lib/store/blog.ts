@@ -6,6 +6,7 @@ const FILE = "blog.json";
 let cache: BlogPost[] | null = null;
 
 async function load(): Promise<BlogPost[]> {
+  if (process.env.NODE_ENV === "development") cache = null;
   if (cache) return cache;
   const stored = await readJson<BlogPost[] | null>(FILE, null);
   cache = stored && stored.length ? stored : [...STATIC_POSTS];
@@ -18,7 +19,9 @@ async function persist(list: BlogPost[]): Promise<void> {
 }
 
 export async function getAllPosts(): Promise<BlogPost[]> {
-  return [...(await load())];
+  const posts = await load();
+  console.log("DEBUG getAllPosts count:", posts.length, "First post:", posts[0]?.slug);
+  return [...posts];
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {

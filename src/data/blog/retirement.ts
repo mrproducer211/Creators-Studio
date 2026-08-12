@@ -169,7 +169,7 @@ export const RETIREMENT: BlogPost[] = [
         heading: "1. General Medical & Doctor Consultation Fees",
         body: [
           "For minor illnesses (colds, basic checkups), a visit to a GP at a reputable private hospital like Bangkok Christian Hospital or St. Louis Hospital costs between ฿600 and ฿1,200, including basic medication. A specialist consultation at Bumrungrad or Samitivej ranges from ฿1,500 to ฿3,000.",
-          "Waiting times are short—you can typically walk in without an appointment and see a doctor within 30 minutes, and prescription medications are dispensed directly by the hospital pharmacy before you leave.",
+          "Waiting times are short, you can typically walk in without an appointment and see a doctor within 30 minutes, and prescription medications are dispensed directly by the hospital pharmacy before you leave.",
           "For regular monthly medications (like blood pressure or cholesterol pills), you can save up to 70% by requesting the doctor write down the generic drug names and purchasing them at large local pharmacies (like the wholesale pharmacies near Victory Monument) instead of the hospital pharmacy, which always carries high markups."
         ]
       },
@@ -177,13 +177,13 @@ export const RETIREMENT: BlogPost[] = [
         heading: "2. Dental Care: Exceptional Value",
         body: [
           "Dental treatment in Thailand is exceptionally affordable and high-quality, with no insurance required. A standard dental checkup, scale, and clean at a modern private clinic costs between ฿800 and ฿1,500.",
-          "More complex treatments are also very cheap: a tooth crown typically costs ฿12,000 to ฿20,000 (roughly USD $350–$600), and dental implants range from ฿40,000 to ฿70,000, saving retirees thousands of dollars compared to Western prices."
+          "More complex treatments are also very cheap: a tooth crown typically costs ฿12,000 to ฿20,000 (roughly USD $350 $600), and dental implants range from ฿40,000 to ฿70,000, saving retirees thousands of dollars compared to Western prices."
         ]
       },
       {
         heading: "3. Major Surgery, Inpatient Costs & Insurance",
         body: [
-          "For major procedures, the price gap between Thailand and Western countries remains significant. For example, a hip replacement surgery at a top private hospital in Bangkok costs between ฿350,000 and ฿500,000 (roughly USD $10,000–$14,000) all-inclusive, compared to USD $40,000+ in the US.",
+          "For major procedures, the price gap between Thailand and Western countries remains significant. For example, a hip replacement surgery at a top private hospital in Bangkok costs between ฿350,000 and ฿500,000 (roughly USD $10,000 $14,000) all-inclusive, compared to USD $40,000+ in the US.",
           "However, to protect against emergency surgeries or intensive care, retirees should hold a valid inpatient health insurance policy, which is also a mandatory requirement for maintaining the Non-OA retirement visa.",
           "A comprehensive local inpatient health insurance plan for a retiree in their 60s typically costs around ฿45,000 to ฿75,000 per year, depending on the deductible. Popular local choices include Luma, Pacific Cross, and AXA Thailand, which offer direct billing with major hospitals so you do not have to pay upfront in emergencies."
         ]
@@ -239,7 +239,7 @@ export const RETIREMENT: BlogPost[] = [
       {
         heading: "4. The Verdict: A Comfortable Retirement",
         body: [
-          "Living in Bangkok on $2,000/month does not mean struggling—it means enjoying a high quality of life. You have a modern apartment, daily help for cleaning (฿500/visit), taxi rides, and eating out regularly, showing why Thailand remains a premier destination for retirees."
+          "Living in Bangkok on $2,000/month does not mean struggling, it means enjoying a high quality of life. You have a modern apartment, daily help for cleaning (฿500/visit), taxi rides, and eating out regularly, showing why Thailand remains a premier destination for retirees."
         ]
       }
     ],

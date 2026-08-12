@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Swipe Mode — NHP Bangkok",
-  description: "Browse Bangkok properties Tinder-style. Swipe right to save, left to skip.",
+  description: "Discover Bangkok condos and apartments with interactive swipe matching. Swipe right to save your favorite properties and connect directly with local agents.",
   alternates: {
     canonical: "/swipe",
   },

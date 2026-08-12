@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { PropertyCard } from "@/types/property";
-import { Neighborhood, NEIGHBORHOODS } from "@/data/neighborhoods";
+import { Neighborhood } from "@/data/neighborhoods";
 import { BlogPost } from "@/data/blogPosts";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -654,25 +654,7 @@ export default function NeighborhoodClient({ neighborhood, initialProperties, re
     });
   }, [meta.vibeCards, transN]);
 
-  const NEARBY_MAP: Record<string, string[]> = {
-    ari: ["phaya-thai", "asok", "sukhumvit"],
-    sathorn: ["silom", "sukhumvit", "asok"],
-    silom: ["sathorn", "sukhumvit", "asok"],
-    "thong-lo": ["ekkamai", "on-nut", "sukhumvit"],
-    asok: ["sukhumvit", "rama-9", "thong-lo"],
-    "on-nut": ["ekkamai", "sukhumvit", "thong-lo"],
-    ekkamai: ["thong-lo", "on-nut", "sukhumvit"],
-    sukhumvit: ["asok", "thong-lo", "ekkamai"],
-    "rama-9": ["huai-khwang", "asok", "sukhumvit"],
-    "bang-na": ["on-nut", "ekkamai", "sukhumvit"],
-    "huai-khwang": ["rama-9", "asok", "phaya-thai"],
-    "phaya-thai": ["ari", "huai-khwang", "asok"],
-    chatuchak: ["ari", "phaya-thai", "huai-khwang"],
-    "rama-4": ["sathorn", "silom", "sukhumvit"]
-  };
 
-  const nearbySlugs = NEARBY_MAP[neighborhood.slug.toLowerCase()] || [];
-  const nearbyNeighborhoods = NEIGHBORHOODS.filter(n => nearbySlugs.includes(n.slug.toLowerCase()));
 
   const handleShare = () => {
     try {

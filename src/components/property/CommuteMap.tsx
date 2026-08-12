@@ -289,7 +289,7 @@ export default function CommuteMap({
         polylines.forEach((p) => p.setMap(null));
       };
     }
-  }, [propertyLat, propertyLng, propertyName, commuteHubs, useGoogle, googleMapsApiKey]);
+  }, [propertyLat, propertyLng, propertyName, commuteHubs, useGoogle, googleMapsApiKey, isValidLat, isValidLng, safeLat, safeLng]);
 
   return (
     <div

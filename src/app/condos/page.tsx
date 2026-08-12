@@ -12,14 +12,14 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
 export const metadata = {
   title: "Bangkok Condos for Rent & Sale | NHP Bangkok",
   description:
-    "Explore luxury and modern condos for rent and sale in Bangkok. Filter by top areas like Sukhumvit, Thong Lo, Sathorn, Ari, and BTS/MRT proximity.",
+    "Explore luxury and modern condos for rent and sale in Bangkok. Filter by top areas like Sukhumvit, Thong Lo, Sathorn, Ari, and BTS/MRT station proximity.",
   alternates: {
     canonical: `${baseUrl}/condos`,
   },
   openGraph: {
     title: "Bangkok Condos for Rent & Sale | NHP Bangkok",
     description:
-      "Explore luxury and modern condos for rent and sale in Bangkok. Filter by top areas like Sukhumvit, Thong Lo, Sathorn, Ari, and BTS/MRT proximity.",
+      "Explore luxury and modern condos for rent and sale in Bangkok. Filter by top areas like Sukhumvit, Thong Lo, Sathorn, Ari, and BTS/MRT station proximity.",
     url: `${baseUrl}/condos`,
     siteName: "New Homes Property",
     images: [{ url: "/images/homepage_hero_v2.webp", width: 1200, height: 630, alt: "Bangkok Condos" }],
@@ -29,10 +29,13 @@ export const metadata = {
     card: "summary_large_image",
     title: "Bangkok Condos for Rent & Sale | NHP Bangkok",
     description:
-      "Explore luxury and modern condos for rent and sale in Bangkok.",
+      "Explore luxury and modern condos for rent and sale in Bangkok. Filter by top areas like Sukhumvit, Thong Lo, Sathorn, Ari, and BTS/MRT station proximity.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };
+
+import SeoCategoryGuide from "@/components/seo/SeoCategoryGuide";
+import { CATEGORY_SEO_GUIDES } from "@/data/categorySeoGuides";
 
 export default async function CondosPage() {
   const properties = await getDbProperties();
@@ -61,6 +64,8 @@ export default async function CondosPage() {
             heading={{ eyebrow: "Bangkok Residences", title: "Condos for Rent & Sale in Bangkok" }}
           />
         </Suspense>
+
+        <SeoCategoryGuide {...CATEGORY_SEO_GUIDES.condos} canonicalUrl={`${baseUrl}/condos`} />
       </main>
       <Footer />
     </>

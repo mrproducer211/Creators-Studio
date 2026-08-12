@@ -68,7 +68,7 @@ export default async function ExplorePage() {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Bangkok Properties & Condos for Rent & Sale",
-    description: "Explore neighbourhood properties for rent and sale in Bangkok.",
+    description: "Explore neighbourhood properties for rent and sale in Bangkok. Filter by area, rental price, bedroom count, and property type to find your perfect home.",
     url: `${baseUrl}/explore`,
     numberOfItems: properties.length,
     mainEntity: {

@@ -61,12 +61,12 @@ export const NOMAD_FAMILY: BlogPost[] = [
     publishedAt: "2026-06-04",
     author: "NHP Bangkok Team",
     keywords: ["safest areas Bangkok", "family neighbourhoods Bangkok", "living in Nichada Thani", "Ekkamai family expat"],
-    intro: "While Bangkok is generally a very safe city with low crime rates, it is a dense, high-speed metropolis. For families, 'safety' isn't just about crime—it is about clean pavements, low traffic, green spaces, walkability, and emergency healthcare access. After interviewing several expat parents, we have mapped out the safest, most child-friendly neighbourhoods in Bangkok.",
+    intro: "While Bangkok is generally a very safe city with low crime rates, it is a dense, high-speed metropolis. For families, 'safety' isn't just about crime, it is about clean pavements, low traffic, green spaces, walkability, and emergency healthcare access. After interviewing several expat parents, we have mapped out the safest, most child-friendly neighbourhoods in Bangkok.",
     sections: [
       {
         heading: "1. Ari: Shaded Residential Streets",
         body: [
-          "Ari Phahon Yothin Sois are widely recommended by expat parents who want to walk with strollers. The residential alleys (like Soi 5, 7, and 9) are leafy, low-density, and have actual pavements—a rare commodity in Bangkok.",
+          "Ari Phahon Yothin Sois are widely recommended by expat parents who want to walk with strollers. The residential alleys (like Soi 5, 7, and 9) are leafy, low-density, and have actual pavements, a rare commodity in Bangkok.",
           "It is a quiet, tight-knit residential community where kids can walk or ride bicycles safely, and it is close to major private hospitals, making it a highly secure base for families."
         ]
       },
@@ -80,7 +80,7 @@ export const NOMAD_FAMILY: BlogPost[] = [
       {
         heading: "3. Nichada Thani: The Ultimate Gated Haven",
         body: [
-          "Located in Pak Kret (northern Bangkok), Nichada Thani is a massive gated expat community built around a private lake and the International School Bangkok (ISB). It is car-free in many zones—residents commute by golf cart or bicycle.",
+          "Located in Pak Kret (northern Bangkok), Nichada Thani is a massive gated expat community built around a private lake and the International School Bangkok (ISB). It is car-free in many zones, residents commute by golf cart or bicycle.",
           "It features its own security force, private clinic, supermarkets, and restaurants. It is the safest, most controlled environment for expat families in Thailand, offering a complete US-style suburban experience."
         ]
       },

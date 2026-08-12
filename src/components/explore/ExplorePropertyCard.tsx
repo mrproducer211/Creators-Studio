@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PropertyCard } from "@/types/property";
 import { useSaved } from "@/contexts/SavedContext";
@@ -19,7 +20,9 @@ import {
   TrainFront,
   Bed,
   ShowerHead,
-  Maximize2
+  Maximize2,
+  Navigation,
+  X
 } from "lucide-react";
 
 interface HubData {
@@ -54,10 +57,20 @@ export default function ExplorePropertyCard({ property }: { property: PropertyCa
   const sub                     = property.listingType === "sale" ? "" : (property.priceLabel ?? "");
   const href                    = `/property/${property.slug}`;
   const [commutes, setCommutes] = useState<CommuteData[]>([]);
+  // hubsConfigured lets us tell the difference between "no commute hubs saved"
+  // (prompt the user) vs. "haven't checked yet" (render nothing).
+  const [hubsConfigured, setHubsConfigured] = useState<boolean | null>(null);
+  // Per-card dismiss flag so the prompt doesn't nag once closed.
+  const [promptDismissed, setPromptDismissed] = useState(false);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem("nhp_commute_hubs");
+      // Record whether the user has any hubs saved so we can prompt if not.
+      let parsed: unknown = null;
+      try { parsed = stored ? JSON.parse(stored) : null; } catch { parsed = null; }
+      const hasHubs = Array.isArray(parsed) && parsed.length > 0;
+      setHubsConfigured(hasHubs);
       if (stored && property.latitude && property.longitude) {
         const hubs = JSON.parse(stored);
         const pLat = Number(property.latitude);
@@ -196,6 +209,33 @@ export default function ExplorePropertyCard({ property }: { property: PropertyCa
                 {c.minutes}{lang === "th" ? " นาทีไปยัง " : lang === "zh" ? " 分钟至 " : "m to "}{c.name}
               </span>
             ))}
+          </div>
+        )}
+
+        {/* Commute-setup prompt: shown once per card when no hubs are saved,
+            so users learn the feature exists instead of seeing an empty slot. */}
+        {commutes.length === 0 && hubsConfigured === false && !promptDismissed && (
+          <div
+            className="flex items-center gap-1.5 mb-2.5 px-2 py-1.5 rounded-lg"
+            style={{ background: "#F0F5F2", border: "1px dashed #C9D8CF" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Navigation className="w-3.5 h-3.5 shrink-0" style={{ color: "#1C3A2F" }} />
+            <Link
+              href="/dashboard"
+              className="text-[10px] font-semibold leading-tight flex-1 min-w-0"
+              style={{ color: "#1C3A2F" }}
+            >
+              {t.property.commutePrompt} <span style={{ color: "#C9A84C" }}>{t.property.setCommute} →</span>
+            </Link>
+            <button
+              onClick={() => setPromptDismissed(true)}
+              aria-label="Dismiss"
+              className="shrink-0 cursor-pointer border-none bg-transparent flex items-center justify-center"
+              style={{ color: "#9aa6a0", padding: 2 }}
+            >
+              <X className="w-3 h-3" />
+            </button>
           </div>
         )}
 

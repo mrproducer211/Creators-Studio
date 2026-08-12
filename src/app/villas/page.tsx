@@ -12,14 +12,14 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
 export const metadata = {
   title: "Bangkok Villas & Houses for Rent & Sale | NHP Bangkok",
   description:
-    "Find luxury villas, private residences, and houses for rent and sale in Bangkok. Private gardens, pools, and spacious family homes.",
+    "Find luxury villas, private residences, and spacious houses for rent and sale in Bangkok. Explore exclusive properties with private pools and lush gardens.",
   alternates: {
     canonical: `${baseUrl}/villas`,
   },
   openGraph: {
     title: "Bangkok Villas & Houses for Rent & Sale | NHP Bangkok",
     description:
-      "Find luxury villas, private residences, and houses for rent and sale in Bangkok. Private gardens, pools, and spacious family homes.",
+      "Find luxury villas, private residences, and spacious houses for rent and sale in Bangkok. Explore exclusive properties with private pools and lush gardens.",
     url: `${baseUrl}/villas`,
     siteName: "New Homes Property",
     images: [{ url: "/images/homepage_hero_v2.webp", width: 1200, height: 630, alt: "Bangkok Villas" }],
@@ -29,10 +29,13 @@ export const metadata = {
     card: "summary_large_image",
     title: "Bangkok Villas & Houses for Rent & Sale | NHP Bangkok",
     description:
-      "Find luxury villas, private residences, and houses for rent and sale in Bangkok.",
+      "Find luxury villas, private residences, and spacious houses for rent and sale in Bangkok. Explore exclusive properties with private pools and lush gardens.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };
+
+import SeoCategoryGuide from "@/components/seo/SeoCategoryGuide";
+import { CATEGORY_SEO_GUIDES } from "@/data/categorySeoGuides";
 
 export default async function VillasPage() {
   const properties = await getDbProperties();
@@ -61,6 +64,8 @@ export default async function VillasPage() {
             heading={{ eyebrow: "Luxury Homes", title: "Villas & Houses in Bangkok" }}
           />
         </Suspense>
+
+        <SeoCategoryGuide {...CATEGORY_SEO_GUIDES.villas} canonicalUrl={`${baseUrl}/villas`} />
       </main>
       <Footer />
     </>

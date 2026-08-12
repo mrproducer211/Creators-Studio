@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyDetail from "@/components/property/PropertyDetail";
@@ -7,6 +7,7 @@ import { getAggregateRatingForProperty } from "@/lib/store/reviews";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
 
 import { generateCleanSeoSlug } from "@/lib/seoEnricher";
+import { getCanonicalSlugForProperty } from "@/lib/seoCanonical";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -58,22 +59,21 @@ export async function generateMetadata({ params }: Props) {
   
   const seoTitle = `${roomType} ${propType} for ${action} in ${p.name}`;
   const title = `${seoTitle}, ${p.area} Bangkok | NHP`;
-  const description = `Spacious ${seoTitle} at ${p.area}, Bangkok. ${p.sqm ? `${p.sqm} sqm layout. ` : ""}${priceStr ? `Offered at ${priceStr}${label}. ` : ""}View photos & details at New Homes Property.`;
+  let description = `${seoTitle} at ${p.area}, Bangkok. ${p.sqm ? `${p.sqm} sqm layout. ` : ""}${priceStr ? `Offered at ${priceStr}${label}. ` : ""}Explore verified photos, building amenities & viewings at NHP.`;
+  if (description.length < 150) {
+    description = description.replace("at NHP.", "at New Homes Property Bangkok.");
+  }
+  if (description.length > 160) {
+    description = description.replace("Explore verified photos, building amenities & viewings at New Homes Property Bangkok.", "View details & photos at NHP.");
+  }
+  if (description.length > 160) {
+    description = description.replace("Explore verified photos, building amenities & viewings at NHP.", "View photos & details at NHP.");
+  }
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL 
     || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
   
-  // Canonical normalization: if property is a short_stay variation and a primary rent/sale listing exists, point canonical to primary
-  let canonicalSlug = p.slug;
-  if (p.slug.endsWith("-short_stay")) {
-    const primaryRentSlug = p.slug.replace(/-short_stay$/, "-rent");
-    const primarySaleSlug = p.slug.replace(/-short_stay$/, "-sale");
-    if (all.some((x) => x.slug === primaryRentSlug)) {
-      canonicalSlug = primaryRentSlug;
-    } else if (all.some((x) => x.slug === primarySaleSlug)) {
-      canonicalSlug = primarySaleSlug;
-    }
-  }
+  const canonicalSlug = getCanonicalSlugForProperty(p, all);
   const canonicalUrl = `${baseUrl}/property/${canonicalSlug}`;
   
   let imageUrl = p.coverImage || "/images/homepage_hero_v2.webp";
@@ -137,9 +137,20 @@ function buildingHint(p: { projectName?: string; name: string }): string {
 
 export default async function PropertyPage({ params }: Props) {
   const { slug } = await params;
-  const all          = await getDbProperties({ includeUnlisted: true });
+  const all = await getDbProperties({ includeUnlisted: true });
   const property = findPropertyBySlug(all, slug);
-  if (!property) notFound();
+  if (!property || property.status === "unlisted") {
+    // Attempt to find active counterpart listing (e.g., -rent vs -sale)
+    const baseSlug = slug.replace(/-(?:sale|rent|short_stay)$/, "");
+    const activeCounterpart = all.find(
+      (p) => p.status !== "unlisted" && p.slug.replace(/-(?:sale|rent|short_stay)$/, "") === baseSlug
+    );
+    if (activeCounterpart) {
+      redirect(`/property/${activeCounterpart.slug}`);
+    } else {
+      redirect("/explore");
+    }
+  }
 
   const bHint = buildingHint(property);
 

@@ -31,7 +31,6 @@ import {
   PawPrint,
   Globe,
   Train,
-  Calendar,
   VolumeX,
   TrainFront,
   ShoppingBag,
@@ -43,7 +42,6 @@ import {
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { T_MATCH } from "@/data/matchTranslations";
-import { getLocalizedDayItinerary } from "@/data/neighborhoodTranslations/itineraries";
 import { stripEmojis } from "@/lib/emoji";
 import Footer from "@/components/Footer";
 

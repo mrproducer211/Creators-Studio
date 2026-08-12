@@ -14,14 +14,14 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
 export const metadata = {
   title: "Bangkok Condos & Property For Sale | NHP",
   description:
-    "Browse condos, apartments and houses for sale across Bangkok's best neighbourhoods — Sukhumvit, Thong Lo, Asok, Sathorn and more. Verified listings with photos, prices and building details.",
+    "Browse condos, apartments, and houses for sale in Bangkok's top neighborhoods like Sukhumvit, Thong Lo & Sathorn. Verified listings with photos and prices.",
   alternates: {
     canonical: `${baseUrl}/for-sale`,
   },
   openGraph: {
     title: "Bangkok Condos & Property For Sale | NHP",
     description:
-      "Browse condos, apartments and houses for sale across Bangkok's best neighbourhoods — Sukhumvit, Thong Lo, Asok, Sathorn and more. Verified listings with photos, prices and building details.",
+      "Browse condos, apartments, and houses for sale in Bangkok's top neighborhoods like Sukhumvit, Thong Lo & Sathorn. Verified listings with photos and prices.",
     url: `${baseUrl}/for-sale`,
     siteName: "New Homes Property",
     images: [{ url: "/images/homepage_hero_v2.webp", width: 1200, height: 630, alt: "Bangkok property for sale" }],
@@ -31,10 +31,13 @@ export const metadata = {
     card: "summary_large_image",
     title: "Bangkok Condos & Property For Sale | NHP",
     description:
-      "Browse condos, apartments and houses for sale across Bangkok's best neighbourhoods — Sukhumvit, Thong Lo, Asok, Sathorn and more.",
+      "Browse condos, apartments, and houses for sale in Bangkok's top neighborhoods like Sukhumvit, Thong Lo & Sathorn. Verified listings with photos and prices.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };
+
+import SeoCategoryGuide from "@/components/seo/SeoCategoryGuide";
+import { CATEGORY_SEO_GUIDES } from "@/data/categorySeoGuides";
 
 export default async function ForSalePage() {
   const properties = await getDbProperties();
@@ -72,6 +75,8 @@ export default async function ForSalePage() {
             heading={{ eyebrow: "Buy in Bangkok", title: "Property For Sale in Bangkok" }}
           />
         </Suspense>
+
+        <SeoCategoryGuide {...CATEGORY_SEO_GUIDES.sale} canonicalUrl={`${baseUrl}/for-sale`} />
       </main>
       <Footer />
     </>

@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "My Dashboard — NHP Bangkok",
-  description: "Personalized search, commute planning, and shortlist collaborations.",
+  description: "Access your personalized Bangkok property dashboard. Manage saved condos, plan daily commutes, track viewing appointments, and collaborate on shortlists.",
 };
 
 export default async function DashboardPage() {

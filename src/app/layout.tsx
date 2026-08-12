@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: "New Homes Property — Live. Belong. Bangkok.",
   description:
-    "Bangkok's neighbourhood property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
+    "Bangkok's neighborhood property platform for expats and nomads. Find verified condos and apartments for long rent, short stay, or sale across prime Bangkok.",
   verification: {
     // Google is verified via the HTML file in /public; this is a backup tag.
     google: "",
@@ -75,7 +75,7 @@ const orgJsonLd = {
   logo: `${baseUrl}/images/nhp-logo.webp`,
   image: `${baseUrl}/images/nhp-logo.webp`,
   description:
-    "Bangkok's neighbourhood property platform for expats, digital nomads and international residents. Buy, long rent, or short stay.",
+    "Bangkok's neighborhood property platform for expats and nomads. Find verified condos and apartments for long rent, short stay, or sale across prime Bangkok.",
   telephone: BUSINESS_PHONE,
   email: BUSINESS_EMAIL,
   priceRange: "฿฿฿",

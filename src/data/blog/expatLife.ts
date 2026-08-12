@@ -31,7 +31,7 @@ export const EXPAT_LIFE: BlogPost[] = [
         ]
       },
       {
-        heading: "3. The Destination Thailand Visa (DTV) — New in 2026",
+        heading: "3. The Destination Thailand Visa (DTV), New in 2026",
         body: [
           "Introduced to cater specifically to digital nomads, remote workers, freelancers, and visitors interested in cultural activities (like Muay Thai or culinary classes), the Destination Thailand Visa (DTV) is a highly attractive addition to the visa landscape. It allows a stay of up to 180 days per entry, with the option to extend for another 180 days inside the country, and is valid for 5 years.",
           "To qualify, you must show proof of remote employment or freelance portfolio work, and hold a minimum balance of ฿500,000 in a bank account. It is significantly cheaper than the LTR or Privilege visas, making it the most popular budget nomad option in 2026."
@@ -78,13 +78,13 @@ export const EXPAT_LIFE: BlogPost[] = [
     publishedAt: "2026-07-09",
     author: "NHP Bangkok Team",
     keywords: ["open bank account Thailand", "Bangkok bank foreigner", "Kasikornbank foreigner", "Thai debit card"],
-    intro: "Opening a bank account in Thailand is one of the first things you should do when you arrive. Having a local debit card and mobile banking app makes daily life infinitely easier—from paying rent to scanning QR codes at street food stalls (which is how almost all local transactions are done). However, walk into any bank branch with a tourist visa and you'll likely be rejected. The rules are strict and vary between branches. Here is the step-by-step guide to opening an account successfully.",
+    intro: "Opening a bank account in Thailand is one of the first things you should do when you arrive. Having a local debit card and mobile banking app makes daily life infinitely easier, from paying rent to scanning QR codes at street food stalls (which is how almost all local transactions are done). However, walk into any bank branch with a tourist visa and you'll likely be rejected. The rules are strict and vary between branches. Here is the step-by-step guide to opening an account successfully.",
     sections: [
       {
         heading: "1. The Document Checklist: What You Need",
         body: [
           "If you have a Work Permit and a long-term lease, opening an account is simple: take your passport, work permit, lease agreement, and a small deposit (฿500) to any major bank branch.",
-          "If you don't have a work permit (e.g. you are on a tourist, student, or retirement visa), you will need: a certificate of residency (issued by your embassy or Thai immigration), a long-term lease agreement (minimum 6 months) signed by your landlord, and a letter of reference from a Thai citizen or your home bank. Some branches may also require you to purchase a local accident insurance policy (usually around ฿2,000–฿3,000) to open the account."
+          "If you don't have a work permit (e.g. you are on a tourist, student, or retirement visa), you will need: a certificate of residency (issued by your embassy or Thai immigration), a long-term lease agreement (minimum 6 months) signed by your landlord, and a letter of reference from a Thai citizen or your home bank. Some branches may also require you to purchase a local accident insurance policy (usually around ฿2,000 ฿3,000) to open the account."
         ]
       },
       {
@@ -98,20 +98,20 @@ export const EXPAT_LIFE: BlogPost[] = [
         heading: "3. Step-by-Step Branch Strategy",
         body: [
           "Do not visit small branches inside shopping malls on weekends; they are often busy and have strict rules. Instead, visit a major branch (ideally a head office or a branch in an expat area like Sukhumvit or Silom) on a weekday morning.",
-          "Be polite, dress neatly, and present your documents clearly. If the first branch rejects you, do not be discouraged—simply walk down the street to a different branch or a different bank. Branch managers have high discretion, and rules can vary between offices."
+          "Be polite, dress neatly, and present your documents clearly. If the first branch rejects you, do not be discouraged, simply walk down the street to a different branch or a different bank. Branch managers have high discretion, and rules can vary between offices."
         ]
       },
       {
         heading: "4. International Transfers: How to Fund Your Account",
         body: [
-          "Once your account is open, the next challenge is getting money into it without paying exorbitant bank fees. Standard SWIFT wire transfers from your home bank are secure but slow (taking 3–5 business days) and involve high flat fees and poor exchange rates.",
+          "Once your account is open, the next challenge is getting money into it without paying exorbitant bank fees. Standard SWIFT wire transfers from your home bank are secure but slow (taking 3 to 5 business days) and involve high flat fees and poor exchange rates.",
           "Expat parents and nomads strongly recommend using Wise (formerly TransferWise) or similar peer-to-peer transfer apps. Wise connects directly to the Thai banking system, allowing you to transfer funds instantly at the mid-market exchange rate for a minimal fee. The money arrives in your Thai account via a local transfer, meaning your Thai bank won't charge you a foreign receiving fee."
         ]
       },
       {
         heading: "5. Credit Cards & Mortgages for Expats",
         body: [
-          "Getting a credit card in Thailand is notoriously difficult for foreigners. Most banks require a valid work permit, a minimum monthly salary of ฿50,000–฿100,000, and at least 6 months of local employment history. Alternatively, you can open a 'fixed deposit' account where the bank freezes a specific amount (e.g., ฿50,000) as collateral for your credit card limit.",
+          "Getting a credit card in Thailand is notoriously difficult for foreigners. Most banks require a valid work permit, a minimum monthly salary of ฿50,000 ฿100,000, and at least 6 months of local employment history. Alternatively, you can open a 'fixed deposit' account where the bank freezes a specific amount (e.g., ฿50,000) as collateral for your credit card limit.",
           "Mortgages are virtually impossible for individual foreign buyers unless you go through specialized international lending programs or purchase through a corporate structure. For the vast majority of expats, buying property requires full cash payments."
         ]
       }
@@ -169,7 +169,7 @@ export const EXPAT_LIFE: BlogPost[] = [
       {
         heading: "5. World-Class Dental Care & Dental Tourism",
         body: [
-          "Dental care in Bangkok is exceptional and very affordable. Many dental clinics (like Bangkok International Dental Center or Dental Hospital Bangkok) cater specifically to international patients and feature specialists who trained abroad. A standard cleaning and checkup costs around ฿1,000–฿1,500, while premium procedures like crowns, root canals, and veneers are priced at a fraction of Western costs, making Bangkok a major hub for dental tourism."
+          "Dental care in Bangkok is exceptional and very affordable. Many dental clinics (like Bangkok International Dental Center or Dental Hospital Bangkok) cater specifically to international patients and feature specialists who trained abroad. A standard cleaning and checkup costs around ฿1,000 ฿1,500, while premium procedures like crowns, root canals, and veneers are priced at a fraction of Western costs, making Bangkok a major hub for dental tourism."
         ]
       }
     ],
@@ -200,14 +200,14 @@ export const EXPAT_LIFE: BlogPost[] = [
         heading: "1. Housing & Rental Costs: Studio vs. Luxury Condo",
         body: [
           "Housing is your largest monthly expense. Rent in Bangkok varies significantly depending on the district, proximity to mass transit (BTS Skytrain/MRT Subway), and the age of the building. In 2026, a modern, fully furnished 30-square-meter studio condo in an expat hub like On Nut or Lat Phrao ranges from ฿12,000 to ฿16,000 per month. If you move closer to the prime commercial districts like Phrom Phong, Thong Lo, or Asok, the same space will cost between ฿22,000 and ฿35,000.",
-          "For those relocating as a family, a spacious 2-bedroom or 3-bedroom apartment (roughly 80–120 sqm) in family-friendly zones like Ekkamai, Phrom Phong, or Sathorn ranges from ฿45,000 to ฿85,000 per month. Renting a standalone house or townhouse in gated suburban estates (like Nichada Thani in Pak Kret) begins around ฿60,000 and can easily reach ฿150,000+ for large villas near international schools.",
+          "For those relocating as a family, a spacious 2-bedroom or 3-bedroom apartment (roughly 80 to 120 sqm) in family-friendly zones like Ekkamai, Phrom Phong, or Sathorn ranges from ฿45,000 to ฿85,000 per month. Renting a standalone house or townhouse in gated suburban estates (like Nichada Thani in Pak Kret) begins around ฿60,000 and can easily reach ฿150,000+ for large villas near international schools.",
           "Most rental agreements require a minimum 12-month contract, a 2-month security deposit, and the first month's rent paid in advance. Condos always come fully furnished, including a TV, refrigerator, microwave, and air-conditioning units."
         ]
       },
       {
         heading: "2. Utility Bills: The Air-Con Factor",
         body: [
-          "Utilities in Bangkok are cheap, except for electricity. High-speed home fiber internet (1 Gbps speed) is extremely reliable and costs around ฿599 to ฿799 per month, which includes a basic TV router package. Water bills are negligible—typically ฿100 to ฿200 per month for a single occupant or couple, calculated based on flat building rates (usually ฿18 to ฿22 per unit).",
+          "Utilities in Bangkok are cheap, except for electricity. High-speed home fiber internet (1 Gbps speed) is extremely reliable and costs around ฿599 to ฿799 per month, which includes a basic TV router package. Water bills are negligible, typically ฿100 to ฿200 per month for a single occupant or couple, calculated based on flat building rates (usually ฿18 to ฿22 per unit).",
           "Electricity is the ultimate wildcard, managed by the Metropolitan Electricity Authority (MEA). The standard government rate is roughly ฿4.2 to ฿4.7 per kilowatt-hour (kWh). If you work from home and run multiple inverter air-conditioners 24/7, expect a monthly electricity bill of ฿3,500 to ฿6,000. However, if you only run the air-con in the evenings while you sleep, your bill will stay between ฿1,200 and ฿1,800 per month. In older buildings, check if they charge direct MEA rates or if the landlord adds a surcharge (some serviced apartments charge ฿7 to ฿9 per unit, which can double your bill)."
         ]
       },
@@ -266,7 +266,7 @@ export const EXPAT_LIFE: BlogPost[] = [
       {
         heading: "2. Day 1: Get Connected (SIM Card & Transit)",
         body: [
-          "Do not buy a tourist SIM card at the airport arrivals hall—they are overpriced and have data limits. Instead, visit any official AIS, True, or DTAC shop inside a shopping mall (like CentralWorld or Terminal 21) on your first day. Bring your passport and buy a monthly unlimited data plan for around ฿300 to ฿450.",
+          "Do not buy a tourist SIM card at the airport arrivals hall, they are overpriced and have data limits. Instead, visit any official AIS, True, or DTAC shop inside a shopping mall (like CentralWorld or Terminal 21) on your first day. Bring your passport and buy a monthly unlimited data plan for around ฿300 to ฿450.",
           "Also, buy a Rabbit Card at the nearest BTS Skytrain station. This rechargeable card allows you to tap through the BTS gates quickly, saving you from queuing for tickets during rush hours."
         ]
       },
@@ -288,7 +288,7 @@ export const EXPAT_LIFE: BlogPost[] = [
         heading: "5. Day 5: Local Banking & QR Payments",
         body: [
           "Take your passport, TM30 receipt, and lease agreement to a main bank branch (like Bangkok Bank's head office on Silom Road) to open a savings account. Ask for mobile banking access and a debit card.",
-          "Once set up, fund your account (using transfer services like Wise) and use the bank app to scan QR codes for payment. This is the national payment system (PromptPay)—it is accepted everywhere from street food carts to high-end malls, eliminating the need to carry cash."
+          "Once set up, fund your account (using transfer services like Wise) and use the bank app to scan QR codes for payment. This is the national payment system (PromptPay) it is accepted everywhere from street food carts to high-end malls, eliminating the need to carry cash."
         ]
       },
       {
@@ -325,7 +325,7 @@ export const EXPAT_LIFE: BlogPost[] = [
         heading: "1. Disrespect the Royal Family (And Stepping on Thai Currency)",
         body: [
           "The Royal Family is held in the highest esteem in Thailand, and criticism or disrespect toward them is a serious offense under the country's strict Lèse-Majesté laws (Section 112 of the Thai Criminal Code). This law is strictly enforced and carries penalties ranging from 3 to 15 years in prison per count. Even casual jokes, political debates, or sharing social media posts that could be interpreted as critical of the monarchy are highly illegal and socially unacceptable.",
-          "A practical extension of this rule involves Thai currency (coins and banknotes), which feature the portrait of the King. If a coin rolls away or a banknote blows in the wind, you must never step on it with your foot to stop it. In Thai culture, doing so is seen as stepping directly on the King's face—a severe act of disrespect. Instead, bend down and use your hand to catch it. Additionally, do not rip, burn, or write on Thai currency under any circumstances."
+          "A practical extension of this rule involves Thai currency (coins and banknotes), which feature the portrait of the King. If a coin rolls away or a banknote blows in the wind, you must never step on it with your foot to stop it. In Thai culture, doing so is seen as stepping directly on the King's face, a severe act of disrespect. Instead, bend down and use your hand to catch it. Additionally, do not rip, burn, or write on Thai currency under any circumstances."
         ]
       },
       {
@@ -452,7 +452,7 @@ export const EXPAT_LIFE: BlogPost[] = [
     metaTitle: "Bangkok 3 to 6 Month Short-Stay Condo Rentals (2026 Guide) | NHP",
     metaDesc: "Need a short-term condo rental in Bangkok? A complete guide to 3-month and 6-month rental agreements, deposit rules, utility setup, and top BTS-connected neighborhoods.",
     excerpt: "Visiting Bangkok for a few months on a Destination Thailand Visa (DTV) or remote work stint? Learn how 3 to 6 month short-stay leases work, deposit rules, and top digital nomad neighborhoods.",
-    image: "/images/blog/thailand-visa-guide-2026.webp",
+    image: "/images/blog/bangkok-short-term-condo-rentals.webp",
     readTime: "9 min read",
     publishedAt: "2026-07-20",
     author: "NHP Bangkok Team",

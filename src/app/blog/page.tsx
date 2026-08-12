@@ -5,20 +5,20 @@ import BlogIndexClient from "@/components/blog/BlogIndexClient";
 import NewsletterCapture from "@/components/blog/NewsletterCapture";
 import { Suspense } from "react";
 
-export const revalidate = 3600;
+export const revalidate = 0;
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
   || (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://newhomesproperty.com");
 
 export const metadata = {
   title: "Bangkok Property Guides & Expat Tips — NHP Blog",
-  description: "Expert guides on living in Bangkok — neighbourhood comparisons, rental prices, digital nomad tips and family relocation advice from the NHP team.",
+  description: "Read expert guides on living in Bangkok — neighborhood comparisons, rental prices, digital nomad tips, and family relocation advice from local realtors.",
   alternates: {
     canonical: `${baseUrl}/blog`,
   },
   openGraph: {
     title: "Bangkok Property Guides & Expat Tips — NHP Blog",
-    description: "Expert guides on living in Bangkok — neighbourhood comparisons, rental prices, digital nomad tips and family relocation advice from the NHP team.",
+    description: "Read expert guides on living in Bangkok — neighborhood comparisons, rental prices, digital nomad tips, and family relocation advice from local realtors.",
     url: `${baseUrl}/blog`,
     siteName: "New Homes Property",
     images: [
@@ -34,7 +34,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Bangkok Property Guides & Expat Tips — NHP Blog",
-    description: "Expert guides on living in Bangkok — neighbourhood comparisons, rental prices, digital nomad tips and family relocation advice from the NHP team.",
+    description: "Read expert guides on living in Bangkok — neighborhood comparisons, rental prices, digital nomad tips, and family relocation advice from local realtors.",
     images: ["/images/homepage_hero_v2.webp"],
   },
 };
@@ -67,7 +67,7 @@ export default async function BlogPage() {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Bangkok Property Guides & Expat Tips — NHP Blog",
-    description: "Expert guides on living in Bangkok — neighbourhood comparisons, rental prices, digital nomad tips and family relocation advice.",
+    description: "Read expert guides on living in Bangkok — neighborhood comparisons, rental prices, digital nomad tips, and family relocation advice from local realtors.",
     url: `${baseUrl}/blog`,
     numberOfItems: POSTS.length,
     mainEntity: {

@@ -4,14 +4,14 @@ import FaqClient from "./FaqClient";
 export const metadata: Metadata = {
   title: "Bangkok Rental FAQ — How NHP Works | New Homes Property",
   description:
-    "Find answers to the most common questions about renting a condo in Bangkok. Learn how NHP verifies listings, arranges viewings, and helps expats find their perfect home.",
+    "Find answers to common questions about renting a condo in Bangkok. Learn how NHP verifies listings, schedules viewings, and guides expats through renting.",
   alternates: {
     canonical: "/faq",
   },
   openGraph: {
     title: "Bangkok Rental FAQ | New Homes Property",
     description:
-      "Everything you need to know about renting a condo in Bangkok — verified listings, viewings, fees, deposits, and neighbourhood guides.",
+      "Find answers to common questions about renting a condo in Bangkok. Learn how NHP verifies listings, schedules viewings, and guides expats through renting.",
     url: "https://newhomesproperty.com/faq",
     siteName: "New Homes Property",
     type: "website",

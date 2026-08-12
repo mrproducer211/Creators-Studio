@@ -20,7 +20,7 @@ export const NEIGHBORHOOD_GUIDES: BlogPost[] = [
       {
         heading: "The Vibe: High-End Retail vs Vintage Hipster",
         body: [
-          "Phrom Phong revolves around the Em District—malls like Emporium, EmQuartier, and EmSphere dominate the skyline. Walking down the street here feels like walking through a high-end fashion magazine. The side streets (especially Sois 33, 39, and 24) host a massive Japanese expat community, meaning you get incredible ramen houses, sake bars, and Japanese supermarkets.",
+          "Phrom Phong revolves around the Em District, malls like Emporium, EmQuartier, and EmSphere dominate the skyline. Walking down the street here feels like walking through a high-end fashion magazine. The side streets (especially Sois 33, 39, and 24) host a massive Japanese expat community, meaning you get incredible ramen houses, sake bars, and Japanese supermarkets.",
           "Ekkamai (Sukhumvit Soi 63) is much more laid-back. The main road is wider, and the side streets host independent coffee houses, vintage clothing shops, art spaces, and local music venues. Ekkamai retains a residential, neighborhood feel that is rare in the high-density zones of central Sukhumvit."
         ]
       },
